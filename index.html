@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSKMOPH - ระบบบันทึกและตรวจวิเคราะห์ตัวอย่างอาหารและน้ำ เขตสุขภาพที่ 10</title>
+    <!-- Google Fonts: Sarabun (for Thai) & Outfit (for headings/numbers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 for beautiful popups -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <i class="fa-solid fa-flask-vial logo-icon"></i>
+                    <div>
+                        <h1 class="logo-title">SSKMOPH</h1>
+                        <span class="logo-subtitle">เขตสุขภาพที่ 10</span>
+                    </div>
+                </div>
+                <button class="toggle-sidebar-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-view="dashboard">
+                    <i class="fa-solid fa-chart-line"></i> <span>แดชบอร์ดสถิติ</span>
+                </a>
+                <a href="#" class="menu-item" data-view="sample-record">
+                    <i class="fa-solid fa-file-signature"></i> <span>บันทึกการเก็บตัวอย่าง</span>
+                </a>
+                <a href="#" class="menu-item" data-view="lab-verify" id="menu-lab-verify">
+                    <i class="fa-solid fa-clipboard-check"></i> <span>ตรวจสอบตัวอย่าง (แลป)</span>
+                </a>
+                <a href="#" class="menu-item" data-view="lab-analysis" id="menu-lab-analysis">
+                    <i class="fa-solid fa-vial-virus"></i> <span>ตรวจวิเคราะห์ตัวอย่าง</span>
+                </a>
+                <a href="#" class="menu-item" data-view="lab-certify" id="menu-lab-certify">
+                    <i class="fa-solid fa-stamp"></i> <span>รับรองผลตรวจวิเคราะห์</span>
+                </a>
+                <a href="#" class="menu-item" data-view="e-tracking">
+                    <i class="fa-solid fa-route"></i> <span>ตรวจสอบสถานะ (E-Tracking)</span>
+                </a>
+                <a href="#" class="menu-item" data-view="data-download" id="menu-data-download">
+                    <i class="fa-solid fa-file-excel"></i> <span>ดาวน์โหลดข้อมูล Excel</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-status-card" id="userStatusCard">
+                    <!-- Dynamic auth state here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <button class="toggle-sidebar-btn" id="openSidebar"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="view-title" id="currentViewTitle">แดชบอร์ดสถิติ</h2>
+                </div>
+                <div class="navbar-right">
+                    <span class="system-time" id="systemTime"><i class="fa-regular fa-clock"></i> --:--</span>
+                    <div class="auth-buttons" id="navAuthButtons">
+                        <!-- Dynamic login/logout buttons -->
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Container -->
+            <div class="content-body">
+                <!-- VIEW 1: DASHBOARD -->
+                <section class="content-view active" id="view-dashboard">
+                    <div class="welcome-banner">
+                        <div class="banner-text">
+                            <h3>ยินดีต้อนรับสู่ระบบตรวจวิเคราะห์อาหารและน้ำ เขตสุขภาพที่ 10</h3>
+                            <p>ศูนย์ข้อมูลสารสนเทศการตรวจสอบความปลอดภัยของอาหารและน้ำ จังหวัดศรีสะเกษ อุบลราชธานี อำนาจเจริญ มุกดาหาร และยโสธร</p>
+                        </div>
+                        <div class="banner-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Summary Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card total">
+                            <div class="stat-icon"><i class="fa-solid fa-database"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">ตัวอย่างทั้งหมด</span>
+                                <h2 class="stat-number" id="stats-total">0</h2>
+                            </div>
+                        </div>
+                        <div class="stat-card pending">
+                            <div class="stat-icon"><i class="fa-solid fa-spinner fa-spin-hover"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">รอรับตัวอย่าง</span>
+                                <h2 class="stat-number" id="stats-pending">0</h2>
+                            </div>
+                        </div>
+                        <div class="stat-card analyzing">
+                            <div class="stat-icon"><i class="fa-solid fa-vial"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">กำลังตรวจวิเคราะห์</span>
+                                <h2 class="stat-number" id="stats-analyzing">0</h2>
+                            </div>
+                        </div>
+                        <div class="stat-card completed">
+                            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">รายงานเสร็จสิ้น/อนุมัติ</span>
+                                <h2 class="stat-number" id="stats-completed">0</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Charts Layout -->
+                    <div class="dashboard-grid">
+                        <div class="chart-container large-chart">
+                            <div class="chart-header">
+                                <h4><i class="fa-solid fa-map-location-dot"></i> จำนวนการส่งตัวอย่างตรวจวิเคราะห์แยกตามรายจังหวัด</h4>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="provinceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h4><i class="fa-solid fa-chart-pie"></i> สัดส่วนผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
+                            </div>
+                            <div class="chart-body small-chart">
+                                <canvas id="resultRatioChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h4><i class="fa-solid fa-list-check"></i> จำนวนตัวอย่างแยกตามประเภทฟอร์มบันทึก (MU.10-001 - 008)</h4>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="formTypeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: SAMPLE RECORD (FORMS) -->
+                <section class="content-view" id="view-sample-record">
+                    <div class="auth-required-wrapper hidden" id="record-auth-block">
+                        <div class="auth-notice-card">
+                            <i class="fa-solid fa-lock auth-lock-icon"></i>
+                            <h3>จำเป็นต้องเข้าสู่ระบบ</h3>
+                            <p>กรุณาลงชื่อเข้าใช้งานก่อนทำรายการบันทึกข้อมูลการเก็บตัวอย่างและดาวน์โหลดแบบฟอร์ม</p>
+                            <button class="btn btn-primary" onclick="app.showLoginModal('collector')">เข้าสู่ระบบ / สมัครสมาชิก</button>
+                        </div>
+                    </div>
+
+                    <div id="record-content-wrapper">
+                        <!-- Form Selection Cards -->
+                        <div class="section-title-wrapper">
+                            <h3>เลือกประเภทแบบบันทึกการเก็บตัวอย่าง (MU.10-001 - MU.10-008)</h3>
+                            <p>กรุณาเลือกฟอร์มที่ต้องการบันทึกข้อมูลและส่งวิเคราะห์</p>
+                        </div>
+                        <div class="form-selection-grid">
+                            <button class="form-select-card" data-form-type="MU.10-001">
+                                <div class="form-card-badge">MU.10-001</div>
+                                <i class="fa-solid fa-carrot form-icon"></i>
+                                <span>ผักและผลไม้</span>
+                            </button>
+                            <button class="form-select-card" data-form-type="MU.10-002">
+                                <div class="form-card-badge">MU.10-002</div>
+                                <i class="fa-solid fa-triangle-exclamation form-icon"></i>
+                                <span>สารปนเปื้อน 5 ชนิด</span>
+                            </button>
+                            <button class="form-select-card" data-form-type="MU.10-003">
+                                <div class="form-card-badge">MU.10-003</div>
+                                <i class="fa-solid fa-droplet form-icon"></i>
+                                <span>น้ำมันทอดซ้ำ (Ebro/Testo)</span>
+                            </button>
+                            <button class="form-select-card" data-form-type="MU.10-004">
+                                <div class="form-card-badge">MU.10-004</div>
+                                <i class="fa-solid fa-vials form-icon"></i>
+                                <span>น้ำมันทอดซ้ำ (Test Kit)</span>
+                            </button>
+                            <button class="form-select-card" data-form-type="MU.10-005">
+                                <div class="form-card-badge">MU.10-005</div>
+                                <i class="fa-solid fa-cubes form-icon"></i>
+                                <span>เกลือบริโภค</span>
+                            </button>
+                            <button class="form-select-card" data-form-type="MU.10-006">
+                                <div class="form-card-badge">MU.10-006</div>
+                                <i class="fa-solid fa-glass-water form-icon"></i>
+                                <span>น้ำบริโภค</span>
+                            </button>
+                            <button class="form-select-card" data-form-type="MU.10-007">
+                                <div class="form-card-badge">MU.10-007</div>
+                                <i class="fa-solid fa-biohazard form-icon"></i>
+                                <span>เชื้อโคลิฟอร์มขั้นต้น (SI-2)</span>
+                            </button>
+                            <button class="form-select-card" data-form-type="MU.10-008">
+                                <div class="form-card-badge">MU.10-008</div>
+                                <i class="fa-solid fa-tags form-icon"></i>
+                                <span>ตรวจฉลากอาหาร</span>
+                            </button>
+                        </div>
+
+                        <!-- The Actual Form Element -->
+                        <div class="form-editor-container hidden" id="formEditorContainer">
+                            <div class="form-editor-header">
+                                <button class="btn btn-text" id="backToFormSelection">
+                                    <i class="fa-solid fa-arrow-left"></i> กลับไปเลือกฟอร์ม
+                                </button>
+                                <span class="form-badge" id="formBadgeTitle">MU.10-001</span>
+                            </div>
+                            
+                            <form id="sampleSubmissionForm" class="modern-form">
+                                <input type="hidden" id="field-form-type" name="form_type">
+                                
+                                <h3 class="form-section-title" id="formNameTitle">แบบบันทึกการเก็บตัวอย่างผักและผลไม้</h3>
+                                
+                                <!-- Part 1: General Info -->
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="field-agency">หน่วยงานที่เก็บตัวอย่าง <span class="required">*</span></label>
+                                        <input type="text" id="field-agency" name="agency" required placeholder="เช่น สสจ.ศรีสะเกษ, รพ.อุบลราชธานี">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-location-type">ประเภทสถานที่เก็บ <span class="required">*</span></label>
+                                        <select id="field-location-type" name="location_type" required>
+                                            <option value="">-- เลือกประเภทสถานที่ --</option>
+                                            <option value="ตลาดสด">ตลาดสด / ตลาดนัด</option>
+                                            <option value="ห้างสรรพสินค้า">ห้างสรรพสินค้า / ซุปเปอร์มาร์เก็ต</option>
+                                            <option value="โรงเรียน">โรงเรียน / สถานศึกษา</option>
+                                            <option value="โรงพยาบาล">โรงพยาบาล / สถานพยาบาล</option>
+                                            <option value="ร้านอาหาร">ร้านอาหาร / แผงลอยจำหน่ายอาหาร</option>
+                                            <option value="โรงงานผลิต">สถานที่ผลิตอาหาร / โรงงาน</option>
+                                            <option value="อื่นๆ">อื่นๆ</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-location-name">สถานที่เก็บตัวอย่าง/ร้านค้า <span class="required">*</span></label>
+                                        <input type="text" id="field-location-name" name="location_name" required placeholder="เช่น ร้านยายใจ ผักสด ตลาดเทศบาล">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-province">จังหวัดที่เก็บตัวอย่าง <span class="required">*</span></label>
+                                        <select id="field-province" name="province" required>
+                                            <option value="">-- เลือกจังหวัด --</option>
+                                            <option value="ศรีสะเกษ">ศรีสะเกษ</option>
+                                            <option value="อุบลราชธานี">อุบลราชธานี</option>
+                                            <option value="อำนาจเจริญ">อำนาจเจริญ</option>
+                                            <option value="มุกดาหาร">มุกดาหาร</option>
+                                            <option value="ยโสธร">ยโสธร</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-amphoe">อำเภอ <span class="required">*</span></label>
+                                        <input type="text" id="field-amphoe" name="amphoe" required placeholder="ระบุอำเภอ">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-tambon">ตำบล <span class="required">*</span></label>
+                                        <input type="text" id="field-tambon" name="tambon" required placeholder="ระบุตำบล">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-collector-name">ชื่อผู้เก็บตัวอย่าง <span class="required">*</span></label>
+                                        <input type="text" id="field-collector-name" name="collector_name" required placeholder="ชื่อ-นามสกุล เจ้าหน้าที่หรือผู้จำหน่าย">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-sampling-date">วันที่เก็บตัวอย่าง <span class="required">*</span></label>
+                                        <input type="date" id="field-sampling-date" name="sampling_date" required>
+                                    </div>
+                                </div>
+
+                                <!-- Part 2: Sample Info -->
+                                <div class="form-section-divider">ข้อมูลตัวอย่างที่ส่งตรวจ</div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="field-sample-name">ชื่อตัวอย่างอาหาร/น้ำ <span class="required">*</span></label>
+                                        <input type="text" id="field-sample-name" name="sample_name" required placeholder="เช่น ผักกาดขาว, น้ำดื่มบรรจุขวด, น้ำมันพืช">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-sample-qty">จำนวนตัวอย่าง (ชิ้น/ขวด) <span class="required">*</span></label>
+                                        <input type="number" id="field-sample-qty" name="sample_qty" required min="1" value="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-distributor">ชื่อผู้จัดจำหน่าย / ผู้ผลิต <span class="required">*</span></label>
+                                        <input type="text" id="field-distributor" name="distributor" required placeholder="เช่น แผงผัก ป้าแดง, หจก. น้ำดื่มสะอาด">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="field-source">แหล่งที่มาของตัวอย่าง <span class="required">*</span></label>
+                                        <input type="text" id="field-source" name="source" required placeholder="เช่น ตลาดไท, รับซื้อจากเกษตรกรในพื้นที่">
+                                    </div>
+                                </div>
+
+                                <!-- Part 3: Form-Specific Inputs (Dynamic Container) -->
+                                <div class="form-section-divider">ข้อมูลวิเคราะห์ทางวิชาการเฉพาะแบบฟอร์ม</div>
+                                <div class="dynamic-inputs-container" id="dynamicFormFields">
+                                    <!-- Dynamic fields inserted by JS based on form type -->
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลเข้าระบบ</button>
+                                    <button type="button" class="btn btn-secondary" id="btnExportSubmissionPDF" disabled><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลด PDF สำหรับยื่นตรวจ</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: LAB VERIFY (ACCEPT/REJECT) -->
+                <section class="content-view" id="view-lab-verify">
+                    <div class="auth-required-wrapper hidden" id="verify-auth-block">
+                        <div class="auth-notice-card">
+                            <i class="fa-solid fa-user-shield auth-lock-icon"></i>
+                            <h3>สำหรับเจ้าหน้าที่ห้องแลปเท่านั้น</h3>
+                            <p>กรุณาลงชื่อเข้าใช้ด้วยบัญชีเจ้าหน้าที่ห้องปฏิบัติการเพื่อดำเนินการตรวจสอบรับตัวอย่าง</p>
+                            <button class="btn btn-primary" onclick="app.showLoginModal('lab')">เข้าสู่ระบบเจ้าหน้าที่แลป</button>
+                        </div>
+                    </div>
+
+                    <div id="verify-content-wrapper" class="hidden">
+                        <div class="table-container">
+                            <div class="table-header-bar">
+                                <h3>รายการตัวอย่างที่รอตรวจสอบรับเข้าระบบ</h3>
+                                <div class="table-actions">
+                                    <input type="text" class="search-input" id="searchVerifyTable" placeholder="ค้นหาตามรหัส/ชื่อตัวอย่าง/จังหวัด...">
+                                </div>
+                            </div>
+                            <div class="responsive-table">
+                                <table class="modern-table" id="verifyTable">
+                                    <thead>
+                                        <tr>
+                                            <th>รหัสอ้างอิงชั่วคราว</th>
+                                            <th>ประเภทฟอร์ม</th>
+                                            <th>ชื่อตัวอย่าง</th>
+                                            <th>สถานที่เก็บ/จังหวัด</th>
+                                            <th>วันที่ลงทะเบียน</th>
+                                            <th>สถานะ</th>
+                                            <th>การจัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="verifyTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: LAB ANALYSIS (INPUT RESULTS) -->
+                <section class="content-view" id="view-lab-analysis">
+                    <div class="auth-required-wrapper hidden" id="analysis-auth-block">
+                        <div class="auth-notice-card">
+                            <i class="fa-solid fa-flask auth-lock-icon"></i>
+                            <h3>สำหรับเจ้าหน้าที่ห้องแลปเท่านั้น</h3>
+                            <p>กรุณาลงชื่อเข้าใช้ด้วยบัญชีเจ้าหน้าที่ห้องปฏิบัติการเพื่อบันทึกผลการทดสอบทางห้องปฏิบัติการ</p>
+                            <button class="btn btn-primary" onclick="app.showLoginModal('lab')">เข้าสู่ระบบเจ้าหน้าที่แลป</button>
+                        </div>
+                    </div>
+
+                    <div id="analysis-content-wrapper" class="hidden">
+                        <div class="table-container">
+                            <div class="table-header-bar">
+                                <h3>รายการตัวอย่างในระบบที่อยู่ระหว่างการตรวจวิเคราะห์</h3>
+                                <div class="table-actions">
+                                    <input type="text" class="search-input" id="searchAnalysisTable" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง...">
+                                </div>
+                            </div>
+                            <div class="responsive-table">
+                                <table class="modern-table" id="analysisTable">
+                                    <thead>
+                                        <tr>
+                                            <th>รหัสตัวอย่าง (Lab ID)</th>
+                                            <th>ประเภทฟอร์ม</th>
+                                            <th>ชื่อตัวอย่าง</th>
+                                            <th>สถานที่เก็บ/จังหวัด</th>
+                                            <th>วันที่รับตัวอย่าง</th>
+                                            <th>สถานะการวิเคราะห์</th>
+                                            <th>บันทึกผล</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="analysisTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: CERTIFICATION (APPROVE REPORT) -->
+                <section class="content-view" id="view-lab-certify">
+                    <div class="auth-required-wrapper hidden" id="certify-auth-block">
+                        <div class="auth-notice-card">
+                            <i class="fa-solid fa-stamp auth-lock-icon"></i>
+                            <h3>สำหรับเจ้าหน้าที่ห้องแลปเท่านั้น</h3>
+                            <p>กรุณาลงชื่อเข้าใช้ด้วยบัญชีผู้มีอำนาจเพื่อทำการรับรองและอนุมัติรายงานผลการตรวจวิเคราะห์</p>
+                            <button class="btn btn-primary" onclick="app.showLoginModal('lab')">เข้าสู่ระบบเจ้าหน้าที่แลป</button>
+                        </div>
+                    </div>
+
+                    <div id="certify-content-wrapper" class="hidden">
+                        <div class="table-container">
+                            <div class="table-header-bar">
+                                <h3>รายการรายงานผลที่รออนุมัติและรับรองผลอิเล็กทรอนิกส์</h3>
+                                <div class="table-actions">
+                                    <input type="text" class="search-input" id="searchCertifyTable" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง...">
+                                </div>
+                            </div>
+                            <div class="responsive-table">
+                                <table class="modern-table" id="certifyTable">
+                                    <thead>
+                                        <tr>
+                                            <th>รหัสตัวอย่าง (Lab ID)</th>
+                                            <th>ประเภทฟอร์ม</th>
+                                            <th>ชื่อตัวอย่าง</th>
+                                            <th>ผลการทดสอบ</th>
+                                            <th>สรุปผลวิเคราะห์</th>
+                                            <th>ผู้บันทึกผล</th>
+                                            <th>การจัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="certifyTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 6: E-TRACKING -->
+                <section class="content-view" id="view-e-tracking">
+                    <div class="tracking-search-section">
+                        <div class="section-title-wrapper text-center">
+                            <h3><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบสถานะการตรวจวิเคราะห์ตัวอย่าง (E-Tracking)</h3>
+                            <p>ระบุรหัสตัวอย่างอ้างอิงชั่วคราว (เช่น TEMP-XXXXX) หรือรหัสตัวอย่างแลป (เช่น SSK-XXXX-XXXX) เพื่อติดตามความคืบหน้า</p>
+                        </div>
+                        <div class="search-bar-center">
+                            <input type="text" id="trackingSearchInput" placeholder="กรอกรหัสตัวอย่างของคุณที่นี่...">
+                            <button class="btn btn-primary" id="btnSearchTracking"><i class="fa-solid fa-magnifying-glass"></i> ค้นหา</button>
+                        </div>
+                    </div>
+
+                    <!-- Tracking Result View -->
+                    <div class="tracking-results-wrapper hidden" id="trackingResultWrapper">
+                        <div class="tracking-metadata-card">
+                            <div class="metadata-header">
+                                <h4 id="track-sample-id">รหัสตัวอย่าง: SSK-2026-0001</h4>
+                                <span class="status-badge status-badge-current" id="track-current-status-badge">กำลังตรวจวิเคราะห์</span>
+                            </div>
+                            <div class="metadata-grid">
+                                <div><strong>ชื่อตัวอย่าง:</strong> <span id="track-sample-name">ผักคะน้า</span></div>
+                                <div><strong>ฟอร์มบันทึก:</strong> <span id="track-form-type">MU.10-001 (ผักและผลไม้)</span></div>
+                                <div><strong>สถานที่จัดส่ง:</strong> <span id="track-location">ตลาดสดเทศบาล จ.ศรีสะเกษ</span></div>
+                                <div><strong>ผู้จัดส่ง:</strong> <span id="track-collector">นายสมชาย รักสะอาด</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Timeline -->
+                        <div class="timeline-container">
+                            <div class="timeline-step" id="step-registered">
+                                <div class="step-icon"><i class="fa-solid fa-file-signature"></i></div>
+                                <div class="step-content">
+                                    <h5>รับตัวอย่างเข้าสู่ระบบ</h5>
+                                    <p class="step-desc" id="desc-registered">ขึ้นทะเบียนบันทึกข้อมูลตัวอย่างเข้าระบบ</p>
+                                    <span class="step-time-stamp" id="time-registered">22 มิ.ย. 2569 14:00</span>
+                                </div>
+                            </div>
+                            <div class="timeline-line"></div>
+                            
+                            <div class="timeline-step" id="step-accepted">
+                                <div class="step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                                <div class="step-content">
+                                    <h5>ห้องปฏิบัติการตรวจสอบรับตัวอย่าง</h5>
+                                    <p class="step-desc" id="desc-accepted">รอผลการพิจารณาตรวจสอบความถูกต้องจากเจ้าหน้าที่ห้องแลป</p>
+                                    <span class="step-time-stamp" id="time-accepted">-</span>
+                                </div>
+                            </div>
+                            <div class="timeline-line"></div>
+
+                            <div class="timeline-step" id="step-analyzing">
+                                <div class="step-icon"><i class="fa-solid fa-flask"></i></div>
+                                <div class="step-content">
+                                    <h5>อยู่ระหว่างการตรวจวิเคราะห์</h5>
+                                    <p class="step-desc" id="desc-analyzing">รอวิเคราะห์ตัวอย่างทางเคมีและชีววิทยาตามเกณฑ์มาตรฐาน</p>
+                                    <span class="step-time-stamp" id="time-analyzing">-</span>
+                                </div>
+                            </div>
+                            <div class="timeline-line"></div>
+
+                            <div class="timeline-step" id="step-summarized">
+                                <div class="step-icon"><i class="fa-solid fa-list-check"></i></div>
+                                <div class="step-content">
+                                    <h5>สรุปผลตรวจวิเคราะห์</h5>
+                                    <p class="step-desc" id="desc-summarized">เจ้าหน้าที่สรุปรายงานผลวิเคราะห์เบื้องต้น</p>
+                                    <span class="step-time-stamp" id="time-summarized">-</span>
+                                </div>
+                            </div>
+                            <div class="timeline-line"></div>
+
+                            <div class="timeline-step" id="step-approved">
+                                <div class="step-icon"><i class="fa-solid fa-stamp"></i></div>
+                                <div class="step-content">
+                                    <h5>อนุมัติและรับรองรายงาน</h5>
+                                    <p class="step-desc" id="desc-approved">หัวหน้าห้องปฏิบัติการอนุมัติใบรายงานอิเล็กทรอนิกส์</p>
+                                    <span class="step-time-stamp" id="time-approved">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tracking-action-bar hidden" id="trackingCertDownloadBar">
+                            <button class="btn btn-primary" id="btnDownloadTrackingCert"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลดใบรับรองผลวิเคราะห์อิเล็กทรอนิกส์ (PDF)</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 7: EXCEL DOWNLOAD -->
+                <section class="content-view" id="view-data-download">
+                    <div class="auth-required-wrapper hidden" id="download-auth-block">
+                        <div class="auth-notice-card">
+                            <i class="fa-solid fa-lock auth-lock-icon"></i>
+                            <h3>สำหรับผู้มีสิทธิ์ใช้งานระบบเท่านั้น</h3>
+                            <p>กรุณาเข้าสู่ระบบด้วยสิทธิ์ผู้บันทึกข้อมูล เจ้าหน้าที่ห้องแลป หรือผู้ใช้ทั่วไป เพื่อสิทธิ์ในการดาวน์โหลดฐานข้อมูลผลการทดสอบ</p>
+                            <button class="btn btn-primary" onclick="app.showLoginModal('download')">เข้าสู่ระบบ</button>
+                        </div>
+                    </div>
+
+                    <div id="download-content-wrapper" class="hidden">
+                        <div class="filter-panel">
+                            <h3><i class="fa-solid fa-filter"></i> ตัวกรองข้อมูลเพื่อดาวน์โหลด</h3>
+                            <form id="excelFilterForm" class="filter-grid">
+                                <div class="form-group">
+                                    <label for="filter-province">จังหวัดที่เก็บตัวอย่าง</label>
+                                    <select id="filter-province" name="filter_province">
+                                        <option value="ALL">ทุกจังหวัด</option>
+                                        <option value="ศรีสะเกษ">ศรีสะเกษ</option>
+                                        <option value="อุบลราชธานี">อุบลราชธานี</option>
+                                        <option value="อำนาจเจริญ">อำนาจเจริญ</option>
+                                        <option value="มุกดาหาร">มุกดาหาร</option>
+                                        <option value="ยโสธร">ยโสธร</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="filter-form-type">ประเภทฟอร์มบันทึก</label>
+                                    <select id="filter-form-type" name="filter_form_type">
+                                        <option value="ALL">ทุกฟอร์มบันทึก</option>
+                                        <option value="MU.10-001">MU.10-001 ผักและผลไม้</option>
+                                        <option value="MU.10-002">MU.10-002 สารปนเปื้อน 5 ชนิด</option>
+                                        <option value="MU.10-003">MU.10-003 น้ำมันทอดซ้ำ (Ebro/Testo)</option>
+                                        <option value="MU.10-004">MU.10-004 น้ำมันทอดซ้ำ (Test Kit)</option>
+                                        <option value="MU.10-005">MU.10-005 เกลือบริโภค</option>
+                                        <option value="MU.10-006">MU.10-006 น้ำบริโภค</option>
+                                        <option value="MU.10-007">MU.10-007 เชื้อโคลิฟอร์มขั้นต้น (SI-2)</option>
+                                        <option value="MU.10-008">MU.10-008 ตรวจฉลากอาหาร</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="filter-status">สถานะตัวอย่าง</label>
+                                    <select id="filter-status" name="filter_status">
+                                        <option value="ALL">ทุกสถานะ</option>
+                                        <option value="registered">ส่งตัวอย่างแล้ว (รอตรวจรับ)</option>
+                                        <option value="accepted">รับตัวอย่างแล้ว (กำลังวิเคราะห์)</option>
+                                        <option value="summarized">วิเคราะห์เสร็จสิ้น (รอรับรองผล)</option>
+                                        <option value="approved">อนุมัติผลวิเคราะห์เรียบร้อย</option>
+                                        <option value="rejected">ปฏิเสธการรับตัวอย่าง</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="filter-start-date">ตั้งแต่วันที่</label>
+                                    <input type="date" id="filter-start-date" name="filter_start_date">
+                                </div>
+                                <div class="form-group">
+                                    <label for="filter-end-date">ถึงวันที่</label>
+                                    <input type="date" id="filter-end-date" name="filter_end_date">
+                                </div>
+                                <div class="form-group flex-end">
+                                    <button type="button" class="btn btn-secondary" id="btnFilterApply"><i class="fa-solid fa-magnifying-glass"></i> ค้นหาตัวอย่าง</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Filtered Samples Table -->
+                        <div class="table-container margin-top">
+                            <div class="table-header-bar">
+                                <h4>รายการตัวอย่างที่ค้นหาพบ (<span id="filtered-count">0</span> รายการ)</h4>
+                                <button class="btn btn-success" id="btnDownloadExcel"><i class="fa-solid fa-file-excel"></i> ดาวน์โหลดตาราง Excel</button>
+                            </div>
+                            <div class="responsive-table">
+                                <table class="modern-table" id="exportTable">
+                                    <thead>
+                                        <tr>
+                                            <th>รหัสอ้างอิง/แลป</th>
+                                            <th>ประเภทฟอร์ม</th>
+                                            <th>ชื่อตัวอย่าง</th>
+                                            <th>สถานที่เก็บ/จังหวัด</th>
+                                            <th>วันที่เก็บ</th>
+                                            <th>ผลการทดสอบ</th>
+                                            <th>สถานะ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="exportTableBody">
+                                        <!-- Dynamic Content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= MODALS & OVERLAYS ================= -->
+
+    <!-- Auth Modal (Login / Register) -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h4 id="authModalTitle">เข้าสู่ระบบระบบ SSKMOPH</h4>
+                <button class="close-modal-btn" onclick="app.closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tab Headers -->
+                <div class="modal-tabs">
+                    <button class="modal-tab-btn active" id="tab-login" onclick="app.switchAuthTab('login')">ลงชื่อเข้าใช้งาน</button>
+                    <button class="modal-tab-btn" id="tab-register" onclick="app.switchAuthTab('register')">สมัครบัญชีใหม่</button>
+                </div>
+
+                <!-- Form: Login -->
+                <form id="loginForm" class="auth-subform active">
+                    <div class="form-group">
+                        <label for="login-username">ชื่อผู้ใช้งาน (Username) <span class="required">*</span></label>
+                        <input type="text" id="login-username" required placeholder="ระบุ Username ของคุณ">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">รหัสผ่าน (Password) <span class="required">*</span></label>
+                        <input type="password" id="login-password" required placeholder="ระบุ รหัสผ่าน">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block margin-top">เข้าสู่ระบบ</button>
+                </form>
+
+                <!-- Form: Register -->
+                <form id="registerForm" class="auth-subform">
+                    <div class="form-group">
+                        <label for="reg-username">ชื่อผู้ใช้งาน (Username) <span class="required">*</span></label>
+                        <input type="text" id="reg-username" required placeholder="ภาษาอังกฤษหรือตัวเลขอย่างน้อย 4 ตัว">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-fullname">ชื่อ-นามสกุลจริง <span class="required">*</span></label>
+                        <input type="text" id="reg-fullname" required placeholder="ชื่อจริง นามสกุลจริง">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-role">ประเภทบัญชีผู้ใช้ <span class="required">*</span></label>
+                        <select id="reg-role" required>
+                            <option value="collector">ผู้เก็บตัวอย่าง / ผู้ส่งตรวจทั่วไป</option>
+                            <option value="lab">เจ้าหน้าที่ห้องปฏิบัติการวิเคราะห์ (Lab Staff)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">รหัสผ่าน (Password) <span class="required">*</span></label>
+                        <input type="password" id="reg-password" required placeholder="รหัสผ่านอย่างน้อย 6 หลัก">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block margin-top">สมัครสมาชิก</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verify Accept Modal -->
+    <div class="modal-overlay" id="verifyAcceptModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h4>บันทึกการรับตัวอย่างตรวจวิเคราะห์</h4>
+                <button class="close-modal-btn" onclick="app.closeVerifyAcceptModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="acceptSampleForm">
+                    <input type="hidden" id="accept-sample-ref-id">
+                    <div class="form-group">
+                        <label>รหัสอ้างอิงชั่วคราว:</label>
+                        <input type="text" id="accept-sample-ref-display" readonly class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อตัวอย่างที่ยื่น:</label>
+                        <input type="text" id="accept-sample-name-display" readonly class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="accept-lab-id">รหัสตัวอย่างแลป (Lab ID) <span class="required">*</span></label>
+                        <input type="text" id="accept-lab-id" required placeholder="เช่น SSK-2026-0001" class="gold-input">
+                        <span class="input-helper">ระบบสร้างให้อัตโนมัติ สามารถแก้ไขเพิ่มเติมได้ตามรูปแบบที่ต้องการ</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="accept-receive-date">วันที่ห้องปฏิบัติการรับตัวอย่าง <span class="required">*</span></label>
+                        <input type="date" id="accept-receive-date" required>
+                    </div>
+                    <div class="form-actions margin-top">
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> ยืนยันรับตัวอย่างเข้าระบบ</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyAcceptModal()">ยกเลิก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verify Reject Modal -->
+    <div class="modal-overlay" id="verifyRejectModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h4>ปฏิเสธการรับตัวอย่างตรวจวิเคราะห์</h4>
+                <button class="close-modal-btn" onclick="app.closeVerifyRejectModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="rejectSampleForm">
+                    <input type="hidden" id="reject-sample-ref-id">
+                    <div class="form-group">
+                        <label>รหัสอ้างอิงชั่วคราว:</label>
+                        <input type="text" id="reject-sample-ref-display" readonly class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="reject-reason">สาเหตุในการปฏิเสธการรับตัวอย่าง <span class="required">*</span></label>
+                        <select id="reject-reason" required>
+                            <option value="">-- เลือกสาเหตุ --</option>
+                            <option value="ตัวอย่างชำรุดเสียหาย/เน่าเสีย">ตัวอย่างชำรุดเสียหาย/เน่าเสีย ระหว่างขนส่ง</option>
+                            <option value="ปริมาณตัวอย่างไม่เพียงพอต่อการวิเคราะห์">ปริมาณตัวอย่างไม่เพียงพอต่อการวิเคราะห์</option>
+                            <option value="เอกสารนำส่งไม่ครบถ้วนหรือไม่สอดคล้อง">เอกสารนำส่งไม่ครบถ้วนหรือไม่สอดคล้องกับตัวอย่าง</option>
+                            <option value="บรรจุภัณฑ์รั่วซึมปนเปื้อน">บรรจุภัณฑ์รั่วซึม/ปนเปื้อน ไม่ได้มาตรฐาน</option>
+                            <option value="อื่นๆ">อื่นๆ (กรุณาระบุรายละเอียด)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reject-detail">รายละเอียดเพิ่มเติม</label>
+                        <textarea id="reject-detail" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติมเพื่อแจ้งผู้ส่งตรวจ..."></textarea>
+                    </div>
+                    <div class="form-actions margin-top">
+                        <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> ยืนยันการปฏิเสธการรับ</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyRejectModal()">ยกเลิก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Input Result Modal -->
+    <div class="modal-overlay" id="analysisInputModal">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h4>บันทึกผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
+                <button class="close-modal-btn" onclick="app.closeAnalysisInputModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="analysisResultForm">
+                    <input type="hidden" id="analysis-sample-ref-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>รหัสตัวอย่างแลป (Lab ID):</label>
+                            <input type="text" id="analysis-lab-id-display" readonly class="readonly-input">
+                        </div>
+                        <div class="form-group">
+                            <label>ชื่อตัวอย่าง:</label>
+                            <input type="text" id="analysis-sample-name-display" readonly class="readonly-input">
+                        </div>
+                    </div>
+
+                    <div class="form-section-divider">รายละเอียดการวิเคราะห์</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="analysis-analyst">ชื่อผู้ตรวจวิเคราะห์ <span class="required">*</span></label>
+                            <input type="text" id="analysis-analyst" required placeholder="ชื่อ-นามสกุล นักวิทยาศาสตร์การแพทย์">
+                        </div>
+                        <div class="form-group">
+                            <label for="analysis-date">วันที่ตรวจวิเคราะห์ <span class="required">*</span></label>
+                            <input type="date" id="analysis-date" required>
+                        </div>
+                    </div>
+
+                    <!-- Test Results Section (will show customized inputs based on form type) -->
+                    <div class="form-section-divider">บันทึกผลทางวิทยาศาสตร์</div>
+                    <div class="form-group">
+                        <label for="analysis-detail-results">รายละเอียดและค่าวิเคราะห์ที่ตรวจพบ <span class="required">*</span></label>
+                        <textarea id="analysis-detail-results" rows="3" required placeholder="ตัวอย่างเช่น: ตรวจพบสารฟอร์มาลิน 1.2 ppm หรือ ตรวจไม่พบเชื้อโคลิฟอร์ม"></textarea>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="analysis-summary-outcome">สรุปผลการวิเคราะห์ <span class="required">*</span></label>
+                            <select id="analysis-summary-outcome" required>
+                                <option value="">-- เลือกสรุปผล --</option>
+                                <option value="ผ่านเกณฑ์มาตรฐาน">ผ่านเกณฑ์มาตรฐาน</option>
+                                <option value="ไม่ผ่านเกณฑ์มาตรฐาน">ไม่ผ่านเกณฑ์มาตรฐาน / ปนเปื้อน</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
+                            <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
+                        </div>
+                    </div>
+
+                    <div class="form-actions margin-top">
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> บันทึกผลวิเคราะห์เบื้องต้น</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeAnalysisInputModal()">ยกเลิก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Approval Modal (Shows E-Report template + Approval + PDF Button) -->
+    <div class="modal-overlay" id="certifyModal">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h4>อนุมัติและลงนามรับรองผลวิเคราะห์อิเล็กทรอนิกส์</h4>
+                <button class="close-modal-btn" onclick="app.closeCertifyModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- E-Certificate Template Container (Ready to print to PDF) -->
+                <div class="certificate-pdf-wrapper" id="certificatePDFContainer">
+                    <div class="cert-pdf-border">
+                        <!-- Cert Header -->
+                        <div class="cert-pdf-header">
+                            <div class="cert-pdf-logo" style="text-align: center; margin-bottom: 10px;">
+                                <i class="fa-solid fa-flask-vial" style="font-size: 40px; color: #1e3a8a;"></i>
+                            </div>
+                            <h3>ใบรายงานผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h3>
+                            <h5>ศูนย์วิทยาศาสตร์การแพทย์ เขตสุขภาพที่ 10</h5>
+                        </div>
+
+                        <div class="cert-pdf-meta">
+                            <p><strong>เลขที่รายงาน:</strong> <span id="cert-pdf-no">SSK-2026-0001</span></p>
+                            <p><strong>วันที่รายงาน:</strong> <span id="cert-pdf-date">22 มิถุนายน 2569</span></p>
+                        </div>
+
+                        <!-- Cert Content -->
+                        <div class="cert-pdf-body">
+                            <p>ใบรายงานฉบับนี้ ขอรับรองว่า ตัวอย่างด้านล่างได้รับการตรวจวิเคราะห์โดยหน่วยงานทางห้องปฏิบัติการ:</p>
+                            
+                            <table class="cert-pdf-table">
+                                <tr>
+                                    <td width="30%"><strong>ประเภทตัวอย่าง:</strong></td>
+                                    <td><span id="cert-pdf-form-type">แบบบันทึกการเก็บตัวอย่างสารปนเปื้อน (MU.10-002)</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ชื่อตัวอย่าง:</strong></td>
+                                    <td><span id="cert-pdf-sample-name">ลูกชิ้นหมูสด</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>จำนวนตัวอย่าง:</strong></td>
+                                    <td><span id="cert-pdf-sample-qty">1 ชิ้น</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>สถานที่เก็บตัวอย่าง:</strong></td>
+                                    <td><span id="cert-pdf-location">ร้านป้าแดง ตลาดสด อ.เมือง จ.ศรีสะเกษ</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ผู้ส่งตรวจ / หน่วยงาน:</strong></td>
+                                    <td><span id="cert-pdf-collector">นายสมคิด สุขใจ (สสจ.ศรีสะเกษ)</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>วันที่ส่งตรวจ:</strong></td>
+                                    <td><span id="cert-pdf-date-recv">22 มิถุนายน 2569</span></td>
+                                </tr>
+                            </table>
+
+                            <h5 style="margin-top: 20px; font-weight: 600; border-bottom: 2px solid #b45309; padding-bottom: 5px; color: #1e3a8a;">ผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h5>
+                            <table class="cert-pdf-table">
+                                <tr>
+                                    <td width="30%"><strong>ผู้ตรวจวิเคราะห์:</strong></td>
+                                    <td><span id="cert-pdf-analyst">นสพ.วิทยา รักดี (นักวิทยาศาสตร์การแพทย์)</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>รายละเอียดผลตรวจ:</strong></td>
+                                    <td><span id="cert-pdf-results-details">ตรวจพบสารบอแรกซ์ในปริมาณ 0.5 ppm</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>สรุปผลการวิเคราะห์:</strong></td>
+                                    <td>
+                                        <span class="cert-pdf-outcome" id="cert-pdf-summary">ไม่ผ่านเกณฑ์มาตรฐาน / ปนเปื้อน</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Cert Signature -->
+                        <div class="cert-pdf-footer">
+                            <div class="cert-signature-area">
+                                <div class="signature-line" id="cert-pdf-signature-image">
+                                    <!-- Dynamic electronic signature stamp -->
+                                    <span class="placeholder-signature">(ลงนามรับรองอิเล็กทรอนิกส์)</span>
+                                </div>
+                                <p><strong id="cert-pdf-approver-name">ดร. สมภพ รักชาติ</strong></p>
+                                <p>หัวหน้าศูนย์วิทยาศาสตร์การแพทย์</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approval Panel (Visible to Officer only) -->
+                <div class="cert-approval-controls margin-top" id="certApprovalControls">
+                    <div class="form-group">
+                        <label for="approve-officer-name">ชื่อผู้อนุมัติรายงาน (ผู้รับรองผล) <span class="required">*</span></label>
+                        <input type="text" id="approve-officer-name" required placeholder="ระบุชื่อจริง นามสกุลจริง หัวหน้าห้องแลป">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-success" id="btnApproveAndSign"><i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()">ยกเลิก</button>
+                    </div>
+                </div>
+
+                <!-- Certificate Actions (After Approval) -->
+                <div class="cert-approval-controls margin-top hidden" id="certExportControls">
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-circle-check"></i> รายงานฉบับนี้ได้รับอนุมัติผลวิเคราะห์อิเล็กทรอนิกส์เรียบร้อยแล้ว
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary" id="btnDownloadCertPDF"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลดรายงานผลวิเคราะห์ (PDF)</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()">ปิดหน้าต่าง</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Print/Export Target Form PDF (Hidden container for html2pdf) -->
+    <div id="hiddenFormPDFContainer" style="display: none; width: 800px; padding: 40px; font-family: 'Sarabun', sans-serif;">
+        <!-- Filled dynamically by js before converting to PDF -->
+    </div>
+
+    <!-- Third party JS libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- App Scripts -->
+    <script src="charts-dash.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
