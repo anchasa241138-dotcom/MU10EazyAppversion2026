@@ -3,6 +3,23 @@
  * Handles Routing, State, Auth, Forms, and PDF/Excel Generation
  */
 
+// Fallback for SweetAlert2 (Swal) if blocked by firewall/offline
+if (typeof Swal === 'undefined') {
+    window.Swal = {
+        fire: function(options) {
+            let msg = '';
+            if (typeof options === 'string') {
+                msg = options;
+            } else {
+                msg = (options.title ? options.title + '\n' : '') + (options.text || options.html || '');
+            }
+            const cleanMsg = msg.replace(/<[^>]*>/g, '');
+            alert(cleanMsg);
+            return Promise.resolve({ isConfirmed: true });
+        }
+    };
+}
+
 const app = {
     // Current authenticated user (null if not logged in)
     currentUser: null,
@@ -13,87 +30,121 @@ const app = {
 
     // Initialization
     init() {
-        this.initData();
-        this.setupEventListeners();
-        this.updateAuthUI();
-        this.switchView('dashboard');
-        
-        // Start system clock
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('systemTime').innerHTML = `<i class="fa-regular fa-clock"></i> ${now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})} น.`;
-        }, 1000);
+        try {
+            this.initData();
+            this.setupEventListeners();
+            this.updateAuthUI();
+            this.switchView('dashboard');
+            
+            // Start system clock
+            setInterval(() => {
+                const now = new Date();
+                const clockEl = document.getElementById('systemTime');
+                if (clockEl) {
+                    clockEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})} น.`;
+                }
+            }, 1000);
+        } catch (error) {
+            console.error("System initialization failed:", error);
+            alert("เกิดข้อผิดพลาดในการเริ่มต้นระบบ (System Init Failed):\n" + error.message + "\n\nStack:\n" + error.stack);
+        }
     },
 
     // Initialize mock database in localStorage
     initData() {
         // Init Users
-        let storedUsers = localStorage.getItem('sskmoph_users');
-        if (!storedUsers) {
+        try {
+            let storedUsers = localStorage.getItem('sskmoph_users');
+            if (!storedUsers) {
+                this.users = [
+                    { username: 'admin', password: 'password', role: 'lab', fullname: 'ดร. สมภพ รักชาติ' },
+                    { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี' },
+                    { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ' }
+                ];
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+            } else {
+                this.users = JSON.parse(storedUsers);
+            }
+        } catch (e) {
+            console.warn("Failed to parse users, resetting default users.", e);
             this.users = [
                 { username: 'admin', password: 'password', role: 'lab', fullname: 'ดร. สมภพ รักชาติ' },
                 { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี' },
                 { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ' }
             ];
             localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-        } else {
-            this.users = JSON.parse(storedUsers);
         }
 
         // Init Samples
-        let storedSamples = localStorage.getItem('sskmoph_samples');
-        if (!storedSamples) {
-            // Mock data for dashboard
-            this.samples = [
-                {
-                    ref_id: 'TEMP-10001', lab_id: 'SSK-2026-0001', form_type: 'MU.10-001',
-                    agency: 'สสจ.ศรีสะเกษ', location_type: 'ตลาดสด', location_name: 'ตลาดสดเทศบาล',
-                    province: 'ศรีสะเกษ', amphoe: 'เมือง', tambon: 'เมืองเหนือ',
-                    collector_name: 'นายสมคิด สุขใจ', sampling_date: '2026-06-20',
-                    sample_name: 'ผักคะน้า', sample_qty: 1, distributor: 'แผงผัก ป้าแดง', source: 'ตลาดไท',
-                    status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-21',
-                    analysis_details: 'ไม่พบการตกค้างของยาฆ่าแมลงกลุ่มออร์กาโนฟอสเฟต',
-                    analysis_summary: 'ผ่านเกณฑ์มาตรฐาน', approver_name: 'ดร. สมภพ รักชาติ',
-                    created_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
-                },
-                {
-                    ref_id: 'TEMP-10002', lab_id: 'UBN-2026-0002', form_type: 'MU.10-002',
-                    agency: 'รพ.อุบลราชธานี', location_type: 'ร้านอาหาร', location_name: 'ร้านข้าวมันไก่เฮียชัย',
-                    province: 'อุบลราชธานี', amphoe: 'เมือง', tambon: 'ในเมือง',
-                    collector_name: 'นางสาวสุดสวย ใจดี', sampling_date: '2026-06-21',
-                    sample_name: 'ลูกชิ้นหมู', sample_qty: 2, distributor: 'เฮียชัย', source: 'ผลิตเอง',
-                    status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-22',
-                    analysis_details: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
-                    analysis_summary: 'ไม่ผ่านเกณฑ์มาตรฐาน', approver_name: 'ดร. สมภพ รักชาติ',
-                    created_at: new Date(Date.now() - 86400000).toISOString()
-                },
-                {
-                    ref_id: 'TEMP-10003', lab_id: '', form_type: 'MU.10-006',
-                    agency: 'สสอ.เมือง', location_type: 'โรงงานผลิต', location_name: 'โรงงานน้ำดื่มตราสิงห์',
-                    province: 'ยโสธร', amphoe: 'เมือง', tambon: 'ในเมือง',
-                    collector_name: 'นายมานะ อดทน', sampling_date: '2026-06-22',
-                    sample_name: 'น้ำดื่มบรรจุขวด', sample_qty: 5, distributor: 'โรงงานน้ำดื่ม', source: 'ผลิตเอง',
-                    status: 'registered', created_at: new Date().toISOString()
-                },
-                 {
-                    ref_id: 'TEMP-10004', lab_id: 'AMN-2026-0004', form_type: 'MU.10-003',
-                    agency: 'สสจ.อำนาจเจริญ', location_type: 'ตลาดนัด', location_name: 'ตลาดนัดวันศุกร์',
-                    province: 'อำนาจเจริญ', amphoe: 'เมือง', tambon: 'บุ่ง',
-                    collector_name: 'นางสมศรี ใจสู้', sampling_date: '2026-06-21',
-                    sample_name: 'น้ำมันทอดไก่', sample_qty: 1, distributor: 'ร้านไก่ทอดป้าแจ๋ว', source: 'ซื้อจากห้าง',
-                    status: 'accepted', created_at: new Date(Date.now() - 86400000).toISOString()
+        try {
+            let storedSamples = localStorage.getItem('sskmoph_samples');
+            if (!storedSamples) {
+                this.resetDefaultSamples();
+            } else {
+                this.samples = JSON.parse(storedSamples);
+                if (!Array.isArray(this.samples)) {
+                    throw new Error("Stored samples is not an array");
                 }
-            ];
-            this.saveSamples();
-        } else {
-            this.samples = JSON.parse(storedSamples);
+            }
+        } catch (e) {
+            console.warn("Failed to parse samples, resetting default samples.", e);
+            this.resetDefaultSamples();
         }
         
         // Restore session
-        const session = sessionStorage.getItem('sskmoph_session');
-        if (session) {
-            this.currentUser = JSON.parse(session);
+        try {
+            const session = sessionStorage.getItem('sskmoph_session');
+            if (session) {
+                this.currentUser = JSON.parse(session);
+            }
+        } catch (e) {
+            console.warn("Failed to parse session", e);
+            this.currentUser = null;
         }
+    },
+
+    resetDefaultSamples() {
+        this.samples = [
+            {
+                ref_id: 'TEMP-10001', lab_id: 'SSK-2026-0001', form_type: 'MU.10-001',
+                agency: 'สสจ.ศรีสะเกษ', location_type: 'ตลาดสด', location_name: 'ตลาดสดเทศบาล',
+                province: 'ศรีสะเกษ', amphoe: 'เมือง', tambon: 'เมืองเหนือ',
+                collector_name: 'นายสมคิด สุขใจ', sampling_date: '2026-06-20',
+                sample_name: 'ผักคะน้า', sample_qty: 1, distributor: 'แผงผัก ป้าแดง', source: 'ตลาดไท',
+                status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-21',
+                analysis_details: 'ไม่พบการตกค้างของยาฆ่าแมลงกลุ่มออร์กาโนฟอสเฟต',
+                analysis_summary: 'ผ่านเกณฑ์มาตรฐาน', approver_name: 'ดร. สมภพ รักชาติ',
+                created_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
+            },
+            {
+                ref_id: 'TEMP-10002', lab_id: 'UBN-2026-0002', form_type: 'MU.10-002',
+                agency: 'รพ.อุบลราชธานี', location_type: 'ร้านอาหาร', location_name: 'ร้านข้าวมันไก่เฮียชัย',
+                province: 'อุบลราชธานี', amphoe: 'เมือง', tambon: 'ในเมือง',
+                collector_name: 'นางสาวสุดสวย ใจดี', sampling_date: '2026-06-21',
+                sample_name: 'ลูกชิ้นหมู', sample_qty: 2, distributor: 'เฮียชัย', source: 'ผลิตเอง',
+                status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-22',
+                analysis_details: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
+                analysis_summary: 'ไม่ผ่านเกณฑ์มาตรฐาน', approver_name: 'ดร. สมภพ รักชาติ',
+                created_at: new Date(Date.now() - 86400000).toISOString()
+            },
+            {
+                ref_id: 'TEMP-10003', lab_id: '', form_type: 'MU.10-006',
+                agency: 'สสอ.เมือง', location_type: 'โรงงานผลิต', location_name: 'โรงงานน้ำดื่มตราสิงห์',
+                province: 'ยโสธร', amphoe: 'เมือง', tambon: 'ในเมือง',
+                collector_name: 'นายมานะ อดทน', sampling_date: '2026-06-22',
+                sample_name: 'น้ำดื่มบรรจุขวด', sample_qty: 5, distributor: 'โรงงานน้ำดื่ม', source: 'ผลิตเอง',
+                status: 'registered', created_at: new Date().toISOString()
+            },
+             {
+                ref_id: 'TEMP-10004', lab_id: 'AMN-2026-0004', form_type: 'MU.10-003',
+                agency: 'สสจ.อำนาจเจริญ', location_type: 'ตลาดนัด', location_name: 'ตลาดนัดวันศุกร์',
+                province: 'อำนาจเจริญ', amphoe: 'เมือง', tambon: 'บุ่ง',
+                collector_name: 'นางสมศรี ใจสู้', sampling_date: '2026-06-21',
+                sample_name: 'น้ำมันทอดไก่', sample_qty: 1, distributor: 'ร้านไก่ทอดป้าแจ๋ว', source: 'ซื้อจากห้าง',
+                status: 'accepted', created_at: new Date(Date.now() - 86400000).toISOString()
+            }
+        ];
+        this.saveSamples();
     },
 
     saveSamples() {
@@ -150,6 +201,12 @@ const app = {
         // Submit form
         document.getElementById('sampleSubmissionForm').addEventListener('submit', this.handleFormSubmit.bind(this));
         document.getElementById('btnExportSubmissionPDF').addEventListener('click', this.generateSubmissionPDF.bind(this));
+
+        // Add Global Sample button
+        const addGlobalBtn = document.getElementById('addGlobalSampleBtn');
+        if (addGlobalBtn) {
+            addGlobalBtn.addEventListener('click', () => this.addGlobalSampleEntry());
+        }
 
         // Verification & Analysis Modals
         document.getElementById('acceptSampleForm').addEventListener('submit', this.handleAcceptSample.bind(this));
@@ -444,10 +501,76 @@ const app = {
         document.getElementById('formNameTitle').innerText = title;
         document.getElementById('dynamicFormFields').innerHTML = dynamicHTML;
         
+        // Initialize global sample entries
+        const globalContainer = document.getElementById('globalSampleEntries');
+        if (globalContainer) {
+            globalContainer.innerHTML = '';
+            this.globalSampleIndex = 0;
+            this.addGlobalSampleEntry(); // add at least one entry by default
+        }
+        
         // Reset PDF button
         document.getElementById('btnExportSubmissionPDF').disabled = true;
         // set today as default date
         document.getElementById('field-sampling-date').valueAsDate = new Date();
+    },
+
+    addGlobalSampleEntry() {
+        this.globalSampleIndex = (this.globalSampleIndex || 0) + 1;
+        const container = document.getElementById('globalSampleEntries');
+        if (!container) return;
+        
+        const div = document.createElement('div');
+        div.className = 'sample-section';
+        div.style.marginTop = '15px';
+        div.style.padding = '15px';
+        div.style.border = '1px solid var(--border-color)';
+        div.style.borderRadius = '8px';
+        div.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+        
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h4 style="color: var(--primary-light); margin: 0;">รายการตัวอย่าง</h4>
+                <button type="button" class="btn btn-text remove-sample-btn" style="color: red; padding: 5px;" onclick="app.removeGlobalSample(this)"><i class="fa-solid fa-trash"></i> ลบ</button>
+            </div>
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="form-group">
+                    <label>ชื่อตัวอย่าง *</label>
+                    <input type="text" name="sample_name_${this.globalSampleIndex}" required placeholder="เช่น ผักกาดขาว, น้ำดื่มบรรจุขวด">
+                </div>
+                <div class="form-group">
+                    <label>ชื่อผู้จัดจำหน่าย / ผู้ผลิต *</label>
+                    <input type="text" name="distributor_${this.globalSampleIndex}" required placeholder="เช่น แผงผัก ป้าแดง">
+                </div>
+                <div class="form-group">
+                    <label>น้ำหนัก (กรัม)</label>
+                    <input type="number" name="weight_${this.globalSampleIndex}" step="0.1" placeholder="เช่น 500">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>แหล่งที่มาของตัวอย่าง *</label>
+                    <input type="text" name="source_${this.globalSampleIndex}" required placeholder="เช่น ตลาดไท, รับซื้อจากเกษตรกร">
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+        this.updateTotalGlobalSamples();
+    },
+
+    removeGlobalSample(btn) {
+        const sampleSection = btn.closest('.sample-section');
+        if (sampleSection) {
+            sampleSection.remove();
+            this.updateTotalGlobalSamples();
+        }
+    },
+
+    updateTotalGlobalSamples() {
+        const container = document.getElementById('globalSampleEntries');
+        const qtyField = document.getElementById('field-sample-qty');
+        if (container && qtyField) {
+            const count = container.querySelectorAll('.sample-section').length;
+            qtyField.value = count;
+        }
     },
 
     handleFormSubmit(e) {

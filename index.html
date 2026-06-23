@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="enhancements.css">
 </head>
 <body>
     <!-- App Container -->
@@ -82,7 +84,7 @@
             <div class="content-body">
                 <!-- VIEW 1: DASHBOARD -->
                 <section class="content-view active" id="view-dashboard">
-                    <div class="welcome-banner">
+                    <div class="welcome-banner glass-bg">
                         <div class="banner-text">
                             <h3>ยินดีต้อนรับสู่ระบบตรวจวิเคราะห์อาหารและน้ำ เขตสุขภาพที่ 10</h3>
                             <p>ศูนย์ข้อมูลสารสนเทศการตรวจสอบความปลอดภัยของอาหารและน้ำ จังหวัดศรีสะเกษ อุบลราชธานี อำนาจเจริญ มุกดาหาร และยโสธร</p>
@@ -281,24 +283,16 @@
 
                                 <!-- Part 2: Sample Info -->
                                 <div class="form-section-divider">ข้อมูลตัวอย่างที่ส่งตรวจ</div>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label for="field-sample-name">ชื่อตัวอย่างอาหาร/น้ำ <span class="required">*</span></label>
-                                        <input type="text" id="field-sample-name" name="sample_name" required placeholder="เช่น ผักกาดขาว, น้ำดื่มบรรจุขวด, น้ำมันพืช">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="field-sample-qty">จำนวนตัวอย่าง (ชิ้น/ขวด) <span class="required">*</span></label>
-                                        <input type="number" id="field-sample-qty" name="sample_qty" required min="1" value="1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="field-distributor">ชื่อผู้จัดจำหน่าย / ผู้ผลิต <span class="required">*</span></label>
-                                        <input type="text" id="field-distributor" name="distributor" required placeholder="เช่น แผงผัก ป้าแดง, หจก. น้ำดื่มสะอาด">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="field-source">แหล่งที่มาของตัวอย่าง <span class="required">*</span></label>
-                                        <input type="text" id="field-source" name="source" required placeholder="เช่น ตลาดไท, รับซื้อจากเกษตรกรในพื้นที่">
-                                    </div>
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label for="field-sample-qty">จำนวนตัวอย่างรวมทั้งหมด (ชิ้น/ขวด) <span class="required">*</span></label>
+                                    <input type="number" id="field-sample-qty" name="sample_qty" required min="1" value="0" readonly style="background-color: #f0f0f0; font-weight: bold; cursor: not-allowed;">
                                 </div>
+                                <div id="globalSampleEntries">
+                                    <!-- Dynamic sample entries will be added here by JS -->
+                                </div>
+                                <button type="button" class="btn btn-primary" id="addGlobalSampleBtn" style="margin-bottom: 1rem; width: 100%;">
+                                    <i class="fa-solid fa-plus"></i> เพิ่มข้อมูลตัวอย่าง
+                                </button>
 
                                 <!-- Part 3: Form-Specific Inputs (Dynamic Container) -->
                                 <div class="form-section-divider">ข้อมูลวิเคราะห์ทางวิชาการเฉพาะแบบฟอร์ม</div>
@@ -941,7 +935,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js"></script>
-    <script src="app.js"></script>
+    <script src="charts-dash.js?v=2"></script>
+    <script src="app.js?v=2"></script>
 </body>
 </html>
