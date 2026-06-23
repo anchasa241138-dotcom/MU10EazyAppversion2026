@@ -9,6 +9,10 @@ let formTypeChartInstance = null;
 
 // Initialize Dashboard Charts
 function initDashboardCharts() {
+    if (typeof Chart === 'undefined') {
+        console.warn('Chart.js is not loaded. Skipping chart initialization.');
+        return;
+    }
     const provinceCtx = document.getElementById('provinceChart')?.getContext('2d');
     const resultRatioCtx = document.getElementById('resultRatioChart')?.getContext('2d');
     const formTypeCtx = document.getElementById('formTypeChart')?.getContext('2d');
@@ -156,9 +160,11 @@ function initDashboardCharts() {
 
 // Update charts with actual data from database
 function updateDashboardCharts(samples) {
+    if (typeof Chart === 'undefined') return;
     if (!provinceChartInstance || !resultRatioChartInstance || !formTypeChartInstance) {
         initDashboardCharts();
     }
+    if (!provinceChartInstance || !resultRatioChartInstance || !formTypeChartInstance) return;
 
     // 1. Calculate Province distribution
     const provinces = ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'];
