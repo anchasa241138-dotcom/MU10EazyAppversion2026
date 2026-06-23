@@ -1,0 +1,45 @@
+// Prisma schema for Food Safety Lab
+
+datasource db {
+  url = env("DATABASE_URL")
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  role      String
+  fullname  String
+  createdAt DateTime @default(now())
+}
+
+model Sample {
+  id                Int      @id @default(autoincrement())
+  ref_id            String   @unique
+  lab_id            String?
+  form_type         String?
+  agency            String?
+  location_type     String?
+  location_name     String?
+  province          String?
+  amphoe            String?
+  tambon            String?
+  collector_name    String?
+  sampling_date     DateTime?
+  sample_name       String?
+  sample_qty        Int?
+  distributor       String?
+  source            String?
+  status            String?
+  analysis_analyst  String?
+  analysis_date     DateTime?
+  analysis_details  String?
+  analysis_summary  String?
+  approver_name     String?
+  created_at        DateTime @default(now())
+}
