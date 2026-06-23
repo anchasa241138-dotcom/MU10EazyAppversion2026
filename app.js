@@ -921,33 +921,168 @@ const app = {
         const sample = this.samples.find(s => s.ref_id === refId);
         if(!sample) return;
 
-        // Populate hidden container
-        const hiddenContainer = document.getElementById('hiddenFormPDFContainer');
-        hiddenContainer.innerHTML = `
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h2>แบบนำส่งตัวอย่างเพื่อตรวจวิเคราะห์</h2>
-                <h4>เขตสุขภาพที่ 10</h4>
-            </div>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
-                <tr><td style="padding: 8px; width: 30%;"><strong>รหัสอ้างอิงชั่วคราว</strong></td><td style="padding: 8px;">${sample.ref_id}</td></tr>
-                <tr><td style="padding: 8px;"><strong>ประเภทฟอร์ม</strong></td><td style="padding: 8px;">${sample.form_type}</td></tr>
-                <tr><td style="padding: 8px;"><strong>ชื่อตัวอย่าง</strong></td><td style="padding: 8px;">${sample.sample_name}</td></tr>
-                <tr><td style="padding: 8px;"><strong>จำนวน</strong></td><td style="padding: 8px;">${sample.sample_qty}</td></tr>
-                <tr><td style="padding: 8px;"><strong>วันที่เก็บตัวอย่าง</strong></td><td style="padding: 8px;">${sample.sampling_date}</td></tr>
-                <tr><td style="padding: 8px;"><strong>หน่วยงานที่ส่ง</strong></td><td style="padding: 8px;">${sample.agency}</td></tr>
-                <tr><td style="padding: 8px;"><strong>ชื่อผู้ส่ง</strong></td><td style="padding: 8px;">${sample.collector_name}</td></tr>
-                <tr><td style="padding: 8px;"><strong>สถานที่เก็บ</strong></td><td style="padding: 8px;">${sample.location_name} จ.${sample.province}</td></tr>
+        // Collect all dynamic sample entries from sample object keys
+        const sampleItems = [];
+        let idx = 1;
+        while (sample[`sample_name_${idx}`] !== undefined) {
+            sampleItems.push({
+                name: sample[`sample_name_${idx}`] || '',
+                distributor: sample[`distributor_${idx}`] || '',
+                weight: sample[`weight_${idx}`] || '',
+                source: sample[`source_${idx}`] || '',
+            });
+            idx++;
+        }
+        // fallback: if old single-entry style
+        if (sampleItems.length === 0) {
+            sampleItems.push({
+                name: sample.sample_name || '',
+                distributor: sample.distributor || '',
+                weight: '',
+                source: sample.source || '',
+            });
+        }
+
+        // Ensure at least 5 rows for the table
+        while (sampleItems.length < 5) sampleItems.push({ name:'', distributor:'', weight:'', source:'' });
+
+        const checkboxCell = `
+            <div style="font-size:10px; line-height:1.8;">
+                <div>☐ ยาฆ่าแมลง (GT Kit)</div>
+                <div>☐ ยาฆ่าแมลง (TM/2 Kit)</div>
+            </div>`;
+
+        const interpretCell = `
+            <div style="font-size:9px; line-height:1.8;">
+                <div>☐ สีตัวอย่าง = สีควบคุม</div>
+                <div>☐ สีควบคุม > สีตัวอย่าง ≥ สีตัดสิน</div>
+                <div>☐ สีตัวอย่าง ≥ 2 สีตัดสิน</div>
+                <div>☐ พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</div>
+                <div>☐ ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</div>
+            </div>`;
+
+        const resultCell = `
+            <div style="font-size:9px; line-height:1.8;">
+                <div>☐ ไม่พบ</div>
+                <div>☐ พบ</div>
+                <div>☐ พบปลอดภัย</div>
+                <div>☐ พบอันตราย</div>
+            </div>`;
+
+        const summaryCell = `
+            <div style="font-size:9px; line-height:1.8;">
+                <div>☐ ผ่าน</div>
+                <div>☐ ไม่ผ่าน</div>
+            </div>`;
+
+        const tableRows = sampleItems.map((item, i) => `
+            <tr style="height: 80px;">
+                <td style="padding:4px; text-align:center; vertical-align:top; font-size:11px;">${i + 1}</td>
+                <td style="padding:4px; vertical-align:top; font-size:10px;">${item.distributor}</td>
+                <td style="padding:4px; vertical-align:top; font-size:10px;"></td>
+                <td style="padding:4px; vertical-align:top; font-size:10px;">${item.name}</td>
+                <td style="padding:4px; text-align:center; vertical-align:top; font-size:10px;">${item.weight}</td>
+                <td style="padding:4px; vertical-align:top; font-size:10px;">${item.source}</td>
+                <td style="padding:4px; vertical-align:top;">${checkboxCell}</td>
+                <td style="padding:4px; vertical-align:top;">${interpretCell}</td>
+                <td style="padding:4px; vertical-align:top;">${resultCell}</td>
+                <td style="padding:4px; vertical-align:top;">${summaryCell}</td>
+            </tr>`).join('');
+
+        const samplingDate = sample.sampling_date ? new Date(sample.sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '';
+
+        const htmlContent = `
+        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 270mm; padding: 8mm; font-size: 11px; color: #1a1a1a; box-sizing: border-box;">
+
+            <!-- HEADER -->
+            <table style="width:100%; border-collapse:collapse; margin-bottom:6px; border: 1.5px solid #333;">
+                <tr>
+                    <td style="width:70px; padding:6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
+                        <!-- Logo placeholder -->
+                        <div style="width:60px; height:60px; border:2px solid #cc2222; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:auto; font-size:9px; color:#cc2222; font-weight:bold; text-align:center; line-height:1.2;">MOBILE<br>UNIT</div>
+                    </td>
+                    <td style="padding:6px 12px; vertical-align:middle; line-height:2;">
+                        <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
+                        <div><strong>ชื่อเอกสาร : แบบบันทึก<span style="color:#cc2222;">การเก็บกลุ่มตัวอย่างอาหาร (กลุ่มผักและผลไม้)</span></strong></div>
+                        <div><strong>วันที่เริ่มใช้ :</strong> 1 ตุลาคม 2567</div>
+                        <div><strong>แผนก :</strong> ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
+                    </td>
+                    <td style="width:160px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left;">
+                        <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="color:#cc2222;">MU.10-001</span></div>
+                        <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span style="color:#cc2222;">002</span></div>
+                    </td>
+                </tr>
             </table>
-            <p style="text-align: center; margin-top: 50px;">กรุณานำเอกสารฉบับนี้แนบมาพร้อมกับตัวอย่างเพื่อส่งตรวจที่ห้องปฏิบัติการ</p>
-        `;
+
+            <!-- META FIELDS -->
+            <table style="width:100%; margin-bottom:4px; border-collapse:collapse;">
+                <tr>
+                    <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td>
+                    <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding:2px 0;">
+                        ตำบล ....<u>${sample.tambon || ''}</u>....
+                        อำเภอ ....<u>${sample.amphoe || ''}</u>....
+                        จังหวัด ....<u>${sample.province || ''}</u>....
+                        วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>....
+                    </td>
+                </tr>
+            </table>
+
+            <!-- MAIN TABLE -->
+            <table style="width:100%; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
+                <thead>
+                    <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
+                        <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:10%;">ชื่อผู้จำหน่าย<br><span style="font-weight:normal;font-size:9px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:8%;">รหัสตัวอย่าง</th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:10%;">ชื่อตัวอย่าง</th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:7%;"><span style="color:#cc2222;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</span></th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:9%;">แหล่งที่มา</th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:14%;"><span style="color:#cc2222;">สารที่ตรวจวิเคราะห์</span></th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:18%;"><span style="color:#cc2222;">การแปลผล</span></th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:11%;">ผลการตรวจ<br>วิเคราะห์</th>
+                        <th style="padding:5px 3px; border:1px solid #555; width:9%;">สรุปผล</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+
+            <!-- FOOTER SIGNATURES -->
+            <table style="width:100%; margin-top:20px; border-collapse:collapse; font-size:10px;">
+                <tr>
+                    <td style="width:33%; vertical-align:top; padding-right:10px;">
+                        <div>ลงชื่อผู้เก็บตัวอย่าง ................................................</div>
+                        <div style="margin-top:6px;">ตำแหน่ง ........................................................</div>
+                        <div style="margin-top:6px;">วันที่เก็บตัวอย่าง ............................................</div>
+                    </td>
+                    <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
+                        <div>ลงชื่อผู้ตรวจวิเคราะห์ ..............................................</div>
+                        <div style="margin-top:6px;">ตำแหน่ง ........................................................</div>
+                        <div style="margin-top:6px;">วันที่ตรวจวิเคราะห์ ............................................</div>
+                    </td>
+                    <td style="width:33%; vertical-align:top; text-align:right;">
+                        <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div>
+                        <div style="margin-top:6px; font-size:9px;">ผอ.ผนก ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อ เขตสุขภาพที่ 10</div>
+                        <div style="margin-top:6px;">วันที่ทบทวนเอกสาร ............................................</div>
+                    </td>
+                </tr>
+            </table>
+        </div>`;
+
+        const hiddenContainer = document.getElementById('hiddenFormPDFContainer');
+        hiddenContainer.innerHTML = htmlContent;
         hiddenContainer.style.display = 'block';
 
         const opt = {
-            margin:       15,
-            filename:     `Submission_${sample.ref_id}.pdf`,
+            margin:       0,
+            filename:     `MU.10-001_${sample.ref_id}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
         };
         
         html2pdf().set(opt).from(hiddenContainer).save().then(() => {
