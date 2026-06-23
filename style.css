@@ -4,17 +4,17 @@
    ========================================================================== */
 
 :root {
-    --primary-color: #0f172a;       /* Dark Navy Slate */
-    --primary-light: #1e293b;       /* Lighter Navy Slate */
-    --secondary-color: #0d9488;     /* Modern Teal */
-    --secondary-hover: #0f766e;     /* Darker Teal */
-    --accent-color: #d97706;        /* Warm Gold */
-    --accent-hover: #b45309;        /* Darker Gold */
-    --bg-light: #f8fafc;            /* Ice White Background */
-    --card-bg: #ffffff;             /* Crisp White Card */
-    --text-main: #1e293b;           /* Slate 800 */
-    --text-muted: #64748b;          /* Slate 500 */
-    --border-color: #e2e8f0;        /* Light Grey Border */
+    --primary-color: #1e3a8a;       /* Deep Royal Navy */
+    --primary-light: #2563eb;       /* Bright Blue */
+    --secondary-color: #0ea5e9;     /* Modern Sky Blue */
+    --secondary-hover: #0284c7;     /* Darker Sky Blue */
+    --accent-color: #f59e0b;        /* Warm Gold */
+    --accent-hover: #d97706;        /* Darker Gold */
+    --bg-light: #f0f9ff;            /* Ice White/Blue Background */
+    --card-bg: rgba(255, 255, 255, 0.75); /* Glass White Card */
+    --text-main: #0f172a;           /* Dark Slate */
+    --text-muted: #475569;          /* Gray Slate */
+    --border-color: rgba(226, 232, 240, 0.6); /* Soft Border */
     --success-color: #10b981;       /* Emerald Green */
     --danger-color: #ef4444;        /* Bright Red */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);

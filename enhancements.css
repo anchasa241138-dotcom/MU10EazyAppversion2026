@@ -1,0 +1,87 @@
+/* enhancements.css – Additional modern styles and glassmorphism */
+
+body {
+  background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Global Glassmorphism utility */
+.glass-bg {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
+}
+
+/* Sidebar Styling */
+.app-sidebar {
+  background: linear-gradient(180deg, #1e3a8a 0%, #0f172a 100%) !important;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.1) !important;
+}
+.app-sidebar .sidebar-header {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+.app-sidebar .sidebar-footer {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Smooth motion for sidebar items */
+.app-sidebar .menu-item {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  border-left: 4px solid transparent;
+}
+.app-sidebar .menu-item:hover, .app-sidebar .menu-item.active {
+  transform: translateX(6px);
+  background: rgba(255, 255, 255, 0.1) !important; 
+  border-left: 4px solid var(--secondary-color) !important;
+}
+
+/* Stat Cards Glass & Smooth Hover */
+.stat-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+}
+.stat-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(14, 165, 233, 0.2) !important;
+}
+
+/* Welcome Banner Glass */
+.welcome-banner {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
+  border-radius: 1.25rem !important;
+}
+
+/* Form Controls & Tables Glass */
+.form-card, .data-card, .chart-container {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+  border-radius: 1.25rem !important;
+  transition: all 0.3s ease;
+}
+.form-card:hover, .data-card:hover, .chart-container:hover {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+}
+
+/* Top Navbar */
+.top-navbar {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02) !important;
+}
