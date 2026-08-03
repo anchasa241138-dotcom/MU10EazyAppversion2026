@@ -13,7 +13,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=37">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="enhancements.css">
 </head>
@@ -37,17 +37,21 @@
                 <a href="#" class="menu-item active" data-view="dashboard">
                     <i class="fa-solid fa-chart-line"></i> <span>แดชบอร์ดสถิติ</span>
                 </a>
-                <a href="#" class="menu-item" data-view="sample-record">
+                <a href="#" class="menu-item" data-view="sample-record" id="menu-sample-record">
                     <i class="fa-solid fa-file-signature"></i> <span>บันทึกการเก็บตัวอย่าง</span>
+                    <span class="badge notification-badge hidden" id="record-notification-badge" style="background-color: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: auto; display: inline-block;">0</span>
                 </a>
                 <a href="#" class="menu-item" data-view="lab-verify" id="menu-lab-verify">
                     <i class="fa-solid fa-clipboard-check"></i> <span>ตรวจสอบตัวอย่าง (แลป)</span>
+                    <span class="badge notification-badge hidden" id="verify-notification-badge" style="background-color: #f59e0b; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: auto; display: inline-block;">0</span>
                 </a>
                 <a href="#" class="menu-item" data-view="lab-analysis" id="menu-lab-analysis">
                     <i class="fa-solid fa-vial-virus"></i> <span>ตรวจวิเคราะห์ตัวอย่าง</span>
+                    <span class="badge notification-badge hidden" id="analysis-notification-badge" style="background-color: #3b82f6; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: auto; display: inline-block;">0</span>
                 </a>
                 <a href="#" class="menu-item" data-view="lab-certify" id="menu-lab-certify">
                     <i class="fa-solid fa-stamp"></i> <span>รับรองผลตรวจวิเคราะห์</span>
+                    <span class="badge notification-badge hidden" id="certify-notification-badge" style="background-color: #8b5cf6; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: auto; display: inline-block;">0</span>
                 </a>
                 <a href="#" class="menu-item" data-view="e-tracking">
                     <i class="fa-solid fa-route"></i> <span>ตรวจสอบสถานะ (E-Tracking)</span>
@@ -215,6 +219,8 @@
                             </button>
                         </div>
 
+                        <!-- Saved Records List moved inside formEditorContainer -->
+
                         <!-- The Actual Form Element -->
                         <div class="form-editor-container hidden" id="formEditorContainer">
                             <div class="form-editor-header">
@@ -306,6 +312,39 @@
                                     <button type="button" class="btn btn-secondary" id="btnExportSubmissionPDF" disabled><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลด PDF สำหรับยื่นตรวจ</button>
                                 </div>
                             </form>
+                            
+                            <!-- Saved Records List -->
+                            <div class="saved-records-container" id="savedRecordsContainerWrapper" style="margin-top: 40px; border-top: 2px dashed #ddd; padding-top: 30px;">
+                                <div class="section-title-wrapper" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <h3><i class="fa-solid fa-list-check"></i> รายการตัวอย่างที่บันทึกไว้สำหรับแบบฟอร์มนี้</h3>
+                                        <p>คุณสามารถแก้ไขข้อมูลหรือยกเลิกรายการที่บันทึกเข้าระบบไปแล้วได้ที่นี่ (เฉพาะรายการที่แลปยังไม่รับเครื่อง)</p>
+                                    </div>
+                                    <div>
+                                        <div class="search-box-wrapper" style="position: relative;">
+                                            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            <input type="text" class="search-input" id="searchSavedRecords" placeholder="ค้นหา รหัสอ้างอิง, ชื่อตัวอย่าง, สถานที่..." style="width: 320px; padding: 8px 12px 8px 35px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table" style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                                        <thead>
+                                            <tr style="background: var(--primary-light); color: white; text-align: left;">
+                                                <th style="padding: 12px 15px;">รหัสอ้างอิง</th>
+                                                <th style="padding: 12px 15px;">ประเภทฟอร์ม</th>
+                                                <th style="padding: 12px 15px;">รายละเอียดตัวอย่าง</th>
+                                                <th style="padding: 12px 15px;">สถานที่/ผู้เก็บ</th>
+                                                <th style="padding: 12px 15px;">วันที่บันทึก</th>
+                                                <th style="padding: 12px 15px; text-align: center;">จัดการ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="savedRecordsTableBody">
+                                            <!-- Will be filled by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -924,7 +963,7 @@
     </div>
 
     <!-- Dynamic Print/Export Target Form PDF (Hidden container for html2pdf) -->
-    <div id="hiddenFormPDFContainer" style="display: none; width: 800px; padding: 40px; font-family: 'Sarabun', sans-serif;">
+    <div id="hiddenFormPDFContainer" style="display: none; position: absolute; left: -9999px; top: 0; width: 1120px; font-family: 'Sarabun', 'TH Sarabun New', 'Tahoma', sans-serif; background: #fff;">
         <!-- Filled dynamically by js before converting to PDF -->
     </div>
 
@@ -935,7 +974,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=3"></script>
-    <script src="app.js?v=3"></script>
+    <script src="charts-dash.js?v=35"></script>
+    <script src="app.js?v=46.7"></script>
 </body>
 </html>
