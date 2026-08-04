@@ -1711,13 +1711,13 @@ const app = {
                     </div>`;
 
                 tableRows += `
-                    <tr style="height: 48px;">
-                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:10.5px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.distributor}</td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;"></td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.name}</td>
-                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.weight}</td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.source}</td>
+                    <tr style="height: 42px;">
+                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:9px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9px; border:1px solid #555;">${item.distributor}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9px; border:1px solid #555;"></td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9px; border:1px solid #555;">${item.name}</td>
+                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:9px; border:1px solid #555;">${item.weight}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9px; border:1px solid #555;">${item.source}</td>
                         <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${checkboxCell}</td>
                         <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${interpretCell}</td>
                         <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${resultCell}</td>
@@ -1733,7 +1733,7 @@ const app = {
         let mainTableHTML = '';
         if (sample.form_type === 'MU.10-003') {
             mainTableHTML = `
-                <table style="width:80%; table-layout:fixed; word-break:break-all; word-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
+                <table style="width:80%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th>
@@ -1757,7 +1757,7 @@ const app = {
             `;
         } else if (sample.form_type === 'MU.10-004') {
             mainTableHTML = `
-                <table style="width:80%; table-layout:fixed; word-break:break-all; word-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
+                <table style="width:80%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -1778,19 +1778,19 @@ const app = {
             `;
         } else {
             mainTableHTML = `
-                <table style="width:80%; table-layout:fixed; word-break:break-all; word-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
+                <table style="width:80%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
-                            <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:16%;">ชื่อผู้จำหน่าย</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:10%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:9px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:16%;">ชื่อตัวอย่าง</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">ลำดับ</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%;">ชื่อผู้จำหน่าย</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:10%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:8.5px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%;">ชื่อตัวอย่าง</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:5%;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:12%;">แหล่งที่มา</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">แหล่งที่มา</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:9%;">สารที่ตรวจวิเคราะห์</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:16%;">การแปลผล</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:7%;">ผลการตรวจ<br>วิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">สรุปผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:8%;">ผลการตรวจ<br>วิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:6%;">สรุปผล</th>
                         </tr>
                     </thead>
                     <tbody>
