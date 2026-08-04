@@ -1709,7 +1709,7 @@ const app = {
                     </div>`;
 
                 tableRows += `
-                    <tr style="height: 80px;">
+                    <tr style="height: 52px;">
                         <td style="padding:4px; text-align:center; vertical-align:top; font-size:11px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
                         <td style="padding:4px; vertical-align:top; font-size:10px; border:1px solid #555;">${item.distributor}</td>
                         <td style="padding:4px; vertical-align:top; font-size:10px; border:1px solid #555;"></td>
@@ -1783,12 +1783,12 @@ const app = {
                             <th style="padding:5px 3px; border:1px solid #555; width:10%;">ชื่อผู้จำหน่าย</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:8%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:9px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
                             <th style="padding:5px 3px; border:1px solid #555; width:10%;">ชื่อตัวอย่าง</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:7%; color: red;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:7%;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:9%;">แหล่งที่มา</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:14%; color: red;">สารที่ตรวจวิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:18%; color: red;">การแปลผล</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%; color: red;">ผลการตรวจ<br>วิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:9%; color: red;">สรุปผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:14%;">สารที่ตรวจวิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:18%;">การแปลผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">ผลการตรวจ<br>วิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:9%;">สรุปผล</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1799,23 +1799,23 @@ const app = {
         }
 
         const htmlContent = `
-        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 270mm; padding: 8mm; font-size: 11px; color: #1a1a1a; box-sizing: border-box; background: #fff;">
+        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; max-width: 100%; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; margin: 0 auto;">
 
             <!-- HEADER -->
-            <table style="width:100%; border-collapse:collapse; margin-bottom:6px; border: 1.5px solid #333;">
+            <table style="width:100%; border-collapse:collapse; margin-bottom:5px; border: 1.5px solid #333;">
                 <tr>
                     <td style="width:70px; padding:6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
                         <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;">
                     </td>
-                    <td style="padding:6px 12px; vertical-align:middle; line-height:2; color:#000;">
+                    <td style="padding:6px 12px; vertical-align:middle; line-height:1.8; color:#000;">
                         <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
-                        <div><strong>ชื่อเอกสาร : <span style="color: red;">${documentName}</span></strong></div>
+                        <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div>
                         <div><strong>วันที่เริ่มใช้ :</strong> 1 ตุลาคม 2567</div>
                         <div><strong>แผนก :</strong> ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
                     </td>
                     <td style="width:160px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;">
-                        <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="color: red;">${documentNum}</span></div>
-                        <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span style="color: red;">002</span></div>
+                        <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span>${documentNum}</span></div>
+                        <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div>
                     </td>
                 </tr>
             </table>
@@ -1840,7 +1840,7 @@ const app = {
             ${mainTableHTML}
 
             <!-- FOOTER SIGNATURES -->
-            <table style="width:100%; margin-top:20px; border-collapse:collapse; font-size:10px; color: red;">
+            <table style="width:100%; margin-top:10px; border-collapse:collapse; font-size:9.5px; color: #000;">
                 <tr>
                     <td style="width:33%; vertical-align:top; padding-right:10px;">
                         <div>ลงชื่อผู้เก็บตัวอย่าง ................................................</div>
