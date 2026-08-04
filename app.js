@@ -1799,7 +1799,7 @@ const app = {
         }
 
         const htmlContent = `
-        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 1020px; max-width: 1020px; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; margin: 0 auto;">
+        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; position: absolute; left: 0; top: 0; margin: 0; width: 1020px; max-width: 1020px; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff;">
 
             <!-- HEADER -->
             <table style="width:100%; border-collapse:collapse; margin-bottom:5px; border: 1.5px solid #333;">
