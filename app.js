@@ -1780,15 +1780,15 @@ const app = {
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:10%;">ชื่อผู้จำหน่าย</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:8%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:9px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:10%;">ชื่อตัวอย่าง</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:7%;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:9%;">แหล่งที่มา</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:14%;">สารที่ตรวจวิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:13%;">ชื่อผู้จำหน่าย</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:10%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:9px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:12%;">ชื่อตัวอย่าง</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">แหล่งที่มา</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">สารที่ตรวจวิเคราะห์</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:18%;">การแปลผล</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">ผลการตรวจ<br>วิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:9%;">สรุปผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:9%;">ผลการตรวจ<br>วิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:7%;">สรุปผล</th>
                         </tr>
                     </thead>
                     <tbody>
