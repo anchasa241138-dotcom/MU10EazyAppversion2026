@@ -2076,9 +2076,9 @@ const app = {
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 1400
+                windowWidth: sample.form_type === 'MU.10-004' ? 1000 : 1400
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         };
 
