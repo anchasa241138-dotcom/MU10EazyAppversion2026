@@ -1862,7 +1862,7 @@ const app = {
             htmlContent = `
             <style>
                 * {
-                    font-family: 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
+                    font-family: 'Sarabun', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
                     font-variant-ligatures: none !important;
                     -webkit-font-variant-ligatures: none !important;
                     font-feature-settings: "liga" 0 !important;
@@ -2016,7 +2016,7 @@ const app = {
             htmlContent = `
             <style>
                 * {
-                    font-family: 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
+                    font-family: 'Sarabun', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
                     font-variant-ligatures: none !important;
                     -webkit-font-variant-ligatures: none !important;
                     font-feature-settings: "liga" 0 !important;
