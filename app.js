@@ -1581,7 +1581,7 @@ const app = {
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) => {
-            return `<span style="font-family:'Sarabun', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
+            return `<span style="font-family:'Tahoma', 'Sarabun', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -1801,7 +1801,7 @@ const app = {
         }
 
         const htmlContent = `
-        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 20px 4mm 220px; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+        <div style="font-family: 'Tahoma', 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 20px 4mm 220px; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
 
             <!-- HEADER -->
             <table style="width:83%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
