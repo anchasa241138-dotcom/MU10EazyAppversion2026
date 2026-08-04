@@ -1799,7 +1799,7 @@ const app = {
         }
 
         const htmlContent = `
-        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; max-width: 100%; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; margin: 0 auto;">
+        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 1020px; max-width: 1020px; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; margin: 0 auto;">
 
             <!-- HEADER -->
             <table style="width:100%; border-collapse:collapse; margin-bottom:5px; border: 1.5px solid #333;">
@@ -1871,7 +1871,7 @@ const app = {
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 1200
+                windowWidth: 1020
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
