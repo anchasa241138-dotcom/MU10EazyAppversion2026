@@ -1733,7 +1733,7 @@ const app = {
         let mainTableHTML = '';
         if (sample.form_type === 'MU.10-003') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
+                <table style="width:83.5%; table-layout:fixed; word-break:break-all; word-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th>
@@ -1757,7 +1757,7 @@ const app = {
             `;
         } else if (sample.form_type === 'MU.10-004') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
+                <table style="width:83.5%; table-layout:fixed; word-break:break-all; word-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -1778,7 +1778,7 @@ const app = {
             `;
         } else {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
+                <table style="width:83.5%; table-layout:fixed; word-break:break-all; word-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:10px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -1801,10 +1801,10 @@ const app = {
         }
 
         const htmlContent = `
-        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 4mm 4mm 215px; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
 
             <!-- HEADER -->
-            <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
+            <table style="width:83.5%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
                 <tr>
                     <td style="width:70px; padding:6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
                         <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;">
@@ -1823,7 +1823,7 @@ const app = {
             </table>
 
             <!-- META FIELDS -->
-            <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000;">
+            <table style="width:83.5%; margin:0 0 4px 0; border-collapse:collapse; color:#000;">
                 <tr>
                     <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td>
                     <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td>
@@ -1842,7 +1842,7 @@ const app = {
             ${mainTableHTML}
 
             <!-- FOOTER SIGNATURES -->
-            <table style="width:100%; margin:10px 0 0 0; border-collapse:collapse; font-size:9.5px; color: #000;">
+            <table style="width:83.5%; margin:10px 0 0 0; border-collapse:collapse; font-size:9.5px; color: #000;">
                 <tr>
                     <td style="width:33%; vertical-align:top; padding-right:10px;">
                         <div>ลงชื่อผู้เก็บตัวอย่าง ................................................</div>
@@ -1874,7 +1874,7 @@ const app = {
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 1200
+                windowWidth: 1400
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
@@ -1889,8 +1889,16 @@ const app = {
         });
 
         // Add printing class to body to hide sidebar and reset margins
+        const sidebarEl = (typeof document !== 'undefined' && typeof document.getElementById === 'function') ? document.getElementById('sidebar') : null;
+        const mainContentEl = (typeof document !== 'undefined' && typeof document.querySelector === 'function') ? document.querySelector('.main-content') : null;
+        
         if (typeof document !== 'undefined' && document.body && document.body.classList) {
             document.body.classList.add('is-printing-pdf');
+        }
+        if (sidebarEl) sidebarEl.style.setProperty('display', 'none', 'important');
+        if (mainContentEl) {
+            mainContentEl.style.setProperty('margin-left', '0', 'important');
+            mainContentEl.style.setProperty('padding', '0', 'important');
         }
 
         // Generate PDF directly from the HTML string
@@ -1899,10 +1907,20 @@ const app = {
                 if (typeof document !== 'undefined' && document.body && document.body.classList) {
                     document.body.classList.remove('is-printing-pdf');
                 }
+                if (sidebarEl) sidebarEl.style.removeProperty('display');
+                if (mainContentEl) {
+                    mainContentEl.style.removeProperty('margin-left');
+                    mainContentEl.style.removeProperty('padding');
+                }
                 Swal.close();
             }).catch(function(err) {
                 if (typeof document !== 'undefined' && document.body && document.body.classList) {
                     document.body.classList.remove('is-printing-pdf');
+                }
+                if (sidebarEl) sidebarEl.style.removeProperty('display');
+                if (mainContentEl) {
+                    mainContentEl.style.removeProperty('margin-left');
+                    mainContentEl.style.removeProperty('padding');
                 }
                 console.error('PDF generation error:', err);
                 Swal.fire({
