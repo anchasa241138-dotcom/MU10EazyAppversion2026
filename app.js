@@ -1677,49 +1677,49 @@ const app = {
                     const isTmChecked = showChecked && (sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
 
                     checkboxCell = `
-                        <div style="font-size:10px; line-height:1.8;">
+                        <div style="font-size:8px; line-height:1.1;">
                             <div>${chk('ยาฆ่าแมลง (GT Kit)', isGtChecked)}</div>
-                            <div>${chk('ยาฆ่าแมลง (TM/2 Kit)', isTmChecked)}</div>
+                            <div style="margin-top:2px;">${chk('ยาฆ่าแมลง (TM/2 Kit)', isTmChecked)}</div>
                         </div>`;
 
                     interpretCell = `
-                        <div style="font-size:9px; line-height:1.8;">
+                        <div style="font-size:8px; line-height:1.1;">
                             <div>${chk('สีตัวอย่าง = สีควบคุม')}</div>
-                            <div>${chk('สีควบคุม > สีตัวอย่าง < สีตัดสิน')}</div>
-                            <div>${chk('สีตัวอย่าง >= สีตัดสิน')}</div>
-                            <div>${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
-                            <div>${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
+                            <div style="margin-top:2px;">${chk('สีควบคุม > สีตัวอย่าง < สีตัดสิน')}</div>
+                            <div style="margin-top:2px;">${chk('สีตัวอย่าง >= สีตัดสิน')}</div>
+                            <div style="margin-top:2px;">${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
+                            <div style="margin-top:2px;">${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
                         </div>`;
 
                     resultCell = `
-                        <div style="font-size:9px; line-height:1.8;">
+                        <div style="font-size:8px; line-height:1.1;">
                             <div>${chk('ไม่พบ')}</div>
-                            <div>${chk('พบ')}</div>
-                            <div>${chk('พบปลอดภัย')}</div>
-                            <div>${chk('พบอันตราย')}</div>
+                            <div style="margin-top:2px;">${chk('พบ')}</div>
+                            <div style="margin-top:2px;">${chk('พบปลอดภัย')}</div>
+                            <div style="margin-top:2px;">${chk('พบอันตราย')}</div>
                         </div>`;
                 }
 
                 const isPassChecked = showChecked && sample.analysis_summary === 'ผ่าน';
                 const isFailChecked = showChecked && sample.analysis_summary === 'ไม่ผ่าน';
                 summaryCell = `
-                    <div style="font-size:9px; line-height:1.8;">
+                    <div style="font-size:8.5px; line-height:1.2;">
                         <div>${chk('ผ่าน', isPassChecked)}</div>
-                        <div>${chk('ไม่ผ่าน', isFailChecked)}</div>
+                        <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div>
                     </div>`;
 
                 tableRows += `
-                    <tr style="height: 52px;">
-                        <td style="padding:4px; text-align:center; vertical-align:top; font-size:11px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
-                        <td style="padding:4px; vertical-align:top; font-size:10px; border:1px solid #555;">${item.distributor}</td>
-                        <td style="padding:4px; vertical-align:top; font-size:10px; border:1px solid #555;"></td>
-                        <td style="padding:4px; vertical-align:top; font-size:10px; border:1px solid #555;">${item.name}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:top; font-size:10px; border:1px solid #555;">${item.weight}</td>
-                        <td style="padding:4px; vertical-align:top; font-size:10px; border:1px solid #555;">${item.source}</td>
-                        <td style="padding:4px; vertical-align:top; border:1px solid #555;">${checkboxCell}</td>
-                        <td style="padding:4px; vertical-align:top; border:1px solid #555;">${interpretCell}</td>
-                        <td style="padding:4px; vertical-align:top; border:1px solid #555;">${resultCell}</td>
-                        <td style="padding:4px; vertical-align:top; border:1px solid #555;">${summaryCell}</td>
+                    <tr style="height: 48px;">
+                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:10.5px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.distributor}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;"></td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.name}</td>
+                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.weight}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.source}</td>
+                        <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${checkboxCell}</td>
+                        <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${interpretCell}</td>
+                        <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${resultCell}</td>
+                        <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${summaryCell}</td>
                     </tr>
                 `;
             }
@@ -1862,7 +1862,7 @@ const app = {
         </div>`;
 
         const opt = {
-            margin: 10,
+            margin: [6, 10, 6, 10],
             filename: `${sample.form_type}_${sample.ref_id}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { 
