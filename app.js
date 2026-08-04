@@ -1499,9 +1499,10 @@ const app = {
     },
 
     generateSubmissionPDF(e) {
-        const refId = e.currentTarget.dataset.refId;
-        const sample = this.samples.find(s => s.ref_id === refId);
-        if(!sample) return;
+        try {
+            const refId = e.currentTarget.dataset.refId;
+            const sample = this.samples.find(s => s.ref_id === refId);
+            if(!sample) return;
 
         // Document Details mapping based on formType
         let documentName = 'แบบบันทึกการส่งตัวอย่างอาหาร (กลุ่มผักและผลไม้)';
@@ -1890,9 +1891,21 @@ const app = {
                 Swal.close();
             }).catch(function(err) {
                 console.error('PDF generation error:', err);
-                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'PDF Generation Error',
+                    text: err.message || err.toString()
+                });
             });
         }, 500);
+        } catch (syncErr) {
+            console.error('PDF sync error:', syncErr);
+            Swal.fire({
+                icon: 'error',
+                title: 'PDF Sync Error',
+                text: syncErr.message || syncErr.toString()
+            });
+        }
     },
     // E-Tracking
     handleTrackingSearch() {
