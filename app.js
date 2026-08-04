@@ -1507,7 +1507,7 @@ const app = {
             if(!sample) return;
 
         // Document Details mapping based on formType
-        let documentName = 'แบบบันทึกการส่งตัวอย่างอาหาร (กลุ่มผักและผลไม้)';
+        let documentName = 'แบบบันทึกการสุ่มตัวอย่างอาหาร (กลุ่มผักและผลไม้)';
         let documentNum = 'MU.10-001';
         if (sample.form_type === 'MU.10-002') {
             documentName = 'แบบบันทึกการเก็บตัวอย่างสารปนเปื้อน 5 ชนิด';
@@ -1812,7 +1812,7 @@ const app = {
                     <td style="padding:6px 12px; vertical-align:middle; line-height:1.8; color:#000;">
                         <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
                         <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div>
-                        <div><strong>วันที่เริ่มใช้ :</strong> 1 ตุลาคม 2567</div>
+                        <div><strong>วันที่เริ่มใช้ :</strong> </div>
                         <div><strong>แผนก :</strong> ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
                     </td>
                     <td style="width:160px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;">
