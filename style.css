@@ -1408,10 +1408,12 @@ body {
 }
 
 /* Print/PDF Export resets to bypass sidebar shifts */
-body:has(.html2pdf__container) .app-sidebar {
+body:has(.html2pdf__container) .app-sidebar,
+body.is-printing-pdf .app-sidebar {
     display: none !important;
 }
-body:has(.html2pdf__container) .main-content {
+body:has(.html2pdf__container) .main-content,
+body.is-printing-pdf .main-content {
     margin-left: 0 !important;
     padding: 0 !important;
 }
