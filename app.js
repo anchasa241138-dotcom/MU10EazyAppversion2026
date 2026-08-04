@@ -1799,7 +1799,7 @@ const app = {
         }
 
         const htmlContent = `
-        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 1020px; max-width: 1020px; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0 auto;">
+        <div style="font-family: 'Sarabun', 'TH Sarabun New', sans-serif; width: 1120px; max-width: 1120px; padding: 4mm; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0 auto;">
 
             <!-- HEADER -->
             <table style="width:100%; border-collapse:collapse; margin-bottom:5px; border: 1.5px solid #333;">
@@ -1862,7 +1862,7 @@ const app = {
         </div>`;
 
         const opt = {
-            margin: [6, 10, 6, 10],
+            margin: [6, 5, 6, 5],
             filename: `${sample.form_type}_${sample.ref_id}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { 
@@ -1871,7 +1871,7 @@ const app = {
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 1020
+                windowWidth: 1120
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
