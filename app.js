@@ -129,7 +129,7 @@ const app = {
                 ref_id: 'TEMP-10001', lab_id: 'SSK-2026-0001', form_type: 'MU.10-001',
                 agency: 'สสจ.ศรีสะเกษ', location_type: 'ตลาดสด', location_name: 'ตลาดสดเทศบาล',
                 province: 'ศรีสะเกษ', amphoe: 'เมือง', tambon: 'เมืองเหนือ',
-                collector_name: 'นายสมคิด สุขใจ', sampling_date: '2026-06-20',
+                collector_name: 'นายสมคิด สุขใจ', collector_position: 'เจ้าหน้าที่สาธารณสุข', sampling_date: '2026-06-20',
                 sample_name: 'ผักคะน้า', sample_qty: 1, distributor: 'แผงผัก ป้าแดง', source: 'ตลาดไท',
                 status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-21',
                 analysis_details: 'ไม่พบการตกค้างของยาฆ่าแมลงกลุ่มออร์กาโนฟอสเฟต',
@@ -140,7 +140,7 @@ const app = {
                 ref_id: 'TEMP-10002', lab_id: 'UBN-2026-0002', form_type: 'MU.10-002',
                 agency: 'รพ.อุบลราชธานี', location_type: 'ร้านอาหาร', location_name: 'ร้านข้าวมันไก่เฮียชัย',
                 province: 'อุบลราชธานี', amphoe: 'เมือง', tambon: 'ในเมือง',
-                collector_name: 'นางสาวสุดสวย ใจดี', sampling_date: '2026-06-21',
+                collector_name: 'นางสาวสุดสวย ใจดี', collector_position: 'พยาบาลวิชาชีพ', sampling_date: '2026-06-21',
                 sample_name: 'ลูกชิ้นหมู', sample_qty: 2, distributor: 'เฮียชัย', source: 'ผลิตเอง',
                 status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-22',
                 analysis_details: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
@@ -151,7 +151,7 @@ const app = {
                 ref_id: 'TEMP-10003', lab_id: '', form_type: 'MU.10-006',
                 agency: 'สสอ.เมือง', location_type: 'โรงงานผลิต', location_name: 'โรงงานน้ำดื่มตราสิงห์',
                 province: 'ยโสธร', amphoe: 'เมือง', tambon: 'ในเมือง',
-                collector_name: 'นายมานะ อดทน', sampling_date: '2026-06-22',
+                collector_name: 'นายมานะ อดทน', collector_position: 'เจ้าหน้าที่สาธารณสุข', sampling_date: '2026-06-22',
                 sample_name: 'น้ำดื่มบรรจุขวด', sample_qty: 5, distributor: 'โรงงานน้ำดื่ม', source: 'ผลิตเอง',
                 status: 'registered', created_at: new Date().toISOString()
             },
@@ -159,7 +159,7 @@ const app = {
                 ref_id: 'TEMP-10004', lab_id: 'AMN-2026-0004', form_type: 'MU.10-003',
                 agency: 'สสจ.อำนาจเจริญ', location_type: 'ตลาดนัด', location_name: 'ตลาดนัดวันศุกร์',
                 province: 'อำนาจเจริญ', amphoe: 'เมือง', tambon: 'บุ่ง',
-                collector_name: 'นางสมศรี ใจสู้', sampling_date: '2026-06-21',
+                collector_name: 'นางสมศรี ใจสู้', collector_position: 'ผู้ประกอบการ', sampling_date: '2026-06-21',
                 sample_name: 'น้ำมันทอดไก่', sample_qty: 1, distributor: 'ร้านไก่ทอดป้าแจ๋ว', source: 'ซื้อจากห้าง',
                 status: 'accepted', created_at: new Date(Date.now() - 86400000).toISOString()
             }
@@ -359,8 +359,9 @@ const app = {
                 } else {
                     document.getElementById('record-auth-block').classList.add('hidden');
                     document.getElementById('record-content-wrapper').classList.remove('hidden');
-                    // Pre-fill collector name
+                    // Pre-fill collector name and position
                     document.getElementById('field-collector-name').value = this.currentUser.fullname;
+                    document.getElementById('field-collector-position').value = this.currentUser.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง';
                     this.renderSavedRecords();
                 }
                 break;
@@ -1102,6 +1103,7 @@ const app = {
         document.getElementById('field-amphoe').value = sample.amphoe || '';
         document.getElementById('field-tambon').value = sample.tambon || '';
         document.getElementById('field-collector-name').value = sample.collector_name || '';
+        document.getElementById('field-collector-position').value = sample.collector_position || '';
         document.getElementById('field-sampling-date').value = sample.sampling_date || '';
 
         // 4. Fill dynamic sample rows
@@ -1844,8 +1846,9 @@ const app = {
                 <tr>
                     <td style="width:33%; vertical-align:top; padding-right:10px;">
                         <div>ลงชื่อผู้เก็บตัวอย่าง ................................................</div>
-                        <div style="margin-top:6px;">ตำแหน่ง ........................................................</div>
-                        <div style="margin-top:6px;">วันที่เก็บตัวอย่าง ............................................</div>
+                        <div style="margin-top:4px; font-size:9px; text-align:left; padding-left:15px;">( ....<u>${sample.collector_name || '................................................'}</u>.... )</div>
+                        <div style="margin-top:6px;">ตำแหน่ง ....<u>${sample.collector_position || '........................................................'}</u>....</div>
+                        <div style="margin-top:6px;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '............................................'}</u>....</div>
                     </td>
                     <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
                         <div>ลงชื่อผู้ตรวจวิเคราะห์ ..............................................</div>
