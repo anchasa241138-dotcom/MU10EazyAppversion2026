@@ -1420,3 +1420,17 @@ body.is-printing-pdf .main-content {
 .html2pdf__container {
     z-index: 99999 !important;
 }
+
+/* Thai Font Vowel Distortion & Positioning Fix for PDF Rendering */
+.html2pdf__container *, 
+body.is-printing-pdf *,
+#certificatePDFContainer,
+#certificatePDFContainer * {
+    font-family: 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
+    font-variant-ligatures: none !important;
+    -webkit-font-variant-ligatures: none !important;
+    font-feature-settings: "liga" 0 !important;
+    -webkit-font-feature-settings: "liga" 0 !important;
+    letter-spacing: normal !important;
+}
+
