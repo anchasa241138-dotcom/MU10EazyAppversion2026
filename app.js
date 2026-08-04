@@ -1845,8 +1845,7 @@ const app = {
             <table style="width:83%; margin:10px 0 0 0; border-collapse:collapse; font-size:9.5px; color: #000;">
                 <tr>
                     <td style="width:33%; vertical-align:top; padding-right:10px;">
-                        <div>ลงชื่อผู้เก็บตัวอย่าง ................................................</div>
-                        <div style="margin-top:4px; font-size:9px; text-align:left; padding-left:15px;">( ....<u>${sample.collector_name || '................................................'}</u>.... )</div>
+                        <div>ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '................................................'}</u>....</div>
                         <div style="margin-top:6px;">ตำแหน่ง ....<u>${sample.collector_position || '........................................................'}</u>....</div>
                         <div style="margin-top:6px;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '............................................'}</u>....</div>
                     </td>
