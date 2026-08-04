@@ -1860,7 +1860,7 @@ const app = {
             }
 
             htmlContent = `
-            <div style="font-family: 'Tahoma', 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 35px 4mm 35px; font-size: 9.5px; color: #000; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+            <div style="font-family: 'Tahoma', 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 35px 4mm 35px; font-size: 9.5px; color: #000; box-sizing: border-box; background: #fff; display: block; position: absolute; left: 0 !important; top: 0 !important; margin: 0 !important; width: 100% !important;">
                 
                 <!-- HEADER -->
                 <table style="width:93%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
