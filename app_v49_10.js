@@ -1860,10 +1860,10 @@ const app = {
             }
 
             htmlContent = `
-            <div style="font-family: 'Tahoma', 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 20px 4mm 220px; font-size: 9.5px; color: #000; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+            <div style="font-family: 'Tahoma', 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 35px 4mm 35px; font-size: 9.5px; color: #000; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
                 
                 <!-- HEADER -->
-                <table style="width:83%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
+                <table style="width:93%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
                     <tr>
                         <td style="width:70px; padding:6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
                             <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;">
@@ -1882,15 +1882,15 @@ const app = {
                 </table>
 
                 <!-- META FIELDS -->
-                <div style="width:83%; line-height:1.6; margin-bottom:6px; color:#000; font-size:9.5px;">
+                <div style="width:93%; line-height:1.6; margin-bottom:6px; color:#000; font-size:9.5px;">
                     <div>(เจ้าหน้าที่) หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || '......................................................'}</u>.... อำเภอ ....<u>${sample.amphoe || '........................................'}</u>.... จังหวัด ....<u>${sample.province || '..........................................'}</u>....</div>
                     <div style="margin-top:2px;">(ผู้ประกอบการ) ชื่อสถานที่ ....<u>${sample.location_name || '..............................................................'}</u>.... เจ้าของร้าน/ผู้ดูแล ..........................................................................</div>
                     <div style="margin-top:2px;">ที่อยู่ ........................................................................................... เบอร์โทร ........................................................................................</div>
                 </div>
-                <hr style="width:83%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;">
+                <hr style="width:93%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;">
 
                 <!-- QUESTIONNAIRE -->
-                <div style="width:83%; line-height:1.5; color:#000; font-size:9.5px; margin-bottom:8px;">
+                <div style="width:93%; line-height:1.5; color:#000; font-size:9.5px; margin-bottom:8px;">
                     <div><strong>ประเภท</strong> &nbsp;
                         ${isFlour ? '&#9745;' : '&#9744;'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div>
@@ -1934,7 +1934,7 @@ const app = {
                 </div>
 
                 <!-- MAIN TABLE -->
-                <table style="width:83%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px; color:#000;" border="1">
+                <table style="width:93%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px; color:#000;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th rowspan="2" style="border:1px solid #555; width:8%; font-size:9px;">ครั้งที่<br>เก็บตัวอย่าง</th>
@@ -1956,13 +1956,13 @@ const app = {
                     </tbody>
                 </table>
 
-                <div style="width:83%; margin:6px 0; font-size:9.5px; color:#000;">
+                <div style="width:93%; margin:6px 0; font-size:9.5px; color:#000;">
                     <strong>สรุปผล</strong> ควรเปลี่ยนน้ำมันใหม่หลังทอดเสร็จในวันที่ ...................................................................................................................................
                 </div>
-                <hr style="width:83%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;">
+                <hr style="width:93%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;">
 
                 <!-- NOTE BOX -->
-                <table style="width:83%; border:1px solid #000; border-collapse:collapse; font-size:8.5px; line-height:1.4; color:#000; margin-bottom:8px;">
+                <table style="width:93%; border:1px solid #000; border-collapse:collapse; font-size:8.5px; line-height:1.4; color:#000; margin-bottom:8px;">
                     <tr>
                         <td style="padding:6px 12px; border-right:1px solid #000; width:50%; vertical-align:top;">
                             <div style="font-weight:bold; text-decoration:underline; margin-bottom:4px; font-size:9px;">การเก็บตัวอย่างน้ำมัน</div>
@@ -1981,7 +1981,7 @@ const app = {
                 </table>
 
                 <!-- FOOTER SIGNATURES -->
-                <table style="width:83%; margin:8px 0 0 0; border-collapse:collapse; font-size:9px; color: #000; line-height:1.6;">
+                <table style="width:93%; margin:8px 0 0 0; border-collapse:collapse; font-size:9px; color: #000; line-height:1.6;">
                     <tr>
                         <td style="width:33%; vertical-align:top; padding-right:10px;">
                             <div>ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '................................................'}</u>....</div>
