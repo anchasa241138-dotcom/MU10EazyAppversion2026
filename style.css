@@ -1406,3 +1406,15 @@ body {
         flex-direction: column;
     }
 }
+
+/* Print/PDF Export resets to bypass sidebar shifts */
+body:has(.html2pdf__container) .app-sidebar {
+    display: none !important;
+}
+body:has(.html2pdf__container) .main-content {
+    margin-left: 0 !important;
+    padding: 0 !important;
+}
+.html2pdf__container {
+    z-index: 99999 !important;
+}
