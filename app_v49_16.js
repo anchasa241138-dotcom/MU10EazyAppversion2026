@@ -49,6 +49,11 @@ const app = {
     // Initialization
     init() {
         try {
+            if (typeof document !== 'undefined' && document.fonts) {
+                document.fonts.load('10px SarabunPDF');
+                document.fonts.load('bold 10px SarabunPDF');
+                console.log("Forced loading of SarabunPDF fonts");
+            }
             this.initData();
             this.unreadRecordsCount = parseInt(localStorage.getItem('unread_records_count') || '0', 10);
             this.setupEventListeners();
@@ -1581,7 +1586,7 @@ const app = {
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) => {
-            return `<span style="font-family:'Tahoma', 'Sarabun', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
+            return `<span style="font-family: 'Tahoma', 'SarabunPDF', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -1862,7 +1867,7 @@ const app = {
             htmlContent = `
             <style>
                 * {
-                    font-family: 'Sarabun', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
+                    font-family: 'SarabunPDF', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
                     font-variant-ligatures: normal !important;
                     -webkit-font-variant-ligatures: normal !important;
                     font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
@@ -1871,7 +1876,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 35px 4mm 35px; font-size: 9.5px; color: #000; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 35px 4mm 35px; font-size: 9.5px; color: #000; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
                 
                 <!-- HEADER -->
                 <table style="width:93%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
@@ -2016,7 +2021,7 @@ const app = {
             htmlContent = `
             <style>
                 * {
-                    font-family: 'Sarabun', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
+                    font-family: 'SarabunPDF', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
                     font-variant-ligatures: normal !important;
                     -webkit-font-variant-ligatures: normal !important;
                     font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
@@ -2025,7 +2030,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'Sarabun', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 20px 4mm 220px; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 100%; padding: 4mm 20px 4mm 220px; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
 
                 <!-- HEADER -->
                 <table style="width:83%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
