@@ -2023,7 +2023,7 @@ const app = {
             </style>
 
             <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1000px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
-            <div style="width: 860px; margin: 4mm 0 4mm 70px; display: block; font-size: 9.5px; color: #000;">
+            <div style="width: 904px; margin: 4mm 0 4mm 48px; display: block; font-size: 9.5px; color: #000;">
                 
                 <!-- HEADER -->
                 <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
@@ -2179,7 +2179,7 @@ const app = {
             </style>
 
             <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1400px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
-            <div style="width: 1260px; margin: 4mm 0 4mm 70px; display: block; font-size: 10.5px; color: #1a1a1a;">
+            <div style="width: 1304px; margin: 4mm 0 4mm 48px; display: block; font-size: 10.5px; color: #1a1a1a;">
 
                 <!-- HEADER -->
                 <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
