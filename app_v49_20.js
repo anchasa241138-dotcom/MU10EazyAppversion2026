@@ -1738,7 +1738,7 @@ const app = {
         let mainTableHTML = '';
         if (sample.form_type === 'MU.10-003') {
             mainTableHTML = `
-                <table style="width:83%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th>
@@ -1762,7 +1762,7 @@ const app = {
             `;
         } else if (sample.form_type === 'MU.10-004') {
             mainTableHTML = `
-                <table style="width:83%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -1783,7 +1783,7 @@ const app = {
             `;
         } else {
             mainTableHTML = `
-                <table style="width:83%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -1876,7 +1876,8 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1000px !important; padding: 4mm 70px 4mm 70px; font-size: 9.5px; color: #000; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1000px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
+            <div style="width: 860px; margin: 4mm auto; display: block; font-size: 9.5px; color: #000;">
                 
                 <!-- HEADER -->
                 <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
@@ -2016,6 +2017,7 @@ const app = {
                         </td>
                     </tr>
                 </table>
+            </div>
             </div>`;
         } else {
             htmlContent = `
@@ -2030,10 +2032,11 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1400px !important; padding: 4mm 20px 4mm 220px; font-size: 10.5px; color: #1a1a1a; box-sizing: border-box; background: #fff; display: block; position: relative; margin: 0;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1400px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
+            <div style="width: 1260px; margin: 4mm auto; display: block; font-size: 10.5px; color: #1a1a1a;">
 
                 <!-- HEADER -->
-                <table style="width:83%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
+                <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
                     <tr>
                         <td style="width:70px; padding:6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
                             <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;">
@@ -2052,7 +2055,7 @@ const app = {
                 </table>
 
                 <!-- META FIELDS -->
-                <table style="width:83%; margin:0 0 4px 0; border-collapse:collapse; color:#000;">
+                <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000;">
                     <tr>
                         <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td>
                         <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td>
@@ -2071,7 +2074,7 @@ const app = {
                 ${mainTableHTML}
 
                 <!-- FOOTER SIGNATURES -->
-                <table style="width:83%; margin:10px 0 0 0; border-collapse:collapse; font-size:9.5px; color: #000;">
+                <table style="width:100%; margin:10px 0 0 0; border-collapse:collapse; font-size:9.5px; color: #000;">
                     <tr>
                         <td style="width:33%; vertical-align:top; padding-right:10px;">
                             <div>ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '................................................'}</u>....</div>
@@ -2090,6 +2093,7 @@ const app = {
                         </td>
                     </tr>
                 </table>
+            </div>
             </div>`;
         }
 
