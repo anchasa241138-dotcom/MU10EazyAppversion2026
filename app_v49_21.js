@@ -595,6 +595,10 @@ const app = {
                 title = 'แบบบันทึกการเก็บตัวอย่างน้ำมันทอดซ้ำ (ด้วยชุดทดสอบ Test Kit)';
                 dynamicHTML = `<p class="input-helper">ไม่มีฟิลด์ข้อมูลเฉพาะสำหรับฟอร์มประเภทนี้</p>`;
                 break;
+            case 'MU.10-005':
+                title = 'แบบบันทึกการเก็บตัวอย่างเกลือบริโภค';
+                dynamicHTML = `<p class="input-helper">ไม่มีฟิลด์ข้อมูลเฉพาะสำหรับฟอร์มประเภทนี้</p>`;
+                break;
             default:
                 title = `แบบบันทึกการเก็บตัวอย่าง ${formType}`;
                 dynamicHTML = `<p class="input-helper">ไม่มีฟิลด์ข้อมูลเฉพาะสำหรับฟอร์มประเภทนี้</p>`;
@@ -618,6 +622,19 @@ const app = {
 
         // Render saved records for this specific form type
         this.renderSavedRecords();
+    },
+
+    calculateIodateOutcome(input, index) {
+        const val = parseFloat(input.value);
+        const select = document.querySelector(`select[name="test_outcome_${index}"]`);
+        if (!select) return;
+        if (isNaN(val)) {
+            select.value = "";
+        } else if (val >= 20 && val <= 40) {
+            select.value = "ผ่าน";
+        } else {
+            select.value = "ไม่ผ่าน";
+        }
     },
 
     addGlobalSampleEntry() {
@@ -756,6 +773,71 @@ const app = {
                     </div>
                 </div>
             `;
+        } else if (formType === 'MU.10-005') {
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <h4 style="color: var(--primary-light); margin: 0; font-size: 16px;"><i class="fa-solid fa-cookie-bite"></i> รายการตรวจเกลือบริโภค #${this.globalSampleIndex}</h4>
+                    <button type="button" class="btn btn-text remove-sample-btn" style="color: #ef4444; padding: 5px; font-weight: 500;" onclick="app.removeGlobalSample(this)"><i class="fa-solid fa-trash"></i> ลบรายการนี้</button>
+                </div>
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label>1. ชื่อผู้จำหน่าย/ร้านค้า *</label>
+                        <input type="text" name="distributor_${this.globalSampleIndex}" required placeholder="ระบุชื่อร้านค้า/ผู้จำหน่าย">
+                    </div>
+                    <div class="form-group">
+                        <label>2. ชื่ออาหาร/ยี่ห้อ *</label>
+                        <input type="text" name="sample_name_${this.globalSampleIndex}" required placeholder="ระบุชื่อยี่ห้อเกลือ">
+                    </div>
+                    <div class="form-group">
+                        <label>3. เลขสารบบอาหาร (13 หลัก) *</label>
+                        <input type="text" name="food_serial_no_	his.globalSampleIndex}" required placeholder="เช่น 10-1-01234-5-6789">
+                    </div>
+                    <div class="form-group">
+                        <label>4. ชื่อ/ที่อยู่ ผู้ผลิต หรือจัดจำหน่าย *</label>
+                        <input type="text" name="manufacturer_info_${this.globalSampleIndex}" required placeholder="ระบุชื่อผู้ผลิตและที่อยู่">
+                    </div>
+                    <div class="form-group">
+                        <label>5. วันผลิต/หมดอายุ *</label>
+                        <select name="has_mfg_exp_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                            <option value="">-- เลือก --</option>
+                            <option value="มี">มี</option>
+                            <option value="ไม่มี">ไม่มี</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>6. น้ำหนักสุทธิ *</label>
+                        <input type="text" name="net_weight_${this.globalSampleIndex}" required placeholder="เช่น 500 กรัม">
+                    </div>
+                    <div class="form-group">
+                        <label>7. ข้อความ 'ควรเก็บในที่ร่มและแห้ง' *</label>
+                        <select name="has_storage_warning_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                            <option value="">-- เลือก --</option>
+                            <option value="มี">มี</option>
+                            <option value="ไม่มี">ไม่มี</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>8. สรุปผลตรวจฉลาก *</label>
+                        <select name="label_summary_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                            <option value="">-- เลือก --</option>
+                            <option value="ผ่าน">ผ่าน</option>
+                            <option value="ไม่ผ่าน">ไม่ผ่าน</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>9. ค่าไอโอเดท (ppm) *</label>
+                        <input type="number" step="0.1" name="iodate_value_${this.globalSampleIndex}" required placeholder="ระบุค่า ppm" oninput="app.calculateIodateOutcome(this, ${this.globalSampleIndex})">
+                    </div>
+                    <div class="form-group">
+                        <label>10. สรุปผลตรวจปริมาณ *</label>
+                        <select name="test_outcome_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                            <option value="">-- เลือก --</option>
+                            <option value="ผ่าน">ผ่าน (20-40 ppm)</option>
+                            <option value="ไม่ผ่าน">ไม่ผ่าน</option>
+                        </select>
+                    </div>
+                </div>
+            `;
         } else {
             div.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -860,7 +942,10 @@ const app = {
                     if (key.startsWith('sample_name_') || key.startsWith('distributor_') || key.startsWith('weight_') || key.startsWith('source_') || key.startsWith('test_') ||
                         key.startsWith('oil_type_') || key.startsWith('fry_duration_') || key.startsWith('fry_count_') || key.startsWith('replacement_type_') ||
                         key.startsWith('last_replacement_date_') || key.startsWith('replacement_frequency_') || key.startsWith('replacement_reason_') ||
-                        key.startsWith('oil_disposal_') || key.startsWith('polar_value_') || key.startsWith('food_category_')) {
+                        key.startsWith('oil_disposal_') || key.startsWith('polar_value_') || key.startsWith('food_category_') ||
+                        key.startsWith('food_serial_no_') || key.startsWith('manufacturer_info_') || key.startsWith('has_mfg_exp_') ||
+                        key.startsWith('net_weight_') || key.startsWith('has_storage_warning_') || key.startsWith('label_summary_') ||
+                        key.startsWith('iodate_value_') || key.startsWith('test_outcome_')) {
                         delete oldSample[key];
                     }
                 });
@@ -1523,6 +1608,9 @@ const app = {
         } else if (sample.form_type === 'MU.10-004') {
             documentName = 'แบบบันทึกการเก็บตัวอย่างน้ำมันทอดซ้ำ (ด้วยชุดทดสอบ Test Kit)';
             documentNum = 'MU.10-004';
+        } else if (sample.form_type === 'MU.10-005') {
+            documentName = 'แบบบันทึกการสุ่มตัวอย่างเกลือบริโภค';
+            documentNum = 'MU.10-005';
         }
 
         // Collect all dynamic sample entries from sample object keys
@@ -1552,6 +1640,19 @@ const app = {
                     replacement_type: sample[`replacement_type_${idx}`] || '',
                     replacement_frequency: sample[`replacement_frequency_${idx}`] || ''
                 });
+            } else if (sample.form_type === 'MU.10-005') {
+                sampleItems.push({
+                    distributor: sample[`distributor_${idx}`] || '',
+                    food_type: sample[`sample_name_${idx}`] || '',
+                    food_serial_no: sample[`food_serial_no_${idx}`] || '',
+                    manufacturer_info: sample[`manufacturer_info_${idx}`] || '',
+                    has_mfg_exp: sample[`has_mfg_exp_${idx}`] || '',
+                    net_weight: sample[`net_weight_${idx}`] || '',
+                    has_storage_warning: sample[`has_storage_warning_${idx}`] || '',
+                    label_summary: sample[`label_summary_${idx}`] || '',
+                    iodate_value: sample[`iodate_value_${idx}`] || '',
+                    test_outcome: sample[`test_outcome_${idx}`] || ''
+                });
             } else {
                 sampleItems.push({
                     name: sample[`sample_name_${idx}`] || '',
@@ -1579,6 +1680,8 @@ const app = {
                 sampleItems.push({ distributor:'', food_type:'', oil_type:'', fry_duration:'', replacement_type:'', last_replacement_date:'', replacement_frequency:'', replacement_reason:'', oil_disposal:'', polar_value:'' });
             } else if (sample.form_type === 'MU.10-004') {
                 sampleItems.push({ food_category:'', food_type:'', oil_type:'', fry_duration:'', fry_count:'', replacement_type:'', replacement_frequency:'' });
+            } else if (sample.form_type === 'MU.10-005') {
+                sampleItems.push({ distributor:'', food_type:'', food_serial_no:'', manufacturer_info:'', has_mfg_exp:'', net_weight:'', has_storage_warning:'', label_summary:'', iodate_value:'', test_outcome:'' });
             } else {
                 sampleItems.push({ name:'', distributor:'', weight:'', source:'' });
             }
@@ -1640,6 +1743,22 @@ const app = {
                             ${chk('ผ่าน', isPassChecked)} &nbsp;
                             ${chk('ไม่ผ่าน', isFailChecked)}
                         </td>
+                    </tr>
+                `;
+            } else if (sample.form_type === 'MU.10-005') {
+                tableRows += `
+                    <tr style="height: 50px;">
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.distributor}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_serial_no}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.manufacturer_info}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.has_mfg_exp}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.net_weight}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.has_storage_warning}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; font-weight:bold; border:1px solid #555;">${item.label_summary}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; font-weight:bold; border:1px solid #555;">${item.iodate_value}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; font-weight:bold; border:1px solid #555;">${item.test_outcome}</td>
                     </tr>
                 `;
             } else {
@@ -1774,6 +1893,33 @@ const app = {
                             <th style="padding:5px 3px; border:1px solid #555; width:12%;">ลักษณะการเปลี่ยนน้ำมัน</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:10%;">ความถี่ (วัน)</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:12%;">ผลการตรวจ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+            `;
+        } else if (sample.form_type === 'MU.10-005') {
+            mainTableHTML = `
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8.5px;" border="1">
+                    <thead>
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
+                            <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
+                            <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th>
+                            <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
+                            <th colspan="6" style="padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th>
+                            <th colspan="2" style="padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th>
+                        </tr>
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:8px;">
+                            <th style="padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th>
+                            <th style="padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th>
+                            <th style="padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th>
+                            <th style="padding:3px 2px; border:1px solid #555; width:7%;">น้ำหนักสุทธิ</th>
+                            <th style="padding:3px 2px; border:1px solid #555; width:9.5%;">แสดงข้อความ<br>“ควรเก็บในที่ร่ม<br>และแห้ง” (มี/ไม่มี)</th>
+                            <th style="padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล<br>ตรวจฉลาก</th>
+                            <th style="padding:3px 2px; border:1px solid #555; width:8%;">ค่าไอโอเดท<br>(ppm)</th>
+                            <th style="padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล</th>
                         </tr>
                     </thead>
                     <tbody>
