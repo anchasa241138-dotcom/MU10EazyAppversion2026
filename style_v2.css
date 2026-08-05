@@ -1440,7 +1440,7 @@ body.is-printing-pdf .main-content {
 body.is-printing-pdf *,
 #certificatePDFContainer,
 #certificatePDFContainer * {
-    font-family: 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
+    font-family: 'SarabunPDF', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
     font-variant-ligatures: normal !important;
     -webkit-font-variant-ligatures: normal !important;
     font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
