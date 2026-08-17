@@ -757,9 +757,14 @@
                         <input type="text" id="accept-sample-name-display" readonly class="readonly-input">
                     </div>
                     <div class="form-group">
-                        <label for="accept-lab-id">รหัสตัวอย่างแลป (Lab ID) <span class="required">*</span></label>
-                        <input type="text" id="accept-lab-id" required placeholder="เช่น SSK-2026-0001" class="gold-input">
-                        <span class="input-helper">ระบบสร้างให้อัตโนมัติ สามารถแก้ไขเพิ่มเติมได้ตามรูปแบบที่ต้องการ</span>
+                        <label for="accept-lab-id">รหัสตัวอย่างอ้างอิง E-Tracking <span class="required">*</span></label>
+                        <input type="text" id="accept-lab-id" required placeholder="เช่น SSK-2026-0001" class="readonly-input" readonly>
+                        <span class="input-helper">ใช้สำหรับให้ผู้ยื่นเรื่องติดตามสถานะผ่าน E-Tracking</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="accept-lab-no">รหัสตรวจวิเคราะห์ (Lab No.) <span class="required">*</span></label>
+                        <input type="text" id="accept-lab-no" required placeholder="เช่น 0001" class="gold-input">
+                        <span class="input-helper">รหัสอัตโนมัติ จะนำไปแสดงในใบรายงานผล และลำดับการตรวจวิเคราะห์</span>
                     </div>
                     <div class="form-group">
                         <label for="accept-receive-date">วันที่ห้องปฏิบัติการรับตัวอย่าง <span class="required">*</span></label>
