@@ -1415,11 +1415,32 @@ const app = {
         document.getElementById('accept-sample-ref-display').value = sample.ref_id;
         document.getElementById('accept-sample-name-display').value = sample.sample_name;
         
-        // Generate auto Lab ID
+        // Generate auto E-Tracking ID
         const year = new Date().getFullYear() + 543; // Thai year
         const prefix = this.getProvincePrefix(sample.province);
         const count = this.samples.filter(s => s.lab_id && s.lab_id.startsWith(prefix)).length + 1;
         document.getElementById('accept-lab-id').value = `${prefix}-${year}-${String(count).padStart(4, '0')}`;
+        
+        // Generate auto Lab No (e.g. 0001) accounting for multiple items in previous samples
+        let maxLabNo = 0;
+        this.samples.forEach(s => {
+            let baseNo = parseInt(s.lab_no, 10);
+            if (!isNaN(baseNo) && baseNo > 0) {
+                let itemCount = 0;
+                let i = 1;
+                while (s[`sample_name_${i}`] !== undefined) {
+                    if (s[`sample_name_${i}`]) itemCount++;
+                    i++;
+                }
+                if (itemCount === 0) itemCount = 1;
+                let maxForThisSample = baseNo + itemCount - 1;
+                if (maxForThisSample > maxLabNo) {
+                    maxLabNo = maxForThisSample;
+                }
+            }
+        });
+        document.getElementById('accept-lab-no').value = String(maxLabNo + 1).padStart(4, '0');
+        
         document.getElementById('accept-receive-date').valueAsDate = new Date();
         
         document.getElementById('verifyAcceptModal').classList.add('active');
@@ -1438,15 +1459,17 @@ const app = {
         e.preventDefault();
         const refId = document.getElementById('accept-sample-ref-id').value;
         const labId = document.getElementById('accept-lab-id').value;
+        const labNo = document.getElementById('accept-lab-no').value;
         
         const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
         if (sampleIndex > -1) {
             this.samples[sampleIndex].status = 'accepted';
             this.samples[sampleIndex].lab_id = labId;
+            this.samples[sampleIndex].lab_no = labNo;
             this.samples[sampleIndex].lab_receive_date = document.getElementById('accept-receive-date').value;
             this.saveSamples();
             
-            Swal.fire('สำเร็จ', `รับตัวอย่างเข้าระบบเรียบร้อย<br>รหัส: ${labId}`, 'success');
+            Swal.fire('สำเร็จ', `รับตัวอย่างเข้าระบบเรียบร้อย<br>รหัสแลป: ${labNo}`, 'success');
             this.closeVerifyAcceptModal();
             this.renderVerifyTable();
         }
@@ -1495,7 +1518,7 @@ const app = {
         tbody.innerHTML = '';
         
         activeSamples.forEach(s => {
-            if (searchTerm && !`${s.lab_id} ${s.sample_name}`.toLowerCase().includes(searchTerm)) return;
+            if (searchTerm && !`${s.lab_no || s.lab_id} ${s.sample_name}`.toLowerCase().includes(searchTerm)) return;
             
             const tr = document.createElement('tr');
             const statusBadge = s.status === 'accepted' 
@@ -1503,7 +1526,7 @@ const app = {
                 : '<span class="status-badge status-summarized">สรุปผลแล้ว</span>';
                 
             tr.innerHTML = `
-                <td><strong>${s.lab_id}</strong></td>
+                <td><strong>${s.lab_no || s.lab_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
                 <td>${s.location_name} จ.${s.province}</td>
@@ -1527,7 +1550,7 @@ const app = {
         
         document.getElementById('analysisResultForm').reset();
         document.getElementById('analysis-sample-ref-id').value = sample.ref_id;
-        document.getElementById('analysis-lab-id-display').value = sample.lab_id;
+        document.getElementById('analysis-lab-id-display').value = sample.lab_no || sample.lab_id;
         document.getElementById('analysis-form-type-display').value = sample.form_type || '-';
         
         // Auto-populate ชื่อตัวอย่าง จากข้อมูลแบบฟอร์ม
@@ -1584,8 +1607,8 @@ const app = {
                         <label for="analysis-substance">สารที่ตรวจวิเคราะห์ <span class="required">*</span></label>
                         <select id="analysis-substance" required>
                             <option value="">-- เลือกสารที่ตรวจ --</option>
-                            <option value="ยาฆ่าแมลง (GT Kit)">ยาฆ่าแมลง (GT Kit)</option>
-                            <option value="ยาฆ่าแมลง (TM/2 Kit)">ยาฆ่าแมลง (TM/2 Kit)</option>
+                            <option value="GT">GT</option>
+                            <option value="TM/2">TM/2</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1744,7 +1767,7 @@ const app = {
         tbody.innerHTML = '';
         
         reportSamples.forEach(s => {
-            if (searchTerm && !`${s.lab_id} ${s.sample_name}`.toLowerCase().includes(searchTerm)) return;
+            if (searchTerm && !`${s.lab_no || s.lab_id} ${s.sample_name}`.toLowerCase().includes(searchTerm)) return;
             
             const isApproved = s.status === 'approved';
             const actionBtn = isApproved 
@@ -1753,7 +1776,7 @@ const app = {
                 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><strong>${s.lab_id}</strong></td>
+                <td><strong>${s.lab_no || s.lab_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
                 <td><small>${s.analysis_details.substring(0, 30)}...</small></td>
@@ -1821,8 +1844,9 @@ const app = {
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
                     <div class="cert-signature-area" style="margin-top: 5px;">
-                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">
-                            <span class="placeholder-signature">(รอลงนามรับรอง)</span>
+                        <div style="height: 40px; margin-bottom: 5px; position: relative; display: flex; align-items: flex-end; justify-content: center; width: 100%;">
+                            <span class="placeholder-signature" style="position: absolute; bottom: 15px;">(รอลงนามรับรอง)</span>
+                            <span style="font-size: 11.5px; white-space: nowrap;">ลงชื่อ................................................${defaultRole}</span>
                         </div>
                         <p style="margin-bottom: 2px;">(.......................................)</p>
                         <p>${defaultRole}</p>
@@ -1836,7 +1860,10 @@ const app = {
             
             return `
                 <div class="cert-signature-area" style="margin-top: 5px;">
-                    <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${sigHtml}</div>
+                    <div style="height: 40px; margin-bottom: 5px; position: relative; display: flex; align-items: flex-end; justify-content: center; width: 100%;">
+                        <div style="position: absolute; bottom: 5px; z-index: 10;">${sigHtml}</div>
+                        <span style="font-size: 11.5px; white-space: nowrap; position: relative; z-index: 1;">ลงชื่อ................................................${defaultRole}</span>
+                    </div>
                     <p style="margin-bottom: 2px;">(${p.name})</p>
                     <p style="margin-bottom: 2px;">${p.title1}</p>
                     ${p.title2 ? `<p>${p.title2}</p>` : ''}
@@ -1860,10 +1887,10 @@ const app = {
                     rowsHtml += `
                         <tr>
                             <td style="text-align:center;">${totalCount}</td>
-                            <td>${sample[`distributor_${idx}`] || '-'}</td>
-                            <td style="text-align:center;">${sample.lab_id}-${totalCount}</td>
-                            <td>${sample[`sample_name_${idx}`]}</td>
-                            <td>${sample[`source_${idx}`] || sample.location_name}</td>
+                            <td style="text-align:center;">${sample[`distributor_${idx}`] || '-'}</td>
+                            <td style="text-align:center;">${sample.lab_no ? String(parseInt(sample.lab_no, 10) + totalCount - 1).padStart(4, '0') : `${sample.lab_id}-${totalCount}`}</td>
+                            <td style="text-align:center;">${sample[`sample_name_${idx}`]}</td>
+                            <td style="text-align:center;">${sample[`source_${idx}`] || sample.location_name}</td>
                             <td style="text-align:center;">${sample.analysis_details || '-'}</td>
                             <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
@@ -1879,10 +1906,10 @@ const app = {
                 rowsHtml += `
                     <tr>
                         <td style="text-align:center;">1</td>
-                        <td>${sample.distributor || '-'}</td>
-                        <td style="text-align:center;">${sample.lab_id}</td>
-                        <td>${sample.sample_name || '-'}</td>
-                        <td>${sample.source || sample.location_name}</td>
+                        <td style="text-align:center;">${sample.distributor || '-'}</td>
+                        <td style="text-align:center;">${sample.lab_no || sample.lab_id}</td>
+                        <td style="text-align:center;">${sample.sample_name || '-'}</td>
+                        <td style="text-align:center;">${sample.source || sample.location_name}</td>
                         <td style="text-align:center;">${sample.analysis_details || '-'}</td>
                         <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                     </tr>
@@ -1905,9 +1932,11 @@ const app = {
                     <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 14.5px;">
                         <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
                     </div>
-                    <div style="display:flex; margin-bottom:8px; font-size: 14.5px;">
-                        <div style="width:50%;"><strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}</div>
-                        <div style="width:50%;"><strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}</div>
+                    <div style="margin-bottom:8px; font-size: 14.5px;">
+                        <strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}
+                    </div>
+                    <div style="margin-bottom:8px; font-size: 14.5px;">
+                        <strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}
                     </div>
                     <div style="margin-bottom:8px; font-size: 14.5px;">
                         <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
@@ -1922,7 +1951,7 @@ const app = {
                             <th width="15%">รหัสตัวอย่าง</th>
                             <th width="15%">ตัวอย่าง</th>
                             <th width="15%">แหล่งที่มา</th>
-                            <th width="15%">${sample.analysis_substance || 'GT'}</th>
+                            <th width="15%">${(sample.analysis_substance === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : (sample.analysis_substance === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : sample.analysis_substance)) || 'GT'}</th>
                             <th width="15%">สรุปผล</th>
                         </tr>
                     </thead>
@@ -1948,7 +1977,7 @@ const app = {
             // --- Legacy Template for other forms ---
             container.innerHTML = `
                 <div class="cert-pdf-meta">
-                    <p><strong>เลขที่รายงาน:</strong> <span>${sample.lab_id}</span></p>
+                    <p><strong>เลขที่รายงาน:</strong> <span>${sample.lab_no || sample.lab_id}</span></p>
                     <p><strong>วันที่รายงาน:</strong> <span>${new Date().toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'})}</span></p>
                 </div>
                 <div class="cert-pdf-body">
@@ -2930,7 +2959,7 @@ const app = {
         // Map data to Thai headers
         const exportData = this.currentExportData.map(s => ({
             'รหัสอ้างอิง': s.ref_id,
-            'รหัสแลป': s.lab_id || '-',
+            'รหัสแลป': s.lab_no || s.lab_id || '-',
             'ประเภทฟอร์ม': s.form_type,
             'ชื่อตัวอย่าง': s.sample_name,
             'จังหวัด': s.province,
