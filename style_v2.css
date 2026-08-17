@@ -1208,30 +1208,38 @@ body {
     align-items: flex-end;
 }
 
-/* PDF layout definitions */
 .certificate-pdf-wrapper {
-    background-color: #ffffff;
-    padding: 10px;
-    overflow: hidden;
+    background-color: #e2e8f0;
+    padding: 20px;
+    overflow: auto;
+    max-height: 65vh;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
 }
 
 .cert-pdf-border {
-    border: 4px double #1e3a8a;
-    padding: 40px;
-    border-radius: 8px;
+    width: 794px;
+    min-width: 794px;
+    height: 1123px; /* Force exactly A4 height at 96dpi so background doesn't squish */
+    min-height: 1123px;
+    margin: 0 auto;
+    padding: 160px 45px 80px 45px;
+    border-radius: 2px;
     position: relative;
-    background-color: #fffdf9; /* Classic certificate paper color tint */
+    background-image: url('cert_background_new.png');
+    background-size: 100% 100%; /* Image will perfectly match the fixed container size */
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    background-color: white;
+    box-sizing: border-box;
+    text-align: left;
 }
 
 .cert-pdf-border::before {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    bottom: 5px;
-    border: 1px solid #1e3a8a;
-    pointer-events: none;
+    display: none; /* Hide old inner border since background provides framing */
 }
 
 .cert-pdf-header {
@@ -1257,13 +1265,20 @@ body {
     justify-content: space-between;
     font-size: 13px;
     margin-bottom: 24px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(30, 58, 138, 0.2);
     padding-bottom: 8px;
+    background: rgba(255, 255, 255, 0.75);
+    padding: 10px 16px;
+    border-radius: 6px;
 }
 
 .cert-pdf-body {
     font-size: 14.5px;
     margin-bottom: 40px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    color: #1e293b;
 }
 
 .cert-pdf-body p {
@@ -1277,9 +1292,14 @@ body {
 }
 
 .cert-pdf-table td {
-    padding: 8px 12px;
+    padding: 10px 14px;
     font-size: 14px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid rgba(30, 58, 138, 0.1);
+    color: #1e293b;
+}
+
+.cert-pdf-table tr:nth-child(even) td {
+    background: rgba(241, 245, 249, 0.5);
 }
 
 .cert-pdf-outcome {
@@ -1325,6 +1345,34 @@ body {
 .official-signature-img {
     max-height: 50px;
     object-fit: contain;
+}
+
+/* New Multi-table styles */
+.cert-multi-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: #1e293b;
+}
+
+.cert-multi-table th, .cert-multi-table td {
+    border: 1px solid #475569;
+    padding: 8px;
+}
+
+.cert-multi-table th {
+    background-color: #f8fafc;
+    text-align: center;
+    font-weight: 600;
+}
+
+.cert-signatures-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    justify-items: center;
+    margin-top: 20px;
 }
 
 .cert-signature-area p {
