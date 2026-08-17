@@ -1889,7 +1889,7 @@ const app = {
         const tbody = document.getElementById('certifyTableBody');
         const searchTerm = document.getElementById('searchCertifyTable').value.toLowerCase();
         
-        const reportSamples = this.samples.filter(s => s.status === 'summarized');
+        const reportSamples = this.samples.filter(s => s.status === 'summarized' || s.status === 'analyst_signed');
         
         tbody.innerHTML = '';
         
@@ -1898,16 +1898,21 @@ const app = {
             
             const isApproved = s.status === 'approved';
             const actionBtn = isApproved 
-                ? `<button class="btn btn-secondary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-file-pdf"></i> ดูรายงาน PDF</button>`
-                : `<button class="btn btn-success btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-stamp"></i> อนุมัติ</button>`;
-                
-            const tr = document.createElement('tr');
+        ? `<button class="btn btn-secondary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-file-pdf"></i> ดูรายงาน PDF</button>`
+        : (s.status === 'summarized' 
+            ? `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-pen-nib"></i> ลงนามผู้ตรวจ</button>` 
+            : `<button class="btn btn-success btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-stamp"></i> ลงนามผู้รับรอง</button>`);
+        
+    const displayStatus = s.status === 'summarized' ? 'รอลงนามผู้ตรวจ' : (s.status === 'analyst_signed' ? 'รอผู้รับรองอนุมัติ' : s.analysis_summary);
+    const statusClass = s.status === 'summarized' ? 'status-pending' : (s.status === 'analyst_signed' ? 'status-warning' : (s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved'));
+        
+    const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${s.lab_no || s.lab_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
                 <td><small>${(s.analysis_details || s.analysis_details_1 || "-").substring(0, 30)}...</small></td>
-                <td><span class="status-badge ${s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved'}">${s.analysis_summary}</span></td>
+                <td><span class="status-badge ${statusClass}">${displayStatus}</span></td>
                 <td>${s.analysis_analyst}</td>
                 <td>${actionBtn}</td>
             `;
@@ -2153,14 +2158,48 @@ const app = {
                 btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์';
             }
             
+            
             if (sample.form_type === 'MU.10-001') {
                 document.getElementById('cert-standard-inputs').style.display = 'none';
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
-                document.getElementById('sel-analyst-1').value = sample.sel_analyst_1 || "anchasa";
-                document.getElementById('sel-analyst-2').value = sample.sel_analyst_2 || "surachai";
-                document.getElementById('sel-approver-1').value = sample.sel_approver_1 || "thitiporn";
-                document.getElementById('sel-approver-2').value = sample.sel_approver_2 || "mallika";
+                
+                const s1 = document.getElementById('sel-analyst-1');
+                const s2 = document.getElementById('sel-analyst-2');
+                const s3 = document.getElementById('sel-approver-1');
+                const s4 = document.getElementById('sel-approver-2');
+                const btnApprove = document.getElementById('btnApproveAndSign');
+                
+                if (isViewOnly) {
+                    s1.value = sample.sel_analyst_1 || "";
+                    s2.value = sample.sel_analyst_2 || "";
+                    s3.value = sample.sel_approver_1 || "";
+                    s4.value = sample.sel_approver_2 || "";
+                    s1.disabled = true; s2.disabled = true; s3.disabled = true; s4.disabled = true;
+                    btnApprove.style.display = 'none';
+                } else if (sample.status === 'summarized') {
+                    // Part 1: Analyst
+                    s1.value = sample.sel_analyst_1 || "anchasa";
+                    s2.value = sample.sel_analyst_2 || "surachai";
+                    s3.value = "";
+                    s4.value = "";
+                    s1.disabled = false; s2.disabled = false;
+                    s3.disabled = true; s4.disabled = true;
+                    btnApprove.innerHTML = '<i class="fa-solid fa-pen-nib"></i> บันทึกลายมือชื่อผู้ตรวจ';
+                    btnApprove.style.display = 'inline-block';
+                } else if (sample.status === 'analyst_signed') {
+                    // Part 2: Approver
+                    s1.value = sample.sel_analyst_1 || "anchasa";
+                    s2.value = sample.sel_analyst_2 || "surachai";
+                    s3.value = sample.sel_approver_1 || "thitiporn";
+                    s4.value = sample.sel_approver_2 || "mallika";
+                    s1.disabled = true; s2.disabled = true;
+                    s3.disabled = false;
+                    s4.disabled = true; // Auto mallika
+                    btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์';
+                    btnApprove.style.display = 'inline-block';
+                }
             } else {
+
                 document.getElementById('cert-standard-inputs').style.display = 'block';
                 if(document.getElementById('cert-mu10-signatures')) document.getElementById('cert-mu10-signatures').style.display = 'none';
                 document.getElementById('approve-officer-name').value = this.currentUser.fullname;
@@ -2192,19 +2231,36 @@ const app = {
         if (sampleIndex === -1) return;
         const sample = this.samples[sampleIndex];
 
+        
         if (sample.form_type === 'MU.10-001') {
-            sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
-            sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
-            sample.sel_approver_1 = document.getElementById('sel-approver-1').value;
-            sample.sel_approver_2 = document.getElementById('sel-approver-2').value;
-            sample.approver_name = "MU.10-001 System"; // placeholder
+            if (sample.status === 'summarized') {
+                sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
+                sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
+                sample.status = 'analyst_signed';
+                this.saveSamples();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'บันทึกลายมือชื่อผู้ตรวจสำเร็จ',
+                    text: 'ส่งต่อไปยังผู้รับรองแล้ว',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                this.closeCertifyModal();
+                this.renderCertifyTable();
+                return;
+            } else if (sample.status === 'analyst_signed') {
+                sample.sel_approver_1 = document.getElementById('sel-approver-1').value;
+                sample.sel_approver_2 = document.getElementById('sel-approver-2').value;
+                sample.approver_name = "MU.10-001 System"; // placeholder
+                sample.status = 'approved';
+            }
         } else {
             const approverName = document.getElementById('approve-officer-name').value;
             if(!approverName) return;
             sample.approver_name = approverName;
+            sample.status = 'approved';
         }
 
-        this.samples[sampleIndex].status = 'approved';
         this.saveSamples();
             
             Swal.fire({
