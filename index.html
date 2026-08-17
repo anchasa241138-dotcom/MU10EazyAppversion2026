@@ -897,12 +897,40 @@
                             <input type="text" id="approve-officer-name" required placeholder="ชื่อ-นามสกุล">
                         </div>
                         <div class="form-group" id="cert-mu10-signatures" style="display:none; grid-column: 1 / -1;">
-                            <label style="font-weight: bold; margin-bottom: 10px; display: block;">เลือกลายมือชื่ออิเล็กทรอนิกส์ที่จะประทับบนรายงาน</label>
-                            <div class="checkbox-group" style="display: flex; gap: 20px; flex-wrap: wrap;">
-                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-anchasa"> อัญชสา ทองสีงามตา</label>
-                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-surachai"> สุรชัย รินทอง</label>
-                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-thitiporn"> ฐิติพร อินศร</label>
-                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-mallika"> มัลลิกา สุพล</label>
+                            <label style="font-weight: bold; margin-bottom: 10px; display: block;">เลือกลายมือชื่อและรายชื่อผู้ลงนาม (เฉพาะ MU.10-001)</label>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>ผู้ตรวจวิเคราะห์คนที่ 1</label>
+                                    <select id="sel-analyst-1" class="form-control">
+                                        <option value="">-- ไม่ระบุ --</option>
+                                        <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
+                                        <option value="surachai">นายสุรชัย รินทอง</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>ผู้ตรวจวิเคราะห์คนที่ 2</label>
+                                    <select id="sel-analyst-2" class="form-control">
+                                        <option value="">-- ไม่ระบุ --</option>
+                                        <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
+                                        <option value="surachai">นายสุรชัย รินทอง</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>ผู้รับรองคนที่ 1</label>
+                                    <select id="sel-approver-1" class="form-control">
+                                        <option value="">-- ไม่ระบุ --</option>
+                                        <option value="thitiporn">นางสาวฐิติพร อินศร</option>
+                                        <option value="mallika">นางสาวมัลลิกา สุพล</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>ผู้รับรองคนที่ 2</label>
+                                    <select id="sel-approver-2" class="form-control">
+                                        <option value="">-- ไม่ระบุ --</option>
+                                        <option value="thitiporn">นางสาวฐิติพร อินศร</option>
+                                        <option value="mallika">นางสาวมัลลิกา สุพล</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -918,6 +946,7 @@
                         <i class="fa-solid fa-circle-check"></i> รายงานฉบับนี้ได้รับอนุมัติผลวิเคราะห์อิเล็กทรอนิกส์เรียบร้อยแล้ว
                     </div>
                     <div class="form-actions">
+                        <button type="button" class="btn btn-warning" onclick="app.enableEditApproval()"><i class="fa-solid fa-pen-to-square"></i> แก้ไขการอนุมัติ</button>
                         <button type="button" class="btn btn-primary" id="btnDownloadCertPDF"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลดรายงานผลวิเคราะห์ (PDF)</button>
                         <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()">ปิดหน้าต่าง</button>
                     </div>
