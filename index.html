@@ -714,6 +714,30 @@
         </div>
     </div>
 
+    <!-- Sample Detail Preview Modal -->
+    <div class="modal-overlay" id="sampleDetailPreviewModal">
+        <div class="modal-card" style="max-width: 720px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1e3a5f, #2563eb); color: #fff;">
+                <h4 style="color:#fff;"><i class="fa-solid fa-microscope"></i> รายละเอียดตัวอย่างที่ส่งตรวจ</h4>
+                <button class="close-modal-btn" onclick="app.closeSampleDetailPreview()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px; max-height: 65vh; overflow-y: auto;">
+                <div id="sampleDetailPreviewContent"></div>
+                <div class="form-actions margin-top" style="display:flex; gap:10px; justify-content:center; padding-top:16px; border-top: 1px solid #e5e7eb;">
+                    <button type="button" class="btn btn-success" id="previewAcceptBtn" onclick="app.proceedToAcceptFromPreview()" style="min-width:160px;">
+                        <i class="fa-solid fa-check"></i> รับตัวอย่างเข้าระบบ
+                    </button>
+                    <button type="button" class="btn btn-danger" id="previewRejectBtn" onclick="app.proceedToRejectFromPreview()" style="min-width:140px;">
+                        <i class="fa-solid fa-xmark"></i> ปฏิเสธตัวอย่าง
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="app.closeSampleDetailPreview()">
+                        ปิด
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Verify Accept Modal -->
     <div class="modal-overlay" id="verifyAcceptModal">
         <div class="modal-card">
@@ -791,28 +815,19 @@
     <!-- Analysis Input Result Modal -->
     <div class="modal-overlay" id="analysisInputModal">
         <div class="modal-card modal-large">
-            <div class="modal-header">
-                <h4>บันทึกผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
-                <button class="close-modal-btn" onclick="app.closeAnalysisInputModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header" style="background: linear-gradient(135deg, #0f766e, #14b8a6); color: #fff;">
+                <h4 style="color:#fff;"><i class="fa-solid fa-flask-vial"></i> บันทึกผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
+                <button class="close-modal-btn" onclick="app.closeAnalysisInputModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: 72vh; overflow-y: auto;">
                 <form id="analysisResultForm">
                     <input type="hidden" id="analysis-sample-ref-id">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>รหัสตัวอย่างแลป (Lab ID):</label>
-                            <input type="text" id="analysis-lab-id-display" readonly class="readonly-input">
-                        </div>
-                        <div class="form-group">
-                            <label>ชื่อตัวอย่าง:</label>
-                            <input type="text" id="analysis-sample-name-display" readonly class="readonly-input">
-                        </div>
-                    </div>
 
-                    <div class="form-section-divider">รายละเอียดการวิเคราะห์</div>
+                    <!-- Section 1: ข้อมูลผู้ตรวจวิเคราะห์ -->
+                    <div class="form-section-divider"><i class="fa-solid fa-user-doctor"></i> ข้อมูลผู้ตรวจวิเคราะห์</div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="analysis-analyst">ชื่อผู้ตรวจวิเคราะห์ <span class="required">*</span></label>
+                            <label for="analysis-analyst">ผู้ตรวจวิเคราะห์ <span class="required">*</span></label>
                             <input type="text" id="analysis-analyst" required placeholder="ชื่อ-นามสกุล นักวิทยาศาสตร์การแพทย์">
                         </div>
                         <div class="form-group">
@@ -821,29 +836,34 @@
                         </div>
                     </div>
 
-                    <!-- Test Results Section (will show customized inputs based on form type) -->
-                    <div class="form-section-divider">บันทึกผลทางวิทยาศาสตร์</div>
-                    <div class="form-group">
-                        <label for="analysis-detail-results">รายละเอียดและค่าวิเคราะห์ที่ตรวจพบ <span class="required">*</span></label>
-                        <textarea id="analysis-detail-results" rows="3" required placeholder="ตัวอย่างเช่น: ตรวจพบสารฟอร์มาลิน 1.2 ppm หรือ ตรวจไม่พบเชื้อโคลิฟอร์ม"></textarea>
+                    <!-- Section 2: ข้อมูลตัวอย่าง -->
+                    <div class="form-section-divider"><i class="fa-solid fa-vial"></i> ข้อมูลตัวอย่าง</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>ชื่อตัวอย่าง:</label>
+                            <input type="text" id="analysis-sample-name-display" readonly class="readonly-input">
+                        </div>
+                        <div class="form-group">
+                            <label>รหัสตัวอย่าง (Lab ID):</label>
+                            <input type="text" id="analysis-lab-id-display" readonly class="readonly-input">
+                        </div>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="analysis-summary-outcome">สรุปผลการวิเคราะห์ <span class="required">*</span></label>
-                            <select id="analysis-summary-outcome" required>
-                                <option value="">-- เลือกสรุปผล --</option>
-                                <option value="ผ่านเกณฑ์มาตรฐาน">ผ่านเกณฑ์มาตรฐาน</option>
-                                <option value="ไม่ผ่านเกณฑ์มาตรฐาน">ไม่ผ่านเกณฑ์มาตรฐาน / ปนเปื้อน</option>
-                            </select>
+                            <label>ประเภทแบบฟอร์ม:</label>
+                            <input type="text" id="analysis-form-type-display" readonly class="readonly-input">
                         </div>
                         <div class="form-group">
-                            <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
-                            <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
+                            <label>แหล่งที่มา:</label>
+                            <input type="text" id="analysis-source-display" readonly class="readonly-input">
                         </div>
                     </div>
 
+                    <!-- Section 3: ผลการตรวจวิเคราะห์ (Dynamic based on form type) -->
+                    <div id="analysis-dynamic-section"></div>
+
                     <div class="form-actions margin-top">
-                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> บันทึกผลวิเคราะห์เบื้องต้น</button>
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> บันทึกผลวิเคราะห์</button>
                         <button type="button" class="btn btn-secondary" onclick="app.closeAnalysisInputModal()">ยกเลิก</button>
                     </div>
                 </form>
@@ -862,89 +882,29 @@
                 <!-- E-Certificate Template Container (Ready to print to PDF) -->
                 <div class="certificate-pdf-wrapper" id="certificatePDFContainer">
                     <div class="cert-pdf-border">
-                        <!-- Cert Header -->
-                        <div class="cert-pdf-header">
-                            <div class="cert-pdf-logo" style="text-align: center; margin-bottom: 10px;">
-                                <i class="fa-solid fa-flask-vial" style="font-size: 40px; color: #1e3a8a;"></i>
-                            </div>
-                            <h3>ใบรายงานผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h3>
-                            <h5>ศูนย์วิทยาศาสตร์การแพทย์ เขตสุขภาพที่ 10</h5>
-                        </div>
-
-                        <div class="cert-pdf-meta">
-                            <p><strong>เลขที่รายงาน:</strong> <span id="cert-pdf-no">SSK-2026-0001</span></p>
-                            <p><strong>วันที่รายงาน:</strong> <span id="cert-pdf-date">22 มิถุนายน 2569</span></p>
-                        </div>
-
-                        <!-- Cert Content -->
-                        <div class="cert-pdf-body">
-                            <p>ใบรายงานฉบับนี้ ขอรับรองว่า ตัวอย่างด้านล่างได้รับการตรวจวิเคราะห์โดยหน่วยงานทางห้องปฏิบัติการ:</p>
-                            
-                            <table class="cert-pdf-table">
-                                <tr>
-                                    <td width="30%"><strong>ประเภทตัวอย่าง:</strong></td>
-                                    <td><span id="cert-pdf-form-type">แบบบันทึกการเก็บตัวอย่างสารปนเปื้อน (MU.10-002)</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>ชื่อตัวอย่าง:</strong></td>
-                                    <td><span id="cert-pdf-sample-name">ลูกชิ้นหมูสด</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>จำนวนตัวอย่าง:</strong></td>
-                                    <td><span id="cert-pdf-sample-qty">1 ชิ้น</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>สถานที่เก็บตัวอย่าง:</strong></td>
-                                    <td><span id="cert-pdf-location">ร้านป้าแดง ตลาดสด อ.เมือง จ.ศรีสะเกษ</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>ผู้ส่งตรวจ / หน่วยงาน:</strong></td>
-                                    <td><span id="cert-pdf-collector">นายสมคิด สุขใจ (สสจ.ศรีสะเกษ)</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>วันที่ส่งตรวจ:</strong></td>
-                                    <td><span id="cert-pdf-date-recv">22 มิถุนายน 2569</span></td>
-                                </tr>
-                            </table>
-
-                            <h5 style="margin-top: 20px; font-weight: 600; border-bottom: 2px solid #b45309; padding-bottom: 5px; color: #1e3a8a;">ผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h5>
-                            <table class="cert-pdf-table">
-                                <tr>
-                                    <td width="30%"><strong>ผู้ตรวจวิเคราะห์:</strong></td>
-                                    <td><span id="cert-pdf-analyst">นสพ.วิทยา รักดี (นักวิทยาศาสตร์การแพทย์)</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>รายละเอียดผลตรวจ:</strong></td>
-                                    <td><span id="cert-pdf-results-details">ตรวจพบสารบอแรกซ์ในปริมาณ 0.5 ppm</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>สรุปผลการวิเคราะห์:</strong></td>
-                                    <td>
-                                        <span class="cert-pdf-outcome" id="cert-pdf-summary">ไม่ผ่านเกณฑ์มาตรฐาน / ปนเปื้อน</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-
-                        <!-- Cert Signature -->
-                        <div class="cert-pdf-footer">
-                            <div class="cert-signature-area">
-                                <div class="signature-line" id="cert-pdf-signature-image">
-                                    <!-- Dynamic electronic signature stamp -->
-                                    <span class="placeholder-signature">(ลงนามรับรองอิเล็กทรอนิกส์)</span>
-                                </div>
-                                <p><strong id="cert-pdf-approver-name">ดร. สมภพ รักชาติ</strong></p>
-                                <p>หัวหน้าศูนย์วิทยาศาสตร์การแพทย์</p>
-                            </div>
+                        <!-- Header is provided by background image (cert_background.png) -->
+                        <div id="cert-dynamic-content">
+                            <!-- Certificate content will be injected here by JavaScript based on form type -->
                         </div>
                     </div>
                 </div>
 
                 <!-- Approval Panel (Visible to Officer only) -->
                 <div class="cert-approval-controls margin-top" id="certApprovalControls">
-                    <div class="form-group">
-                        <label for="approve-officer-name">ชื่อผู้อนุมัติรายงาน (ผู้รับรองผล) <span class="required">*</span></label>
-                        <input type="text" id="approve-officer-name" required placeholder="ระบุชื่อจริง นามสกุลจริง หัวหน้าห้องแลป">
+                    <div class="form-grid">
+                        <div class="form-group" id="cert-standard-inputs">
+                            <label for="approve-officer-name">ชื่อผู้รับรอง <span class="required">*</span></label>
+                            <input type="text" id="approve-officer-name" required placeholder="ชื่อ-นามสกุล">
+                        </div>
+                        <div class="form-group" id="cert-mu10-signatures" style="display:none; grid-column: 1 / -1;">
+                            <label style="font-weight: bold; margin-bottom: 10px; display: block;">เลือกลายมือชื่ออิเล็กทรอนิกส์ที่จะประทับบนรายงาน</label>
+                            <div class="checkbox-group" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-anchasa"> อัญชสา ทองสีงามตา</label>
+                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-surachai"> สุรชัย รินทอง</label>
+                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-thitiporn"> ฐิติพร อินศร</label>
+                                <label style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="chk-sig-mallika"> มัลลิกา สุพล</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-success" id="btnApproveAndSign"><i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์</button>
