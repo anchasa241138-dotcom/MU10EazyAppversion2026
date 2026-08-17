@@ -1769,7 +1769,7 @@ const app = {
         }
     },
 
-    openCertifyModal(refId, viewOnly = false) {
+    openCertifyModal(refId, viewOnly = false, forceEdit = false) {
         const sample = this.samples.find(s => s.ref_id === refId);
         if(!sample) return;
         
@@ -1788,6 +1788,60 @@ const app = {
                 return `<img src="${fileName}" class="official-signature-img" onerror="this.style.display='none'">`;
             }
             return `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
+        };
+
+        const PERSON_DATA = {
+            'anchasa': {
+                name: 'นางสาวอัญชสา ทองสีงามตา',
+                title1: 'นักวิชาการสาธารณสุข',
+                title2: '',
+                sig: 'sig_anchasa.png'
+            },
+            'surachai': {
+                name: 'นายสุรชัย รินทอง',
+                title1: 'นักวิชาการสาธารณสุข',
+                title2: '',
+                sig: 'sig_surachai.png'
+            },
+            'thitiporn': {
+                name: 'นางสาวฐิติพร อินศร',
+                title1: 'เภสัชกรชำนาญการพิเศษ',
+                title2: 'หัวหน้าห้องปฏิบัติการ',
+                sig: 'sig_thitiporn.png'
+            },
+            'mallika': {
+                name: 'นางสาวมัลลิกา สุพล',
+                title1: 'เภสัชกรชำนาญการพิเศษ',
+                title2: 'หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข',
+                sig: 'sig_mallika.png'
+            }
+        };
+
+        const renderSignatureSlot = (personKey, defaultRole) => {
+            if (!personKey || !PERSON_DATA[personKey]) {
+                return `
+                    <div class="cert-signature-area" style="margin-top: 5px;">
+                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">
+                            <span class="placeholder-signature">(รอลงนามรับรอง)</span>
+                        </div>
+                        <p style="margin-bottom: 2px;">(.......................................)</p>
+                        <p>${defaultRole}</p>
+                    </div>
+                `;
+            }
+            const p = PERSON_DATA[personKey];
+            const sigHtml = (viewOnly || sample.status === 'approved') ? 
+                `<img src="${p.sig}" class="official-signature-img" onerror="this.style.display='none'">` : 
+                `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
+            
+            return `
+                <div class="cert-signature-area" style="margin-top: 5px;">
+                    <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${sigHtml}</div>
+                    <p style="margin-bottom: 2px;">(${p.name})</p>
+                    <p style="margin-bottom: 2px;">${p.title1}</p>
+                    ${p.title2 ? `<p>${p.title2}</p>` : ''}
+                </div>
+            `;
         };
 
         if (sample.form_type === 'MU.10-001') {
@@ -1884,28 +1938,10 @@ const app = {
                 </div>
                 
                 <div class="cert-signatures-grid" style="font-size: 11.5px; color: #334155; margin-top: 10px; gap: 15px 40px;">
-                    <div class="cert-signature-area">
-                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_anchasa.png', sample.sig_anchasa)}</div>
-                        <p style="margin-bottom: 2px;">(นางสาวอัญชสา ทองสีงามตา)</p>
-                        <p>นักวิชาการสาธารณสุข</p>
-                    </div>
-                    <div class="cert-signature-area">
-                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_surachai.png', sample.sig_surachai)}</div>
-                        <p style="margin-bottom: 2px;">(นายสุรชัย รินทอง)</p>
-                        <p>นักวิชาการสาธารณสุข</p>
-                    </div>
-                    <div class="cert-signature-area" style="margin-top: 5px;">
-                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_thitiporn.png', sample.sig_thitiporn)}</div>
-                        <p style="margin-bottom: 2px;">(นางสาวฐิติพร อินศร)</p>
-                        <p style="margin-bottom: 2px;">เภสัชกรชำนาญการพิเศษ</p>
-                        <p>หัวหน้าห้องปฏิบัติการ</p>
-                    </div>
-                    <div class="cert-signature-area" style="margin-top: 5px;">
-                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_mallika.png', sample.sig_mallika)}</div>
-                        <p style="margin-bottom: 2px;">(นางสาวมัลลิกา สุพล)</p>
-                        <p style="margin-bottom: 2px;">เภสัชกรชำนาญการพิเศษ</p>
-                        <p>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</p>
-                    </div>
+                    ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์')}
+                    ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์')}
+                    ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง')}
+                    ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง')}
                 </div>
             `;
         } else {
@@ -1945,31 +1981,47 @@ const app = {
         }
 
         // Setup Controls
-        if(viewOnly || sample.status === 'approved') {
+        if(viewOnly || (sample.status === 'approved' && !forceEdit)) {
             document.getElementById('certApprovalControls').classList.add('hidden');
             document.getElementById('certExportControls').classList.remove('hidden');
         } else {
             document.getElementById('certApprovalControls').classList.remove('hidden');
             document.getElementById('certExportControls').classList.add('hidden');
             
+            const btnApprove = document.getElementById('btnApproveAndSign');
+            if (forceEdit) {
+                btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
+            } else {
+                btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์';
+            }
+            
             if (sample.form_type === 'MU.10-001') {
                 document.getElementById('cert-standard-inputs').style.display = 'none';
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
-                document.getElementById('chk-sig-anchasa').checked = true;
-                document.getElementById('chk-sig-surachai').checked = true;
-                document.getElementById('chk-sig-thitiporn').checked = true;
-                document.getElementById('chk-sig-mallika').checked = true;
+                document.getElementById('sel-analyst-1').value = sample.sel_analyst_1 || "anchasa";
+                document.getElementById('sel-analyst-2').value = sample.sel_analyst_2 || "surachai";
+                document.getElementById('sel-approver-1').value = sample.sel_approver_1 || "thitiporn";
+                document.getElementById('sel-approver-2').value = sample.sel_approver_2 || "mallika";
             } else {
                 document.getElementById('cert-standard-inputs').style.display = 'block';
                 if(document.getElementById('cert-mu10-signatures')) document.getElementById('cert-mu10-signatures').style.display = 'none';
                 document.getElementById('approve-officer-name').value = this.currentUser.fullname;
             }
-            
             // Attach refId to approve button
-            document.getElementById('btnApproveAndSign').dataset.refId = refId;
+            btnApprove.dataset.refId = refId;
         }
 
+        // Ensure refId is always available for edit operations
+        document.getElementById('btnApproveAndSign').dataset.refId = refId;
+
         document.getElementById('certifyModal').classList.add('active');
+    },
+
+    enableEditApproval() {
+        const refId = document.getElementById('btnApproveAndSign').dataset.refId;
+        if(refId) {
+            this.openCertifyModal(refId, false, true);
+        }
     },
 
     closeCertifyModal() {
@@ -1983,10 +2035,10 @@ const app = {
         const sample = this.samples[sampleIndex];
 
         if (sample.form_type === 'MU.10-001') {
-            sample.sig_anchasa = document.getElementById('chk-sig-anchasa').checked;
-            sample.sig_surachai = document.getElementById('chk-sig-surachai').checked;
-            sample.sig_thitiporn = document.getElementById('chk-sig-thitiporn').checked;
-            sample.sig_mallika = document.getElementById('chk-sig-mallika').checked;
+            sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
+            sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
+            sample.sel_approver_1 = document.getElementById('sel-approver-1').value;
+            sample.sel_approver_2 = document.getElementById('sel-approver-2').value;
             sample.approver_name = "MU.10-001 System"; // placeholder
         } else {
             const approverName = document.getElementById('approve-officer-name').value;
