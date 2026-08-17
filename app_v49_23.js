@@ -1653,97 +1653,126 @@ const app = {
         document.getElementById('analysisInputModal').classList.add('active');
     },
 
+    
+    handleInterpretationChange(idx) {
+        const interpretationMap = {
+            'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' },
+            'สีควบคุม>สีตัวอย่าง<สีตัดสิน':       { result: 'พบปลอดภัย',  summary: 'ผ่านเกณฑ์มาตรฐาน' },
+            'สีตัวอย่าง ≥ สีตัดสิน':              { result: 'พบอันตราย',  summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
+            'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
+            'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' }
+        };
+        const el = document.getElementById('analysis-interpretation-' + idx);
+        const resultInput = document.getElementById('analysis-detail-results-' + idx);
+        const summaryInput = document.getElementById('analysis-summary-outcome-' + idx);
+        if(!el || !resultInput || !summaryInput) return;
+        
+        const mapped = interpretationMap[el.value];
+        if (mapped) {
+            resultInput.value = mapped.result;
+            summaryInput.value = mapped.summary;
+            if (mapped.summary === 'ผ่านเกณฑ์มาตรฐาน') {
+                resultInput.style.color = '#16a34a';
+                resultInput.style.background = '#f0fdf4';
+                summaryInput.style.color = '#16a34a';
+                summaryInput.style.background = '#f0fdf4';
+            } else {
+                resultInput.style.color = '#dc2626';
+                resultInput.style.background = '#fef2f2';
+                summaryInput.style.color = '#dc2626';
+                summaryInput.style.background = '#fef2f2';
+            }
+        } else {
+            resultInput.value = '';
+            summaryInput.value = '';
+            resultInput.style.color = '';
+            resultInput.style.background = '';
+            summaryInput.style.color = '';
+            summaryInput.style.background = '';
+        }
+    },
+    
     renderAnalysisDynamicSection(sample) {
         const container = document.getElementById('analysis-dynamic-section');
         
         if (sample.form_type === 'MU.10-001') {
-            container.innerHTML = `
-                <div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (${sample.form_type})</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="analysis-substance">สารที่ตรวจวิเคราะห์ <span class="required">*</span></label>
-                        <select id="analysis-substance" required>
-                            <option value="">-- เลือกสารที่ตรวจ --</option>
-                            <option value="GT">GT</option>
-                            <option value="TM/2">TM/2</option>
-                        </select>
+            const sampleNames = [];
+            let idx = 1;
+            while (sample['sample_name_' + idx] !== undefined) {
+                if (sample['sample_name_' + idx]) sampleNames.push({ name: sample['sample_name_' + idx], idx: idx });
+                idx++;
+            }
+            if (sampleNames.length === 0) {
+                sampleNames.push({ name: sample.sample_name || 'ตัวอย่างที่ 1', idx: 1 });
+            }
+
+            let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
+
+            sampleNames.forEach(item => {
+                html += `
+                    <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
+                        <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ตัวอย่าง: ${item.name}</h5>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>สารที่ตรวจวิเคราะห์ <span class="required">*</span></label>
+                                <select id="analysis-substance-${item.idx}" required>
+                                    <option value="">-- เลือกสารที่ตรวจ --</option>
+                                    <option value="GT">GT</option>
+                                    <option value="TM/2">TM/2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>การแปลผล <span class="required">*</span></label>
+                                <select id="analysis-interpretation-${item.idx}" required onchange="app.handleInterpretationChange(${item.idx})">
+                                    <option value="">-- เลือกการแปลผล --</option>
+                                    <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
+                                    <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
+                                    <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
+                                    <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                    <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>ผลการตรวจวิเคราะห์</label>
+                                <input type="text" id="analysis-detail-results-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
+                                <span class="input-helper">เติมอัตโนมัติจากการแปลผล</span>
+                            </div>
+                            <div class="form-group">
+                                <label>สรุปผล</label>
+                                <input type="text" id="analysis-summary-outcome-${item.idx}" readonly class="readonly-input" style="font-weight:700; font-size:14px;">
+                                <span class="input-helper">คำนวณอัตโนมัติจากการแปลผล</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="analysis-interpretation">การแปลผล <span class="required">*</span></label>
-                        <select id="analysis-interpretation" required>
-                            <option value="">-- เลือกการแปลผล --</option>
-                            <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
-                            <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
-                            <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
-                            <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
-                            <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="analysis-detail-results">ผลการตรวจวิเคราะห์</label>
-                        <input type="text" id="analysis-detail-results" readonly class="readonly-input" style="font-weight:600;">
-                        <span class="input-helper">เติมอัตโนมัติจากการแปลผล</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="analysis-summary-outcome">สรุปผล</label>
-                        <input type="text" id="analysis-summary-outcome" readonly class="readonly-input" style="font-weight:700; font-size:14px;">
-                        <span class="input-helper">คำนวณอัตโนมัติจากการแปลผล</span>
-                    </div>
-                </div>
+                `;
+            });
+
+            html += `
                 <div class="form-group">
                     <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
                     <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
                 </div>
             `;
-            
-            // Mapping: การแปลผล → ผลการตรวจวิเคราะห์ + สรุปผล
-            const interpretationMap = {
-                'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' },
-                'สีควบคุม>สีตัวอย่าง<สีตัดสิน':       { result: 'พบปลอดภัย',  summary: 'ผ่านเกณฑ์มาตรฐาน' },
-                'สีตัวอย่าง ≥ สีตัดสิน':              { result: 'พบอันตราย',  summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-                'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-                'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' }
-            };
-            
-            const interpSelect = document.getElementById('analysis-interpretation');
-            const resultInput = document.getElementById('analysis-detail-results');
-            const summaryInput = document.getElementById('analysis-summary-outcome');
-            
-            interpSelect.addEventListener('change', function() {
-                const mapped = interpretationMap[this.value];
-                if (mapped) {
-                    resultInput.value = mapped.result;
-                    summaryInput.value = mapped.summary;
-                    // Style based on pass/fail
-                    if (mapped.summary === 'ผ่านเกณฑ์มาตรฐาน') {
-                        resultInput.style.color = '#16a34a';
-                        resultInput.style.background = '#f0fdf4';
-                        summaryInput.style.color = '#16a34a';
-                        summaryInput.style.background = '#f0fdf4';
-                    } else {
-                        resultInput.style.color = '#dc2626';
-                        resultInput.style.background = '#fef2f2';
-                        summaryInput.style.color = '#dc2626';
-                        summaryInput.style.background = '#fef2f2';
+            container.innerHTML = html;
+
+            // Pre-fill saved values
+            sampleNames.forEach(item => {
+                const sub = sample['analysis_substance_' + item.idx] || sample.analysis_substance;
+                if (sub) document.getElementById('analysis-substance-' + item.idx).value = sub;
+                
+                const interp = sample['analysis_interpretation_' + item.idx] || sample.analysis_interpretation;
+                if (interp) {
+                    const el = document.getElementById('analysis-interpretation-' + item.idx);
+                    if (el) {
+                        el.value = interp;
+                        // Trigger manual change
+                        app.handleInterpretationChange(item.idx);
                     }
-                } else {
-                    resultInput.value = '';
-                    summaryInput.value = '';
-                    resultInput.style.color = '';
-                    resultInput.style.background = '';
-                    summaryInput.style.color = '';
-                    summaryInput.style.background = '';
                 }
             });
-            
-            // Pre-fill saved values
-            if (sample.analysis_substance) document.getElementById('analysis-substance').value = sample.analysis_substance;
-            if (sample.analysis_interpretation) {
-                document.getElementById('analysis-interpretation').value = sample.analysis_interpretation;
-                interpSelect.dispatchEvent(new Event('change'));
-            }
+
             if (sample.analysis_comment) document.getElementById('analysis-comment').value = sample.analysis_comment;
             
         } else {
@@ -1794,17 +1823,58 @@ const app = {
         if (sampleIndex > -1) {
             const sample = this.samples[sampleIndex];
             sample.status = 'summarized';
+            
             sample.analysis_analyst = document.getElementById('analysis-analyst').value;
             sample.analysis_date = document.getElementById('analysis-date').value;
-            sample.analysis_interpretation = document.getElementById('analysis-interpretation').value;
-            sample.analysis_details = document.getElementById('analysis-detail-results').value;
-            sample.analysis_summary = document.getElementById('analysis-summary-outcome').value;
+            
+            const interpEl = document.getElementById('analysis-interpretation');
+            if(interpEl) sample.analysis_interpretation = interpEl.value;
+            
+            const detailEl = document.getElementById('analysis-detail-results');
+            if(detailEl) sample.analysis_details = detailEl.value;
+            
+            const summaryEl = document.getElementById('analysis-summary-outcome');
+            if(summaryEl) sample.analysis_summary = summaryEl.value;
+            
             sample.analysis_comment = document.getElementById('analysis-comment') ? document.getElementById('analysis-comment').value : '';
+
+            
             
             // Save MU.10-001 specific fields
             if (sample.form_type === 'MU.10-001') {
-                const substanceEl = document.getElementById('analysis-substance');
-                if (substanceEl) sample.analysis_substance = substanceEl.value;
+                let passCount = 0;
+                let totalCount = 0;
+                let idx = 1;
+                while (sample['sample_name_' + idx] !== undefined) {
+                    if (sample['sample_name_' + idx]) {
+                        totalCount++;
+                        sample['analysis_substance_' + idx] = document.getElementById('analysis-substance-' + idx)?.value || '';
+                        sample['analysis_interpretation_' + idx] = document.getElementById('analysis-interpretation-' + idx)?.value || '';
+                        sample['analysis_details_' + idx] = document.getElementById('analysis-detail-results-' + idx)?.value || '';
+                        const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
+                        sample['analysis_summary_' + idx] = summary;
+                        if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
+                    }
+                    idx++;
+                }
+                if (totalCount === 0) {
+                    totalCount = 1;
+                    sample['analysis_substance_1'] = document.getElementById('analysis-substance-1')?.value || '';
+                    sample['analysis_interpretation_1'] = document.getElementById('analysis-interpretation-1')?.value || '';
+                    sample['analysis_details_1'] = document.getElementById('analysis-detail-results-1')?.value || '';
+                    const summary = document.getElementById('analysis-summary-outcome-1')?.value || '';
+                    sample['analysis_summary_1'] = summary;
+                    if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
+                }
+                
+                // Set overall summary string for table views
+                if (passCount === totalCount && totalCount > 0) {
+                    sample.analysis_summary = 'ผ่านเกณฑ์มาตรฐาน';
+                } else if (passCount === 0) {
+                    sample.analysis_summary = 'ไม่ผ่านเกณฑ์มาตรฐาน';
+                } else {
+                    sample.analysis_summary = `ผ่าน ${passCount} / ไม่ผ่าน ${totalCount - passCount}`;
+                }
             }
             
             this.saveSamples();
@@ -1938,8 +2008,9 @@ const app = {
             while (sample[`sample_name_${idx}`] !== undefined) {
                 if (sample[`sample_name_${idx}`]) {
                     totalCount++;
-                    const isPass = sample.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน';
+                    const isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
                     if (isPass) passCount++;
+                    const details = sample['analysis_details_' + idx] || sample.analysis_details || '-';
                     
                     rowsHtml += `
                         <tr>
@@ -1948,7 +2019,7 @@ const app = {
                             <td style="text-align:center;">${sample.lab_no ? String(parseInt(sample.lab_no, 10) + totalCount - 1).padStart(4, '0') : `${sample.lab_id}-${totalCount}`}</td>
                             <td style="text-align:center;">${sample[`sample_name_${idx}`]}</td>
                             <td style="text-align:center;">${sample[`source_${idx}`] || sample.location_name}</td>
-                            <td style="text-align:center;">${sample.analysis_details || '-'}</td>
+                            <td style="text-align:center;">${details}</td>
                             <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
@@ -1958,8 +2029,9 @@ const app = {
             
             if (totalCount === 0) {
                 totalCount = 1;
-                const isPass = sample.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน';
+                const isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
                 if (isPass) passCount++;
+                const details = sample['analysis_details_1'] || sample.analysis_details || '-';
                 rowsHtml += `
                     <tr>
                         <td style="text-align:center;">1</td>
@@ -1967,7 +2039,7 @@ const app = {
                         <td style="text-align:center;">${sample.lab_no || sample.lab_id}</td>
                         <td style="text-align:center;">${sample.sample_name || '-'}</td>
                         <td style="text-align:center;">${sample.source || sample.location_name}</td>
-                        <td style="text-align:center;">${sample.analysis_details || '-'}</td>
+                        <td style="text-align:center;">${details}</td>
                         <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                     </tr>
                 `;
@@ -2008,7 +2080,7 @@ const app = {
                             <th width="15%">รหัสตัวอย่าง</th>
                             <th width="15%">ตัวอย่าง</th>
                             <th width="15%">แหล่งที่มา</th>
-                            <th width="15%">${(sample.analysis_substance === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : (sample.analysis_substance === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : sample.analysis_substance)) || 'GT'}</th>
+                            <th width="15%">${(sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT'}</th>
                             <th width="15%">สรุปผล</th>
                         </tr>
                     </thead>
