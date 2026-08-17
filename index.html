@@ -53,6 +53,9 @@
                     <i class="fa-solid fa-stamp"></i> <span>รับรองผลตรวจวิเคราะห์</span>
                     <span class="badge notification-badge hidden" id="certify-notification-badge" style="background-color: #8b5cf6; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: auto; display: inline-block;">0</span>
                 </a>
+                <a href="#" class="menu-item" data-view="download-results">
+                    <i class="fa-solid fa-download"></i> <span>ดาวน์โหลดผลตรวจวิเคราะห์</span>
+                </a>
                 <a href="#" class="menu-item" data-view="e-tracking">
                     <i class="fa-solid fa-route"></i> <span>ตรวจสอบสถานะ (E-Tracking)</span>
                 </a>
@@ -476,6 +479,48 @@
                     </div>
                 </section>
 
+                
+                
+                <!-- VIEW: DOWNLOAD RESULTS -->
+                <section class="content-view" id="view-download-results">
+                    <div id="download-auth-block" class="hidden">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-lock" style="font-size: 48px; color: #cbd5e1; margin-bottom: 20px;"></i>
+                            <h3>กรุณาเข้าสู่ระบบ</h3>
+                            <p>คุณต้องเข้าสู่ระบบก่อนจึงจะสามารถดาวน์โหลดผลตรวจวิเคราะห์ได้</p>
+                            <button class="btn btn-primary" style="margin-top: 20px;" onclick="app.showLoginModal()">เข้าสู่ระบบ</button>
+                        </div>
+                    </div>
+                    <div id="download-content-wrapper">
+                        <div class="table-container">
+                            <div class="table-header-bar">
+                                <h3>รายการผลตรวจวิเคราะห์ที่ผ่านการรับรองแล้ว (พร้อมดาวน์โหลด)</h3>
+                                <div class="table-actions">
+                                    <input type="text" id="searchDownloadTable" class="search-input" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง..." onkeyup="app.renderDownloadTable()">
+                                </div>
+                            </div>
+                            <div class="responsive-table">
+                                <table class="modern-table">
+                                    <thead>
+                                        <tr>
+                                            <th>รหัสตัวอย่าง (Lab ID)</th>
+                                            <th>ประเภทฟอร์ม</th>
+                                            <th>ชื่อตัวอย่าง</th>
+                                            <th>ผลการทดสอบ</th>
+                                            <th>สรุปผลวิเคราะห์</th>
+                                            <th>ผู้รับรอง</th>
+                                            <th>การจัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="downloadTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
                 <!-- VIEW 6: E-TRACKING -->
                 <section class="content-view" id="view-e-tracking">
                     <div class="tracking-search-section">
