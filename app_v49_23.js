@@ -1906,7 +1906,7 @@ const app = {
                 <td><strong>${s.lab_no || s.lab_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
-                <td><small>${s.analysis_details.substring(0, 30)}...</small></td>
+                <td><small>${(s.analysis_details || s.analysis_details_1 || "-").substring(0, 30)}...</small></td>
                 <td><span class="status-badge ${s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved'}">${s.analysis_summary}</span></td>
                 <td>${s.analysis_analyst}</td>
                 <td>${actionBtn}</td>
