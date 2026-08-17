@@ -1290,8 +1290,7 @@ const app = {
                 <td>${new Date(s.created_at).toLocaleDateString('th-TH')}</td>
                 <td><span class="status-badge status-registered">รอตรวจรับ</span></td>
                 <td>
-                    <button class="btn btn-success btn-text" onclick="app.openVerifyAcceptModal('${s.ref_id}')"><i class="fa-solid fa-check"></i> รับ</button>
-                    <button class="btn btn-danger btn-text" onclick="app.openVerifyRejectModal('${s.ref_id}')"><i class="fa-solid fa-xmark"></i> ปฏิเสธ</button>
+                    <button class="btn btn-primary btn-text" onclick="app.openSampleDetailPreview('${s.ref_id}')"><i class="fa-solid fa-eye"></i> ดูรายละเอียด</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -1300,6 +1299,112 @@ const app = {
         if (tbody.innerHTML === '') {
             tbody.innerHTML = '<tr><td colspan="7" class="text-center">ไม่มีรายการที่รอตรวจสอบ</td></tr>';
         }
+    },
+
+    // Sample Detail Preview (before Accept/Reject)
+    openSampleDetailPreview(refId) {
+        const sample = this.samples.find(s => s.ref_id === refId);
+        if (!sample) return;
+        
+        this._previewRefId = refId;
+        
+        // Collect sample items
+        const sampleItems = [];
+        let idx = 1;
+        while (sample[`sample_name_${idx}`] !== undefined) {
+            sampleItems.push({
+                name: sample[`sample_name_${idx}`] || '',
+                distributor: sample[`distributor_${idx}`] || '',
+                weight: sample[`weight_${idx}`] || '',
+                source: sample[`source_${idx}`] || ''
+            });
+            idx++;
+        }
+        
+        const samplingDate = sample.sampling_date 
+            ? new Date(sample.sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' }) 
+            : '-';
+        const createdDate = sample.created_at 
+            ? new Date(sample.created_at).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' }) 
+            : '-';
+        
+        // Build sample items table
+        let sampleItemsHTML = '';
+        if (sampleItems.length > 0 && sampleItems.some(item => item.name)) {
+            sampleItemsHTML = `
+                <div style="margin-top:16px;">
+                    <h5 style="margin:0 0 8px 0; color:#1e3a5f; font-size:14px;"><i class="fa-solid fa-list-check"></i> รายการตัวอย่าง (${sampleItems.filter(i => i.name).length} รายการ)</h5>
+                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <thead>
+                            <tr style="background:#f1f5f9;">
+                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center; width:40px;">#</th>
+                                <th style="padding:8px; border:1px solid #e2e8f0;">ชื่อตัวอย่าง</th>
+                                <th style="padding:8px; border:1px solid #e2e8f0;">ผู้จำหน่าย</th>
+                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center;">น้ำหนัก(กรัม)</th>
+                                <th style="padding:8px; border:1px solid #e2e8f0;">แหล่งที่มา</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sampleItems.filter(i => i.name).map((item, i) => `
+                                <tr>
+                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${i+1}</td>
+                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; font-weight:500;">${item.name}</td>
+                                    <td style="padding:6px 8px; border:1px solid #e2e8f0;">${item.distributor || '-'}</td>
+                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${item.weight || '-'}</td>
+                                    <td style="padding:6px 8px; border:1px solid #e2e8f0;">${item.source || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+        
+        const detailHTML = `
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; font-size:13.5px; color:#333;">
+                <div style="grid-column: span 2; background: linear-gradient(135deg, #eff6ff, #dbeafe); padding:12px 16px; border-radius:8px; border-left: 4px solid #2563eb;">
+                    <div style="font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">รหัสอ้างอิง</div>
+                    <div style="font-size:18px; font-weight:700; color:#1e3a5f; margin-top:2px;">${sample.ref_id}</div>
+                </div>
+                
+                <div><span style="color:#6b7280; font-size:12px;">ประเภทแบบฟอร์ม</span><br><strong>${sample.form_type || '-'}</strong></div>
+                <div><span style="color:#6b7280; font-size:12px;">วันที่ส่งตัวอย่าง</span><br><strong>${createdDate}</strong></div>
+                
+                <div><span style="color:#6b7280; font-size:12px;">หน่วยงานที่เก็บ</span><br><strong>${sample.agency || '-'}</strong></div>
+                <div><span style="color:#6b7280; font-size:12px;">ผู้เก็บตัวอย่าง</span><br><strong>${sample.collector_name || '-'}</strong></div>
+                
+                <div><span style="color:#6b7280; font-size:12px;">ตำแหน่ง</span><br><strong>${sample.collector_position || '-'}</strong></div>
+                <div><span style="color:#6b7280; font-size:12px;">วันที่เก็บตัวอย่าง</span><br><strong>${samplingDate}</strong></div>
+                
+                <div style="grid-column: span 2; border-top:1px solid #e5e7eb; padding-top:10px; margin-top:2px;"></div>
+                
+                <div><span style="color:#6b7280; font-size:12px;">ประเภทสถานที่</span><br><strong>${sample.location_type || '-'}</strong></div>
+                <div><span style="color:#6b7280; font-size:12px;">ชื่อสถานที่เก็บ</span><br><strong>${sample.location_name || '-'}</strong></div>
+                
+                <div><span style="color:#6b7280; font-size:12px;">จังหวัด</span><br><strong>${sample.province || '-'}</strong></div>
+                <div><span style="color:#6b7280; font-size:12px;">อำเภอ / ตำบล</span><br><strong>${sample.amphoe || '-'} / ${sample.tambon || '-'}</strong></div>
+            </div>
+            ${sampleItemsHTML}
+        `;
+        
+        document.getElementById('sampleDetailPreviewContent').innerHTML = detailHTML;
+        document.getElementById('sampleDetailPreviewModal').classList.add('active');
+    },
+
+    closeSampleDetailPreview() {
+        document.getElementById('sampleDetailPreviewModal').classList.remove('active');
+        this._previewRefId = null;
+    },
+
+    proceedToAcceptFromPreview() {
+        const refId = this._previewRefId;
+        this.closeSampleDetailPreview();
+        if (refId) this.openVerifyAcceptModal(refId);
+    },
+
+    proceedToRejectFromPreview() {
+        const refId = this._previewRefId;
+        this.closeSampleDetailPreview();
+        if (refId) this.openVerifyRejectModal(refId);
     },
 
     openVerifyAcceptModal(refId) {
@@ -1423,15 +1528,178 @@ const app = {
         document.getElementById('analysisResultForm').reset();
         document.getElementById('analysis-sample-ref-id').value = sample.ref_id;
         document.getElementById('analysis-lab-id-display').value = sample.lab_id;
-        document.getElementById('analysis-sample-name-display').value = sample.sample_name;
+        document.getElementById('analysis-form-type-display').value = sample.form_type || '-';
         
-        // Pre-fill if exists
+        // Auto-populate ชื่อตัวอย่าง จากข้อมูลแบบฟอร์ม
+        const sampleNames = [];
+        let idx = 1;
+        while (sample[`sample_name_${idx}`] !== undefined) {
+            if (sample[`sample_name_${idx}`]) sampleNames.push(sample[`sample_name_${idx}`]);
+            idx++;
+        }
+        if (sampleNames.length === 0 && sample.sample_name) {
+            sampleNames.push(sample.sample_name);
+        }
+        document.getElementById('analysis-sample-name-display').value = sampleNames.join(', ') || '-';
+        
+        // Auto-populate แหล่งที่มา จากข้อมูลแบบฟอร์ม
+        const sources = [];
+        idx = 1;
+        while (sample[`sample_name_${idx}`] !== undefined) {
+            const src = sample[`source_${idx}`] || '';
+            const dist = sample[`distributor_${idx}`] || '';
+            if (src || dist) {
+                sources.push([dist, src].filter(Boolean).join(' / '));
+            }
+            idx++;
+        }
+        if (sources.length === 0) {
+            const parts = [];
+            if (sample.distributor) parts.push(sample.distributor);
+            if (sample.source) parts.push(sample.source);
+            if (sample.location_name) parts.push(sample.location_name);
+            if (sample.province) parts.push(`จ.${sample.province}`);
+            if (parts.length > 0) sources.push(parts.join(', '));
+        }
+        document.getElementById('analysis-source-display').value = sources.join('; ') || '-';
+        
+        // Pre-fill analyst & date
         document.getElementById('analysis-analyst').value = sample.analysis_analyst || this.currentUser.fullname;
         document.getElementById('analysis-date').value = sample.analysis_date || new Date().toISOString().split('T')[0];
-        if (sample.analysis_details) document.getElementById('analysis-detail-results').value = sample.analysis_details;
-        if (sample.analysis_summary) document.getElementById('analysis-summary-outcome').value = sample.analysis_summary;
+        
+        // Render dynamic section based on form type
+        this.renderAnalysisDynamicSection(sample);
         
         document.getElementById('analysisInputModal').classList.add('active');
+    },
+
+    renderAnalysisDynamicSection(sample) {
+        const container = document.getElementById('analysis-dynamic-section');
+        
+        if (sample.form_type === 'MU.10-001') {
+            container.innerHTML = `
+                <div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (${sample.form_type})</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="analysis-substance">สารที่ตรวจวิเคราะห์ <span class="required">*</span></label>
+                        <select id="analysis-substance" required>
+                            <option value="">-- เลือกสารที่ตรวจ --</option>
+                            <option value="ยาฆ่าแมลง (GT Kit)">ยาฆ่าแมลง (GT Kit)</option>
+                            <option value="ยาฆ่าแมลง (TM/2 Kit)">ยาฆ่าแมลง (TM/2 Kit)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="analysis-interpretation">การแปลผล <span class="required">*</span></label>
+                        <select id="analysis-interpretation" required>
+                            <option value="">-- เลือกการแปลผล --</option>
+                            <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
+                            <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
+                            <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
+                            <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                            <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="analysis-detail-results">ผลการตรวจวิเคราะห์</label>
+                        <input type="text" id="analysis-detail-results" readonly class="readonly-input" style="font-weight:600;">
+                        <span class="input-helper">เติมอัตโนมัติจากการแปลผล</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="analysis-summary-outcome">สรุปผล</label>
+                        <input type="text" id="analysis-summary-outcome" readonly class="readonly-input" style="font-weight:700; font-size:14px;">
+                        <span class="input-helper">คำนวณอัตโนมัติจากการแปลผล</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
+                    <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
+                </div>
+            `;
+            
+            // Mapping: การแปลผล → ผลการตรวจวิเคราะห์ + สรุปผล
+            const interpretationMap = {
+                'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' },
+                'สีควบคุม>สีตัวอย่าง<สีตัดสิน':       { result: 'พบปลอดภัย',  summary: 'ผ่านเกณฑ์มาตรฐาน' },
+                'สีตัวอย่าง ≥ สีตัดสิน':              { result: 'พบอันตราย',  summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
+                'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
+                'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' }
+            };
+            
+            const interpSelect = document.getElementById('analysis-interpretation');
+            const resultInput = document.getElementById('analysis-detail-results');
+            const summaryInput = document.getElementById('analysis-summary-outcome');
+            
+            interpSelect.addEventListener('change', function() {
+                const mapped = interpretationMap[this.value];
+                if (mapped) {
+                    resultInput.value = mapped.result;
+                    summaryInput.value = mapped.summary;
+                    // Style based on pass/fail
+                    if (mapped.summary === 'ผ่านเกณฑ์มาตรฐาน') {
+                        resultInput.style.color = '#16a34a';
+                        resultInput.style.background = '#f0fdf4';
+                        summaryInput.style.color = '#16a34a';
+                        summaryInput.style.background = '#f0fdf4';
+                    } else {
+                        resultInput.style.color = '#dc2626';
+                        resultInput.style.background = '#fef2f2';
+                        summaryInput.style.color = '#dc2626';
+                        summaryInput.style.background = '#fef2f2';
+                    }
+                } else {
+                    resultInput.value = '';
+                    summaryInput.value = '';
+                    resultInput.style.color = '';
+                    resultInput.style.background = '';
+                    summaryInput.style.color = '';
+                    summaryInput.style.background = '';
+                }
+            });
+            
+            // Pre-fill saved values
+            if (sample.analysis_substance) document.getElementById('analysis-substance').value = sample.analysis_substance;
+            if (sample.analysis_interpretation) {
+                document.getElementById('analysis-interpretation').value = sample.analysis_interpretation;
+                interpSelect.dispatchEvent(new Event('change'));
+            }
+            if (sample.analysis_comment) document.getElementById('analysis-comment').value = sample.analysis_comment;
+            
+        } else {
+            // Generic form for other form types
+            container.innerHTML = `
+                <div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์</div>
+                <div class="form-group">
+                    <label for="analysis-interpretation">การแปลผล <span class="required">*</span></label>
+                    <textarea id="analysis-interpretation" rows="2" required placeholder="อธิบายการแปลผลตรวจ เช่น สีที่ปรากฏ, ค่าที่อ่านได้, ขีดบนชุดทดสอบ ฯลฯ"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="analysis-detail-results">ผลการตรวจวิเคราะห์ <span class="required">*</span></label>
+                    <textarea id="analysis-detail-results" rows="3" required placeholder="ตัวอย่างเช่น: ตรวจพบสารฟอร์มาลิน 1.2 ppm หรือ ตรวจไม่พบเชื้อโคลิฟอร์ม"></textarea>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="analysis-summary-outcome">สรุปผล <span class="required">*</span></label>
+                        <select id="analysis-summary-outcome" required>
+                            <option value="">-- เลือกสรุปผล --</option>
+                            <option value="ผ่านเกณฑ์มาตรฐาน">ผ่านเกณฑ์มาตรฐาน</option>
+                            <option value="ไม่ผ่านเกณฑ์มาตรฐาน">ไม่ผ่านเกณฑ์มาตรฐาน / ปนเปื้อน</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
+                        <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
+                    </div>
+                </div>
+            `;
+            
+            // Pre-fill saved values
+            if (sample.analysis_interpretation) document.getElementById('analysis-interpretation').value = sample.analysis_interpretation;
+            if (sample.analysis_details) document.getElementById('analysis-detail-results').value = sample.analysis_details;
+            if (sample.analysis_summary) document.getElementById('analysis-summary-outcome').value = sample.analysis_summary;
+            if (sample.analysis_comment) document.getElementById('analysis-comment').value = sample.analysis_comment;
+        }
     },
 
     closeAnalysisInputModal() {
@@ -1444,12 +1712,20 @@ const app = {
         const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
         
         if (sampleIndex > -1) {
-            this.samples[sampleIndex].status = 'summarized';
-            this.samples[sampleIndex].analysis_analyst = document.getElementById('analysis-analyst').value;
-            this.samples[sampleIndex].analysis_date = document.getElementById('analysis-date').value;
-            this.samples[sampleIndex].analysis_details = document.getElementById('analysis-detail-results').value;
-            this.samples[sampleIndex].analysis_summary = document.getElementById('analysis-summary-outcome').value;
-            this.samples[sampleIndex].analysis_comment = document.getElementById('analysis-comment').value;
+            const sample = this.samples[sampleIndex];
+            sample.status = 'summarized';
+            sample.analysis_analyst = document.getElementById('analysis-analyst').value;
+            sample.analysis_date = document.getElementById('analysis-date').value;
+            sample.analysis_interpretation = document.getElementById('analysis-interpretation').value;
+            sample.analysis_details = document.getElementById('analysis-detail-results').value;
+            sample.analysis_summary = document.getElementById('analysis-summary-outcome').value;
+            sample.analysis_comment = document.getElementById('analysis-comment') ? document.getElementById('analysis-comment').value : '';
+            
+            // Save MU.10-001 specific fields
+            if (sample.form_type === 'MU.10-001') {
+                const substanceEl = document.getElementById('analysis-substance');
+                if (substanceEl) sample.analysis_substance = substanceEl.value;
+            }
             
             this.saveSamples();
             Swal.fire('บันทึกผลสำเร็จ', 'ผลวิเคราะห์ถูกส่งไปยังหน้าอนุมัติรายงานแล้ว', 'success');
@@ -1497,43 +1773,197 @@ const app = {
         const sample = this.samples.find(s => s.ref_id === refId);
         if(!sample) return;
         
-        // Fill Certificate Template
-        document.getElementById('cert-pdf-no').innerText = sample.lab_id;
-        document.getElementById('cert-pdf-date').innerText = new Date().toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
-        document.getElementById('cert-pdf-form-type').innerText = sample.form_type;
-        document.getElementById('cert-pdf-sample-name').innerText = sample.sample_name;
-        document.getElementById('cert-pdf-sample-qty').innerText = sample.sample_qty;
-        document.getElementById('cert-pdf-location').innerText = `${sample.location_name} จ.${sample.province}`;
-        document.getElementById('cert-pdf-collector').innerText = `${sample.collector_name} (${sample.agency})`;
-        document.getElementById('cert-pdf-date-recv').innerText = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH');
+        const container = document.getElementById('cert-dynamic-content');
         
-        document.getElementById('cert-pdf-analyst').innerText = sample.analysis_analyst;
-        document.getElementById('cert-pdf-results-details').innerText = sample.analysis_details;
-        
-        const summaryEl = document.getElementById('cert-pdf-summary');
-        summaryEl.innerText = sample.analysis_summary;
-        if(sample.analysis_summary.includes('ไม่ผ่าน')) {
-            summaryEl.style.color = '#ef4444';
-            summaryEl.style.borderColor = '#ef4444';
+        // Define signature html helper
+        const getSig = (name) => {
+            if(viewOnly || sample.status === 'approved') {
+                return name ? `<img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Signature_of_John_Hancock.svg" class="official-signature-img" style="filter: hue-rotate(200deg) brightness(0.5);">` : '';
+            }
+            return `<span class="placeholder-signature">(ลงนามรับรอง)</span>`;
+        };
+
+        const getSpecificSig = (fileName, isSelected) => {
+            if ((viewOnly || sample.status === 'approved') && isSelected) {
+                return `<img src="${fileName}" class="official-signature-img" onerror="this.style.display='none'">`;
+            }
+            return `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
+        };
+
+        if (sample.form_type === 'MU.10-001') {
+            // --- MU.10-001 Template ---
+            let rowsHtml = '';
+            let totalCount = 0;
+            let passCount = 0;
+            
+            let idx = 1;
+            while (sample[`sample_name_${idx}`] !== undefined) {
+                if (sample[`sample_name_${idx}`]) {
+                    totalCount++;
+                    const isPass = sample.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน';
+                    if (isPass) passCount++;
+                    
+                    rowsHtml += `
+                        <tr>
+                            <td style="text-align:center;">${totalCount}</td>
+                            <td>${sample[`distributor_${idx}`] || '-'}</td>
+                            <td style="text-align:center;">${sample.lab_id}-${totalCount}</td>
+                            <td>${sample[`sample_name_${idx}`]}</td>
+                            <td>${sample[`source_${idx}`] || sample.location_name}</td>
+                            <td style="text-align:center;">${sample.analysis_details || '-'}</td>
+                            <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                        </tr>
+                    `;
+                }
+                idx++;
+            }
+            
+            if (totalCount === 0) {
+                totalCount = 1;
+                const isPass = sample.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน';
+                if (isPass) passCount++;
+                rowsHtml += `
+                    <tr>
+                        <td style="text-align:center;">1</td>
+                        <td>${sample.distributor || '-'}</td>
+                        <td style="text-align:center;">${sample.lab_id}</td>
+                        <td>${sample.sample_name || '-'}</td>
+                        <td>${sample.source || sample.location_name}</td>
+                        <td style="text-align:center;">${sample.analysis_details || '-'}</td>
+                        <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                    </tr>
+                `;
+            }
+            
+            const passPercent = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
+            const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
+            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
+            
+            container.innerHTML = `
+                <div style="position: absolute; top: 140px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                    RD-001
+                </div>
+                <div style="position: absolute; top: 140px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                    หน้าที่ 1/1
+                </div>
+                <div class="cert-pdf-header-mu10" style="margin-bottom: 20px;">
+                    <h4 style="text-align:center; font-weight:bold; margin-bottom: 25px; font-size: 18px; color: #1e3a8a;">ผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)</h4>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 14.5px;">
+                        <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
+                    </div>
+                    <div style="display:flex; margin-bottom:8px; font-size: 14.5px;">
+                        <div style="width:50%;"><strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}</div>
+                        <div style="width:50%;"><strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}</div>
+                    </div>
+                    <div style="margin-bottom:8px; font-size: 14.5px;">
+                        <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
+                    </div>
+                </div>
+                
+                <table class="cert-multi-table">
+                    <thead>
+                        <tr>
+                            <th width="5%">ลำดับ</th>
+                            <th width="20%">ชื่อผู้จำหน่าย</th>
+                            <th width="15%">รหัสตัวอย่าง</th>
+                            <th width="15%">ตัวอย่าง</th>
+                            <th width="15%">แหล่งที่มา</th>
+                            <th width="15%">${sample.analysis_substance || 'GT'}</th>
+                            <th width="15%">สรุปผล</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                </table>
+                
+                <div style="margin-top:20px; font-size:11.5px; margin-bottom: 40px; color: #334155;">
+                    <p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</p>
+                    <p style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</p>
+                    <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</p>
+                </div>
+                
+                <div class="cert-signatures-grid" style="font-size: 11.5px; color: #334155; margin-top: 10px; gap: 15px 40px;">
+                    <div class="cert-signature-area">
+                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_anchasa.png', sample.sig_anchasa)}</div>
+                        <p style="margin-bottom: 2px;">(นางสาวอัญชสา ทองสีงามตา)</p>
+                        <p>นักวิชาการสาธารณสุข</p>
+                    </div>
+                    <div class="cert-signature-area">
+                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_surachai.png', sample.sig_surachai)}</div>
+                        <p style="margin-bottom: 2px;">(นายสุรชัย รินทอง)</p>
+                        <p>นักวิชาการสาธารณสุข</p>
+                    </div>
+                    <div class="cert-signature-area" style="margin-top: 5px;">
+                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_thitiporn.png', sample.sig_thitiporn)}</div>
+                        <p style="margin-bottom: 2px;">(นางสาวฐิติพร อินศร)</p>
+                        <p style="margin-bottom: 2px;">เภสัชกรชำนาญการพิเศษ</p>
+                        <p>หัวหน้าห้องปฏิบัติการ</p>
+                    </div>
+                    <div class="cert-signature-area" style="margin-top: 5px;">
+                        <div class="signature-line" style="height: 40px; margin-bottom: 5px;">${getSpecificSig('sig_mallika.png', sample.sig_mallika)}</div>
+                        <p style="margin-bottom: 2px;">(นางสาวมัลลิกา สุพล)</p>
+                        <p style="margin-bottom: 2px;">เภสัชกรชำนาญการพิเศษ</p>
+                        <p>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</p>
+                    </div>
+                </div>
+            `;
         } else {
-            summaryEl.style.color = '#10b981';
-            summaryEl.style.borderColor = '#10b981';
+            // --- Legacy Template for other forms ---
+            container.innerHTML = `
+                <div class="cert-pdf-meta">
+                    <p><strong>เลขที่รายงาน:</strong> <span>${sample.lab_id}</span></p>
+                    <p><strong>วันที่รายงาน:</strong> <span>${new Date().toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'})}</span></p>
+                </div>
+                <div class="cert-pdf-body">
+                    <p>ใบรายงานฉบับนี้ ขอรับรองว่า ตัวอย่างด้านล่างได้รับการตรวจวิเคราะห์โดยหน่วยงานทางห้องปฏิบัติการ:</p>
+                    <table class="cert-pdf-table">
+                        <tr><td width="30%"><strong>ประเภทตัวอย่าง:</strong></td><td><span>${sample.form_type}</span></td></tr>
+                        <tr><td><strong>ชื่อตัวอย่าง:</strong></td><td><span>${sample.sample_name || sample.sample_name_1 || '-'}</span></td></tr>
+                        <tr><td><strong>จำนวนตัวอย่าง:</strong></td><td><span>${sample.sample_qty || '1'}</span></td></tr>
+                        <tr><td><strong>สถานที่เก็บตัวอย่าง:</strong></td><td><span>${sample.location_name} จ.${sample.province}</span></td></tr>
+                        <tr><td><strong>ผู้ส่งตรวจ / หน่วยงาน:</strong></td><td><span>${sample.collector_name} (${sample.agency})</span></td></tr>
+                        <tr><td><strong>วันที่ส่งตรวจ:</strong></td><td><span>${new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH')}</span></td></tr>
+                    </table>
+                    <h5 style="margin-top: 20px; font-weight: 600; border-bottom: 2px solid #b45309; padding-bottom: 5px; color: #1e3a8a;">ผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h5>
+                    <table class="cert-pdf-table">
+                        <tr><td width="30%"><strong>ผู้ตรวจวิเคราะห์:</strong></td><td><span>${sample.analysis_analyst || '-'}</span></td></tr>
+                        <tr><td><strong>รายละเอียดผลตรวจ:</strong></td><td><span>${sample.analysis_details || '-'}</span></td></tr>
+                        <tr><td><strong>สรุปผลการวิเคราะห์:</strong></td><td>
+                            <span class="cert-pdf-outcome" style="color:${sample.analysis_summary?.includes('ไม่ผ่าน') ? '#ef4444' : '#10b981'}; border-color:${sample.analysis_summary?.includes('ไม่ผ่าน') ? '#ef4444' : '#10b981'};">${sample.analysis_summary || '-'}</span>
+                        </td></tr>
+                    </table>
+                </div>
+                <div class="cert-signatures-grid" style="grid-template-columns: 1fr;">
+                    <div class="cert-signature-area" style="margin: 0 auto;">
+                        <div class="signature-line">${getSig(sample.approver_name)}</div>
+                        <p><strong>${sample.approver_name || '(รอการลงนาม)'}</strong></p>
+                        <p>หัวหน้าศูนย์วิทยาศาสตร์การแพทย์</p>
+                    </div>
+                </div>
+            `;
         }
 
         // Setup Controls
         if(viewOnly || sample.status === 'approved') {
             document.getElementById('certApprovalControls').classList.add('hidden');
             document.getElementById('certExportControls').classList.remove('hidden');
-            
-            // Show Signature
-            document.getElementById('cert-pdf-approver-name').innerText = sample.approver_name;
-            document.getElementById('cert-pdf-signature-image').innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/f/f6/Signature_of_John_Hancock.svg" class="official-signature-img" style="filter: hue-rotate(200deg) brightness(0.5);">`; // Mock signature image
         } else {
             document.getElementById('certApprovalControls').classList.remove('hidden');
             document.getElementById('certExportControls').classList.add('hidden');
-            document.getElementById('approve-officer-name').value = this.currentUser.fullname;
-            document.getElementById('cert-pdf-approver-name').innerText = '(รอการลงนาม)';
-            document.getElementById('cert-pdf-signature-image').innerHTML = `<span class="placeholder-signature">(ลงนามรับรองอิเล็กทรอนิกส์)</span>`;
+            
+            if (sample.form_type === 'MU.10-001') {
+                document.getElementById('cert-standard-inputs').style.display = 'none';
+                document.getElementById('cert-mu10-signatures').style.display = 'block';
+                document.getElementById('chk-sig-anchasa').checked = true;
+                document.getElementById('chk-sig-surachai').checked = true;
+                document.getElementById('chk-sig-thitiporn').checked = true;
+                document.getElementById('chk-sig-mallika').checked = true;
+            } else {
+                document.getElementById('cert-standard-inputs').style.display = 'block';
+                if(document.getElementById('cert-mu10-signatures')) document.getElementById('cert-mu10-signatures').style.display = 'none';
+                document.getElementById('approve-officer-name').value = this.currentUser.fullname;
+            }
             
             // Attach refId to approve button
             document.getElementById('btnApproveAndSign').dataset.refId = refId;
@@ -1548,14 +1978,24 @@ const app = {
 
     handleApproveReport(e) {
         const refId = e.currentTarget.dataset.refId;
-        const approverName = document.getElementById('approve-officer-name').value;
-        if(!approverName) return;
-
         const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
-        if (sampleIndex > -1) {
-            this.samples[sampleIndex].status = 'approved';
-            this.samples[sampleIndex].approver_name = approverName;
-            this.saveSamples();
+        if (sampleIndex === -1) return;
+        const sample = this.samples[sampleIndex];
+
+        if (sample.form_type === 'MU.10-001') {
+            sample.sig_anchasa = document.getElementById('chk-sig-anchasa').checked;
+            sample.sig_surachai = document.getElementById('chk-sig-surachai').checked;
+            sample.sig_thitiporn = document.getElementById('chk-sig-thitiporn').checked;
+            sample.sig_mallika = document.getElementById('chk-sig-mallika').checked;
+            sample.approver_name = "MU.10-001 System"; // placeholder
+        } else {
+            const approverName = document.getElementById('approve-officer-name').value;
+            if(!approverName) return;
+            sample.approver_name = approverName;
+        }
+
+        this.samples[sampleIndex].status = 'approved';
+        this.saveSamples();
             
             Swal.fire({
                 icon: 'success',
@@ -1567,7 +2007,6 @@ const app = {
                 this.openCertifyModal(refId, true); // Re-open in view mode
                 this.renderCertifyTable();
             });
-        }
     },
 
     // PDF Generation
