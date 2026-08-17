@@ -2169,7 +2169,7 @@ const app = {
                 const s4 = document.getElementById('sel-approver-2');
                 const btnApprove = document.getElementById('btnApproveAndSign');
                 
-                if (isViewOnly) {
+                if (viewOnly) {
                     s1.value = sample.sel_analyst_1 || "";
                     s2.value = sample.sel_analyst_2 || "";
                     s3.value = sample.sel_approver_1 || "";
