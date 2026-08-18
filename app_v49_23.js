@@ -2226,42 +2226,45 @@ const app = {
     },
 
     handleApproveReport(e) {
-        const refId = e.currentTarget.dataset.refId;
-        const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
-        if (sampleIndex === -1) return;
-        const sample = this.samples[sampleIndex];
-
-        
-        if (sample.form_type === 'MU.10-001') {
-            if (sample.status === 'summarized') {
-                sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
-                sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
-                sample.status = 'analyst_signed';
-                this.saveSamples();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'บันทึกลายมือชื่อผู้ตรวจสำเร็จ',
-                    text: 'ส่งต่อไปยังผู้รับรองแล้ว',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                this.closeCertifyModal();
-                this.renderCertifyTable();
+        try {
+            const refId = e.currentTarget.dataset.refId || document.getElementById('btnApproveAndSign').dataset.refId;
+            const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
+            if (sampleIndex === -1) {
+                alert("Error: sampleIndex is -1 for refId: " + refId);
                 return;
-            } else if (sample.status === 'analyst_signed') {
-                sample.sel_approver_1 = document.getElementById('sel-approver-1').value;
-                sample.sel_approver_2 = document.getElementById('sel-approver-2').value;
-                sample.approver_name = "MU.10-001 System"; // placeholder
+            }
+            const sample = this.samples[sampleIndex];
+
+            if (sample.form_type === 'MU.10-001') {
+                if (sample.status === 'summarized') {
+                    sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
+                    sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
+                    sample.status = 'analyst_signed';
+                    this.saveSamples();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'บันทึกลายมือชื่อผู้ตรวจสำเร็จ',
+                        text: 'ส่งต่อไปยังผู้รับรองแล้ว',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    this.closeCertifyModal();
+                    this.renderCertifyTable();
+                    return;
+                } else if (sample.status === 'analyst_signed') {
+                    sample.sel_approver_1 = document.getElementById('sel-approver-1').value;
+                    sample.sel_approver_2 = document.getElementById('sel-approver-2').value;
+                    sample.approver_name = "MU.10-001 System"; // placeholder
+                    sample.status = 'approved';
+                }
+            } else {
+                const approverName = document.getElementById('approve-officer-name').value;
+                if(!approverName) return;
+                sample.approver_name = approverName;
                 sample.status = 'approved';
             }
-        } else {
-            const approverName = document.getElementById('approve-officer-name').value;
-            if(!approverName) return;
-            sample.approver_name = approverName;
-            sample.status = 'approved';
-        }
 
-        this.saveSamples();
+            this.saveSamples();
             
             Swal.fire({
                 icon: 'success',
@@ -2273,6 +2276,9 @@ const app = {
                 this.openCertifyModal(refId, true); // Re-open in view mode
                 this.renderCertifyTable();
             });
+        } catch (err) {
+            alert("Error in handleApproveReport: " + err.message + "\n" + err.stack);
+        }
     },
 
     // PDF Generation
