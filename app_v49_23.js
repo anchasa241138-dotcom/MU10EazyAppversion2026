@@ -1343,7 +1343,9 @@ const app = {
                 <td><strong>${s.ref_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
-                <td>${s.location_name} จ.${s.province}</td>
+                <td>${s.agency || '-'}</td>
+                  <td>${s.agency || '-'}</td>
+                  <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.created_at).toLocaleDateString('th-TH')}</td>
                 <td><span class="status-badge status-registered">รอตรวจรับ</span></td>
                 <td>
@@ -1586,7 +1588,9 @@ const app = {
                 <td><strong>${s.lab_no || s.lab_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
-                <td>${s.location_name} จ.${s.province}</td>
+                <td>${s.agency || '-'}</td>
+                  <td>${s.agency || '-'}</td>
+                  <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.lab_receive_date || s.created_at).toLocaleDateString('th-TH')}</td>
                 <td>${statusBadge}</td>
                 <td>
@@ -3142,7 +3146,8 @@ const app = {
                 <td>${s.lab_id || s.ref_id}</td>
                 <td>${s.form_type}</td>
                 <td>${s.sample_name}</td>
-                <td>${s.province}</td>
+                  <td>${s.agency || '-'}</td>
+                  <td>${s.province}</td>
                 <td>${new Date(s.sampling_date).toLocaleDateString('th-TH')}</td>
                 <td>${s.analysis_summary || '-'}</td>
                 <td><span class="status-badge ${statusMap[s.status] === 'อนุมัติ' ? 'status-approved' : 'status-registered'}">${statusMap[s.status]}</span></td>
@@ -3188,4 +3193,7 @@ const app = {
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
+
+
+
 
