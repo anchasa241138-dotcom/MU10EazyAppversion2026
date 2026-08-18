@@ -1344,7 +1344,6 @@ const app = {
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
                 <td>${s.agency || '-'}</td>
-                  <td>${s.agency || '-'}</td>
                   <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.created_at).toLocaleDateString('th-TH')}</td>
                 <td><span class="status-badge status-registered">รอตรวจรับ</span></td>
@@ -1589,7 +1588,6 @@ const app = {
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
                 <td>${s.sample_name}</td>
                 <td>${s.agency || '-'}</td>
-                  <td>${s.agency || '-'}</td>
                   <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.lab_receive_date || s.created_at).toLocaleDateString('th-TH')}</td>
                 <td>${statusBadge}</td>
@@ -1908,18 +1906,28 @@ const app = {
             : `<button class="btn btn-success btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-stamp"></i> ลงนามผู้รับรอง</button>`);
         
     const displayStatus = s.status === 'summarized' ? 'รอผู้ตรวจวิเคราะห์และผู้รับรองลงนาม' : (s.status === 'analyst_signed' ? 'รอผู้รับรองลงนาม' : s.analysis_summary);
-    const statusClass = s.status === 'summarized' ? 'status-pending' : (s.status === 'analyst_signed' ? 'status-warning' : (s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved'));
-        
-    const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${s.lab_no || s.lab_id}</strong></td>
-                <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
-                <td>${s.sample_name}</td>
-                <td><small>${(s.analysis_details || s.analysis_details_1 || "-").substring(0, 30)}...</small></td>
-                <td><span class="status-badge ${statusClass}">${displayStatus}</span></td>
-                <td>${s.analysis_analyst}</td>
-                <td>${actionBtn}</td>
-            `;
+      const statusClass = s.status === 'summarized' ? 'status-pending' : (s.status === 'analyst_signed' ? 'status-warning' : (s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved'));
+          
+      let underActionStatus = '';
+      if (s.status === 'summarized') {
+          underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#eab308; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> รอผู้ตรวจวิเคราะห์<br>และผู้รับรองลงนาม</div>';
+      } else if (s.status === 'analyst_signed') {
+          underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</div>';
+      }
+
+      const tr = document.createElement('tr');
+              tr.innerHTML = `
+                  <td><strong>${s.lab_no || s.lab_id}</strong></td>
+                  <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
+                  <td>${s.sample_name}</td>
+                  <td><small>${(s.analysis_details || s.analysis_details_1 || "-").substring(0, 30)}...</small></td>
+                  <td><span class="status-badge ${statusClass}">${displayStatus}</span></td>
+                  <td>${s.analysis_analyst}</td>
+                  <td style="text-align:center;">
+                      ${actionBtn}
+                      ${underActionStatus}
+                  </td>
+              `;
             tbody.appendChild(tr);
         });
         
@@ -2156,6 +2164,18 @@ const app = {
             document.getElementById('certExportControls').classList.add('hidden');
             
             const btnApprove = document.getElementById('btnApproveAndSign');
+              const modalStatusText = document.getElementById('modal-status-text');
+              if (modalStatusText) {
+                  if (sample.status === 'summarized') {
+                      modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#eab308; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> รอผู้ตรวจวิเคราะห์และผู้รับรองลงนาม</span>';
+                  } else if (sample.status === 'analyst_signed') {
+                      modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</span>';
+                  } else if (sample.status === 'approved') {
+                      modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-check-circle"></i> อนุมัติเสร็จสมบูรณ์</span>';
+                  } else {
+                      modalStatusText.innerHTML = '';
+                  }
+              }
             if (forceEdit) {
                 btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
             } else {
@@ -3193,6 +3213,7 @@ const app = {
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
 });
+
 
 
 
