@@ -2016,30 +2016,36 @@ const app = {
         };
 
         if (sample.form_type === 'MU.10-001') {
-            // --- MU.10-001 Template ---
-            let rowsHtml = '';
+            // Fix background stretching by moving the background from the wrapper to individual pages
+            const wrapper = container.parentElement;
+            if (wrapper) {
+                wrapper.style.background = 'none';
+                wrapper.style.padding = '0';
+                wrapper.style.minHeight = '0';
+                wrapper.style.width = '100%';
+            }
+
+            const allItems = [];
             let totalCount = 0;
             let passCount = 0;
             
             let idx = 1;
-            while (sample[`sample_name_${idx}`] !== undefined) {
-                if (sample[`sample_name_${idx}`]) {
+            while (sample['sample_name_' + idx] !== undefined) {
+                if (sample['sample_name_' + idx]) {
                     totalCount++;
                     const isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
                     if (isPass) passCount++;
                     const details = sample['analysis_details_' + idx] || sample.analysis_details || '-';
                     
-                    rowsHtml += `
-                        <tr>
-                            <td style="text-align:center;">${totalCount}</td>
-                            <td style="text-align:center;">${sample[`distributor_${idx}`] || '-'}</td>
-                            <td style="text-align:center;">${sample.lab_no ? String(parseInt(sample.lab_no, 10) + totalCount - 1).padStart(4, '0') : `${sample.lab_id}-${totalCount}`}</td>
-                            <td style="text-align:center;">${sample[`sample_name_${idx}`]}</td>
-                            <td style="text-align:center;">${sample[`source_${idx}`] || sample.location_name}</td>
-                            <td style="text-align:center;">${details}</td>
-                            <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
-                        </tr>
-                    `;
+                    allItems.push({
+                        idx: totalCount,
+                        distributor: sample['distributor_' + idx] || '-',
+                        labId: sample.lab_no ? String(parseInt(sample.lab_no, 10) + totalCount - 1).padStart(4, '0') : (sample.lab_id + '-' + totalCount),
+                        sampleName: sample['sample_name_' + idx],
+                        source: sample['source_' + idx] || sample.location_name,
+                        details: details,
+                        isPass: isPass
+                    });
                 }
                 idx++;
             }
@@ -2049,77 +2055,112 @@ const app = {
                 const isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
                 if (isPass) passCount++;
                 const details = sample['analysis_details_1'] || sample.analysis_details || '-';
-                rowsHtml += `
-                    <tr>
-                        <td style="text-align:center;">1</td>
-                        <td style="text-align:center;">${sample.distributor || '-'}</td>
-                        <td style="text-align:center;">${sample.lab_no || sample.lab_id}</td>
-                        <td style="text-align:center;">${sample.sample_name || '-'}</td>
-                        <td style="text-align:center;">${sample.source || sample.location_name}</td>
-                        <td style="text-align:center;">${details}</td>
-                        <td style="text-align:center;">${isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
-                    </tr>
-                `;
+                allItems.push({
+                    idx: 1,
+                    distributor: sample.distributor || '-',
+                    labId: sample.lab_no || sample.lab_id,
+                    sampleName: sample.sample_name || '-',
+                    source: sample.source || sample.location_name,
+                    details: details,
+                    isPass: isPass
+                });
             }
-            
+
+            const ITEMS_PER_PAGE = 5;
+            const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
             const passPercent = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
+            const tableHeaderSubstance = (sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
+
+            let fullHtml = '';
             
-            container.innerHTML = `
-                <div style="position: absolute; top: 140px; left: 60px; font-size: 12.5px; color: #1e293b;">
-                    RD-001
-                </div>
-                <div style="position: absolute; top: 140px; right: 60px; font-size: 12.5px; color: #1e293b;">
-                    หน้าที่ 1/1
-                </div>
-                <div class="cert-pdf-header-mu10" style="margin-bottom: 20px;">
-                    <h4 style="text-align:center; font-weight:bold; margin-bottom: 25px; font-size: 18px; color: #1e3a8a;">ผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)</h4>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 14.5px;">
-                        <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
-                    </div>
-                    <div style="margin-bottom:8px; font-size: 14.5px;">
-                        <strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}
-                    </div>
-                    <div style="margin-bottom:8px; font-size: 14.5px;">
-                        <strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}
-                    </div>
-                    <div style="margin-bottom:8px; font-size: 14.5px;">
-                        <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
-                    </div>
-                </div>
+            for (let page = 0; page < totalPages; page++) {
+                const chunk = allItems.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
                 
-                <table class="cert-multi-table">
-                    <thead>
+                let rowsHtml = '';
+                chunk.forEach(item => {
+                    rowsHtml += `
                         <tr>
-                            <th width="5%">ลำดับ</th>
-                            <th width="20%">ชื่อผู้จำหน่าย</th>
-                            <th width="15%">รหัสตัวอย่าง</th>
-                            <th width="15%">ตัวอย่าง</th>
-                            <th width="15%">แหล่งที่มา</th>
-                            <th width="15%">${(sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT'}</th>
-                            <th width="15%">สรุปผล</th>
+                            <td style="text-align:center;">${item.idx}</td>
+                            <td style="text-align:center;">${item.distributor}</td>
+                            <td style="text-align:center;">${item.labId}</td>
+                            <td style="text-align:center;">${item.sampleName}</td>
+                            <td style="text-align:center;">${item.source}</td>
+                            <td style="text-align:center;">${item.details}</td>
+                            <td style="text-align:center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        ${rowsHtml}
-                    </tbody>
-                </table>
+                    `;
+                });
                 
-                <div style="margin-top:20px; font-size:11.5px; margin-bottom: 40px; color: #334155;">
-                    <p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</p>
-                    <p style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</p>
-                    <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</p>
-                </div>
                 
-                <div class="cert-signatures-grid" style="font-size: 11.5px; color: #334155; margin-top: 10px; gap: 15px 40px;">
-                    ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์')}
-                    ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์')}
-                    ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง')}
-                    ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง')}
-                </div>
-            `;
+                
+                const pageHtml = `
+                    <div class="cert-pdf-border" style="height: 297mm; ${page < totalPages - 1 ? 'page-break-after: always; margin-bottom: 30px;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 210mm 297mm; background-position: top left;">
+                        <div style="position: absolute; top: 140px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                            RD-001
+                        </div>
+                        <div style="position: absolute; top: 140px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                            หน้าที่ ${page + 1}/${totalPages}
+                        </div>
+                        <div class="cert-pdf-header-mu10" style="margin-bottom: 20px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 25px; font-size: 18px; color: #1e3a8a;">ผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)</h4>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 14.5px;">
+                                <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
+                            </div>
+                            <div style="margin-bottom:8px; font-size: 14.5px;">
+                                <strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}
+                            </div>
+                            <div style="margin-bottom:8px; font-size: 14.5px;">
+                                <strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}
+                            </div>
+                            <div style="margin-bottom:8px; font-size: 14.5px;">
+                                <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
+                            </div>
+                        </div>
+                        
+                        <table class="cert-multi-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">ลำดับ</th>
+                                    <th width="20%">ชื่อผู้จำหน่าย</th>
+                                    <th width="15%">รหัสตัวอย่าง</th>
+                                    <th width="15%">ตัวอย่าง</th>
+                                    <th width="15%">แหล่งที่มา</th>
+                                    <th width="15%">${tableHeaderSubstance}</th>
+                                    <th width="15%">สรุปผล</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                        
+                        <div style="margin-top:20px; font-size:11.5px; margin-bottom: 40px; color: #334155;">
+                            <p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</p>
+                            <p style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</p>
+                            <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</p>
+                        </div>
+                        
+                        <div class="cert-signatures-grid" style="font-size: 11.5px; color: #334155; margin-top: 10px; gap: 15px 40px;">
+                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์')}
+                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์')}
+                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง')}
+                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง')}
+                        </div>
+                    </div>
+                `;
+                fullHtml += pageHtml;
+            }
+            container.innerHTML = fullHtml;
         } else {
+            const wrapper = container.parentElement;
+            if (wrapper) {
+                wrapper.style.background = '';
+                wrapper.style.padding = '';
+                wrapper.style.minHeight = '';
+                wrapper.style.width = '';
+            }
             // --- Legacy Template for other forms ---
             container.innerHTML = `
                 <div class="cert-pdf-meta">
