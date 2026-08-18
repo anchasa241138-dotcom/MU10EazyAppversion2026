@@ -1903,7 +1903,7 @@ const app = {
             ? `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-pen-nib"></i> ลงนามผู้ตรวจ</button>` 
             : `<button class="btn btn-success btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-stamp"></i> ลงนามผู้รับรอง</button>`);
         
-    const displayStatus = s.status === 'summarized' ? 'รอลงนามผู้ตรวจ' : (s.status === 'analyst_signed' ? 'รอผู้รับรองอนุมัติ' : s.analysis_summary);
+    const displayStatus = s.status === 'summarized' ? 'รอผู้ตรวจวิเคราะห์และผู้รับรองลงนาม' : (s.status === 'analyst_signed' ? 'รอผู้รับรองลงนาม' : s.analysis_summary);
     const statusClass = s.status === 'summarized' ? 'status-pending' : (s.status === 'analyst_signed' ? 'status-warning' : (s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved'));
         
     const tr = document.createElement('tr');
@@ -2155,7 +2155,7 @@ const app = {
             if (forceEdit) {
                 btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
             } else {
-                btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์';
+                btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> บันทึก';
             }
             
             
@@ -2184,7 +2184,7 @@ const app = {
                     s4.value = "";
                     s1.disabled = false; s2.disabled = false;
                     s3.disabled = true; s4.disabled = true;
-                    btnApprove.innerHTML = '<i class="fa-solid fa-pen-nib"></i> บันทึกลายมือชื่อผู้ตรวจ';
+                    btnApprove.innerHTML = '<i class="fa-solid fa-pen-nib"></i> บันทึกลายมือชื่อผู้ตรวจวิเคราะห์';
                     btnApprove.style.display = 'inline-block';
                 } else if (sample.status === 'analyst_signed') {
                     // Part 2: Approver
@@ -2195,7 +2195,7 @@ const app = {
                     s1.disabled = true; s2.disabled = true;
                     s3.disabled = false;
                     s4.disabled = true; // Auto mallika
-                    btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์';
+                    btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> บันทึก';
                     btnApprove.style.display = 'inline-block';
                 }
             } else {
