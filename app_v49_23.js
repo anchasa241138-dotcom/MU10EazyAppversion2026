@@ -2571,7 +2571,7 @@ const app = {
                         </div>`;
 
                     interpretCell = `
-                        <div style="font-size:8px; line-height:1.3;">
+                        <div style="font-size:9px; line-height:1.3;">
                             <div>${chk('ส้ม')}  ${chk('ส้มแสด')}  ${chk('ส้มแดง')}</div>
                             <div>${chk('ชมพู')}  ${chk('ส้มแดง')}  ${chk('ไม่มีสี')}  ${chk('สีเหลือง')}</div>
                             <div>${chk('ตะกอนสีเทาดำ')}  ${chk('สีดำ')}  ${chk('ไม่มีสี')}</div>
@@ -2589,13 +2589,13 @@ const app = {
                     const isTmChecked = showChecked && (sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
 
                     checkboxCell = `
-                        <div style="font-size:8px; line-height:1.1;">
+                        <div style="font-size:9px; line-height:1.1;">
                             <div>${chk('ยาฆ่าแมลง (GT Kit)', isGtChecked)}</div>
                             <div style="margin-top:2px;">${chk('ยาฆ่าแมลง (TM/2 Kit)', isTmChecked)}</div>
                         </div>`;
 
                     interpretCell = `
-                        <div style="font-size:8px; line-height:1.1;">
+                        <div style="font-size:9px; line-height:1.1;">
                             <div>${chk('สีตัวอย่าง = สีควบคุม')}</div>
                             <div style="margin-top:2px;">${chk('สีควบคุม > สีตัวอย่าง < สีตัดสิน')}</div>
                             <div style="margin-top:2px;">${chk('สีตัวอย่าง >= สีตัดสิน')}</div>
@@ -2604,7 +2604,7 @@ const app = {
                         </div>`;
 
                     resultCell = `
-                        <div style="font-size:8px; line-height:1.1;">
+                        <div style="font-size:9px; line-height:1.1;">
                             <div>${chk('ไม่พบ')}</div>
                             <div style="margin-top:2px;">${chk('พบ')}</div>
                             <div style="margin-top:2px;">${chk('พบปลอดภัย')}</div>
@@ -2643,7 +2643,7 @@ const app = {
         let mainTableHTML = '';
         if (sample.form_type === 'MU.10-003') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th>
@@ -2667,7 +2667,7 @@ const app = {
             `;
         } else if (sample.form_type === 'MU.10-004') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -2688,7 +2688,7 @@ const app = {
             `;
         } else if (sample.form_type === 'MU.10-005') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8.5px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8.5px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
@@ -2697,7 +2697,7 @@ const app = {
                             <th colspan="6" style="padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th>
                             <th colspan="2" style="padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th>
                         </tr>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:8px;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:9px;">
                             <th style="padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th>
                             <th style="padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th>
                             <th style="padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th>
@@ -2715,7 +2715,7 @@ const app = {
             `;
         } else {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -2808,8 +2808,8 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 900px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding-left: 120px; padding-right: 40px; padding-top: 30px; box-sizing: border-box;">
-            <div style="width: 100%; margin: 0; display: block; font-size: 9.5px; color: #000;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;">
+            <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #000;">
                 
                 <!-- HEADER -->
                 <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
@@ -2883,7 +2883,7 @@ const app = {
                 </div>
 
                 <!-- MAIN TABLE -->
-                <table style="width: 100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px; color:#000;" border="1">
+                <table style="width: 100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px; color:#000;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th rowspan="2" style="border:1px solid #555; width:8%; font-size:9px;">ครั้งที่<br>เก็บตัวอย่าง</th>
@@ -2892,7 +2892,7 @@ const app = {
                             <th colspan="2" style="border:1px solid #555; width:28%; font-size:9px; padding:2px;">การแปลผล</th>
                             <th rowspan="2" style="border:1px solid #555; width:13%; font-size:9px;">สรุปผล</th>
                         </tr>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:8px;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:9px;">
                             <th style="border:1px solid #555; padding:2px;">สีชมพู<br>&lt; 20%</th>
                             <th style="border:1px solid #555; padding:2px;">สีชมพูจาง<br>20 - 25%</th>
                             <th style="border:1px solid #555; padding:2px;">ไม่มีสี<br>&gt; 25%</th>
@@ -2964,7 +2964,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1500px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding-left: 200px; padding-right: 50px; padding-top: 30px; box-sizing: border-box;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1100px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;">
             <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;">
 
                 <!-- HEADER -->
@@ -3039,7 +3039,10 @@ const app = {
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: sample.form_type === 'MU.10-004' ? 900 : 1500
+                x: 0,
+                y: 0,
+                width: sample.form_type === 'MU.10-004' ? 780 : 1100,
+                windowWidth: sample.form_type === 'MU.10-004' ? 780 : 1100
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
