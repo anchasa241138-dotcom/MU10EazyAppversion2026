@@ -3099,7 +3099,6 @@ const app = {
                 });
             });
         }, 500);
-        }, 500);
         } catch (syncErr) {
             console.error('PDF sync error:', syncErr);
             Swal.fire({
