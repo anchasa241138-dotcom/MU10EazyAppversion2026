@@ -2808,7 +2808,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding-left: 100px; padding-right: 30px; padding-top: 20px; box-sizing: border-box;">
             <div style="width: 100%; margin: 0; display: block; font-size: 9.5px; color: #000;">
                 
                 <!-- HEADER -->
@@ -2964,7 +2964,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1100px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1100px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding-left: 160px; padding-right: 40px; padding-top: 20px; box-sizing: border-box;">
             <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;">
 
                 <!-- HEADER -->
@@ -3036,7 +3036,10 @@ const app = {
             html2canvas: { 
                 scale: 2, 
                 useCORS: false, 
-                logging: false
+                logging: false,
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: sample.form_type === 'MU.10-004' ? 780 : 1100
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
