@@ -3033,7 +3033,7 @@ const app = {
         }
 
         const opt = {
-            margin: [6, 0, 6, 0],
+            margin: 8,
             filename: `${sample.form_type}_${sample.ref_id}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { 
