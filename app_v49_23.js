@@ -2475,7 +2475,7 @@ const app = {
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) => {
-            return `<span style="font-family: 'Sarabun', 'TH Sarabun New', 'Tahoma', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
+            return `<span style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -2643,7 +2643,7 @@ const app = {
         let mainTableHTML = '';
         if (sample.form_type === 'MU.10-003') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th>
@@ -2667,7 +2667,7 @@ const app = {
             `;
         } else if (sample.form_type === 'MU.10-004') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -2688,7 +2688,7 @@ const app = {
             `;
         } else if (sample.form_type === 'MU.10-005') {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8.5px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8.5px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
@@ -2715,7 +2715,7 @@ const app = {
             `;
         } else {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
@@ -2808,7 +2808,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Sarabun', 'TH Sarabun New', 'Tahoma', sans-serif; width: 900px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding-left: 120px; padding-right: 40px; padding-top: 30px; box-sizing: border-box;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 900px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding-left: 120px; padding-right: 40px; padding-top: 30px; box-sizing: border-box;">
             <div style="width: 100%; margin: 0; display: block; font-size: 9.5px; color: #000;">
                 
                 <!-- HEADER -->
@@ -2883,7 +2883,7 @@ const app = {
                 </div>
 
                 <!-- MAIN TABLE -->
-                <table style="width: 100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px; color:#000;" border="1">
+                <table style="width: 100%; table-layout:fixed; word-break:normal; word-wrap:normal; overflow-wrap:normal; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9px; color:#000;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th rowspan="2" style="border:1px solid #555; width:8%; font-size:9px;">ครั้งที่<br>เก็บตัวอย่าง</th>
@@ -2964,7 +2964,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Sarabun', 'TH Sarabun New', 'Tahoma', sans-serif; width: 1300px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding-left: 180px; padding-right: 60px; padding-top: 30px; box-sizing: border-box;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1500px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding-left: 200px; padding-right: 50px; padding-top: 30px; box-sizing: border-box;">
             <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;">
 
                 <!-- HEADER -->
@@ -3039,7 +3039,7 @@ const app = {
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: sample.form_type === 'MU.10-004' ? 900 : 1300
+                windowWidth: sample.form_type === 'MU.10-004' ? 900 : 1500
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
