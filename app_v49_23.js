@@ -2500,7 +2500,7 @@ const app = {
                 }
 
                 tableRows += `
-                    <tr style="height: 60px;">
+                    <tr style="height: 60px; page-break-inside: avoid;">
                         <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.distributor ? (i + 1) : ''}</td>
                         <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.distributor}</td>
                         <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type}</td>
@@ -2521,7 +2521,7 @@ const app = {
                 const isFailChecked = showChecked && sample.analysis_summary === 'ไม่ผ่าน';
 
                 tableRows += `
-                    <tr style="height: 60px;">
+                    <tr style="height: 60px; page-break-inside: avoid;">
                         <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td>
                         <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_category}</td>
                         <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type}</td>
@@ -2538,7 +2538,7 @@ const app = {
                 `;
             } else if (sample.form_type === 'MU.10-005') {
                 tableRows += `
-                    <tr style="height: 50px;">
+                    <tr style="height: 50px; page-break-inside: avoid;">
                         <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td>
                         <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.distributor}</td>
                         <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type}</td>
@@ -2626,7 +2626,7 @@ const app = {
                     </div>`;
 
                 tableRows += `
-                    <tr style="height: 42px;">
+                    <tr style="height: 42px; page-break-inside: avoid;">
                         <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:8px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
                         <td style="padding:2px 3px; vertical-align:top; font-size:8px; border:1px solid #555;">${item.distributor}</td>
                         <td style="padding:2px 3px; vertical-align:top; font-size:8px; border:1px solid #555;"></td>
@@ -2650,7 +2650,7 @@ const app = {
             mainTableHTML = `
                 <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8px;" border="1">
                     <thead>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid;">
                             <th style="padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:13%;">ชนิดอาหาร</th>
@@ -2674,7 +2674,7 @@ const app = {
             mainTableHTML = `
                 <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8px;" border="1">
                     <thead>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:15%;">ประเภทอาหาร</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:15%;">ระบุชนิดอาหาร</th>
@@ -2695,7 +2695,7 @@ const app = {
             mainTableHTML = `
                 <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:7.5px;" border="1">
                     <thead>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid;">
                             <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
                             <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th>
                             <th rowspan="2" style="padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
@@ -2722,7 +2722,7 @@ const app = {
             mainTableHTML = `
                 <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8px;" border="1">
                     <thead>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:11%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:7.5px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
@@ -2890,7 +2890,7 @@ const app = {
                 <!-- MAIN TABLE -->
                 <table style="width: 100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8px; color:#000;" border="1">
                     <thead>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid;">
                             <th rowspan="2" style="border:1px solid #555; width:8%; font-size:8px;">ครั้งที่<br>เก็บตัวอย่าง</th>
                             <th rowspan="2" style="border:1px solid #555; width:15%; font-size:8px;">วันที่เก็บตัวอย่าง<br>(ว/ด/ป)</th>
                             <th colspan="3" style="border:1px solid #555; width:36%; font-size:8px; padding:2px;">ผลการตรวจสารโพลาร์</th>
@@ -3050,7 +3050,7 @@ const app = {
                 windowWidth: sample.form_type === 'MU.10-004' ? 780 : 1200
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            pagebreak: { mode: ['css', 'legacy'] }
         };
 
         Swal.fire({
