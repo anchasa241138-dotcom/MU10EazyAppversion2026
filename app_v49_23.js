@@ -2475,7 +2475,7 @@ const app = {
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) => {
-            return `<span style="font-family: 'Tahoma', 'SarabunPDF', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
+            return `<span style="font-family: 'Sarabun', 'TH Sarabun New', 'Tahoma', sans-serif;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -2808,7 +2808,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 900px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding-left: 120px; padding-right: 40px; padding-top: 30px; box-sizing: border-box;">
+            <div style="font-family: 'Sarabun', 'TH Sarabun New', 'Tahoma', sans-serif; width: 900px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding-left: 120px; padding-right: 40px; padding-top: 30px; box-sizing: border-box;">
             <div style="width: 100%; margin: 0; display: block; font-size: 9.5px; color: #000;">
                 
                 <!-- HEADER -->
@@ -2964,7 +2964,7 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1300px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding-left: 180px; padding-right: 60px; padding-top: 30px; box-sizing: border-box;">
+            <div style="font-family: 'Sarabun', 'TH Sarabun New', 'Tahoma', sans-serif; width: 1300px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding-left: 180px; padding-right: 60px; padding-top: 30px; box-sizing: border-box;">
             <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;">
 
                 <!-- HEADER -->
