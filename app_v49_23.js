@@ -3035,7 +3035,7 @@ const app = {
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { 
                 scale: 2, 
-                useCORS: false, 
+                useCORS: true, 
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
