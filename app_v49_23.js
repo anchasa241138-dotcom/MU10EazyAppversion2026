@@ -1372,7 +1372,7 @@ const app = {
         this._previewRefId = refId;
         
         // Collect sample items
-        const sampleItems = [];
+        let sampleItems = [];
         let idx = 1;
         while (sample[`sample_name_${idx}`] !== undefined) {
             sampleItems.push({
@@ -2405,7 +2405,7 @@ const app = {
         }
 
         // Collect all dynamic sample entries from sample object keys
-        const sampleItems = [];
+        let sampleItems = [];
         let idx = 1;
         while (sample[`sample_name_${idx}`] !== undefined) {
             if (sample.form_type === 'MU.10-003') {
