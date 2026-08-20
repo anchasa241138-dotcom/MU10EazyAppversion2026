@@ -89,6 +89,11 @@ const app = {
                 localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
             } else {
                 this.users = JSON.parse(storedUsers);
+                // Force reset default users just in case of corruption or forgotten password
+                const adminUser = this.users.find(u => u.username === 'admin');
+                if (adminUser) adminUser.password = 'password';
+                else this.users.push({ username: 'admin', password: 'password', role: 'lab', fullname: 'Admin' });
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
             }
         } catch (e) {
             console.warn("Failed to parse users, resetting default users.", e);
@@ -535,8 +540,8 @@ const app = {
 
     handleLogin(e) {
         e.preventDefault();
-        const username = document.getElementById('login-username').value;
-        const pass = document.getElementById('login-password').value;
+        const username = document.getElementById('login-username').value.trim();
+        const pass = document.getElementById('login-password').value.trim();
 
         const user = this.users.find(u => u.username === username && u.password === pass);
         if (user) {
