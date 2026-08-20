@@ -3070,19 +3070,9 @@ const app = {
         }
 
         // Generate PDF directly from the HTML string
-        // Generate PDF by appending to DOM first (Fixes html2canvas left-clip bug)
-        const pdfWrapper = document.createElement('div');
-        pdfWrapper.innerHTML = htmlContent;
-        pdfWrapper.style.position = 'absolute';
-        pdfWrapper.style.top = '0';
-        pdfWrapper.style.left = '0';
-        pdfWrapper.style.zIndex = '-9999';
-        pdfWrapper.style.background = '#fff';
-        document.body.appendChild(pdfWrapper);
-
+        // Generate PDF directly from the HTML string
         setTimeout(() => {
-            html2pdf().set(opt).from(pdfWrapper).save().then(function() {
-                if (pdfWrapper.parentNode) pdfWrapper.parentNode.removeChild(pdfWrapper);
+            html2pdf().set(opt).from(htmlContent).save().then(function() {
                 if (typeof document !== 'undefined' && document.body && document.body.classList) {
                     document.body.classList.remove('is-printing-pdf');
                 }
@@ -3093,7 +3083,6 @@ const app = {
                 }
                 Swal.close();
             }).catch(function(err) {
-                if (pdfWrapper.parentNode) pdfWrapper.parentNode.removeChild(pdfWrapper);
                 if (typeof document !== 'undefined' && document.body && document.body.classList) {
                     document.body.classList.remove('is-printing-pdf');
                 }
@@ -3109,6 +3098,7 @@ const app = {
                     text: err.message || err.toString()
                 });
             });
+        }, 500);
         }, 500);
         } catch (syncErr) {
             console.error('PDF sync error:', syncErr);
