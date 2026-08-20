@@ -2455,7 +2455,14 @@ const app = {
             idx++;
         }
 
+        
+        // Remove completely empty rows that the user might have cleared in the UI
+        sampleItems = sampleItems.filter(item => {
+            return Object.values(item).some(val => val && String(val).trim() !== '');
+        });
+        
         // Fallback: if old single-entry style
+
         if (sampleItems.length === 0) {
             sampleItems.push({
                 name: sample.sample_name || '',
