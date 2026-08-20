@@ -1067,7 +1067,7 @@ const app = {
         if (!tbody) return;
 
         // Find only 'registered' samples (not yet verified/approved by lab)
-        let mySavedSamples = this.samples.filter(s => s.status === 'registered');
+        let mySavedSamples = this.samples;
 
         // Filter by current form type
         const currentFormType = document.getElementById('field-form-type')?.value;
