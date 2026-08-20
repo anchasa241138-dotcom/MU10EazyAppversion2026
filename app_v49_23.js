@@ -1666,8 +1666,8 @@ const app = {
             'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' },
             'สีควบคุม>สีตัวอย่าง<สีตัดสิน':       { result: 'พบปลอดภัย',  summary: 'ผ่านเกณฑ์มาตรฐาน' },
             'สีตัวอย่าง ≥ สีตัดสิน':              { result: 'พบอันตราย',  summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'พบจุดสีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'ไม่พบจุดสีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' }
+            'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
+            'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' }
         };
         const el = document.getElementById('analysis-interpretation-' + idx);
         const resultInput = document.getElementById('analysis-detail-results-' + idx);
@@ -2074,7 +2074,7 @@ const app = {
             const passPercent = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
-            const tableHeaderSubstance = ['ยาฆ่าแมลง (จีที คิท)', 'ยาฆ่าแมลง (GT Kit)'].includes(sample.analysis_substance_1 || sample.analysis_substance) ? 'GT' : (['ยาฆ่าแมลง (ทีเอ็ม/2 คิท)', 'ยาฆ่าแมลง (TM/2 Kit)'].includes(sample.analysis_substance_1 || sample.analysis_substance) ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
+            const tableHeaderSubstance = (sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
             let fullHtml = '';
             
             for (let page = 0; page < totalPages; page++) {
@@ -2588,7 +2588,7 @@ const app = {
                             <div>${chk('ชมพู')}  ${chk('ส้มแดง')}  ${chk('ไม่มีสี')}  ${chk('สีเหลือง')}</div>
                             <div>${chk('ตะกอนสีเทาดำ')}  ${chk('สีดำ')}  ${chk('ไม่มีสี')}</div>
                             <div>${chk('สีม่วงดำ')}  ${chk('สีเหลือง')}  ${chk('สีเขียว')}</div>
-                            <div>${chk('1 ขีด (ชุดควบคุม)')}  ${chk('2 ขีด (ชุดควบคุม+ทดสอบ) (ทดสอบ)')}</div>
+                            <div>${chk('1 ขีด (Control)')}  ${chk('2 ขีด (Control+Test)')}</div>
                         </div>`;
 
                     resultCell = `
@@ -2597,13 +2597,13 @@ const app = {
                             <div>${chk('พบ')}</div>
                         </div>`;
                 } else {
-                    const isGtChecked = showChecked && (sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (จีที คิท)' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true);
-                    const isTmChecked = showChecked && (sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (ทีเอ็ม/2 คิท)' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
+                    const isGtChecked = showChecked && (sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true);
+                    const isTmChecked = showChecked && (sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
 
                     checkboxCell = `
                         <div style="font-size:8px; line-height:1.1;">
-                            <div>${chk('ยาฆ่าแมลง (จีที คิท)', isGtChecked)}</div>
-                            <div style="margin-top:2px;">${chk('ยาฆ่าแมลง (ทีเอ็ม/2 คิท)', isTmChecked)}</div>
+                            <div>${chk('ยาฆ่าแมลง (GT Kit)', isGtChecked)}</div>
+                            <div style="margin-top:2px;">${chk('ยาฆ่าแมลง (TM/2 Kit)', isTmChecked)}</div>
                         </div>`;
 
                     interpretCell = `
@@ -2611,8 +2611,8 @@ const app = {
                             <div>${chk('สีตัวอย่าง = สีควบคุม')}</div>
                             <div style="margin-top:2px;">${chk('สีควบคุม > สีตัวอย่าง < สีตัดสิน')}</div>
                             <div style="margin-top:2px;">${chk('สีตัวอย่าง >= สีตัดสิน')}</div>
-                            <div style="margin-top:2px;">${chk('พบจุดสีเทา สีน้ำตาลเข้มถึงดำ')}</div>
-                            <div style="margin-top:2px;">${chk('ไม่พบจุดสีเทา สีน้ำตาลเข้มถึงดำ')}</div>
+                            <div style="margin-top:2px;">${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
+                            <div style="margin-top:2px;">${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
                         </div>`;
 
                     resultCell = `
