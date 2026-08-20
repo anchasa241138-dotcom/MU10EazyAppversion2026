@@ -2722,13 +2722,13 @@ const app = {
                     <thead>
                         <tr style="background:#f5f5f5; text-align:center; vertical-align:middle;">
                             <th style="padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:13%;">ชื่อผู้จำหน่าย</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%;">ชื่อผู้จำหน่าย</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:9%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:8.5px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:13%;">ชื่อตัวอย่าง</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%;">ชื่อตัวอย่าง</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:5%;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:10%;">แหล่งที่มา</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:12%;">สารที่ตรวจวิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:18%;">การแปลผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:14%;">การแปลผล</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:10%;">ผลการตรวจ<br>วิเคราะห์</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:6%;">สรุปผล</th>
                         </tr>
@@ -2811,8 +2811,8 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
-            <div style="width: 740px; margin: 4mm auto; display: block; font-size: 9.5px; color: #000;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 20px; box-sizing: border-box;">
+            <div style="width: 740px; margin: 0; display: block; font-size: 9.5px; color: #000;">
                 
                 <!-- HEADER -->
                 <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;">
@@ -2967,8 +2967,8 @@ const app = {
                 }
             </style>
 
-            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1100px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; box-sizing: border-box;">
-            <div style="width: 1060px; margin: 4mm auto; display: block; font-size: 10.5px; color: #1a1a1a;">
+            <div style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; width: 1100px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 20px; box-sizing: border-box;">
+            <div style="width: 1060px; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;">
 
                 <!-- HEADER -->
                 <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;">
