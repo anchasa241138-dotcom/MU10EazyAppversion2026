@@ -2024,7 +2024,6 @@ const app = {
                 wrapper.style.minHeight = '0';
                 wrapper.style.width = '100%';
             }
-
             const allItems = [];
             let totalCount = 0;
             let passCount = 0;
@@ -2065,14 +2064,12 @@ const app = {
                     isPass: isPass
                 });
             }
-
             const ITEMS_PER_PAGE = 5;
             const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
             const passPercent = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
             const tableHeaderSubstance = (sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
-
             let fullHtml = '';
             
             for (let page = 0; page < totalPages; page++) {
@@ -3039,10 +3036,7 @@ const app = {
             html2canvas: { 
                 scale: 2, 
                 useCORS: false, 
-                logging: false,
-                scrollX: 0,
-                scrollY: 0,
-                windowWidth: sample.form_type === 'MU.10-004' ? 780 : 1100
+                logging: false
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
@@ -3262,4 +3256,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
+
