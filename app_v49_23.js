@@ -2728,11 +2728,11 @@ const app = {
                             <th style="padding:5px 3px; border:1px solid #555; width:11%;">รหัสตัวอย่าง<br><span style="font-weight:normal;font-size:8.5px;">(สำหรับผู้ตรวจ<br>วิเคราะห์)</span></th>
                             <th style="padding:5px 3px; border:1px solid #555; width:11%;">ชื่อตัวอย่าง</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:5%;">ปริมาณ<br>ตัวอย่าง<br>(กรัม)</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:12%;">แหล่งที่มา</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%;">แหล่งที่มา</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:10%;">สารที่ตรวจวิเคราะห์</th>
                             <th style="padding:5px 3px; border:1px solid #555; width:14%;">การแปลผล</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:9%;">ผลการตรวจ<br>วิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:6%;">สรุปผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:7%;">ผลการตรวจ<br>วิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">สรุปผล</th>
                         </tr>
                     </thead>
                     <tbody>
