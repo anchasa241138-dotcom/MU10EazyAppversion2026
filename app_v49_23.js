@@ -2828,8 +2828,8 @@ const app = {
                             <div><strong>วันที่เริ่มใช้ :</strong> </div>
                             <div><strong>แผนก :</strong> ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
                         </td>
-                        <td style="width:160px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;">
-                            <div style="font-size:11px;"><strong>หมายเลขเอกสาร :</strong> <span>MU.10-004</span></div>
+                        <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;">
+                            <div style="font-size:11px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">MU.10-004</span></div>
                             <div style="margin-top:6px; font-size:11px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div>
                         </td>
                     </tr>
@@ -2984,8 +2984,8 @@ const app = {
                             <div><strong>วันที่เริ่มใช้ :</strong> </div>
                             <div><strong>แผนก :</strong> ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
                         </td>
-                        <td style="width:160px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;">
-                            <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span>${documentNum}</span></div>
+                        <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;">
+                            <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">${documentNum}</span></div>
                             <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div>
                         </td>
                     </tr>
