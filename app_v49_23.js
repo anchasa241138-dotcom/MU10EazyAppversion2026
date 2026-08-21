@@ -2374,6 +2374,11 @@ const app = {
                 Swal.showLoading();
             }
         });
+        
+        // Fix floating Thai vowels for html2canvas
+        element.innerHTML = element.innerHTML.replace(/<th([^>]*)>([\s\S]*?)<\/th>/gi, '<th$1><span style="display:inline-block; text-align:left;">$2</span></th>');
+        element.innerHTML = element.innerHTML.replace(/<td([^>]*text-align:\s*center[^>]*)>([\s\S]*?)<\/td>/gi, '<td$1><span style="display:inline-block; text-align:left;">$2</span></td>');
+
         html2pdf().set(opt).from(element).save().then(() => {
             Swal.close();
         }).catch(err => {
@@ -3081,7 +3086,12 @@ const app = {
             mainContentEl.style.setProperty('padding', '0', 'important');
         }
 
-        // Generate PDF directly from the HTML string
+        
+        
+        // Fix for floating Thai vowels in html2canvas with text-align: center
+        htmlContent = htmlContent.replace(/<th([^>]*)>([\s\S]*?)<\/th>/g, '<th$1><span style="display:inline-block; text-align:left;">$2</span></th>');
+        htmlContent = htmlContent.replace(/<td([^>]*text-align:\s*center[^>]*)>([\s\S]*?)<\/td>/g, '<td$1><span style="display:inline-block; text-align:left;">$2</span></td>');
+
         // Generate PDF directly from the HTML string
         setTimeout(() => {
             html2pdf().set(opt).from(htmlContent).save().then(function() {
