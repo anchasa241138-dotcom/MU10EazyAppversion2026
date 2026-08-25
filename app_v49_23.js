@@ -2356,13 +2356,18 @@ const app = {
         
         // Temporarily remove overflow to prevent html2canvas clipping
         const modalBody = element.closest('.modal-body');
-        const oldOverflow = modalBody ? modalBody.style.overflowY : '';
-        const oldMaxHeight = modalBody ? modalBody.style.maxHeight : '';
+        const oldOverflowBody = modalBody ? modalBody.style.overflowY : '';
+        const oldMaxHeightBody = modalBody ? modalBody.style.maxHeight : '';
         if (modalBody) {
             modalBody.style.overflowY = 'visible';
             modalBody.style.maxHeight = 'none';
         }
-
+        
+        const oldOverflowElement = element.style.overflow || '';
+        const oldMaxHeightElement = element.style.maxHeight || '';
+        element.style.overflow = 'visible';
+        element.style.maxHeight = 'none';
+        
         const opt = {
             margin:       10,
             filename:     `Certificate_${pdfNo}.pdf`,
@@ -2387,15 +2392,19 @@ const app = {
 
         html2pdf().set(opt).from(element).save().then(() => {
             if (modalBody) {
-                modalBody.style.overflowY = oldOverflow;
-                modalBody.style.maxHeight = oldMaxHeight;
+                modalBody.style.overflowY = oldOverflowBody;
+                modalBody.style.maxHeight = oldMaxHeightBody;
             }
+            element.style.overflow = oldOverflowElement;
+            element.style.maxHeight = oldMaxHeightElement;
             Swal.close();
         }).catch(err => {
             if (modalBody) {
-                modalBody.style.overflowY = oldOverflow;
-                modalBody.style.maxHeight = oldMaxHeight;
+                modalBody.style.overflowY = oldOverflowBody;
+                modalBody.style.maxHeight = oldMaxHeightBody;
             }
+            element.style.overflow = oldOverflowElement;
+            element.style.maxHeight = oldMaxHeightElement;
             Swal.fire('Error', err.toString(), 'error');
         });
     },
