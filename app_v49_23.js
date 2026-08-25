@@ -410,11 +410,11 @@ const app = {
                 break;
             case 'data-download':
                 if (!this.currentUser) {
-                    document.getElementById('download-auth-block').classList.remove('hidden');
-                    document.getElementById('download-content-wrapper').classList.add('hidden');
+                    document.getElementById(viewId === 'data-download' ? 'excel-download-auth-block' : 'download-auth-block').classList.remove('hidden');
+                    document.getElementById(viewId === 'data-download' ? 'excel-download-content-wrapper' : 'download-content-wrapper').classList.add('hidden');
                 } else {
-                    document.getElementById('download-auth-block').classList.add('hidden');
-                    document.getElementById('download-content-wrapper').classList.remove('hidden');
+                    document.getElementById(viewId === 'data-download' ? 'excel-download-auth-block' : 'download-auth-block').classList.add('hidden');
+                    document.getElementById(viewId === 'data-download' ? 'excel-download-content-wrapper' : 'download-content-wrapper').classList.remove('hidden');
                     this.renderExportTable();
                 }
                 break;
