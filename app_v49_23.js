@@ -2350,12 +2350,13 @@ const app = {
 
     // PDF Generation
     generateCertificatePDF() {
-        const element = document.getElementById('certificatePDFContainer');
+        const container = document.getElementById('certificatePDFContainer');
+        const element = container.querySelector('.cert-pdf-border') || container;
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
         // Temporarily remove overflow to prevent html2canvas clipping
-        const modalBody = element.closest('.modal-body');
+        const modalBody = container.closest('.modal-body');
         const oldOverflowBody = modalBody ? modalBody.style.overflowY : '';
         const oldMaxHeightBody = modalBody ? modalBody.style.maxHeight : '';
         if (modalBody) {
@@ -2363,13 +2364,14 @@ const app = {
             modalBody.style.maxHeight = 'none';
         }
         
-        const oldOverflowElement = element.style.overflow || '';
-        const oldMaxHeightElement = element.style.maxHeight || '';
-        element.style.overflow = 'visible';
-        element.style.maxHeight = 'none';
+        const oldOverflowElement = container.style.overflow || '';
+        const oldMaxHeightElement = container.style.maxHeight || '';
+        container.style.overflow = 'visible';
+        container.style.maxHeight = 'none';
         
+        // Use 0 margin so the 794x1123px border maps perfectly to 210x297mm A4 page without overflowing to a second page
         const opt = {
-            margin:       10,
+            margin:       0,
             filename:     `Certificate_${pdfNo}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { 
@@ -2395,16 +2397,16 @@ const app = {
                 modalBody.style.overflowY = oldOverflowBody;
                 modalBody.style.maxHeight = oldMaxHeightBody;
             }
-            element.style.overflow = oldOverflowElement;
-            element.style.maxHeight = oldMaxHeightElement;
+            container.style.overflow = oldOverflowElement;
+            container.style.maxHeight = oldMaxHeightElement;
             Swal.close();
         }).catch(err => {
             if (modalBody) {
                 modalBody.style.overflowY = oldOverflowBody;
                 modalBody.style.maxHeight = oldMaxHeightBody;
             }
-            element.style.overflow = oldOverflowElement;
-            element.style.maxHeight = oldMaxHeightElement;
+            container.style.overflow = oldOverflowElement;
+            container.style.maxHeight = oldMaxHeightElement;
             Swal.fire('Error', err.toString(), 'error');
         });
     },
