@@ -2513,17 +2513,17 @@ const app = {
 
                 tableRows += `
                     <tr style="height: 60px; page-break-inside: avoid;">
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.distributor ? (i + 1) : ''}</td>
-                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.distributor}</td>
-                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.oil_type}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.fry_duration}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.replacement_type}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${formattedDate}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.replacement_frequency}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.replacement_reason}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.oil_disposal}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; font-weight:bold; border:1px solid #555;">${item.polar_value}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor ? (i + 1) : ''}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_type}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_duration}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_type}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${formattedDate}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_frequency}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_reason}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_disposal}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; font-weight:bold; border:1px solid #555;">${item.polar_value}</td>
                         <td style="padding:4px; text-align:center; vertical-align:middle; font-size:11px; font-weight:bold; border:1px solid #555;">${summaryText}</td>
                     </tr>
                 `;
@@ -2534,15 +2534,15 @@ const app = {
 
                 tableRows += `
                     <tr style="height: 60px; page-break-inside: avoid;">
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td>
-                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_category}</td>
-                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.food_type}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.oil_type}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.fry_duration}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.fry_count}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.replacement_type}</td>
-                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:10px; border:1px solid #555;">${item.replacement_frequency}</td>
-                        <td style="padding:4px; vertical-align:middle; font-size:10px; border:1px solid #555;">
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_category}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_type}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_duration}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_count}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_type}</td>
+                        <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_frequency}</td>
+                        <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">
                             ${chk('ผ่าน', isPassChecked)} &nbsp;
                             ${chk('ไม่ผ่าน', isFailChecked)}
                         </td>
@@ -2606,13 +2606,13 @@ const app = {
                     const isTmChecked = showChecked && (sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
 
                     checkboxCell = `
-                        <div style="font-size:8px; line-height:1.1;">
+                        <div style="font-size:9.5px; line-height:1.1;">
                             <div>${chk('ยาฆ่าแมลง (GT Kit)', isGtChecked)}</div>
                             <div style="margin-top:2px;">${chk('ยาฆ่าแมลง (TM/2 Kit)', isTmChecked)}</div>
                         </div>`;
 
                     interpretCell = `
-                        <div style="font-size:8px; line-height:1.1;">
+                        <div style="font-size:9.5px; line-height:1.1;">
                             <div>${chk('สีตัวอย่าง = สีควบคุม')}</div>
                             <div style="margin-top:2px;">${chk('สีควบคุม > สีตัวอย่าง < สีตัดสิน')}</div>
                             <div style="margin-top:2px;">${chk('สีตัวอย่าง >= สีตัดสิน')}</div>
@@ -2621,7 +2621,7 @@ const app = {
                         </div>`;
 
                     resultCell = `
-                        <div style="font-size:8px; line-height:1.1;">
+                        <div style="font-size:9.5px; line-height:1.1;">
                             <div>${chk('ไม่พบ')}</div>
                             <div style="margin-top:2px;">${chk('พบ')}</div>
                             <div style="margin-top:2px;">${chk('พบปลอดภัย')}</div>
@@ -2639,12 +2639,12 @@ const app = {
 
                 tableRows += `
                     <tr style="height: 42px; page-break-inside: avoid;">
-                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:8px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:8px; border:1px solid #555;">${item.distributor}</td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:8px; border:1px solid #555;"></td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:8px; border:1px solid #555;">${item.name}</td>
-                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:8px; border:1px solid #555;">${item.weight}</td>
-                        <td style="padding:2px 3px; vertical-align:top; font-size:8px; border:1px solid #555;">${item.source}</td>
+                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.distributor}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;"></td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.name}</td>
+                        <td style="padding:2px 3px; text-align:center; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.weight}</td>
+                        <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.source}</td>
                         <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${checkboxCell}</td>
                         <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${interpretCell}</td>
                         <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${resultCell}</td>
@@ -2732,19 +2732,19 @@ const app = {
             `;
         } else {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:8px; letter-spacing:0px !important; word-spacing:0px !important; " border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9.5px;" border="1">
                     <thead>
-                                                <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid;">
-                            <th style="padding:5px 3px; border:1px solid #555; width:4%; text-align:left;"><div style="padding-left:4px;">ล<span style="margin-left:-3.5px;">ำ</span>ดับ</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:12%; text-align:left;"><div style="padding-left:18px;">ชื่อผู้จ<span style="margin-left:-3.5px;">ำ</span>หน่าย</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;"><div style="padding-left:16px;">รหัสตัวอย<span style="margin-left:-3.5px;">่</span>าง</div><div style="font-weight:normal;font-size:7.5px; padding-left:12px;">(ส<span style="margin-left:-3.5px;">ำ</span>หรับผู้ตรวจวิเคราะห<span style="margin-left:-2px;">์</span>)</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;"><div style="padding-left:18px;">ชื่อตัวอย<span style="margin-left:-3.5px;">่</span>าง</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;"><div style="padding-left:2px;">ปริมาณ<br>(ตัวอย<span style="margin-left:-3.5px;">่</span>าง)</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:15%; text-align:left;"><div style="padding-left:24px;">แหล<span style="margin-left:-3.5px;">่</span>งที่มา</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:10%; text-align:left;"><div style="padding-left:8px;">สารที่ตรวจวิเคราะห<span style="margin-left:-2px;">์</span></div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:14%; text-align:left;"><div style="padding-left:24px;">การแปลผล</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:7%; text-align:left;"><div style="padding-left:2px;">ผลการตรวจวิเคราะห<span style="margin-left:-2px;">์</span></div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;"><div style="padding-left:4px;">สรุปผล</div></th>
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid;">
+                            <th style="padding:5px 3px; border:1px solid #555; width:4%;">ล<span style="display:inline-block; transform:translateX(-2.5px);">ำ</span>ดับ</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:12%;">ชื่อผู้จ<span style="display:inline-block; transform:translateX(-2.5px);">ำ</span>หน่าย</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">รหัสตัวอย<span style="display:inline-block; transform:translateX(-2.5px);">่</span>าง<br><span style="font-weight:normal;font-size:8px;">(ส<span style="display:inline-block; transform:translateX(-2px);">ำ</span>หรับผู้ตรวจวิเคราะห<span style="display:inline-block; transform:translateX(-1.5px);">์</span>)</span></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">ชื่อตัวอย<span style="display:inline-block; transform:translateX(-2.5px);">่</span>าง</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">ปริมาณ<br>(ตัวอย<span style="display:inline-block; transform:translateX(-2.5px);">่</span>าง)</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%;">แหล<span style="display:inline-block; transform:translateX(-2.5px);">่</span>งที่มา</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:10%;">สารที่ตรวจวิเคราะห<span style="display:inline-block; transform:translateX(-1.5px);">์</span></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:14%;">การแปลผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:7%;">ผลการตรวจวิเคราะห<span style="display:inline-block; transform:translateX(-1.5px);">์</span></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">สรุปผล</th>
                         </tr>
                     </thead>
                     <tbody>
