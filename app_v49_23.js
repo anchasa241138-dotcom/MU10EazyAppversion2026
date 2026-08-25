@@ -2374,15 +2374,15 @@ const app = {
         const opt = {
             margin:       0,
             filename:     `Certificate_${pdfNo}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
+            image:        { type: 'jpeg', quality: 1.0 },
             html2canvas:  { 
-                scale: 2, 
+                scale: 4, 
                 useCORS: true,
                 scrollX: 0,
                 scrollY: 0
-                // DO NOT set windowWidth/windowHeight as it causes zooming bugs!
             },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: 'avoid-all' }
         };
         
         Swal.fire({
@@ -3076,7 +3076,7 @@ const app = {
         const opt = {
             margin: 10,
             filename: `${sample.form_type}_${sample.ref_id}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
+            image:        { type: 'jpeg', quality: 1.0 },
             html2canvas: { 
                 scale: 2, 
                 useCORS: true, 
