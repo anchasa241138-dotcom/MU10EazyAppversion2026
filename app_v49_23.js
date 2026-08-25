@@ -2351,10 +2351,18 @@ const app = {
     // PDF Generation
     generateCertificatePDF() {
         const element = document.getElementById('certificatePDFContainer');
-        const currentScrollY = window.scrollY || window.pageYOffset || 0;
-        const currentScrollX = window.scrollX || window.pageXOffset || 0;
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
+        
+        // Temporarily remove overflow to prevent html2canvas clipping
+        const modalBody = element.closest('.modal-body');
+        const oldOverflow = modalBody ? modalBody.style.overflowY : '';
+        const oldMaxHeight = modalBody ? modalBody.style.maxHeight : '';
+        if (modalBody) {
+            modalBody.style.overflowY = 'visible';
+            modalBody.style.maxHeight = 'none';
+        }
+
         const opt = {
             margin:       10,
             filename:     `Certificate_${pdfNo}.pdf`,
@@ -2362,8 +2370,10 @@ const app = {
             html2canvas:  { 
                 scale: 2, 
                 useCORS: true,
-                scrollX: currentScrollX,
-                scrollY: currentScrollY
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: document.documentElement.offsetWidth,
+                windowHeight: document.documentElement.offsetHeight
             },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
@@ -2374,17 +2384,22 @@ const app = {
                 Swal.showLoading();
             }
         });
-        
-        // Fix floating Thai vowels for html2canvas
-        element.innerHTML = element.innerHTML.replace(/<th([^>]*)>([\s\S]*?)<\/th>/gi, '<th$1><span style="display:inline-block; text-align:left;">$2</span></th>');
-        element.innerHTML = element.innerHTML.replace(/<td([^>]*text-align:\s*center[^>]*)>([\s\S]*?)<\/td>/gi, '<td$1><span style="display:inline-block; text-align:left;">$2</span></td>');
 
         html2pdf().set(opt).from(element).save().then(() => {
+            if (modalBody) {
+                modalBody.style.overflowY = oldOverflow;
+                modalBody.style.maxHeight = oldMaxHeight;
+            }
             Swal.close();
         }).catch(err => {
+            if (modalBody) {
+                modalBody.style.overflowY = oldOverflow;
+                modalBody.style.maxHeight = oldMaxHeight;
+            }
             Swal.fire('Error', err.toString(), 'error');
         });
     },
+
 
     generateSubmissionPDF(e) {
         try {
