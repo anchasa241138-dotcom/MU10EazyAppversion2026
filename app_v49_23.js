@@ -1997,8 +1997,8 @@ const app = {
                             <span class="placeholder-signature" style="position: absolute; bottom: 15px;">(รอลงนามรับรอง)</span>
                             <span style="font-size: 11.5px; white-space: nowrap;">ลงชื่อ................................................${defaultRole}</span>
                         </div>
-                        <p style="margin-bottom: 2px;">(.......................................)</p>
-                        <p>${defaultRole}</p>
+                        <p style="margin: 2px 0; white-space: nowrap;">(.......................................)</p>
+                        <p style="margin: 2px 0; white-space: nowrap;">${defaultRole}</p>
                     </div>
                 `;
             }
@@ -2013,9 +2013,9 @@ const app = {
                         <div style="position: absolute; bottom: 5px; z-index: 10;">${sigHtml}</div>
                         <span style="font-size: 11.5px; white-space: nowrap; position: relative; z-index: 1;">ลงชื่อ................................................${defaultRole}</span>
                     </div>
-                    <p style="margin-bottom: 2px;">(${p.name})</p>
-                    <p style="margin-bottom: 2px;">${p.title1}</p>
-                    ${p.title2 ? `<p>${p.title2}</p>` : ''}
+                    <p style="margin: 2px 0; white-space: nowrap;">(${p.name})</p>
+                    <p style="margin: 2px 0; white-space: nowrap;">${p.title1}</p>
+                    ${p.title2 ? `<p style="margin: 2px 0; white-space: nowrap;">${p.title2}</p>` : ''}
                 </div>
             `;
         };
