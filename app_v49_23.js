@@ -2351,29 +2351,35 @@ const app = {
     // PDF Generation
     generateCertificatePDF() {
         const container = document.getElementById('certificatePDFContainer');
-        const element = container.querySelector('.cert-pdf-border') || container;
+        const originalElement = container.querySelector('.cert-pdf-border') || container;
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
-        // Temporarily remove overflow to prevent html2canvas clipping
-        const modalBody = container.closest('.modal-body');
-        const oldOverflowBody = modalBody ? modalBody.style.overflowY : '';
-        const oldMaxHeightBody = modalBody ? modalBody.style.maxHeight : '';
-        if (modalBody) {
-            modalBody.style.overflowY = 'visible';
-            modalBody.style.maxHeight = 'none';
-        }
-        
-        // Force the element to behave like a strict A4 block without centering margins that confuse html2canvas
-        const oldMargin = element.style.margin;
-        element.style.margin = '0';
-        
-        const oldOverflowElement = container.style.overflow || '';
-        const oldMaxHeightElement = container.style.maxHeight || '';
-        container.style.overflow = 'visible';
-        container.style.maxHeight = 'none';
-        
-        // Use exactly the element width for windowWidth so html2canvas doesn't capture extra whitespace
+        Swal.fire({
+            title: 'กำลังสร้าง PDF...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // The absolute most robust way to get a perfect 1-page A4 in html2canvas/html2pdf:
+        // Clone the element, put it at the very top-left of the document, 
+        // with exact A4 pixel dimensions (794x1123), and no margins.
+        const clone = originalElement.cloneNode(true);
+        clone.id = 'temp-pdf-clone';
+        clone.style.position = 'absolute';
+        clone.style.top = '0';
+        clone.style.left = '0';
+        clone.style.width = '794px';
+        clone.style.height = '1123px';
+        clone.style.minHeight = '1123px';
+        clone.style.margin = '0';
+        clone.style.padding = '0';
+        clone.style.background = 'white';
+        clone.style.zIndex = '-9999'; // hide behind everything
+        document.body.appendChild(clone);
+
         const opt = {
             margin:       0,
             filename:     `Certificate_${pdfNo}.pdf`,
@@ -2383,35 +2389,20 @@ const app = {
                 useCORS: true,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 794
+                windowWidth: 794,
+                windowHeight: 1123
             },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        Swal.fire({
-            title: 'กำลังสร้าง PDF...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
 
-        html2pdf().set(opt).from(element).save().then(() => {
-            if (modalBody) {
-                modalBody.style.overflowY = oldOverflowBody;
-                modalBody.style.maxHeight = oldMaxHeightBody;
-            }
-            element.style.margin = oldMargin;
-            container.style.overflow = oldOverflowElement;
-            container.style.maxHeight = oldMaxHeightElement;
+        // Render the clone instead of the modal element
+        html2pdf().set(opt).from(clone).save().then(() => {
+            document.body.removeChild(clone);
             Swal.close();
         }).catch(err => {
-            if (modalBody) {
-                modalBody.style.overflowY = oldOverflowBody;
-                modalBody.style.maxHeight = oldMaxHeightBody;
+            if(document.getElementById('temp-pdf-clone')) {
+                document.body.removeChild(clone);
             }
-            element.style.margin = oldMargin;
-            container.style.overflow = oldOverflowElement;
-            container.style.maxHeight = oldMaxHeightElement;
             Swal.fire('Error', err.toString(), 'error');
         });
     },
