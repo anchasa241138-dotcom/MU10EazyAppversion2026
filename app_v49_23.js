@@ -2364,12 +2364,16 @@ const app = {
             modalBody.style.maxHeight = 'none';
         }
         
+        // Force the element to behave like a strict A4 block without centering margins that confuse html2canvas
+        const oldMargin = element.style.margin;
+        element.style.margin = '0';
+        
         const oldOverflowElement = container.style.overflow || '';
         const oldMaxHeightElement = container.style.maxHeight || '';
         container.style.overflow = 'visible';
         container.style.maxHeight = 'none';
         
-        // Use 0 margin so the 794x1123px border maps perfectly to 210x297mm A4 page without overflowing to a second page
+        // Use exactly the element width for windowWidth so html2canvas doesn't capture extra whitespace
         const opt = {
             margin:       0,
             filename:     `Certificate_${pdfNo}.pdf`,
@@ -2379,8 +2383,7 @@ const app = {
                 useCORS: true,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: document.documentElement.offsetWidth,
-                windowHeight: document.documentElement.offsetHeight
+                windowWidth: 794
             },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
@@ -2397,6 +2400,7 @@ const app = {
                 modalBody.style.overflowY = oldOverflowBody;
                 modalBody.style.maxHeight = oldMaxHeightBody;
             }
+            element.style.margin = oldMargin;
             container.style.overflow = oldOverflowElement;
             container.style.maxHeight = oldMaxHeightElement;
             Swal.close();
@@ -2405,6 +2409,7 @@ const app = {
                 modalBody.style.overflowY = oldOverflowBody;
                 modalBody.style.maxHeight = oldMaxHeightBody;
             }
+            element.style.margin = oldMargin;
             container.style.overflow = oldOverflowElement;
             container.style.maxHeight = oldMaxHeightElement;
             Swal.fire('Error', err.toString(), 'error');
