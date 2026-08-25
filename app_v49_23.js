@@ -2732,19 +2732,19 @@ const app = {
             `;
         } else {
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9.5px;" border="1">
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9.5px; letter-spacing:0px !important; word-spacing:0px !important;" border="1">
                     <thead>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid;">
-                            <th style="padding:5px 3px; border:1px solid #555; width:4%;">ล<span style="display:inline-block; transform:translateX(-2.5px);">ำ</span>ดับ</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:12%;">ชื่อผู้จ<span style="display:inline-block; transform:translateX(-2.5px);">ำ</span>หน่าย</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">รหัสตัวอย<span style="display:inline-block; transform:translateX(-2.5px);">่</span>าง<br><span style="font-weight:normal;font-size:8px;">(ส<span style="display:inline-block; transform:translateX(-2px);">ำ</span>หรับผู้ตรวจวิเคราะห<span style="display:inline-block; transform:translateX(-1.5px);">์</span>)</span></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%;">ชื่อตัวอย<span style="display:inline-block; transform:translateX(-2.5px);">่</span>าง</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">ปริมาณ<br>(ตัวอย<span style="display:inline-block; transform:translateX(-2.5px);">่</span>าง)</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:15%;">แหล<span style="display:inline-block; transform:translateX(-2.5px);">่</span>งที่มา</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:10%;">สารที่ตรวจวิเคราะห<span style="display:inline-block; transform:translateX(-1.5px);">์</span></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:14%;">การแปลผล</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:7%;">ผลการตรวจวิเคราะห<span style="display:inline-block; transform:translateX(-1.5px);">์</span></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:5%;">สรุปผล</th>
+                        <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid;">
+                            <th style="padding:5px 3px; border:1px solid #555; width:4%; text-align:left;"><div style="padding-left:4px;">ลำดับ</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:12%; text-align:left;"><div style="padding-left:18px;">ชื่อผู้จำหน่าย</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;"><div style="padding-left:16px;">รหัสตัวอย่าง</div><div style="font-weight:normal;font-size:7.5px; padding-left:12px;">(สำหรับผู้ตรวจวิเคราะห์)</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;"><div style="padding-left:18px;">ชื่อตัวอย่าง</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;"><div style="padding-left:2px;">ปริมาณ<br>(ตัวอย่าง)</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%; text-align:left;"><div style="padding-left:24px;">แหล่งที่มา</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:10%; text-align:left;"><div style="padding-left:8px;">สารที่ตรวจวิเคราะห์</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:14%; text-align:left;"><div style="padding-left:24px;">การแปลผล</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:7%; text-align:left;"><div style="padding-left:2px;">ผลการตรวจวิเคราะห์</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;"><div style="padding-left:4px;">สรุปผล</div></th>
                         </tr>
                     </thead>
                     <tbody>
