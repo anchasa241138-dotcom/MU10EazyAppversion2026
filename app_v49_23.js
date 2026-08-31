@@ -1371,7 +1371,20 @@ const app = {
             tr.innerHTML = `
                 <td><strong>${s.ref_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
-                <td>${s.sample_name}</td>
+                <td>${(()=>{
+    let n = s.sample_name || '';
+    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
+        const arr = [];
+        let i = 1;
+        while(s['sample_name_'+i] !== undefined) {
+            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
+            i++;
+        }
+        if(arr.length > 0) n = arr.join(', ');
+    }
+    if(!n) n = '-';
+    return n.length > 30 ? n.substring(0,30) + '...' : n;
+})()}</td>
                 <td>${s.agency || '-'}</td>
                   <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.created_at).toLocaleDateString('th-TH')}</td>
@@ -1615,7 +1628,20 @@ const app = {
             tr.innerHTML = `
                 <td><strong>${s.lab_no || s.lab_id}</strong></td>
                 <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
-                <td>${s.sample_name}</td>
+                <td>${(()=>{
+    let n = s.sample_name || '';
+    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
+        const arr = [];
+        let i = 1;
+        while(s['sample_name_'+i] !== undefined) {
+            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
+            i++;
+        }
+        if(arr.length > 0) n = arr.join(', ');
+    }
+    if(!n) n = '-';
+    return n.length > 30 ? n.substring(0,30) + '...' : n;
+})()}</td>
                 <td>${s.agency || '-'}</td>
                   <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.lab_receive_date || s.created_at).toLocaleDateString('th-TH')}</td>
@@ -2136,7 +2162,20 @@ const app = {
               tr.innerHTML = `
                   <td><strong>${s.lab_no || s.lab_id}</strong></td>
                   <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
-                  <td>${s.sample_name}</td>
+                  <td>${(()=>{
+    let n = s.sample_name || '';
+    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
+        const arr = [];
+        let i = 1;
+        while(s['sample_name_'+i] !== undefined) {
+            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
+            i++;
+        }
+        if(arr.length > 0) n = arr.join(', ');
+    }
+    if(!n) n = '-';
+    return n.length > 30 ? n.substring(0,30) + '...' : n;
+})()}</td>
                   <td><small>${(s.analysis_details || s.analysis_details_1 || "-").substring(0, 30)}...</small></td>
                   <td><span class="status-badge ${statusClass}">${displayStatus}</span></td>
                   <td>${s.analysis_analyst}</td>
@@ -3532,7 +3571,20 @@ const app = {
             tr.innerHTML = `
                 <td>${s.lab_id || s.ref_id}</td>
                 <td>${s.form_type}</td>
-                <td>${s.sample_name}</td>
+                <td>${(()=>{
+    let n = s.sample_name || '';
+    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
+        const arr = [];
+        let i = 1;
+        while(s['sample_name_'+i] !== undefined) {
+            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
+            i++;
+        }
+        if(arr.length > 0) n = arr.join(', ');
+    }
+    if(!n) n = '-';
+    return n.length > 30 ? n.substring(0,30) + '...' : n;
+})()}</td>
                   <td>${s.agency || '-'}</td>
                   <td>${s.province}</td>
                 <td>${new Date(s.sampling_date).toLocaleDateString('th-TH')}</td>
