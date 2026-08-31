@@ -2232,8 +2232,7 @@ const app = {
             `;
         };
 
-        if (sample.form_type === 'MU.10-001') {
-            // Fix background stretching by moving the background from the wrapper to individual pages
+        if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
             const wrapper = container.parentElement;
             if (wrapper) {
                 wrapper.style.background = 'none';
@@ -2245,13 +2244,45 @@ const app = {
             let totalCount = 0;
             let passCount = 0;
             
+            let usedTests = new Set();
+            const testLabels = {
+                borax: 'บอแรกซ์',
+                formalin: 'ฟอร์มาลดีไฮด์',
+                bleach: 'ฟอกขาว',
+                salicylic: 'กันรา',
+                agonist: 'สารเร่งเนื้อแดง'
+            };
+
             let idx = 1;
             while (sample['sample_name_' + idx] !== undefined) {
                 if (sample['sample_name_' + idx]) {
                     totalCount++;
-                    const isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
+                    let isPass = false;
+                    let detailsText = '-';
+
+                    if (sample.form_type === 'MU.10-002') {
+                        let itemPass = true;
+                        let itemDetails = [];
+                        ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
+                            if (sample['test_' + k + '_' + idx] || sample['test_' + k] || (sample.tests && sample.tests.includes(testLabels[k]))) {
+                                usedTests.add(k);
+                                const sum = sample['analysis_summary_' + idx + '_' + k];
+                                const det = sample['analysis_details_' + idx + '_' + k];
+                                if (sum !== 'ผ่านเกณฑ์มาตรฐาน') itemPass = false;
+                                if (det) itemDetails.push(det);
+                            }
+                        });
+                        isPass = itemPass;
+                        detailsText = itemDetails.length > 0 ? itemDetails.join(', ') : 'ไม่พบ';
+                        if (itemDetails.length === 0) {
+                             isPass = true;
+                        }
+                    } else {
+                        isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
+                        detailsText = sample['analysis_details_' + idx] || sample.analysis_details || '-';
+                    }
+
                     if (isPass) passCount++;
-                    const details = sample['analysis_details_' + idx] || sample.analysis_details || '-';
                     
                     allItems.push({
                         idx: totalCount,
@@ -2259,7 +2290,7 @@ const app = {
                         labId: sample.lab_no ? String(parseInt(sample.lab_no, 10) + totalCount - 1).padStart(4, '0') : (sample.lab_id + '-' + totalCount),
                         sampleName: sample['sample_name_' + idx],
                         source: sample['source_' + idx] || sample.location_name,
-                        details: details,
+                        details: detailsText,
                         isPass: isPass
                     });
                 }
@@ -2268,25 +2299,67 @@ const app = {
             
             if (totalCount === 0) {
                 totalCount = 1;
-                const isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
+                let isPass = false;
+                let detailsText = '-';
+
+                if (sample.form_type === 'MU.10-002') {
+                    let itemPass = true;
+                    let itemDetails = [];
+                    ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
+                        if (sample['test_' + k] || (sample.tests && sample.tests.includes(testLabels[k]))) {
+                            usedTests.add(k);
+                            const sum = sample['analysis_summary_1_' + k];
+                            const det = sample['analysis_details_1_' + k];
+                            if (sum !== 'ผ่านเกณฑ์มาตรฐาน') itemPass = false;
+                            if (det) itemDetails.push(det);
+                        }
+                    });
+                    isPass = itemPass;
+                    detailsText = itemDetails.length > 0 ? itemDetails.join(', ') : 'ไม่พบ';
+                    if (itemDetails.length === 0) {
+                        isPass = true;
+                    }
+                } else {
+                    isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
+                    detailsText = sample['analysis_details_1'] || sample.analysis_details || '-';
+                }
+
                 if (isPass) passCount++;
-                const details = sample['analysis_details_1'] || sample.analysis_details || '-';
                 allItems.push({
                     idx: 1,
                     distributor: sample.distributor || '-',
                     labId: sample.lab_no || sample.lab_id,
                     sampleName: sample.sample_name || '-',
                     source: sample.source || sample.location_name,
-                    details: details,
+                    details: detailsText,
                     isPass: isPass
                 });
             }
-            const ITEMS_PER_PAGE = 5;
+
+            const ITEMS_PER_PAGE = sample.form_type === 'MU.10-002' ? 10 : 5;
             const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
-            const passPercent = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
+            const passPercent = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(2) : 0;
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
-            const tableHeaderSubstance = (sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
+            
+            let tableHeaderSubstance = '';
+            let remarkText = '';
+            const documentCode = sample.form_type === 'MU.10-002' ? 'RD-002' : 'RD-001';
+            const reportTitle = sample.form_type === 'MU.10-002' ? 'ผลการตรวจวิเคราะห์สารปนเปื้อนในอาหาร โดยชุดทดสอบเบื้องต้น (Test kit)' : 'ผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)';
+            
+            if (sample.form_type === 'MU.10-002') {
+                const usedTestNames = Array.from(usedTests).map(k => testLabels[k]);
+                tableHeaderSubstance = usedTestNames.length > 0 ? usedTestNames.join(', ') : 'สารปนเปื้อน';
+                remarkText = `<p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> - การตรวจวิเคราะห์สารปนเปื้อนในอาหาร โดยชุดทดสอบเบื้องต้น Test kit ได้แก่ ${tableHeaderSubstance}</p>
+                              <p style="margin-left: 65px; margin-bottom:4px;">- ผ่าน หมายถึง ไม่พบสารปนเปื้อน</p>
+                              <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบสารปนเปื้อน</p>`;
+            } else {
+                tableHeaderSubstance = (sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
+                remarkText = `<p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</p>
+                              <p style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</p>
+                              <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</p>`;
+            }
+
             let fullHtml = '';
             
             for (let page = 0; page < totalPages; page++) {
@@ -2302,23 +2375,21 @@ const app = {
                             <td style="text-align:center;">${item.sampleName}</td>
                             <td style="text-align:center;">${item.source}</td>
                             <td style="text-align:center;">${item.details}</td>
-                            <td style="text-align:center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                            <td style="text-align:center; ${!item.isPass ? 'background-color:#fef08a;' : ''}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
                 });
                 
-                
-                
                 const pageHtml = `
                     <div class="cert-pdf-border" style="height: 297mm; ${page < totalPages - 1 ? 'page-break-after: always; margin-bottom: 30px;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 210mm 297mm; background-position: top left;">
                         <div style="position: absolute; top: 140px; left: 60px; font-size: 12.5px; color: #1e293b;">
-                            RD-001
+                            ${documentCode}
                         </div>
                         <div style="position: absolute; top: 140px; right: 60px; font-size: 12.5px; color: #1e293b;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-bottom: 20px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 25px; font-size: 18px; color: #1e3a8a;">ผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)</h4>
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 25px; font-size: 18px; color: #1e3a8a;">${reportTitle}</h4>
                             <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 14.5px;">
                                 <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
                             </div>
@@ -2329,7 +2400,7 @@ const app = {
                                 <strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}
                             </div>
                             <div style="margin-bottom:8px; font-size: 14.5px;">
-                                <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
+                                <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;ตรวจ ${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
                             </div>
                         </div>
                         
@@ -2351,9 +2422,7 @@ const app = {
                         </table>
                         
                         <div style="margin-top:20px; font-size:11.5px; margin-bottom: 40px; color: #334155;">
-                            <p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</p>
-                            <p style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</p>
-                            <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</p>
+                            ${remarkText}
                         </div>
                         
                         <div class="cert-signatures-grid" style="font-size: 11.5px; color: #334155; margin-top: 10px; gap: 15px 40px;">
@@ -2367,50 +2436,7 @@ const app = {
                 fullHtml += pageHtml;
             }
             container.innerHTML = fullHtml;
-        } else {
-            const wrapper = container.parentElement;
-            if (wrapper) {
-                wrapper.style.background = '';
-                wrapper.style.padding = '';
-                wrapper.style.minHeight = '';
-                wrapper.style.width = '';
-            }
-            // --- Legacy Template for other forms ---
-            container.innerHTML = `
-                <div class="cert-pdf-meta">
-                    <p><strong>เลขที่รายงาน:</strong> <span>${sample.lab_no || sample.lab_id}</span></p>
-                    <p><strong>วันที่รายงาน:</strong> <span>${new Date().toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'})}</span></p>
-                </div>
-                <div class="cert-pdf-body">
-                    <p>ใบรายงานฉบับนี้ ขอรับรองว่า ตัวอย่างด้านล่างได้รับการตรวจวิเคราะห์โดยหน่วยงานทางห้องปฏิบัติการ:</p>
-                    <table class="cert-pdf-table">
-                        <tr><td width="30%"><strong>ประเภทตัวอย่าง:</strong></td><td><span>${sample.form_type}</span></td></tr>
-                        <tr><td><strong>ชื่อตัวอย่าง:</strong></td><td><span>${sample.sample_name || sample.sample_name_1 || '-'}</span></td></tr>
-                        <tr><td><strong>จำนวนตัวอย่าง:</strong></td><td><span>${sample.sample_qty || '1'}</span></td></tr>
-                        <tr><td><strong>สถานที่เก็บตัวอย่าง:</strong></td><td><span>${sample.location_name} จ.${sample.province}</span></td></tr>
-                        <tr><td><strong>ผู้ส่งตรวจ / หน่วยงาน:</strong></td><td><span>${sample.collector_name} (${sample.agency})</span></td></tr>
-                        <tr><td><strong>วันที่ส่งตรวจ:</strong></td><td><span>${new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH')}</span></td></tr>
-                    </table>
-                    <h5 style="margin-top: 20px; font-weight: 600; border-bottom: 2px solid #b45309; padding-bottom: 5px; color: #1e3a8a;">ผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h5>
-                    <table class="cert-pdf-table">
-                        <tr><td width="30%"><strong>ผู้ตรวจวิเคราะห์:</strong></td><td><span>${sample.analysis_analyst || '-'}</span></td></tr>
-                        <tr><td><strong>รายละเอียดผลตรวจ:</strong></td><td><span>${sample.analysis_details || '-'}</span></td></tr>
-                        <tr><td><strong>สรุปผลการวิเคราะห์:</strong></td><td>
-                            <span class="cert-pdf-outcome" style="color:${sample.analysis_summary?.includes('ไม่ผ่าน') ? '#ef4444' : '#10b981'}; border-color:${sample.analysis_summary?.includes('ไม่ผ่าน') ? '#ef4444' : '#10b981'};">${sample.analysis_summary || '-'}</span>
-                        </td></tr>
-                    </table>
-                </div>
-                <div class="cert-signatures-grid" style="grid-template-columns: 1fr;">
-                    <div class="cert-signature-area" style="margin: 0 auto;">
-                        <div class="signature-line">${getSig(sample.approver_name)}</div>
-                        <p><strong>${sample.approver_name || '(รอการลงนาม)'}</strong></p>
-                        <p>หัวหน้าศูนย์วิทยาศาสตร์การแพทย์</p>
-                    </div>
-                </div>
-            `;
         }
-
-        // Setup Controls
         if(viewOnly || (sample.status === 'approved' && !forceEdit)) {
             document.getElementById('certApprovalControls').classList.add('hidden');
             document.getElementById('certExportControls').classList.remove('hidden');
@@ -2438,7 +2464,7 @@ const app = {
             }
             
             
-            if (sample.form_type === 'MU.10-001') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
                 document.getElementById('cert-standard-inputs').style.display = 'none';
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
                 
@@ -2512,7 +2538,7 @@ const app = {
             }
             const sample = this.samples[sampleIndex];
 
-            if (sample.form_type === 'MU.10-001') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
                 if (sample.status === 'summarized') {
                     sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
                     sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
