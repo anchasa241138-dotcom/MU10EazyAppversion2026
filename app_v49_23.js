@@ -636,18 +636,7 @@ const app = {
                 break;
             case 'MU.10-002':
                 title = 'แบบบันทึกการเก็บตัวอย่างสารปนเปื้อน 5 ชนิด';
-                dynamicHTML = `
-                    <div class="form-group span-2">
-                        <label>ชนิดสารปนเปื้อนที่ต้องการส่งตรวจ (เลือกได้มากกว่า 1)</label>
-                        <div class="checkbox-group-container">
-                            <div class="checkbox-item"><input type="checkbox" name="test_borax" value="บอแรกซ์"> <label>บอแรกซ์</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_formalin" value="ฟอร์มาลิน"> <label>ฟอร์มาลิน</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_bleach" value="ฟอกขาว"> <label>ฟอกขาว</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_salicylic" value="กันรา (ซาลิซิลิค)"> <label>กันรา (ซาลิซิลิค)</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_agonist" value="สารเร่งเนื้อแดง"> <label>สารเร่งเนื้อแดง</label></div>
-                        </div>
-                    </div>
-                `;
+                dynamicHTML = `<p class="input-helper">ชนิดสารปนเปื้อนสามารถเลือกได้ในแต่ละรายการตัวอย่างด้านบน</p>`;
                 break;
             case 'MU.10-003':
                 title = 'แบบบันทึกการเก็บตัวอย่างน้ำมันทอดซ้ำ (ด้วยเครื่อง Ebro/Testo)';
@@ -900,6 +889,41 @@ const app = {
                     </div>
                 </div>
             `;
+        } else if (formType === 'MU.10-002') {
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="color: var(--primary-light); margin: 0;">รายการตัวอย่าง</h4>
+                    <button type="button" class="btn btn-text remove-sample-btn" style="color: red; padding: 5px;" onclick="app.removeGlobalSample(this)"><i class="fa-solid fa-trash"></i> ลบ</button>
+                </div>
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label>ชื่อตัวอย่าง *</label>
+                        <input type="text" name="sample_name_${this.globalSampleIndex}" required placeholder="เช่น ผักกาดขาว, น้ำดื่มบรรจุขวด">
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อผู้จัดจำหน่าย / ผู้ผลิต *</label>
+                        <input type="text" name="distributor_${this.globalSampleIndex}" required placeholder="เช่น แผงผัก ป้าแดง">
+                    </div>
+                    <div class="form-group">
+                        <label>น้ำหนัก (กรัม)</label>
+                        <input type="number" name="weight_${this.globalSampleIndex}" step="0.1" placeholder="เช่น 500">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>แหล่งที่มาของตัวอย่าง *</label>
+                        <input type="text" name="source_${this.globalSampleIndex}" required placeholder="เช่น ตลาดไท, รับซื้อจากเกษตรกร">
+                    </div>
+                
+                    <div class="form-group" style="grid-column: span 2; margin-top: 15px;">
+                        <label>ชนิดสารปนเปื้อนที่ต้องการส่งตรวจ (เลือกได้มากกว่า 1) *</label>
+                        <div class="checkbox-group-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px;">
+                            <div class="checkbox-item"><input type="checkbox" name="test_borax_\${this.globalSampleIndex}" value="บอแรกซ์"> <label>บอแรกซ์</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_formalin_\${this.globalSampleIndex}" value="ฟอร์มาลิน"> <label>ฟอร์มาลิน</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_bleach_\${this.globalSampleIndex}" value="ฟอกขาว"> <label>ฟอกขาว</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_salicylic_\${this.globalSampleIndex}" value="กันรา (ซาลิซิลิค)"> <label>กันรา (ซาลิซิลิค)</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_agonist_\${this.globalSampleIndex}" value="สารเร่งเนื้อแดง"> <label>สารเร่งเนื้อแดง</label></div>
+                        </div>
+                    </div>
+                </div>`;
         } else {
             div.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -1274,7 +1298,7 @@ const app = {
                     const sampleKey = `${baseName}_${idx}`;
                     if (sample[sampleKey] !== undefined) {
                         if (input.type === 'checkbox') {
-                            input.checked = sample[sampleKey] === 'on' || sample[sampleKey] === true;
+                            input.checked = sample[sampleKey] === 'on' || sample[sampleKey] === true || sample[sampleKey] === input.value;
                         } else {
                             input.value = sample[sampleKey];
                         }
@@ -2476,11 +2500,20 @@ const app = {
                     test_outcome: sample[`test_outcome_${idx}`] || ''
                 });
             } else {
+                let tests = [];
+                if (sample[`test_borax_${idx}`]) tests.push('บอแรกซ์');
+                if (sample[`test_formalin_${idx}`]) tests.push('ฟอร์มาลิน');
+                if (sample[`test_bleach_${idx}`]) tests.push('ฟอกขาว');
+                if (sample[`test_salicylic_${idx}`]) tests.push('กันรา');
+                if (sample[`test_agonist_${idx}`]) tests.push('สารเร่งเนื้อแดง');
+
                 sampleItems.push({
                     name: sample[`sample_name_${idx}`] || '',
                     distributor: sample[`distributor_${idx}`] || '',
                     weight: sample[`weight_${idx}`] || '',
                     source: sample[`source_${idx}`] || '',
+                    idx: idx,
+                    tests: tests
                 });
             }
             idx++;
@@ -2512,7 +2545,7 @@ const app = {
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({ distributor:'', food_type:'', food_serial_no:'', manufacturer_info:'', has_mfg_exp:'', net_weight:'', has_storage_warning:'', label_summary:'', iodate_value:'', test_outcome:'' });
             } else {
-                sampleItems.push({ name:'', distributor:'', weight:'', source:'' });
+                sampleItems.push({ name:'', distributor:'', weight:'', source:'', tests:[] });
             }
         }
 
@@ -2598,11 +2631,11 @@ const app = {
                 let summaryCell = '';
 
                 if (sample.form_type === 'MU.10-002') {
-                    const isBoraxChecked = showChecked && (sample.test_borax === 'on' || sample.test_borax === 'บอแรกซ์' || sample.test_borax === true);
-                    const isFormalinChecked = showChecked && (sample.test_formalin === 'on' || sample.test_formalin === 'ฟอร์มาลิน' || sample.test_formalin === true);
-                    const isBleachChecked = showChecked && (sample.test_bleach === 'on' || sample.test_bleach === 'ฟอกขาว' || sample.test_bleach === true);
-                    const isSalicylicChecked = showChecked && (sample.test_salicylic === 'on' || sample.test_salicylic === 'กันรา (ซาลิซิลิค)' || sample.test_salicylic === true);
-                    const isAgonistChecked = showChecked && (sample.test_agonist === 'on' || sample.test_agonist === 'สารเร่งเนื้อแดง' || sample.test_agonist === true);
+                    const isBoraxChecked = showChecked && (item.tests && item.tests.includes('บอแรกซ์') || sample.test_borax);
+                    const isFormalinChecked = showChecked && (item.tests && item.tests.includes('ฟอร์มาลิน') || sample.test_formalin);
+                    const isBleachChecked = showChecked && (item.tests && item.tests.includes('ฟอกขาว') || sample.test_bleach);
+                    const isSalicylicChecked = showChecked && (item.tests && item.tests.includes('กันรา') || sample.test_salicylic);
+                    const isAgonistChecked = showChecked && (item.tests && item.tests.includes('สารเร่งเนื้อแดง') || sample.test_agonist);
 
                     checkboxCell = `
                         <div style="font-size:8px; line-height:1.4;">
