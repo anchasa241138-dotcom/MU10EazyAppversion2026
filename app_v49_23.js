@@ -916,11 +916,11 @@ const app = {
                     <div class="form-group" style="grid-column: span 2; margin-top: 15px;">
                         <label>ชนิดสารปนเปื้อนที่ต้องการส่งตรวจ (เลือกได้มากกว่า 1) *</label>
                         <div class="checkbox-group-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px;">
-                            <div class="checkbox-item"><input type="checkbox" name="test_borax_\${this.globalSampleIndex}" value="บอแรกซ์"> <label>บอแรกซ์</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_formalin_\${this.globalSampleIndex}" value="ฟอร์มาลิน"> <label>ฟอร์มาลิน</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_bleach_\${this.globalSampleIndex}" value="ฟอกขาว"> <label>ฟอกขาว</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_salicylic_\${this.globalSampleIndex}" value="กันรา (ซาลิซิลิค)"> <label>กันรา (ซาลิซิลิค)</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_agonist_\${this.globalSampleIndex}" value="สารเร่งเนื้อแดง"> <label>สารเร่งเนื้อแดง</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_borax_${this.globalSampleIndex}" value="บอแรกซ์"> <label>บอแรกซ์</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_formalin_${this.globalSampleIndex}" value="ฟอร์มาลิน"> <label>ฟอร์มาลิน</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_bleach_${this.globalSampleIndex}" value="ฟอกขาว"> <label>ฟอกขาว</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_salicylic_${this.globalSampleIndex}" value="กันรา (ซาลิซิลิค)"> <label>กันรา (ซาลิซิลิค)</label></div>
+                            <div class="checkbox-item"><input type="checkbox" name="test_agonist_${this.globalSampleIndex}" value="สารเร่งเนื้อแดง"> <label>สารเร่งเนื้อแดง</label></div>
                         </div>
                     </div>
                 </div>`;
