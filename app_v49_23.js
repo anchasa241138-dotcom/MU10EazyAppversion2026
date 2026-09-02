@@ -3661,6 +3661,10 @@ const app = {
 
         const exportData = this.currentExportData.flatMap(s => {
             const createRowForSample = (s, idx, isFallback, validItemCount) => {
+                let sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || '-');
+                let weight = isFallback ? (s.weight || s['weight_1'] || '-') : (s['weight_'+idx] || '-');
+                let source = isFallback ? (s.source || s['source_1'] || '-') : (s['source_'+idx] || '-');
+                
                 let currentLabNo = s.lab_no;
                 if (currentLabNo && !isNaN(parseInt(currentLabNo, 10))) {
                     let offset = validItemCount !== undefined ? validItemCount : 0;
@@ -3670,24 +3674,32 @@ const app = {
                 } else {
                     currentLabNo = '-';
                 }
-                let sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || '-');
-                let weight = isFallback ? (s.weight || s['weight_1'] || '-') : (s['weight_'+idx] || '-');
-                let source = isFallback ? (s.source || s['source_1'] || '-') : (s['source_'+idx] || '-');
                 
+                let substances = [];
                 let interpretations = [];
                 let details = [];
                 let summaries = [];
 
                 if (s.form_type === 'MU.10-002') {
+                    const dict = {
+                        'borax': 'บอแรกซ์',
+                        'formalin': 'ฟอร์มาลิน',
+                        'bleach': 'ฟอกขาว',
+                        'salicylic': 'กันรา (ซาลิซิลิค)',
+                        'agonist': 'สารเร่งเนื้อแดง'
+                    };
                     ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
                         const sum = s['analysis_summary_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_summary_'+k]);
                         if (sum) {
+                            substances.push(dict[k]);
                             interpretations.push(s['analysis_interpretation_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_interpretation_'+k]) || '');
                             details.push(s['analysis_details_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_details_'+k]) || '');
                             summaries.push(sum);
                         }
                     });
                 } else if (s.form_type === 'MU.10-001') {
+                    const sub = s['analysis_substance_'+idx] || (!isFallback ? '' : s.analysis_substance);
+                    if (sub) substances.push(sub);
                     const sum = s['analysis_summary_'+idx] || (!isFallback ? '' : s.analysis_summary);
                     if (sum) {
                         interpretations.push(s['analysis_interpretation_'+idx] || (!isFallback ? '' : s.analysis_interpretation) || '');
@@ -3695,11 +3707,14 @@ const app = {
                         summaries.push(sum);
                     }
                 } else {
+                    const sub = s['analysis_substance_'+idx] || s.analysis_substance;
+                    if (sub) substances.push(sub);
                     if (s.analysis_interpretation) interpretations.push(s.analysis_interpretation);
                     if (s.analysis_details) details.push(s.analysis_details);
                     if (s.analysis_summary) summaries.push(s.analysis_summary);
                 }
 
+                const subsStr = [...new Set(substances.filter(Boolean))].join(', ') || '-';
                 const interpStr = [...new Set(interpretations.filter(Boolean))].join(', ') || '-';
                 const detailStr = [...new Set(details.filter(Boolean))].join(', ') || '-';
                 
@@ -3736,6 +3751,7 @@ const app = {
                     'วันที่รับตัวอย่าง': s.lab_receive_date || '-',
                     'เวลาที่รับตัวอย่าง': formatTime(s.lab_receive_timestamp),
                     'ชื่อผู้ตรวจวิเคราะห์': s.analysis_analyst || '-',
+                    'สารปนเปื้อน': subsStr,
                     'การแปลผล': interpStr,
                     'ผลการตรวจวิเคราะห์': detailStr,
                     'สรุปผล': itemSummary
