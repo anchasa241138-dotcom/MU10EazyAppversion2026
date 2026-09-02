@@ -63,6 +63,7 @@ const app = {
 
             // Enforce global login requirement
             if (!this.currentUser) {
+                document.body.classList.add('require-login-mode');
                 this.showLoginModal();
                 const closeBtn = document.querySelector('#authModal .close-modal-btn');
                 if (closeBtn) closeBtn.style.display = 'none';
@@ -569,6 +570,7 @@ const app = {
                 timer: 1500,
                 showConfirmButton: false
             });
+            document.body.classList.remove('require-login-mode');
             const closeBtn = document.querySelector('#authModal .close-modal-btn');
             if (closeBtn) closeBtn.style.display = 'block';
             this.closeAuthModal();
@@ -616,6 +618,7 @@ const app = {
         this.updateAuthUI();
         this.switchView('dashboard');
         Swal.fire({ icon: 'info', title: 'ออกจากระบบแล้ว', timer: 1000, showConfirmButton: false });
+        document.body.classList.add('require-login-mode');
         this.showLoginModal();
         const closeBtn = document.querySelector('#authModal .close-modal-btn');
         if (closeBtn) closeBtn.style.display = 'none';
