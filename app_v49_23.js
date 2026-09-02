@@ -90,7 +90,7 @@ const app = {
         if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab') {
             return this.samples;
         }
-        return this.samples.filter(s => s.created_by === this.currentUser.username || s.collector_name === this.currentUser.fullname);
+        return this.samples.filter(s => s.created_by === this.currentUser.username);
     },
 
     initData() {
