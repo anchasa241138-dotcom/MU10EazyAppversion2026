@@ -3588,20 +3588,29 @@ const app = {
             return;
         }
         
-        // Fill timestamps
-        document.getElementById('time-registered').innerText = new Date(sample.created_at).toLocaleDateString('th-TH');
-        document.getElementById('time-accepted').innerText = sample.lab_receive_date ? new Date(sample.lab_receive_date).toLocaleDateString('th-TH') : '-';
-        document.getElementById('time-analyzing').innerText = sample.lab_receive_date ? new Date(sample.lab_receive_date).toLocaleDateString('th-TH') : '-';
-        document.getElementById('time-summarized').innerText = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH') : '-';
-        document.getElementById('time-approved').innerText = sample.status === 'approved' ? new Date().toLocaleDateString('th-TH') : '-';
+        // Fill timestamps with time
+        const formatTime = (isoString) => {
+            if (!isoString) return '-';
+            const d = new Date(isoString);
+            return `${d.toLocaleDateString('th-TH')} ${d.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})} น.`;
+        };
+        
+        document.getElementById('time-registered').innerText = formatTime(sample.created_at);
+        document.getElementById('time-accepted').innerText = formatTime(sample.lab_receive_timestamp || sample.lab_receive_date);
+        document.getElementById('time-analyzing').innerText = formatTime(sample.lab_receive_timestamp || sample.lab_receive_date);
+        document.getElementById('time-summarized').innerText = formatTime(sample.analysis_timestamp || sample.analysis_date);
+        document.getElementById('time-approved').innerText = formatTime(sample.approved_timestamp || (sample.status === 'approved' ? new Date().toISOString() : null));
 
-        // Apply classes
+        // Apply classes (color text & icon for completed steps)
         steps.forEach((step, index) => {
             const el = document.getElementById(`step-${step}`);
-            if (index < currentStepIndex) {
+            if (index <= currentStepIndex) {
                 el.classList.add('completed');
-                if(index < 4) document.querySelectorAll('.timeline-line')[index].classList.add('active');
-            } else if (index === currentStepIndex) {
+            }
+            if (index < currentStepIndex && index < 4) {
+                document.querySelectorAll('.timeline-line')[index].classList.add('active');
+            }
+            if (index === currentStepIndex && sample.status !== 'approved') {
                 el.classList.add('current');
             }
         });
