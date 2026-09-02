@@ -1601,6 +1601,7 @@ const app = {
             this.samples[sampleIndex].lab_id = labId;
             this.samples[sampleIndex].lab_no = labNo;
             this.samples[sampleIndex].lab_receive_date = document.getElementById('accept-receive-date').value;
+            this.samples[sampleIndex].lab_receive_timestamp = new Date().toISOString();
             this.saveSamples();
             
             Swal.fire('สำเร็จ', `รับตัวอย่างเข้าระบบเรียบร้อย<br>รหัสแลป: ${labNo}`, 'success');
@@ -2062,6 +2063,7 @@ const app = {
             
             sample.analysis_analyst = document.getElementById('analysis-analyst').value;
             sample.analysis_date = document.getElementById('analysis-date').value;
+            sample.analysis_timestamp = new Date().toISOString();
             
             const interpEl = document.getElementById('analysis-interpretation');
             if(interpEl) sample.analysis_interpretation = interpEl.value;
@@ -2635,12 +2637,14 @@ const app = {
                     sample.sel_approver_2 = document.getElementById('sel-approver-2').value;
                     sample.approver_name = "MU.10-001 System"; // placeholder
                     sample.status = 'approved';
+                    sample.approved_timestamp = new Date().toISOString();
                 }
             } else {
                 const approverName = document.getElementById('approve-officer-name').value;
                 if(!approverName) return;
                 sample.approver_name = approverName;
                 sample.status = 'approved';
+                    sample.approved_timestamp = new Date().toISOString();
             }
 
             this.saveSamples();
