@@ -3650,20 +3650,89 @@ const app = {
         }
 
         // Map data to Thai headers
-        const exportData = this.currentExportData.map(s => ({
-            'รหัสอ้างอิง': s.ref_id,
-            'รหัสแลป': s.lab_no || s.lab_id || '-',
-            'ประเภทฟอร์ม': s.form_type,
-            'ชื่อตัวอย่าง': s.sample_name,
-            'จังหวัด': s.province,
-            'สถานที่เก็บ': s.location_name,
-            'หน่วยงานที่เก็บ': s.agency,
-            'วันที่เก็บ': s.sampling_date,
-            'ผู้เก็บ': s.collector_name,
-            'สถานะ': s.status,
-            'ผลการตรวจวิเคราะห์': s.analysis_details || '-',
-            'สรุปผล': s.analysis_summary || '-'
-        }));
+        const formatTime = (isoString) => {
+            if (!isoString) return '-';
+            try {
+                const d = new Date(isoString);
+                if (isNaN(d)) return '-';
+                return d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+            } catch(e) { return '-'; }
+        };
+
+        const exportData = this.currentExportData.map(s => {
+            const gather = (prefix) => {
+                let vals = [];
+                let i = 1;
+                while(s[prefix + '_' + i] !== undefined) {
+                    if (s[prefix + '_' + i]) vals.push(s[prefix + '_' + i]);
+                    i++;
+                }
+                if (vals.length === 0 && s[prefix]) vals.push(s[prefix]);
+                return vals.join(', ') || '-';
+            };
+
+            const sampleNames = gather('sample_name');
+            const weights = gather('weight');
+            const sources = gather('source');
+            
+            let interpretations = [];
+            let details = [];
+            
+            if (s.form_type === 'MU.10-002') {
+                 let i = 1;
+                 while(s['sample_name_'+i] !== undefined || i === 1) {
+                     ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
+                          if (s['analysis_summary_'+i+'_'+k] || s['analysis_summary_'+k]) {
+                              interpretations.push(s['analysis_interpretation_'+i+'_'+k] || s['analysis_interpretation_'+k] || '');
+                              details.push(s['analysis_details_'+i+'_'+k] || s['analysis_details_'+k] || '');
+                          }
+                     });
+                     if (s['sample_name_'+i] === undefined) break;
+                     i++;
+                 }
+            } else if (s.form_type === 'MU.10-001') {
+                 let i = 1;
+                 while(s['sample_name_'+i] !== undefined || i === 1) {
+                     if (s['analysis_summary_'+i] || s.analysis_summary) {
+                         interpretations.push(s['analysis_interpretation_'+i] || s.analysis_interpretation || '');
+                         details.push(s['analysis_details_'+i] || s.analysis_details || '');
+                     }
+                     if (s['sample_name_'+i] === undefined) break;
+                     i++;
+                 }
+            } else {
+                 if (s.analysis_interpretation) interpretations.push(s.analysis_interpretation);
+                 if (s.analysis_details) details.push(s.analysis_details);
+            }
+
+            const interpStr = [...new Set(interpretations.filter(Boolean))].join(', ') || '-';
+            const detailStr = [...new Set(details.filter(Boolean))].join(', ') || '-';
+
+            return {
+                'รหัสอ้างอิง': s.ref_id || '-',
+                'ประเภทฟอร์ม': s.form_type || '-',
+                'รหัสแลป': s.lab_no || s.lab_id || '-',
+                'หน่วยงานที่เก็บ': s.agency || '-',
+                'ประเภทสถานที่เก็บ': s.location_type || '-',
+                'สถานที่เก็บ': s.location_name || '-',
+                'ตำบล': s.sub_district || '-',
+                'อำเภอ': s.district || '-',
+                'จังหวัด': s.province || '-',
+                'ชื่อผู้เก็บตัวอย่าง': s.collector_name || '-',
+                'ตำแหน่งผู้เก็บตัวอย่าง': s.collector_position || '-',
+                'วันที่เก็บ': s.sampling_date || '-',
+                'เวลาที่บันทึกเก็บตัวอย่าง': formatTime(s.created_at),
+                'ชื่อตัวอย่าง': sampleNames,
+                'น้ำหนัก': weights,
+                'แหล่งที่มาของตัวอย่าง': sources,
+                'วันที่รับตัวอย่าง': s.lab_receive_date || '-',
+                'เวลาที่รับตัวอย่าง': formatTime(s.lab_receive_timestamp),
+                'ชื่อผู้ตรวจวิเคราะห์': s.analysis_analyst || '-',
+                'การแปลผล': interpStr,
+                'ผลการตรวจวิเคราะห์': detailStr,
+                'สรุปผล': s.analysis_summary || '-'
+            };
+        });
 
         const worksheet = XLSX.utils.json_to_sheet(exportData);
         const workbook = XLSX.utils.book_new();
