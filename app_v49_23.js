@@ -60,6 +60,13 @@ const app = {
             this.updateAuthUI();
             this.updateSidebarBadges();
             this.switchView('dashboard');
+
+            // Enforce global login requirement
+            if (!this.currentUser) {
+                this.showLoginModal();
+                const closeBtn = document.querySelector('#authModal .close-modal-btn');
+                if (closeBtn) closeBtn.style.display = 'none';
+            }
             
             // Start system clock
             setInterval(() => {
@@ -527,6 +534,14 @@ const app = {
     },
 
     closeAuthModal() {
+        if (!this.currentUser) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'จำเป็นต้องเข้าสู่ระบบ',
+                text: 'กรุณาลงชื่อเข้าใช้งาน หรือสมัครสมาชิกก่อนเข้าสู่ระบบ'
+            });
+            return;
+        }
         document.getElementById('authModal').classList.remove('active');
     },
 
@@ -554,6 +569,8 @@ const app = {
                 timer: 1500,
                 showConfirmButton: false
             });
+            const closeBtn = document.querySelector('#authModal .close-modal-btn');
+            if (closeBtn) closeBtn.style.display = 'block';
             this.closeAuthModal();
             this.updateAuthUI();
             e.target.reset();
@@ -599,6 +616,9 @@ const app = {
         this.updateAuthUI();
         this.switchView('dashboard');
         Swal.fire({ icon: 'info', title: 'ออกจากระบบแล้ว', timer: 1000, showConfirmButton: false });
+        this.showLoginModal();
+        const closeBtn = document.querySelector('#authModal .close-modal-btn');
+        if (closeBtn) closeBtn.style.display = 'none';
     },
 
     // Forms Logic
