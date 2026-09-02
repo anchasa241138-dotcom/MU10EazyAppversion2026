@@ -84,6 +84,15 @@ const app = {
     },
 
     // Initialize mock database in localStorage
+
+    getVisibleSamples() {
+        if (!this.currentUser) return [];
+        if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab') {
+            return this.samples;
+        }
+        return this.samples.filter(s => s.created_by === this.currentUser.username || s.collector_name === this.currentUser.fullname);
+    },
+
     initData() {
         // Init Users
         try {
