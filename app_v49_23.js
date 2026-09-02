@@ -3751,6 +3751,8 @@ const app = {
                     'วันที่รับตัวอย่าง': s.lab_receive_date || '-',
                     'เวลาที่รับตัวอย่าง': formatTime(s.lab_receive_timestamp),
                     'ชื่อผู้ตรวจวิเคราะห์': s.analysis_analyst || '-',
+                    'วันที่ตรวจวิเคราะห์': s.analysis_date || '-',
+                    'เวลาที่ตรวจวิเคราะห์': formatTime(s.analysis_timestamp),
                     'สารปนเปื้อน': subsStr,
                     'การแปลผล': interpStr,
                     'ผลการตรวจวิเคราะห์': detailStr,
