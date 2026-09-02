@@ -3660,7 +3660,16 @@ const app = {
         };
 
         const exportData = this.currentExportData.flatMap(s => {
-            const createRowForSample = (s, idx, isFallback) => {
+            const createRowForSample = (s, idx, isFallback, validItemCount) => {
+                let currentLabNo = s.lab_no;
+                if (currentLabNo && !isNaN(parseInt(currentLabNo, 10))) {
+                    let offset = validItemCount !== undefined ? validItemCount : 0;
+                    currentLabNo = String(parseInt(currentLabNo, 10) + offset).padStart(4, '0');
+                } else if (s.lab_id) {
+                    currentLabNo = s.lab_id;
+                } else {
+                    currentLabNo = '-';
+                }
                 let sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || '-');
                 let weight = isFallback ? (s.weight || s['weight_1'] || '-') : (s['weight_'+idx] || '-');
                 let source = isFallback ? (s.source || s['source_1'] || '-') : (s['source_'+idx] || '-');
@@ -3710,7 +3719,7 @@ const app = {
                 return {
                     'รหัสอ้างอิง': s.ref_id || '-',
                     'ประเภทฟอร์ม': s.form_type || '-',
-                    'รหัสแลป': s.lab_no || s.lab_id || '-',
+                    'รหัสแลป': currentLabNo,
                     'หน่วยงานที่เก็บ': s.agency || '-',
                     'ประเภทสถานที่เก็บ': s.location_type || '-',
                     'สถานที่เก็บ': s.location_name || '-',
@@ -3736,16 +3745,18 @@ const app = {
             let rows = [];
             let hasDynamicSamples = false;
             let i = 1;
+            let validItemCount = 0;
             while(s['sample_name_'+i] !== undefined) {
                 if (s['sample_name_'+i]) {
                     hasDynamicSamples = true;
-                    rows.push(createRowForSample(s, i, false));
+                    rows.push(createRowForSample(s, i, false, validItemCount));
+                    validItemCount++;
                 }
                 i++;
             }
             
             if (!hasDynamicSamples) {
-                rows.push(createRowForSample(s, 1, true));
+                rows.push(createRowForSample(s, 1, true, 0));
             }
             
             return rows;
