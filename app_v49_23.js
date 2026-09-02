@@ -3659,34 +3659,97 @@ const app = {
             } catch(e) { return '-'; }
         };
 
-        const exportData = this.currentExportData.map(s => {
-            const gather = (prefix) => {
-                let vals = [];
-                let i = 1;
-                while(s[prefix + '_' + i] !== undefined) {
-                    if (s[prefix + '_' + i]) vals.push(s[prefix + '_' + i]);
-                    i++;
+        const exportData = this.currentExportData.flatMap(s => {
+            const createRowForSample = (s, idx, isFallback) => {
+                let sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || '-');
+                let weight = isFallback ? (s.weight || s['weight_1'] || '-') : (s['weight_'+idx] || '-');
+                let source = isFallback ? (s.source || s['source_1'] || '-') : (s['source_'+idx] || '-');
+                
+                let interpretations = [];
+                let details = [];
+                let summaries = [];
+
+                if (s.form_type === 'MU.10-002') {
+                    ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
+                        const sum = s['analysis_summary_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_summary_'+k]);
+                        if (sum) {
+                            interpretations.push(s['analysis_interpretation_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_interpretation_'+k]) || '');
+                            details.push(s['analysis_details_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_details_'+k]) || '');
+                            summaries.push(sum);
+                        }
+                    });
+                } else if (s.form_type === 'MU.10-001') {
+                    const sum = s['analysis_summary_'+idx] || (!isFallback ? '' : s.analysis_summary);
+                    if (sum) {
+                        interpretations.push(s['analysis_interpretation_'+idx] || (!isFallback ? '' : s.analysis_interpretation) || '');
+                        details.push(s['analysis_details_'+idx] || (!isFallback ? '' : s.analysis_details) || '');
+                        summaries.push(sum);
+                    }
+                } else {
+                    if (s.analysis_interpretation) interpretations.push(s.analysis_interpretation);
+                    if (s.analysis_details) details.push(s.analysis_details);
+                    if (s.analysis_summary) summaries.push(s.analysis_summary);
                 }
-                if (vals.length === 0 && s[prefix]) vals.push(s[prefix]);
-                return vals.join(', ') || '-';
+
+                const interpStr = [...new Set(interpretations.filter(Boolean))].join(', ') || '-';
+                const detailStr = [...new Set(details.filter(Boolean))].join(', ') || '-';
+                
+                let itemSummary = '-';
+                if (summaries.length > 0) {
+                    if (summaries.some(x => x === 'ไม่ผ่านเกณฑ์มาตรฐาน' || x === 'ไม่ผ่าน')) {
+                        itemSummary = 'ไม่ผ่านเกณฑ์มาตรฐาน';
+                    } else if (summaries.every(x => x === 'ผ่านเกณฑ์มาตรฐาน' || x === 'ผ่าน')) {
+                        itemSummary = 'ผ่านเกณฑ์มาตรฐาน';
+                    } else {
+                        itemSummary = [...new Set(summaries.filter(Boolean))].join(', ');
+                    }
+                } else if (isFallback && s.analysis_summary) {
+                    itemSummary = s.analysis_summary;
+                }
+
+                return {
+                    'รหัสอ้างอิง': s.ref_id || '-',
+                    'ประเภทฟอร์ม': s.form_type || '-',
+                    'รหัสแลป': s.lab_no || s.lab_id || '-',
+                    'หน่วยงานที่เก็บ': s.agency || '-',
+                    'ประเภทสถานที่เก็บ': s.location_type || '-',
+                    'สถานที่เก็บ': s.location_name || '-',
+                    'ตำบล': s.sub_district || '-',
+                    'อำเภอ': s.district || '-',
+                    'จังหวัด': s.province || '-',
+                    'ชื่อผู้เก็บตัวอย่าง': s.collector_name || '-',
+                    'ตำแหน่งผู้เก็บตัวอย่าง': s.collector_position || '-',
+                    'วันที่เก็บ': s.sampling_date || '-',
+                    'เวลาที่บันทึกเก็บตัวอย่าง': formatTime(s.created_at),
+                    'ชื่อตัวอย่าง': sampleName,
+                    'น้ำหนัก': weight,
+                    'แหล่งที่มาของตัวอย่าง': source,
+                    'วันที่รับตัวอย่าง': s.lab_receive_date || '-',
+                    'เวลาที่รับตัวอย่าง': formatTime(s.lab_receive_timestamp),
+                    'ชื่อผู้ตรวจวิเคราะห์': s.analysis_analyst || '-',
+                    'การแปลผล': interpStr,
+                    'ผลการตรวจวิเคราะห์': detailStr,
+                    'สรุปผล': itemSummary
+                };
             };
 
-            const sampleNames = gather('sample_name');
-            const weights = gather('weight');
-            const sources = gather('source');
+            let rows = [];
+            let hasDynamicSamples = false;
+            let i = 1;
+            while(s['sample_name_'+i] !== undefined) {
+                if (s['sample_name_'+i]) {
+                    hasDynamicSamples = true;
+                    rows.push(createRowForSample(s, i, false));
+                }
+                i++;
+            }
             
-            let interpretations = [];
-            let details = [];
+            if (!hasDynamicSamples) {
+                rows.push(createRowForSample(s, 1, true));
+            }
             
-            if (s.form_type === 'MU.10-002') {
-                 let i = 1;
-                 while(s['sample_name_'+i] !== undefined || i === 1) {
-                     ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
-                          if (s['analysis_summary_'+i+'_'+k] || s['analysis_summary_'+k]) {
-                              interpretations.push(s['analysis_interpretation_'+i+'_'+k] || s['analysis_interpretation_'+k] || '');
-                              details.push(s['analysis_details_'+i+'_'+k] || s['analysis_details_'+k] || '');
-                          }
-                     });
+            return rows;
+        });
                      if (s['sample_name_'+i] === undefined) break;
                      i++;
                  }
