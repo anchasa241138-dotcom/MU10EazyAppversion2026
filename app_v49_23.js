@@ -1006,6 +1006,30 @@ const app = {
         // Collect form data
         const formData = new FormData(e.target);
         const sampleData = Object.fromEntries(formData.entries());
+
+        if (sampleData.form_type === 'MU.10-001') {
+            const forbiddenNames = ['ถั่วงอก', 'ขิงซอย', 'ขิงฝอย'];
+            let foundForbidden = false;
+            for (let key in sampleData) {
+                if (key.startsWith('sample_name')) {
+                    const val = sampleData[key] ? sampleData[key].trim() : '';
+                    if (forbiddenNames.some(name => val.includes(name))) {
+                        foundForbidden = true;
+                        break;
+                    }
+                }
+            }
+            if (foundForbidden) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ข้อควรระวังในการส่งตรวจ',
+                    html: 'สารฟอกขาว หรือ โซเดียมไฮโดรซัลไฟต์ (Sodium Hydrosulfite) มักพบการลักลอบใช้หรือปนเปื้อนในอาหารสีขาวเพื่อให้ดูสดใหม่ น่ารับประทาน อาหารที่มักพบสารฟอกขาว เช่น ถั่วงอก, ขิงซอย<br><br>หากคุณต้องการตรวจการปนเปื้อนของสารฟอกขาวหรือโซเดียมไฮโดรซัลไฟต์ สามารถส่งตัวอย่างและบันทึกลงในแบบบันทึก <b>MU.10-002</b> ได้เลย',
+                    confirmButtonText: 'เข้าใจแล้ว',
+                    width: 600
+                });
+                return;
+            }
+        }
         
         let tempId = '';
         if (this.currentEditingRefId) {
@@ -1648,6 +1672,7 @@ const app = {
                 <td>${statusBadge}</td>
                 <td>
                     <button class="btn btn-primary btn-text" onclick="app.openAnalysisInputModal('${s.ref_id}')"><i class="fa-solid fa-pen-to-square"></i> บันทึกผล</button>
+                    ${s.status === 'summarized' ? `<button class="btn btn-secondary btn-text" style="color:#0ea5e9; margin-top:4px; display:block;" onclick="app.generateSubmissionPDF({currentTarget: {dataset: {refId: '${s.ref_id}'}}})"><i class="fa-solid fa-file-pdf"></i> ใบนำส่งตัวอย่าง</button>` : ''}
                 </td>
             `;
             tbody.appendChild(tr);
@@ -2407,14 +2432,14 @@ const app = {
                 let rowsHtml = '';
                 chunk.forEach(item => {
                     rowsHtml += `
-                        <tr>
+                        <tr style="${!item.isPass ? 'background-color:#fef08a;' : ''}">
                             <td style="text-align:center;">${item.idx}</td>
                             <td style="text-align:center;">${item.distributor}</td>
                             <td style="text-align:center;">${item.labId}</td>
                             <td style="text-align:center;">${item.sampleName}</td>
                             <td style="text-align:center;">${item.source}</td>
                             <td style="text-align:center;">${item.details}</td>
-                            <td style="text-align:center; ${!item.isPass ? 'background-color:#fef08a;' : ''}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                            <td style="text-align:center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
                 });
@@ -2890,23 +2915,23 @@ const app = {
                     const isSalicylicChecked = showChecked && (item.tests && item.tests.includes('กันรา') || sample.test_salicylic);
                     const isAgonistChecked = showChecked && (item.tests && item.tests.includes('สารเร่งเนื้อแดง') || sample.test_agonist);
 
-                    const b_interp = sample['analysis_interpretation_' + item.idx + '_borax'] || '';
-                    const f_interp = sample['analysis_interpretation_' + item.idx + '_formalin'] || '';
-                    const bl_interp = sample['analysis_interpretation_' + item.idx + '_bleach'] || '';
-                    const s_interp = sample['analysis_interpretation_' + item.idx + '_salicylic'] || '';
-                    const a_interp = sample['analysis_interpretation_' + item.idx + '_agonist'] || '';
+                    const b_interp = sample['analysis_interpretation_' + (item.idx || 1) + '_borax'] || '';
+                    const f_interp = sample['analysis_interpretation_' + (item.idx || 1) + '_formalin'] || '';
+                    const bl_interp = sample['analysis_interpretation_' + (item.idx || 1) + '_bleach'] || '';
+                    const s_interp = sample['analysis_interpretation_' + (item.idx || 1) + '_salicylic'] || '';
+                    const a_interp = sample['analysis_interpretation_' + (item.idx || 1) + '_agonist'] || '';
                     
-                    const b_res = sample['analysis_details_' + item.idx + '_borax'] || '';
-                    const f_res = sample['analysis_details_' + item.idx + '_formalin'] || '';
-                    const bl_res = sample['analysis_details_' + item.idx + '_bleach'] || '';
-                    const s_res = sample['analysis_details_' + item.idx + '_salicylic'] || '';
-                    const a_res = sample['analysis_details_' + item.idx + '_agonist'] || '';
+                    const b_res = sample['analysis_details_' + (item.idx || 1) + '_borax'] || '';
+                    const f_res = sample['analysis_details_' + (item.idx || 1) + '_formalin'] || '';
+                    const bl_res = sample['analysis_details_' + (item.idx || 1) + '_bleach'] || '';
+                    const s_res = sample['analysis_details_' + (item.idx || 1) + '_salicylic'] || '';
+                    const a_res = sample['analysis_details_' + (item.idx || 1) + '_agonist'] || '';
                     
-                    const b_sum = sample['analysis_summary_' + item.idx + '_borax'] || '';
-                    const f_sum = sample['analysis_summary_' + item.idx + '_formalin'] || '';
-                    const bl_sum = sample['analysis_summary_' + item.idx + '_bleach'] || '';
-                    const s_sum = sample['analysis_summary_' + item.idx + '_salicylic'] || '';
-                    const a_sum = sample['analysis_summary_' + item.idx + '_agonist'] || '';
+                    const b_sum = sample['analysis_summary_' + (item.idx || 1) + '_borax'] || '';
+                    const f_sum = sample['analysis_summary_' + (item.idx || 1) + '_formalin'] || '';
+                    const bl_sum = sample['analysis_summary_' + (item.idx || 1) + '_bleach'] || '';
+                    const s_sum = sample['analysis_summary_' + (item.idx || 1) + '_salicylic'] || '';
+                    const a_sum = sample['analysis_summary_' + (item.idx || 1) + '_agonist'] || '';
 
                     checkboxCell = `
                         <div style="font-size:8px; line-height:1.4;">
@@ -2944,8 +2969,13 @@ const app = {
                             <div>${chk('ผ่าน', a_sum === 'ผ่านเกณฑ์มาตรฐาน')} ${chk('ไม่ผ่าน', a_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน')}</div>
                         </div>`;
                 } else {
-                    const isGtChecked = showChecked && (sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true);
-                    const isTmChecked = showChecked && (sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
+                    const sub = sample['analysis_substance_' + (item.idx || 1)] || '';
+                    const interp = sample['analysis_interpretation_' + (item.idx || 1)] || '';
+                    const res = sample['analysis_details_' + (item.idx || 1)] || '';
+                    const sum = sample['analysis_summary_' + (item.idx || 1)] || '';
+
+                    const isGtChecked = showChecked && (sub === 'GT' || sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true);
+                    const isTmChecked = showChecked && (sub === 'TM/2' || sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
 
                     checkboxCell = `
                         <div style="font-size:9.5px; line-height:1.1;">
@@ -2955,24 +2985,25 @@ const app = {
 
                     interpretCell = `
                         <div style="font-size:9.5px; line-height:1.1;">
-                            <div>${chk('สีตัวอย่าง = สีควบคุม')}</div>
-                            <div style="margin-top:2px;">${chk('สีควบคุม > สีตัวอย่าง < สีตัดสิน')}</div>
-                            <div style="margin-top:2px;">${chk('สีตัวอย่าง >= สีตัดสิน')}</div>
-                            <div style="margin-top:2px;">${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
-                            <div style="margin-top:2px;">${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
+                            <div>${chk('สีตัวอย่าง = สีควบคุม', interp === 'สีตัวอย่าง = สีควบคุม')}</div>
+                            <div style="margin-top:2px;">${chk('สีควบคุม > สีตัวอย่าง < สีตัดสิน', interp.includes('สีควบคุม') && interp.includes('สีตัดสิน') && interp.includes('>'))}</div>
+                            <div style="margin-top:2px;">${chk('สีตัวอย่าง >= สีตัดสิน', interp.includes('≥') || interp.includes('>='))}</div>
+                            <div style="margin-top:2px;">${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
+                            <div style="margin-top:2px;">${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div>
                         </div>`;
 
                     resultCell = `
                         <div style="font-size:9.5px; line-height:1.1;">
-                            <div>${chk('ไม่พบ')}</div>
-                            <div style="margin-top:2px;">${chk('พบ')}</div>
-                            <div style="margin-top:2px;">${chk('พบปลอดภัย')}</div>
-                            <div style="margin-top:2px;">${chk('พบอันตราย')}</div>
+                            <div>${chk('ไม่พบ', res === 'ไม่พบ')}</div>
+                            <div style="margin-top:2px;">${chk('พบ', res === 'พบ')}</div>
+                            <div style="margin-top:2px;">${chk('พบปลอดภัย', res === 'พบปลอดภัย')}</div>
+                            <div style="margin-top:2px;">${chk('พบอันตราย', res === 'พบอันตราย')}</div>
                         </div>`;
                 }
 
-                const isPassChecked = showChecked && sample.analysis_summary === 'ผ่าน';
-                const isFailChecked = showChecked && sample.analysis_summary === 'ไม่ผ่าน';
+                const sumValue = sample.form_type === 'MU.10-001' ? (sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary) : sample.analysis_summary;
+                const isPassChecked = showChecked && (sumValue === 'ผ่านเกณฑ์มาตรฐาน' || sumValue === 'ผ่าน');
+                const isFailChecked = showChecked && (sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน' || sumValue === 'ไม่ผ่าน');
                 summaryCell = `
                     <div style="font-size:7.5px; line-height:1.2;">
                         <div>${chk('ผ่าน', isPassChecked)}</div>
