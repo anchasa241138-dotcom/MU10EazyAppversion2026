@@ -436,7 +436,7 @@ const app = {
         const searchInput = document.getElementById('searchDownloadTable');
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
         
-        const approvedSamples = this.samples.filter(s => s.status === 'approved');
+        const approvedSamples = this.getVisibleSamples().filter(s => s.status === 'approved');
         
         tbody.innerHTML = '';
         
@@ -484,10 +484,11 @@ const app = {
     },
 
     updateDashboardStats() {
-        const total = this.samples.length;
-        const pending = this.samples.filter(s => s.status === 'registered').length;
-        const analyzing = this.samples.filter(s => s.status === 'accepted').length;
-        const completed = this.samples.filter(s => s.status === 'approved').length;
+        const visible = this.getVisibleSamples();
+        const total = visible.length;
+        const pending = visible.filter(s => s.status === 'registered').length;
+        const analyzing = visible.filter(s => s.status === 'accepted').length;
+        const completed = visible.filter(s => s.status === 'approved').length;
 
         document.getElementById('stats-total').innerText = total;
         document.getElementById('stats-pending').innerText = pending;
@@ -1153,7 +1154,7 @@ const app = {
         if (!tbody) return;
 
         // Find only 'registered' samples (not yet verified/approved by lab)
-        let mySavedSamples = this.samples;
+        let mySavedSamples = this.getVisibleSamples();
 
         // Filter by current form type
         const currentFormType = document.getElementById('field-form-type')?.value;
@@ -3619,7 +3620,7 @@ const app = {
         const startDate = document.getElementById('filter-start-date').value;
         const endDate = document.getElementById('filter-end-date').value;
 
-        let filtered = this.samples.filter(s => {
+        let filtered = this.getVisibleSamples().filter(s => {
             let match = true;
             if(province !== 'ALL' && s.province !== province) match = false;
             if(formType !== 'ALL' && s.form_type !== formType) match = false;
