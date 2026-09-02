@@ -3601,17 +3601,34 @@ const app = {
         document.getElementById('time-summarized').innerText = formatTime(sample.analysis_timestamp || sample.analysis_date);
         document.getElementById('time-approved').innerText = formatTime(sample.approved_timestamp || (sample.status === 'approved' ? new Date().toISOString() : null));
 
-        // Apply classes (color text & icon for completed steps)
+        // Apply classes and inline colors to guarantee visibility
         steps.forEach((step, index) => {
             const el = document.getElementById(`step-${step}`);
-            if (index <= currentStepIndex) {
+            const icon = el.querySelector('.step-icon');
+            const h5 = el.querySelector('.step-content h5');
+            
+            // Reset inline styles
+            icon.style = '';
+            h5.style = '';
+            
+            if (index < currentStepIndex) {
+                // Completed steps (Blue)
                 el.classList.add('completed');
-            }
-            if (index < currentStepIndex && index < 4) {
-                document.querySelectorAll('.timeline-line')[index].classList.add('active');
-            }
-            if (index === currentStepIndex && sample.status !== 'approved') {
+                icon.style.backgroundColor = '#0ea5e9'; // var(--secondary-color)
+                icon.style.color = '#ffffff';
+                h5.style.color = '#0ea5e9';
+                if (index < 4) document.querySelectorAll('.timeline-line')[index].classList.add('active');
+            } else if (index === currentStepIndex) {
+                // Current pending step (Gold/Orange)
                 el.classList.add('current');
+                icon.style.backgroundColor = '#f59e0b'; // var(--accent-color)
+                icon.style.color = '#ffffff';
+                h5.style.color = '#f59e0b';
+            } else {
+                // Future steps (Grey)
+                icon.style.backgroundColor = 'rgba(226, 232, 240, 0.6)';
+                icon.style.color = '#475569';
+                h5.style.color = '#475569';
             }
         });
 
