@@ -3601,46 +3601,57 @@ const app = {
         document.getElementById('time-summarized').innerText = formatTime(sample.analysis_timestamp || sample.analysis_date);
         document.getElementById('time-approved').innerText = formatTime(sample.approved_timestamp || (sample.status === 'approved' ? new Date().toISOString() : null));
 
-        // Apply classes and inline colors to guarantee visibility
+        // Apply classes and inline colors to guarantee visibility with important
         steps.forEach((step, index) => {
             const el = document.getElementById(`step-${step}`);
+            if(!el) return;
             const icon = el.querySelector('.step-icon');
             const h5 = el.querySelector('.step-content h5');
             
-            // Reset inline styles
-            icon.style = '';
-            h5.style = '';
+            if(icon) icon.style = '';
+            if(h5) h5.style = '';
             
             if (index < currentStepIndex) {
-                // Completed steps (Blue)
                 el.classList.add('completed');
-                icon.style.backgroundColor = '#0ea5e9'; // var(--secondary-color)
-                icon.style.color = '#ffffff';
-                h5.style.color = '#0ea5e9';
-                if (index < 4) document.querySelectorAll('.timeline-line')[index].classList.add('active');
+                if(icon) {
+                    icon.style.setProperty('background-color', '#0ea5e9', 'important');
+                    icon.style.setProperty('color', '#ffffff', 'important');
+                    icon.style.setProperty('box-shadow', '0 0 0 4px rgba(13,148,136,0.2)', 'important');
+                }
+                if(h5) h5.style.setProperty('color', '#0ea5e9', 'important');
+                if (index < 4) {
+                    const line = document.querySelectorAll('.timeline-line')[index];
+                    if(line) line.classList.add('active');
+                }
             } else if (index === currentStepIndex) {
-                // Current pending step (Gold/Orange)
                 el.classList.add('current');
-                icon.style.backgroundColor = '#f59e0b'; // var(--accent-color)
-                icon.style.color = '#ffffff';
-                h5.style.color = '#f59e0b';
+                if(icon) {
+                    icon.style.setProperty('background-color', '#f59e0b', 'important');
+                    icon.style.setProperty('color', '#ffffff', 'important');
+                    icon.style.setProperty('box-shadow', '0 0 0 4px rgba(217,119,6,0.25)', 'important');
+                }
+                if(h5) h5.style.setProperty('color', '#f59e0b', 'important');
             } else {
-                // Future steps (Grey)
-                icon.style.backgroundColor = 'rgba(226, 232, 240, 0.6)';
-                icon.style.color = '#475569';
-                h5.style.color = '#475569';
+                if(icon) {
+                    icon.style.setProperty('background-color', '#e2e8f0', 'important');
+                    icon.style.setProperty('color', '#475569', 'important');
+                    icon.style.setProperty('box-shadow', 'none', 'important');
+                }
+                if(h5) h5.style.setProperty('color', '#475569', 'important');
             }
         });
 
         // Update Badge text
         const statusMap = {
-            'registered': ['รอตรวจรับ', 'status-registered'],
-            'accepted': ['กำลังวิเคราะห์', 'status-analyzing'],
-            'summarized': ['รอรับรองผล', 'status-summarized'],
-            'approved': ['อนุมัติผลวิเคราะห์เรียบร้อย', 'status-approved']
+            'registered': ['รอตรวจรับ', '#eff6ff', '#1d4ed8'],
+            'accepted': ['กำลังวิเคราะห์', '#f0fdf4', '#15803d'],
+            'summarized': ['รอรับรองผล', '#faf5ff', '#6b21a8'],
+            'approved': ['อนุมัติผลวิเคราะห์เรียบร้อย', '#ecfdf5', '#047857']
         };
         badge.innerText = statusMap[sample.status][0];
-        badge.className = `status-badge status-badge-current ${statusMap[sample.status][1]}`;
+        badge.className = 'status-badge status-badge-current';
+        badge.style.setProperty('background-color', statusMap[sample.status][1], 'important');
+        badge.style.setProperty('color', statusMap[sample.status][2], 'important');
 
         if(sample.status === 'approved') {
             document.getElementById('trackingCertDownloadBar').classList.remove('hidden');
