@@ -3018,7 +3018,7 @@ const app = {
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) => {
-            return `<span style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; word-break: break-all; white-space: normal;">${checked ? '&#9745;' : '&#9744;'} ${txt}</span>`;
+            return `<span style="font-family: 'Tahoma', 'SarabunPDF', 'TH Sarabun New', sans-serif; word-break: break-all; white-space: normal;">${checked ? '[X]' : '[ ]'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -3069,7 +3069,7 @@ const app = {
                         <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_type}</td>
                         <td style="padding:4px; text-align:center; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_frequency}</td>
                         <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">
-                            ${chk('ผ่าน', isPassChecked)} &nbsp;
+                            ${chk('ผ่าน', isPassChecked)}  
                             ${chk('ไม่ผ่าน', isFailChecked)}
                         </td>
                     </tr>
@@ -3297,16 +3297,16 @@ const app = {
                 <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:9.5px; letter-spacing:0px !important; word-spacing:0px !important;" border="1">
                     <thead>
                         <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid;">
-                            <th style="padding:5px 3px; border:1px solid #555; width:4%; text-align:left;">&nbsp;&nbsp;ลำดับ</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:12%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ชื่อผู้จำหน่าย</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;รหัสตัวอย่าง<div style="font-weight:normal;font-size:7.5px;">&nbsp;&nbsp;&nbsp;&nbsp;(สำหรับผู้ตรวจวิเคราะห์)</div></th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ชื่อตัวอย่าง</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;">&nbsp;ปริมาณ<br>&nbsp;(ตัวอย่าง)</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:15%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;แหล่งที่มา</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:10%; text-align:left;">&nbsp;&nbsp;&nbsp;สารที่ตรวจวิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:14%; text-align:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;การแปลผล</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:7%; text-align:left;">&nbsp;ผลการตรวจวิเคราะห์</th>
-                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;">&nbsp;&nbsp;สรุปผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:4%; text-align:left;">  ลำดับ</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:12%; text-align:left;">      ชื่อผู้จำหน่าย</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;">     รหัสตัวอย่าง<div style="font-weight:normal;font-size:7.5px;">    (สำหรับผู้ตรวจวิเคราะห์)</div></th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:11%; text-align:left;">      ชื่อตัวอย่าง</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;"> ปริมาณ<br> (ตัวอย่าง)</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:15%; text-align:left;">        แหล่งที่มา</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:10%; text-align:left;">   สารที่ตรวจวิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:14%; text-align:left;">        การแปลผล</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:7%; text-align:left;"> ผลการตรวจวิเคราะห์</th>
+                            <th style="padding:5px 3px; border:1px solid #555; width:5%; text-align:left;">  สรุปผล</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -3351,11 +3351,11 @@ const app = {
                         <tr style="height: 22px; text-align:center;">
                             <td style="border:1px solid #555; vertical-align:middle; font-size:8px;">${i + 1}</td>
                             <td style="border:1px solid #555; vertical-align:middle; font-size:8px;">${samplingDate}</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isPass ? '&#9745;' : '&#9744;'}</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">&#9744;</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isFail ? '&#9745;' : '&#9744;'}</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isFail ? '&#9745;' : '&#9744;'}</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isPass ? '&#9745;' : '&#9744;'}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isPass ? '[X]' : '[ ]'}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">[ ]</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isFail ? '[X]' : '[ ]'}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isFail ? '[X]' : '[ ]'}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">${isPass ? '[X]' : '[ ]'}</td>
                             <td style="border:1px solid #555; vertical-align:middle; font-size:8px; font-weight:bold;">${isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : '')}</td>
                         </tr>
                     `;
@@ -3363,13 +3363,13 @@ const app = {
                     tableRowsHTML += `
                         <tr style="height: 22px; text-align:center;">
                             <td style="border:1px solid #555; vertical-align:middle; font-size:8px;">${i + 1}</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:8px;">&nbsp;</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">&#9744;</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">&#9744;</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">&#9744;</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">&#9744;</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">&#9744;</td>
-                            <td style="border:1px solid #555; vertical-align:middle; font-size:8px;">&nbsp;</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:8px;"> </td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">[ ]</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">[ ]</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">[ ]</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">[ ]</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:10px;">[ ]</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:8px;"> </td>
                         </tr>
                     `;
                 }
@@ -3379,11 +3379,7 @@ const app = {
             <style>
                 * {
                     font-family: 'SarabunPDF', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
-                    font-variant-ligatures: normal !important;
-                    -webkit-font-variant-ligatures: normal !important;
-                    font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
-                    -webkit-font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
-                    letter-spacing: normal !important;
+                                        letter-spacing: normal !important;
                 }
             </style>
 
@@ -3419,41 +3415,41 @@ const app = {
 
                 <!-- QUESTIONNAIRE -->
                 <div style="width: 100%; line-height:1.5; color:#000; font-size:9.5px; margin-bottom:8px;">
-                    <div><strong>ประเภท</strong> &nbsp;
-                        ${isFlour ? '&#9745;' : '&#9744;'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
+                    <div><strong>ประเภท</strong>  
+                        ${isFlour ? '[X]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div>
                     <div style="margin-top:1px; padding-left:38px;">
-                        ${isMeat ? '&#9745;' : '&#9744;'} เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMeat ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
+                        ${isMeat ? '[X]' : '[ ]'} เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMeat ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div>
                     <div style="margin-top:1px; padding-left:38px;">
-                        ${isMeatProduct ? '&#9745;' : '&#9744;'} ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ ระบุชนิดอาหาร ....<u>${isMeatProduct ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
+                        ${isMeatProduct ? '[X]' : '[ ]'} ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ ระบุชนิดอาหาร ....<u>${isMeatProduct ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div>
                     <div style="margin-top:1px; padding-left:38px;">
-                        ${isMix ? '&#9745;' : '&#9744;'} พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMix ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
+                        ${isMix ? '[X]' : '[ ]'} พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMix ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div>
                     <div style="margin-top:1px; padding-left:38px;">
-                        ${isOtherFood ? '&#9745;' : '&#9744;'} อื่นๆ ระบุ ....<u>${isOtherFood ? (firstItem.food_category + (firstItem.food_type ? ' - ' + firstItem.food_type : '')) : '..............................................................................................................................................'}</u>....
+                        ${isOtherFood ? '[X]' : '[ ]'} อื่นๆ ระบุ ....<u>${isOtherFood ? (firstItem.food_category + (firstItem.food_type ? ' - ' + firstItem.food_type : '')) : '..............................................................................................................................................'}</u>....
                     </div>
 
                     <div style="margin-top:3px;">
-                        <strong>ชนิดน้ำมัน</strong> &nbsp;&nbsp;
-                        ${isPalm ? '&#9745;' : '&#9744;'} น้ำมันปาล์ม &nbsp;&nbsp;
-                        ${isLard ? '&#9745;' : '&#9744;'} น้ำมันหมู &nbsp;&nbsp;
-                        ${isSoy ? '&#9745;' : '&#9744;'} น้ำมันถั่วเหลือง &nbsp;&nbsp;
-                        ${isOtherOil ? '&#9745;' : '&#9744;'} อื่น ๆ ระบุ ....<u>${isOtherOil ? firstItem.oil_type : '.......................................................................................'}</u>....
+                        <strong>ชนิดน้ำมัน</strong>   
+                        ${isPalm ? '[X]' : '[ ]'} น้ำมันปาล์ม   
+                        ${isLard ? '[X]' : '[ ]'} น้ำมันหมู   
+                        ${isSoy ? '[X]' : '[ ]'} น้ำมันถั่วเหลือง   
+                        ${isOtherOil ? '[X]' : '[ ]'} อื่น ๆ ระบุ ....<u>${isOtherOil ? firstItem.oil_type : '.......................................................................................'}</u>....
                     </div>
 
                     <div style="margin-top:3px;">
-                        <strong>ระยะเวลาใช้ทอด</strong> ....<u>${firstItem.fry_duration || '............'}</u>.... นาที/ครั้ง &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <strong>ระยะเวลาใช้ทอด</strong> ....<u>${firstItem.fry_duration || '............'}</u>.... นาที/ครั้ง             
                         <strong>จำนวนครั้งที่ทอด</strong> ....<u>${firstItem.fry_count || '............'}</u>.... ครั้ง/วัน
                     </div>
 
                     <div style="margin-top:3px;">
-                        <strong>ลักษณะการเปลี่ยนน้ำมัน</strong> &nbsp;&nbsp;
-                        ${isRepNone ? '&#9745;' : '&#9744;'} ไม่เปลี่ยนเลย &nbsp;&nbsp;
-                        ${isRepPart ? '&#9745;' : '&#9744;'} เปลี่ยนบางส่วน &nbsp;&nbsp;
-                        ${isRepAll ? '&#9745;' : '&#9744;'} เปลี่ยนใหม่ทั้งหมด &nbsp;&nbsp;
-                        ${isRepOther ? '&#9745;' : '&#9744;'} อื่น ๆ ระบุ ....<u>${isRepOther ? firstItem.replacement_type : '........................'}</u>....
+                        <strong>ลักษณะการเปลี่ยนน้ำมัน</strong>   
+                        ${isRepNone ? '[X]' : '[ ]'} ไม่เปลี่ยนเลย   
+                        ${isRepPart ? '[X]' : '[ ]'} เปลี่ยนบางส่วน   
+                        ${isRepAll ? '[X]' : '[ ]'} เปลี่ยนใหม่ทั้งหมด   
+                        ${isRepOther ? '[X]' : '[ ]'} อื่น ๆ ระบุ ....<u>${isRepOther ? firstItem.replacement_type : '........................'}</u>....
                     </div>
 
                     <div style="margin-top:3px;">
@@ -3535,11 +3531,7 @@ const app = {
             <style>
                 * {
                     font-family: 'SarabunPDF', 'Leelawadee UI', 'Leelawadee', 'Segoe UI', 'Tahoma', 'Microsoft Sans Serif', sans-serif !important;
-                    font-variant-ligatures: normal !important;
-                    -webkit-font-variant-ligatures: normal !important;
-                    font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
-                    -webkit-font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
-                    letter-spacing: normal !important;
+                                        letter-spacing: normal !important;
                 }
             </style>
 
@@ -3651,8 +3643,8 @@ const app = {
         
         
         // Fix for floating Thai vowels in html2canvas with text-align: center
-        htmlContent = htmlContent.replace(/<th([^>]*)>([\s\S]*?)<\/th>/g, '<th$1><span style="display:inline-block; text-align:left;">$2</span></th>');
-        htmlContent = htmlContent.replace(/<td([^>]*text-align:\s*center[^>]*)>([\s\S]*?)<\/td>/g, '<td$1><span style="display:inline-block; text-align:left;">$2</span></td>');
+        
+        
 
         // Generate PDF directly from the HTML string
         setTimeout(() => {
