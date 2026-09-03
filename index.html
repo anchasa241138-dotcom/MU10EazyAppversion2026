@@ -917,6 +917,7 @@
                                             <th>หน่วยงาน/สถานที่</th>
                                             <th>บทบาท</th>
                                             <th>สถานะ</th>
+                                            <th>การจัดการ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1237,6 +1238,27 @@
         </div>
     </div>
 
+    
+    <!-- User Details Modal -->
+    <div class="modal-overlay" id="userDetailsModal">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h4><i class="fa-solid fa-address-card"></i> ข้อมูลผู้ใช้งาน</h4>
+                <button class="close-modal-btn" onclick="app.closeUserDetailsModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" style="width: 100%; border-collapse: collapse;">
+                    <tbody id="user-details-content">
+                        <!-- Content injected via JS -->
+                    </tbody>
+                </table>
+                <div class="form-actions margin-top text-center" style="margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeUserDetailsModal()">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Verify Accept Modal -->
     <div class="modal-overlay" id="verifyAcceptModal">
         <div class="modal-card">
@@ -1473,7 +1495,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1105"></script>
+    <script src="app_v49_23.js?v=1107"></script>
 </body>
 </html>
 

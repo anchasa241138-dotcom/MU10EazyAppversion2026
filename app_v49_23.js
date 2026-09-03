@@ -3827,16 +3827,96 @@ const app = {
             `).join('');
             
         approvedTbody.innerHTML = approvedUsers.length === 0
-            ? '<tr><td colspan="5" class="text-center">ไม่มีผู้ใช้งานในระบบ</td></tr>'
+            ? '<tr><td colspan="6" class="text-center">ไม่มีผู้ใช้งานในระบบ</td></tr>'
             : approvedUsers.map(u => `
                 <tr>
                     <td>${u.fullname}</td>
                     <td>${u.username}</td>
-                    <td>${u.workplace || '-'}</td>
+                    <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
                     <td>${u.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</td>
                     <td><span class="badge" style="background-color: #10b981; color: white;">ใช้งานได้</span></td>
+                    <td>
+                        <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px; margin-right: 5px;" onclick="app.viewUserDetails('${u.username}')"><i class="fa-solid fa-circle-info"></i> ดูข้อมูล</button>
+                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="app.deleteUser('${u.username}')"><i class="fa-solid fa-trash"></i> ลบ</button>
+                    </td>
                 </tr>
             `).join('');
+    },
+
+    viewUserDetails(username) {
+        const user = this.users.find(u => u.username === username);
+        if (!user) return;
+        
+        const content = document.getElementById('user-details-content');
+        if (content) {
+            content.innerHTML = `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; width: 40%; color: #64748b;">ชื่อ-นามสกุล:</td>
+                    <td style="padding: 10px;">${user.fullname || '-'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">Username:</td>
+                    <td style="padding: 10px;">${user.username || '-'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">เลขบัตรประชาชน (CID):</td>
+                    <td style="padding: 10px;">${user.cid || '-'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">วัน/เดือน/ปีเกิด:</td>
+                    <td style="padding: 10px;">${user.birthdate || '-'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">ตำแหน่ง:</td>
+                    <td style="padding: 10px;">${user.position || '-'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">สถานที่ปฏิบัติงาน:</td>
+                    <td style="padding: 10px;">${user.workplace || '-'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">ที่อยู่ (จังหวัด/อำเภอ/ตำบล):</td>
+                    <td style="padding: 10px;">${user.province || '-'} / ${user.district || '-'} / ${user.subdistrict || '-'}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">ประเภทบัญชี/บทบาท:</td>
+                    <td style="padding: 10px;">${user.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้เก็บตัวอย่าง'}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">วันที่สมัคร:</td>
+                    <td style="padding: 10px;">${user.createdAt ? new Date(user.createdAt).toLocaleString('th-TH') : '-'}</td>
+                </tr>
+            `;
+        }
+        
+        const modal = document.getElementById('userDetailsModal');
+        if (modal) modal.classList.add('active');
+    },
+
+    closeUserDetailsModal() {
+        const modal = document.getElementById('userDetailsModal');
+        if (modal) modal.classList.remove('active');
+    },
+
+    deleteUser(username) {
+        Swal.fire({
+            title: 'ยืนยันการลบบัญชี?',
+            text: `คุณต้องการลบบัญชี "${username}" ใช่หรือไม่? ข้อมูลผู้ใช้นี้จะถูกลบออกจากระบบอย่างถาวร`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ใช่, ลบบัญชี',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.users = this.users.filter(u => u.username !== username);
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+                this.renderManageUsers();
+                this.updateBadges();
+                Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
+            }
+        });
     },
 
     approveUser(username) {
