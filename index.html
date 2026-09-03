@@ -18,12 +18,177 @@
 <link rel="stylesheet" href="enhancements.css">
 
     <style>
+        /* Modern Login Page Styling */
+        body.require-login-mode {
+            background: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover no-repeat fixed;
+        }
+        body.require-login-mode::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(30,58,138,0.85), rgba(14,165,233,0.85));
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
         body.require-login-mode .app-container {
             display: none !important;
         }
-        body.require-login-mode .modal-overlay#authModal {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
-            backdrop-filter: none !important;
+        
+        #authModal {
+            background: transparent !important;
+            z-index: 1001 !important;
+        }
+        
+        #authModal .modal-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 440px;
+            padding: 0;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: authFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes authFadeIn {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #authModal .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            padding: 40px 20px 30px;
+            text-align: center;
+            color: white;
+            display: block;
+            border-bottom: none;
+            position: relative;
+        }
+        
+        #authModal .close-modal-btn {
+            display: none !important;
+        }
+
+        .auth-logo {
+            font-size: 52px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.15);
+            width: 88px;
+            height: 88px;
+            line-height: 88px;
+            border-radius: 50%;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        #authModal h4 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        #authModal .auth-subtitle {
+            margin: 5px 0 0;
+            opacity: 0.85;
+            font-size: 14.5px;
+        }
+
+        #authModal .modal-body {
+            padding: 35px 30px;
+        }
+
+        #authModal .modal-tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 25px;
+            border: none;
+        }
+        #authModal .modal-tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        #authModal .modal-tab-btn.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            border: none;
+        }
+
+        #authModal .input-icon-wrapper {
+            position: relative;
+            margin-bottom: 18px;
+        }
+        #authModal .input-icon-wrapper label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+        }
+        #authModal .input-icon-wrapper i {
+            position: absolute;
+            left: 16px;
+            bottom: 15px;
+            color: #94a3b8;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        #authModal .input-icon-wrapper input:focus + i,
+        #authModal .input-icon-wrapper select:focus + i {
+            color: var(--primary-light);
+        }
+        
+        #authModal .input-icon-wrapper input, 
+        #authModal .input-icon-wrapper select {
+            padding-left: 44px !important;
+            height: 48px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            transition: all 0.2s;
+            width: 100%;
+            font-family: inherit;
+        }
+        #authModal .input-icon-wrapper input:focus, 
+        #authModal .input-icon-wrapper select:focus {
+            background: #ffffff;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+        
+        #authModal .btn-primary {
+            height: 50px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+            border: none;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        #authModal .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.35);
         }
     </style>
 </head>
@@ -722,54 +887,62 @@
     <div class="modal-overlay" id="authModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h4 id="authModalTitle">เข้าสู่ระบบระบบ SSKMOPH</h4>
-                <button class="close-modal-btn" onclick="app.closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+                <div class="auth-logo"><i class="fa-solid fa-flask-vial"></i></div>
+                <h4 id="authModalTitle">SSKMOPH System</h4>
+                <p class="auth-subtitle">ระบบบันทึกและตรวจวิเคราะห์ตัวอย่าง เขตสุขภาพที่ 10</p>
             </div>
             <div class="modal-body">
                 <!-- Tab Headers -->
                 <div class="modal-tabs">
-                    <button class="modal-tab-btn active" id="tab-login" onclick="app.switchAuthTab('login')">ลงชื่อเข้าใช้งาน</button>
-                    <button class="modal-tab-btn" id="tab-register" onclick="app.switchAuthTab('register')">สมัครบัญชีใหม่</button>
+                    <button class="modal-tab-btn active" id="tab-login" onclick="app.switchAuthTab('login')">เข้าสู่ระบบ</button>
+                    <button class="modal-tab-btn" id="tab-register" onclick="app.switchAuthTab('register')">สมัครสมาชิก</button>
                 </div>
 
                 <!-- Form: Login -->
                 <form id="loginForm" class="auth-subform active">
-                    <div class="form-group">
-                        <label for="login-username">ชื่อผู้ใช้งาน (Username) <span class="required">*</span></label>
-                        <input type="text" id="login-username" required placeholder="ระบุ Username ของคุณ">
+                    <div class="input-icon-wrapper">
+                        <label for="login-username">ชื่อผู้ใช้งาน</label>
+                        <input type="text" id="login-username" required placeholder="Username">
+                        <i class="fa-solid fa-user"></i>
                     </div>
-                    <div class="form-group">
-                        <label for="login-password">รหัสผ่าน (Password) <span class="required">*</span></label>
-                        <input type="password" id="login-password" required placeholder="ระบุ รหัสผ่าน">
+                    <div class="input-icon-wrapper">
+                        <label for="login-password">รหัสผ่าน</label>
+                        <input type="password" id="login-password" required placeholder="Password">
+                        <i class="fa-solid fa-lock"></i>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block margin-top">เข้าสู่ระบบ</button>
+                    <button type="submit" class="btn btn-primary btn-block">เข้าสู่ระบบ</button>
                 </form>
 
                 <!-- Form: Register -->
                 <form id="registerForm" class="auth-subform">
-                    <div class="form-group">
-                        <label for="reg-username">ชื่อผู้ใช้งาน (Username) <span class="required">*</span></label>
-                        <input type="text" id="reg-username" required placeholder="ภาษาอังกฤษหรือตัวเลขอย่างน้อย 4 ตัว">
+                    <div class="input-icon-wrapper">
+                        <label for="reg-username">ชื่อผู้ใช้งาน</label>
+                        <input type="text" id="reg-username" required placeholder="Username อย่างน้อย 4 ตัว">
+                        <i class="fa-solid fa-user-plus"></i>
                     </div>
-                    <div class="form-group">
-                        <label for="reg-fullname">ชื่อ-นามสกุลจริง <span class="required">*</span></label>
-                        <input type="text" id="reg-fullname" required placeholder="ชื่อจริง นามสกุลจริง">
+                    <div class="input-icon-wrapper">
+                        <label for="reg-fullname">ชื่อ-นามสกุลจริง</label>
+                        <input type="text" id="reg-fullname" required placeholder="ชื่อ-นามสกุล">
+                        <i class="fa-solid fa-id-card"></i>
                     </div>
-                    <div class="form-group">
-                        <label for="reg-role">ประเภทบัญชีผู้ใช้ <span class="required">*</span></label>
+                    <div class="input-icon-wrapper">
+                        <label for="reg-role">ประเภทบัญชี</label>
                         <select id="reg-role" required>
                             <option value="collector">ผู้เก็บตัวอย่าง / ผู้ส่งตรวจทั่วไป</option>
-                            <option value="lab">เจ้าหน้าที่ห้องปฏิบัติการวิเคราะห์ (Lab Staff)</option>
+                            <option value="lab">เจ้าหน้าที่ห้องปฏิบัติการ (Lab Staff)</option>
                         </select>
+                        <i class="fa-solid fa-user-tag"></i>
                     </div>
-                    <div class="form-group">
-                        <label for="reg-password">รหัสผ่าน (Password) <span class="required">*</span></label>
+                    <div class="input-icon-wrapper">
+                        <label for="reg-password">รหัสผ่าน</label>
                         <input type="password" id="reg-password" required placeholder="รหัสผ่านอย่างน้อย 6 หลัก">
+                        <i class="fa-solid fa-key"></i>
                     </div>
-                    <button type="submit" class="btn btn-success btn-block margin-top">สมัครสมาชิก</button>
+                    <button type="submit" class="btn btn-primary btn-block">สมัครสมาชิก</button>
                 </form>
             </div>
         </div>
+    </div>div>
     </div>
 
     <!-- Sample Detail Preview Modal -->
@@ -1032,7 +1205,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1088"></script>
+    <script src="app_v49_23.js?v=1089"></script>
 </body>
 </html>
 
