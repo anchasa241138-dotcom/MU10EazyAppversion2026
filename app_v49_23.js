@@ -561,7 +561,8 @@ const app = {
         document.querySelectorAll('.modal-tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.auth-subform').forEach(form => form.classList.remove('active'));
         
-        document.getElementById(`tab-${tab}`).classList.add('active');
+        const tabBtn = document.getElementById(`tab-${tab}`);
+        if(tabBtn) tabBtn.classList.add('active');
         document.getElementById(`${tab}Form`).classList.add('active');
     },
 

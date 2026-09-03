@@ -896,7 +896,7 @@
                 <div class="modal-tabs">
                     <button class="modal-tab-btn active" id="tab-login" onclick="app.switchAuthTab('login')">เข้าสู่ระบบ</button>
                     <button class="modal-tab-btn" id="tab-register" onclick="app.switchAuthTab('register')">สมัครสมาชิก</button>
-                    <button class="modal-tab-btn" id="tab-forgot" onclick="app.switchAuthTab('forgot')">ลืมรหัสผ่าน</button>
+                    
                 </div>
 
                 <!-- Form: Login -->
@@ -912,6 +912,9 @@
                         <i class="fa-solid fa-lock"></i>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">เข้าสู่ระบบ</button>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="#" onclick="app.switchAuthTab('forgot'); return false;" style="color: #64748b; font-size: 14px; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">ลืมรหัสผ่านใช่หรือไม่?</a>
+                    </div>
                 </form>
 
                 <!-- Form: Register -->
@@ -970,6 +973,9 @@
                         <i class="fa-solid fa-check-double"></i>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">รีเซ็ตรหัสผ่าน</button>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="#" onclick="app.switchAuthTab('login'); return false;" style="color: #64748b; font-size: 14px; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
+                    </div>
                 </form>
             </div>
         </div>
@@ -1236,7 +1242,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1092"></script>
+    <script src="app_v49_23.js?v=1093"></script>
 </body>
 </html>
 
