@@ -278,6 +278,18 @@ const app = {
         // Auth forms
         document.getElementById('loginForm').addEventListener('submit', this.handleLogin.bind(this));
         document.getElementById('registerForm').addEventListener('submit', this.handleRegister.bind(this));
+        
+        const regPass = document.getElementById('reg-password');
+        if (regPass) {
+            regPass.addEventListener('input', (e) => {
+                const val = e.target.value;
+                document.getElementById('meter-length').classList.toggle('active', val.length >= 8);
+                document.getElementById('meter-upper').classList.toggle('active', /[A-Z]/.test(val));
+                document.getElementById('meter-lower').classList.toggle('active', /[a-z]/.test(val));
+                document.getElementById('meter-number').classList.toggle('active', /[0-9]/.test(val));
+                document.getElementById('meter-special').classList.toggle('active', /[\W_]/.test(val));
+            });
+        }
         document.getElementById('forgotForm').addEventListener('submit', this.handleForgotPassword.bind(this));
 
         // Forms selection
