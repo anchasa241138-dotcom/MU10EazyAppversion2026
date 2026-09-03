@@ -101,7 +101,8 @@ const app = {
                 this.users = [
                     { username: 'admin', password: 'password', role: 'admin', fullname: 'ดร. สมภพ รักชาติ', status: 'approved' },
                     { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
-                    { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
+                    { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' },
+                    { username: 'anchasa', password: 'Password123!', role: 'collector', fullname: 'นางสาว อัญชสา ใจดี', status: 'pending', workplace: 'รพ.ศรีสะเกษ', province: 'ศรีสะเกษ', createdAt: new Date().toISOString() }
                 ];
                 localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
             } else {
@@ -120,6 +121,20 @@ const app = {
                     adminUser.status = 'approved';
                 }
                 else this.users.push({ username: 'admin', password: 'password', role: 'admin', fullname: 'Admin', status: 'approved' });
+                
+                // Add mock pending user for demonstration if not exists
+                if (!this.users.some(u => u.username === 'anchasa')) {
+                    this.users.push({
+                        username: 'anchasa',
+                        password: 'Password123!',
+                        role: 'collector',
+                        fullname: 'นางสาว อัญชสา ใจดี',
+                        status: 'pending',
+                        workplace: 'รพ.ศรีสะเกษ',
+                        province: 'ศรีสะเกษ',
+                        createdAt: new Date().toISOString()
+                    });
+                }
                 
                 localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
             }
