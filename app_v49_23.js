@@ -131,26 +131,10 @@ const app = {
                 { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
             ];
             localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-        } else {
-                this.users = JSON.parse(storedUsers);
-                // Force reset default users just in case of corruption or forgotten password
-                const adminUser = this.users.find(u => u.username === 'admin');
-                if (adminUser) adminUser.password = 'password';
-                else this.users.push({ username: 'admin', password: 'password', role: 'lab', fullname: 'Admin' });
-                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-            }
-        } catch (e) {
-            console.warn("Failed to parse users, resetting default users.", e);
-            this.users = [
-                { username: 'admin', password: 'password', role: 'lab', fullname: 'ดร. สมภพ รักชาติ' },
-                { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี' },
-                { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ' }
-            ];
-            localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
         }
 
-        // Init Samples
-        try {
+
+            try {
             let storedSamples = localStorage.getItem('sskmoph_samples');
             if (!storedSamples) {
                 this.resetDefaultSamples();
@@ -546,6 +530,28 @@ const app = {
     },
 
     // Authentication Logic
+    updateBadges() {
+        const counts = {
+            'record-notification-badge': this.getVisibleSamples().length,
+            'verify-notification-badge': this.getVisibleSamples().filter(s => s.status === 'registered').length,
+            'analysis-notification-badge': this.getVisibleSamples().filter(s => s.status === 'accepted').length,
+            'certify-notification-badge': this.getVisibleSamples().filter(s => s.status === 'analyzing' || s.status === 'summarized').length,
+            'user-approval-badge': this.users.filter(u => u.status === 'pending').length
+        };
+
+        for (const [id, count] of Object.entries(counts)) {
+            const badge = document.getElementById(id);
+            if (badge) {
+                if (count > 0) {
+                    badge.innerText = count;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+        }
+    },
+
     updateAuthUI() {
         const authButtons = document.getElementById('navAuthButtons');
         const userStatusCard = document.getElementById('userStatusCard');
