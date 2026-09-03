@@ -3271,7 +3271,7 @@ const app = {
             let mu10003Note = '';
         if (sample.form_type === 'MU.10-003') {
             mu10003Note = `
-            <div style="width:100%; border:1px solid #555; padding:6px 8px; margin:8px 0; font-size:9.5px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
+            <div style="width:100%; border:none; padding:4px 0; margin:8px 0; font-size:9.5px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
                 <strong>หมายเหตุ โปรดระบุพฤติกรรมการใช้น้ำมันทอดอาหารและการกำจัดน้ำมัน ใช้วิธีสอบถามผู้จำหน่าย รายละเอียดดังนี้</strong><br>
                 <span style="display:inline-block; margin-left:15px;">(1) ลักษณะการเปลี่ยนถ่ายน้ำมัน กำหนดให้ A1 = ไม่เปลี่ยนเลย / A2 = เปลี่ยนบางส่วน / A3 = เปลี่ยนใหม่ทั้งหมด</span><br>
                 <span style="display:inline-block; margin-left:15px;">(2) เหตุผลที่เปลี่ยน กำหนดให้ B1 = สภาพน้ำมันเปลี่ยน / B2 = สภาพอาหารเปลี่ยน / B3 = อื่น ๆ โปรดระบุ</span><br>
