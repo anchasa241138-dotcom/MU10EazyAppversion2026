@@ -3282,7 +3282,7 @@ const app = {
 
         const opt = {
             margin: 10,
-            filename: `${sample.form_type}_${sample.ref_id}.pdf`,
+            filename: `${sample.ref_id}-${sample.location_name}`,
             image:        { type: 'png' },
             html2canvas: { 
                 scale: 2, 
@@ -3341,8 +3341,11 @@ const app = {
             iframe.contentWindow.onafterprint = () => {
                 if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
             };
+            const originalTitle = document.title;
+            document.title = opt.filename;
             iframe.contentWindow.focus();
             iframe.contentWindow.print();
+            setTimeout(() => { document.title = originalTitle; }, 1000);
             
             if (typeof document !== 'undefined' && document.body && document.body.classList) {
                 document.body.classList.remove('is-printing-pdf');
