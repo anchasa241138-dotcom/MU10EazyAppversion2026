@@ -559,8 +559,13 @@ const app = {
             
             // Show lab menus if role is lab
             document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
-                el.style.display = 'flex';
+                el.style.display = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'flex' : 'none';
             });
+            
+            const adminMenu = document.getElementById('menu-manage-users');
+            if (adminMenu) {
+                adminMenu.style.display = this.currentUser.role === 'admin' ? 'flex' : 'none';
+            }
             
         } else {
             authButtons.innerHTML = `<button class="btn btn-primary" onclick="app.showLoginModal()"><i class="fa-solid fa-user-lock"></i> เข้าสู่ระบบ</button>`;
