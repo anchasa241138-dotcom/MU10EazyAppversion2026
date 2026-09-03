@@ -831,7 +831,7 @@ const app = {
         }
         
         document.getElementById('formNameTitle').innerText = title;
-        document.getElementById('dynamicFormFields').innerHTML = dynamicHTML;
+        const dynContainer = document.getElementById('dynamicFormFields'); if(dynContainer) dynContainer.innerHTML = dynamicHTML;
         
         // Initialize global sample entries
         const globalContainer = document.getElementById('globalSampleEntries');
