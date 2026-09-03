@@ -326,6 +326,10 @@
                 <a href="#" class="menu-item" data-view="data-download" id="menu-data-download">
                     <i class="fa-solid fa-file-excel"></i> <span>ดาวน์โหลดข้อมูล Excel</span>
                 </a>
+                <a href="#" class="menu-item admin-only" data-view="manage-users" id="menu-manage-users" style="display:none;">
+                    <i class="fa-solid fa-users-gear"></i> <span>จัดการผู้ใช้งาน</span>
+                    <span class="badge notification-badge hidden" id="user-approval-badge" style="background-color: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: auto; display: inline-block;">0</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -873,6 +877,57 @@
                     </div>
                 </section>
 
+                <!-- VIEW: MANAGE USERS -->
+                <section class="content-view" id="view-manage-users">
+                    <div class="content-header">
+                        <h2><i class="fa-solid fa-users-gear"></i> จัดการผู้ใช้งาน (รออนุมัติ)</h2>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="pending-users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>วันที่สมัคร</th>
+                                            <th>ชื่อ-นามสกุล</th>
+                                            <th>หน่วยงาน/สถานที่</th>
+                                            <th>บทบาท</th>
+                                            <th>สถานะ</th>
+                                            <th>การจัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Pending users will be rendered here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-header" style="margin-top: 30px;">
+                        <h2><i class="fa-solid fa-users"></i> รายชื่อผู้ใช้งานที่อนุมัติแล้ว</h2>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="approved-users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ชื่อ-นามสกุล</th>
+                                            <th>Username</th>
+                                            <th>หน่วยงาน/สถานที่</th>
+                                            <th>บทบาท</th>
+                                            <th>สถานะ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Approved users will be rendered here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- VIEW 7: EXCEL DOWNLOAD -->
                 <section class="content-view" id="view-data-download">
                     <div class="auth-required-wrapper hidden" id="excel-download-auth-block">
@@ -1416,7 +1471,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1098"></script>
+    <script src="app_v49_23.js?v=1099"></script>
 </body>
 </html>
 
