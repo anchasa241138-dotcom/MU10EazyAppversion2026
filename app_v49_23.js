@@ -701,24 +701,55 @@ const app = {
 
     handleRegister(e) {
         e.preventDefault();
-        const username = document.getElementById('reg-username').value;
-        const fullname = document.getElementById('reg-fullname').value;
-        const role = document.getElementById('reg-role').value;
-        const pass = document.getElementById('reg-password').value;
+        
+        const title = document.getElementById('reg-title') ? document.getElementById('reg-title').value : '';
+        const firstname = document.getElementById('reg-firstname') ? document.getElementById('reg-firstname').value : '';
+        const lastname = document.getElementById('reg-lastname') ? document.getElementById('reg-lastname').value : '';
+        const cid = document.getElementById('reg-cid') ? document.getElementById('reg-cid').value : '';
+        const birthdate = document.getElementById('reg-birthdate') ? document.getElementById('reg-birthdate').value : '';
+        const position = document.getElementById('reg-position') ? document.getElementById('reg-position').value : '';
+        const workplace = document.getElementById('reg-workplace') ? document.getElementById('reg-workplace').value : '';
+        const province = document.getElementById('reg-province') ? document.getElementById('reg-province').value : '';
+        const district = document.getElementById('reg-district') ? document.getElementById('reg-district').value : '';
+        const subdistrict = document.getElementById('reg-subdistrict') ? document.getElementById('reg-subdistrict').value : '';
+        
+        const username = document.getElementById('reg-username') ? document.getElementById('reg-username').value : '';
+        const role = document.getElementById('reg-role') ? document.getElementById('reg-role').value : 'collector';
+        const pass = document.getElementById('reg-password') ? document.getElementById('reg-password').value : '';
+        const confirmPass = document.getElementById('reg-confirm-password') ? document.getElementById('reg-confirm-password').value : '';
+        
+        const fullname = `${title}${firstname} ${lastname}`.trim();
+
+        if (pass !== confirmPass) {
+            Swal.fire('ข้อผิดพลาด', 'รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน', 'error');
+            return;
+        }
+
+        const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
+        if (!passRegex.test(pass)) {
+            Swal.fire('ข้อผิดพลาด', 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร ประกอบด้วยอักษรพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และอักขระพิเศษ', 'error');
+            return;
+        }
 
         if (this.users.some(u => u.username === username)) {
             Swal.fire('ข้อผิดพลาด', 'ชื่อผู้ใช้งานนี้มีอยู่ในระบบแล้ว', 'error');
             return;
         }
 
-        const newUser = { username, fullname, role, password: pass };
+        const newUser = { 
+            username, fullname, cid, role, password: pass,
+            title, firstname, lastname, birthdate, position, workplace, province, district, subdistrict,
+            status: 'pending',
+            createdAt: new Date().toISOString()
+        };
+
         this.users.push(newUser);
         localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
         
         Swal.fire({
             icon: 'success',
             title: 'สมัครสมาชิกสำเร็จ',
-            text: 'กรุณาลงชื่อเข้าใช้งานด้วยบัญชีที่สมัคร',
+            text: 'บัญชีของคุณถูกสร้างแล้ว กรุณารอผู้ดูแลระบบอนุมัติก่อนเข้าใช้งาน',
             confirmButtonText: 'ตกลง'
         }).then(() => {
             this.switchAuthTab('login');
