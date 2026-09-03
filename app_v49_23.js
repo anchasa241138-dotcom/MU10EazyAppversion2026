@@ -3237,16 +3237,7 @@ const app = {
                 }
             }
 
-            let mu10003Note = '';
-        if (sample.form_type === 'MU.10-003') {
-            mu10003Note = `
-            <div style="width:100%; border:1px solid #555; padding:6px 8px; margin:8px 0; font-size:9.5px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
-                <strong>หมายเหตุ โปรดระบุพฤติกรรมการใช้น้ำมันทอดอาหารและการกำจัดน้ำมัน ใช้วิธีสอบถามผู้จำหน่าย รายละเอียดดังนี้</strong><br>
-                <span style="display:inline-block; margin-left:15px;">(1) ลักษณะการเปลี่ยนถ่ายน้ำมัน กำหนดให้ A1 = ไม่เปลี่ยนเลย / A2 = เปลี่ยนบางส่วน / A3 = เปลี่ยนใหม่ทั้งหมด</span><br>
-                <span style="display:inline-block; margin-left:15px;">(2) เหตุผลที่เปลี่ยน กำหนดให้ B1 = สภาพน้ำมันเปลี่ยน / B2 = สภาพอาหารเปลี่ยน / B3 = อื่น ๆ โปรดระบุ</span><br>
-                <span style="display:inline-block; margin-left:15px;">(3) การกำจัดน้ำมัน กำหนดให้ C1 = เก็บรวบรวมน้ำมันใช้แล้วขายต่อ โปรดระบุขายต่อให้กับใครด้วย / C2 = เก็บรวบรวมน้ำมันใช้แล้วมาทิ้งเองในระบบสาธารณะ</span>
-            </div>`;
-        }
+
 
         htmlContent = `
             <style>* {
@@ -3277,6 +3268,17 @@ const app = {
                         </td> <td style="padding:6px 12px; width:50%; vertical-align:top;"> <div style="font-weight:bold; visibility:hidden; margin-bottom:4px; font-size:8px;">การเก็บตัวอย่างน้ำมัน</div> <strong>๒. วิธีการเก็บตัวอย่างน้ำมัน</strong><br>- ตั้งน้ำมันทิ้งไว้ให้เย็น<br>- ใช้ช้อนตักประมาณ ๒ ช้อนโต๊ะ เทใส่ภาชนะกันร้อน เก็บไว้ในที่เย็นให้พ้นแสง<br>- เขียนวันที่เก็บตัวอย่างที่ข้างภาชนะโดยใช้ปากกากันสีกันน้ำ
                         </td> </tr> </table> <!-- FOOTER SIGNATURES --> <table style="width: 100%; margin:8px 0 0 0; border-collapse:collapse; font-size:8px; color: #000; line-height:1.6;"> <tr> <td style="width:33%; vertical-align:top; padding-right:10px;"> <div>ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '................................................'}</u>....</div> <div style="margin-top:4px;">ตำแหน่ง ....<u>${sample.collector_position || '........................................................'}</u>....</div> <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '............................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:left; padding:0 10px;"> <div>ลงชื่อผู้ตรวจวิเคราะห์ ................................................ , ................................................</div> <div style="margin-top:4px;">ตำแหน่ง ........................................................</div> <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ............................................</div> </td> <td style="width:33%; vertical-align:top; text-align:right;"> <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div> <div style="margin-top:4px;">ตำแหน่ง พนง. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div> </td> </tr> </table> </div> </div>`;
         } else {
+            let mu10003Note = '';
+        if (sample.form_type === 'MU.10-003') {
+            mu10003Note = `
+            <div style="width:100%; border:1px solid #555; padding:6px 8px; margin:8px 0; font-size:9.5px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
+                <strong>หมายเหตุ โปรดระบุพฤติกรรมการใช้น้ำมันทอดอาหารและการกำจัดน้ำมัน ใช้วิธีสอบถามผู้จำหน่าย รายละเอียดดังนี้</strong><br>
+                <span style="display:inline-block; margin-left:15px;">(1) ลักษณะการเปลี่ยนถ่ายน้ำมัน กำหนดให้ A1 = ไม่เปลี่ยนเลย / A2 = เปลี่ยนบางส่วน / A3 = เปลี่ยนใหม่ทั้งหมด</span><br>
+                <span style="display:inline-block; margin-left:15px;">(2) เหตุผลที่เปลี่ยน กำหนดให้ B1 = สภาพน้ำมันเปลี่ยน / B2 = สภาพอาหารเปลี่ยน / B3 = อื่น ๆ โปรดระบุ</span><br>
+                <span style="display:inline-block; margin-left:15px;">(3) การกำจัดน้ำมัน กำหนดให้ C1 = เก็บรวบรวมน้ำมันใช้แล้วขายต่อ โปรดระบุขายต่อให้กับใครด้วย / C2 = เก็บรวบรวมน้ำมันใช้แล้วมาทิ้งเองในระบบสาธารณะ</span>
+            </div>`;
+        }
+
             htmlContent = `
             <style>* {
                     font-family: 'SarabunPDF', 'Sarabun', sans-serif !important;
