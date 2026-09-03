@@ -570,6 +570,11 @@ const app = {
     },
 
     switchAuthTab(tab) {
+        const modalCard = document.querySelector('#authModal .modal-card');
+        if (modalCard) {
+            if (tab === 'register') modalCard.classList.add('register-mode');
+            else modalCard.classList.remove('register-mode');
+        }
         document.querySelectorAll('.modal-tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.auth-subform').forEach(form => form.classList.remove('active'));
         
