@@ -1496,3 +1496,38 @@ body.is-printing-pdf *,
     letter-spacing: normal !important;
 }
 
+/* Standard PDF typography: keep Thai text legible and allow tables to flow to the next page. */
+#certificatePDFContainer .cert-pdf-border,
+#certificatePDFContainer .cert-pdf-border * {
+    font-family: 'SarabunPDF', 'Sarabun', 'Leelawadee UI', 'Leelawadee', sans-serif !important;
+    font-size: 16px !important;
+    line-height: 1.45 !important;
+    font-variant-ligatures: normal !important;
+    font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
+}
+
+#certificatePDFContainer .cert-pdf-border {
+    height: auto !important;
+    min-height: 297mm;
+    overflow: visible !important;
+}
+
+#certificatePDFContainer table {
+    table-layout: fixed;
+}
+
+#certificatePDFContainer th,
+#certificatePDFContainer td {
+    padding: 6px !important;
+    vertical-align: top !important;
+    overflow-wrap: anywhere;
+}
+
+#certificatePDFContainer thead {
+    display: table-header-group;
+}
+
+#certificatePDFContainer tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
