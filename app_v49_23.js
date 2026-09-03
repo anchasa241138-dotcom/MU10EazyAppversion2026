@@ -278,6 +278,7 @@ const app = {
         // Auth forms
         document.getElementById('loginForm').addEventListener('submit', this.handleLogin.bind(this));
         document.getElementById('registerForm').addEventListener('submit', this.handleRegister.bind(this));
+        document.getElementById('forgotForm').addEventListener('submit', this.handleForgotPassword.bind(this));
 
         // Forms selection
         document.querySelectorAll('.form-select-card').forEach(card => {
@@ -593,6 +594,38 @@ const app = {
                 text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง'
             });
         }
+    },
+
+    handleForgotPassword(e) {
+        e.preventDefault();
+        const username = document.getElementById('forgot-username').value.trim();
+        const cid = document.getElementById('forgot-cid').value.trim();
+        const newPass = document.getElementById('forgot-new-password').value;
+        const confirmPass = document.getElementById('forgot-confirm-password').value;
+
+        if (newPass !== confirmPass) {
+            Swal.fire('ข้อผิดพลาด', 'รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน', 'error');
+            return;
+        }
+
+        const userIndex = this.users.findIndex(u => u.username === username && u.cid === cid);
+        if (userIndex === -1) {
+            Swal.fire('ข้อผิดพลาด', 'ข้อมูล Username หรือ เลขบัตรประชาชน (CID) ไม่ถูกต้อง', 'error');
+            return;
+        }
+
+        this.users[userIndex].password = newPass;
+        localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+
+        Swal.fire({
+            icon: 'success',
+            title: 'เปลี่ยนรหัสผ่านสำเร็จ',
+            text: 'คุณสามารถเข้าสู่ระบบด้วยรหัสผ่านใหม่ได้ทันที',
+            confirmButtonText: 'เข้าสู่ระบบ'
+        }).then(() => {
+            this.switchAuthTab('login');
+            e.target.reset();
+        });
     },
 
     handleRegister(e) {

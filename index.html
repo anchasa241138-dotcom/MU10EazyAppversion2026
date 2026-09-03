@@ -896,6 +896,7 @@
                 <div class="modal-tabs">
                     <button class="modal-tab-btn active" id="tab-login" onclick="app.switchAuthTab('login')">เข้าสู่ระบบ</button>
                     <button class="modal-tab-btn" id="tab-register" onclick="app.switchAuthTab('register')">สมัครสมาชิก</button>
+                    <button class="modal-tab-btn" id="tab-forgot" onclick="app.switchAuthTab('forgot')">ลืมรหัสผ่าน</button>
                 </div>
 
                 <!-- Form: Login -->
@@ -926,6 +927,11 @@
                         <i class="fa-solid fa-id-card"></i>
                     </div>
                     <div class="input-icon-wrapper">
+                        <label for="reg-cid">เลขบัตรประชาชน 13 หลัก</label>
+                        <input type="text" id="reg-cid" required placeholder="เลขบัตรประชาชน 13 หลัก" maxlength="13" pattern="\d{13}">
+                        <i class="fa-solid fa-id-card-clip"></i>
+                    </div>
+                    <div class="input-icon-wrapper">
                         <label for="reg-role">ประเภทบัญชี</label>
                         <select id="reg-role" required>
                             <option value="collector">ผู้เก็บตัวอย่าง / ผู้ส่งตรวจทั่วไป</option>
@@ -939,6 +945,31 @@
                         <i class="fa-solid fa-key"></i>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">สมัครสมาชิก</button>
+                </form>
+
+                <!-- Form: Forgot Password -->
+                <form id="forgotForm" class="auth-subform">
+                    <div class="input-icon-wrapper">
+                        <label for="forgot-username">ชื่อผู้ใช้งาน (Username)</label>
+                        <input type="text" id="forgot-username" required placeholder="Username ที่ลงทะเบียนไว้">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="input-icon-wrapper">
+                        <label for="forgot-cid">เลขบัตรประชาชน (เพื่อยืนยันตัวตน)</label>
+                        <input type="text" id="forgot-cid" required placeholder="เลขบัตรประชาชน 13 หลัก" maxlength="13">
+                        <i class="fa-solid fa-id-card-clip"></i>
+                    </div>
+                    <div class="input-icon-wrapper">
+                        <label for="forgot-new-password">รหัสผ่านใหม่</label>
+                        <input type="password" id="forgot-new-password" required placeholder="รหัสผ่านใหม่อย่างน้อย 6 หลัก" minlength="6">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <div class="input-icon-wrapper">
+                        <label for="forgot-confirm-password">ยืนยันรหัสผ่านใหม่</label>
+                        <input type="password" id="forgot-confirm-password" required placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                        <i class="fa-solid fa-check-double"></i>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">รีเซ็ตรหัสผ่าน</button>
                 </form>
             </div>
         </div>
@@ -1205,7 +1236,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1091"></script>
+    <script src="app_v49_23.js?v=1092"></script>
 </body>
 </html>
 
