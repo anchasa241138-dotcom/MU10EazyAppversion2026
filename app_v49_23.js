@@ -111,7 +111,9 @@ const app = {
                 // Ensure all existing users have an approved status for backwards compatibility
                 this.users.forEach(u => {
                     if (!u.status) u.status = 'approved';
+                    if (u.username === 'admin') u.fullname = 'Admin Mobile Unit 10';
                 });
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
 
                 // Force reset admin user to be sure
                 const adminUser = this.users.find(u => u.username === 'admin');
@@ -169,6 +171,10 @@ const app = {
             const session = sessionStorage.getItem('sskmoph_session');
             if (session) {
                 this.currentUser = JSON.parse(session);
+            if (this.currentUser && this.currentUser.username === 'admin') {
+                this.currentUser.fullname = 'Admin Mobile Unit 10';
+                sessionStorage.setItem('sskmoph_session', JSON.stringify(this.currentUser));
+            }
             }
         } catch (e) {
             console.warn("Failed to parse session", e);
@@ -2840,9 +2846,49 @@ const app = {
     },
 
     // PDF Generation
-    generateCertificatePDF() {
+    getStandardPdfStyles(orientation) {
+        return `
+            <style id="sskmoph-standard-pdf-styles">
+                @page { size: A4 ${orientation}; margin: 10mm; }
+                html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                body > div, body > div * {
+                    font-family: 'SarabunPDF', 'Sarabun', 'Leelawadee UI', 'Leelawadee', sans-serif !important;
+                    font-variant-ligatures: normal !important;
+                    font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
+                    letter-spacing: normal !important;
+                    text-rendering: geometricPrecision;
+                }
+                body > div {
+                    box-sizing: border-box !important;
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                }
+                thead { display: table-header-group; }
+                tr { break-inside: avoid; page-break-inside: avoid; }
+                img { max-width: 100%; height: auto; }
+                @media print { body > div { break-after: auto; } }
+            </style>`;
+    },
+
+    async waitForPdfAssets(doc) {
+        const fontSet = doc.fonts;
+        if (fontSet) {
+            await fontSet.load('16px SarabunPDF');
+            await fontSet.ready;
+        }
+        const images = Array.from(doc.images || []);
+        await Promise.all(images.map(image => {
+            if (image.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                image.addEventListener('load', resolve, { once: true });
+                image.addEventListener('error', resolve, { once: true });
+            });
+        }));
+    },
+
+    async generateCertificatePDF() {
         const container = document.getElementById('certificatePDFContainer');
-        const element = container.querySelector('.cert-pdf-border') || container;
+        const element = container;
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
@@ -2862,6 +2908,11 @@ const app = {
 
         // Target the inner .cert-pdf-border directly. It has 794x1123 dimension.
         // Set margin: 0 to force html2pdf to stretch this perfectly to A4 borders.
+        if (document.fonts) {
+            await document.fonts.load('16px SarabunPDF');
+            await document.fonts.ready;
+        }
+
         const opt = {
             margin:       0,
             filename:     `Certificate_${pdfNo}.pdf`,
@@ -2872,7 +2923,8 @@ const app = {
                 scrollX: 0,
                 scrollY: 0
             },
-            jsPDF:        { unit: 'px', format: [794, 1123], orientation: 'portrait' }
+            jsPDF:        { unit: 'px', format: [794, 1123], orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'legacy'] }
         };
         
         Swal.fire({
@@ -2903,7 +2955,7 @@ const app = {
     },
 
 
-    generateSubmissionPDF(e) {
+    async generateSubmissionPDF(e) {
         try {
             const refId = e.currentTarget.dataset.refId;
             const sample = this.samples.find(s =>s.ref_id === refId);
@@ -3018,7 +3070,7 @@ const app = {
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) =>{
-            return `<span style="font-family: 'Tahoma', sans-serif !important; word-break: break-all; white-space: normal;">${checked ? '[X]' : '[ ]'} ${txt}</span>`;
+            return `<span style="font-family: 'SarabunPDF', 'Sarabun', sans-serif !important; word-break: break-word; white-space: normal;">${checked ? '[X]' : '[ ]'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -3187,12 +3239,12 @@ const app = {
 
             htmlContent = `
             <style>* {
-                    font-family: 'Tahoma', sans-serif !important;
+                    font-family: 'SarabunPDF', 'Sarabun', sans-serif !important;
                                         letter-spacing: normal !important;
                 }
             @page { size: ${sample.form_type === 'MU.10-004' ? 'A4 portrait' : 'A4 landscape'}; margin: 10mm; }
                 th { text-align: center !important; }
-            </style> <div style="font-family: 'Tahoma', sans-serif !important; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #000;"> <!-- HEADER --> <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:11px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">MU.10-004</span></div> <div style="margin-top:6px; font-size:11px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <div style="width: 100%; line-height:1.6; margin-bottom:6px; color:#000; font-size:9.5px;"> <div>(เจ้าหน้าที่) หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || '......................................................'}</u>.... อำเภอ ....<u>${sample.amphoe || '........................................'}</u>.... จังหวัด ....<u>${sample.province || '..........................................'}</u>....</div> <div style="margin-top:2px;">(ผู้ประกอบการ) ชื่อสถานที่ ....<u>${sample.location_name || '..............................................................'}</u>.... เจ้าของร้าน/ผู้ดูแล ..........................................................................</div> <div style="margin-top:2px;">ที่อยู่ ........................................................................................... เบอร์โทร ........................................................................................</div> </div> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;"> <!-- QUESTIONNAIRE --> <div style="width: 100%; line-height:1.5; color:#000; font-size:9.5px; margin-bottom:8px;"> <div><strong>ประเภท</strong>${isFlour ? '[X]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
+            </style> <div class="pdf-document" style="font-family: 'SarabunPDF', 'Sarabun', sans-serif !important; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #000;"> <!-- HEADER --> <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:11px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">MU.10-004</span></div> <div style="margin-top:6px; font-size:11px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <div style="width: 100%; line-height:1.6; margin-bottom:6px; color:#000; font-size:9.5px;"> <div>(เจ้าหน้าที่) หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || '......................................................'}</u>.... อำเภอ ....<u>${sample.amphoe || '........................................'}</u>.... จังหวัด ....<u>${sample.province || '..........................................'}</u>....</div> <div style="margin-top:2px;">(ผู้ประกอบการ) ชื่อสถานที่ ....<u>${sample.location_name || '..............................................................'}</u>.... เจ้าของร้าน/ผู้ดูแล ..........................................................................</div> <div style="margin-top:2px;">ที่อยู่ ........................................................................................... เบอร์โทร ........................................................................................</div> </div> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;"> <!-- QUESTIONNAIRE --> <div style="width: 100%; line-height:1.5; color:#000; font-size:9.5px; margin-bottom:8px;"> <div><strong>ประเภท</strong>${isFlour ? '[X]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div> <div style="margin-top:1px; padding-left:38px;">${isMeat ? '[X]' : '[ ]'} เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMeat ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div> <div style="margin-top:1px; padding-left:38px;">${isMeatProduct ? '[X]' : '[ ]'} ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ ระบุชนิดอาหาร ....<u>${isMeatProduct ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div> <div style="margin-top:1px; padding-left:38px;">${isMix ? '[X]' : '[ ]'} พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMix ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
@@ -3216,10 +3268,10 @@ const app = {
         } else {
             htmlContent = `
             <style>* {
-                    font-family: 'Tahoma', sans-serif !important;
+                    font-family: 'SarabunPDF', 'Sarabun', sans-serif !important;
                                         letter-spacing: normal !important;
                 }
-            </style> <div style="font-family: 'Tahoma', sans-serif !important; width: 1000px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">${documentNum}</span></div> <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:11.5px; font-weight:bold;"> <tr> <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td> <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td colspan="2" style="padding:2px 0;">ตำบล ....<u>${sample.tambon || ''}</u>....
+            </style> <div class="pdf-document" style="font-family: 'SarabunPDF', 'Sarabun', sans-serif !important; width: 1000px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">${documentNum}</span></div> <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:11.5px; font-weight:bold;"> <tr> <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td> <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td colspan="2" style="padding:2px 0;">ตำบล ....<u>${sample.tambon || ''}</u>....
                             อำเภอ ....<u>${sample.amphoe || ''}</u>....
                             จังหวัด ....<u>${sample.province || ''}</u>....
                             วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>....
@@ -3270,34 +3322,27 @@ const app = {
 
         
         
-        // Fix for floating Thai vowels in html2canvas with text-align:left;
-        
-        
-
-        // Generate PDF directly from the HTML string
-        setTimeout(() => {
-            // Use iframe printing instead of html2pdf to ensure perfect Thai rendering
+        // Generate through the browser print engine: it embeds the loaded Thai font
+        // instead of rasterizing text with a fallback font.
+        try {
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             document.body.appendChild(iframe);
             const doc = iframe.contentWindow.document;
             doc.open();
-            doc.write('<html><head><title>' + opt.filename + '</title></head><body style="margin:0; padding:0; -webkit-print-color-adjust: exact; print-color-adjust: exact;">');
+            const pageOrientation = sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape';
+            doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="style_v2.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
             doc.write(htmlContent);
             doc.write('</body></html>');
             doc.close();
 
-            // Wait for fonts and images to render in iframe
-            setTimeout(() => {
-                Swal.close();
-                iframe.contentWindow.focus();
-                iframe.contentWindow.print();
-                
-                // Cleanup
-                setTimeout(() => {
-                    document.body.removeChild(iframe);
-                }, 1000);
-            }, 800);
+            await this.waitForPdfAssets(doc);
+            Swal.close();
+            iframe.contentWindow.onafterprint = () => {
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            };
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
             
             if (typeof document !== 'undefined' && document.body && document.body.classList) {
                 document.body.classList.remove('is-printing-pdf');
@@ -3307,8 +3352,9 @@ const app = {
                 mainContentEl.style.removeProperty('margin-left');
                 mainContentEl.style.removeProperty('padding');
             }
-
-        }, 500);
+        } catch (asyncErr) {
+            throw asyncErr;
+        }
         } catch (syncErr) {
             console.error('PDF sync error:', syncErr);
             Swal.fire({
@@ -3795,7 +3841,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-
-
-
