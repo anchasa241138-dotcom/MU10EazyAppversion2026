@@ -3656,7 +3656,19 @@ const app = {
 
         // Generate PDF directly from the HTML string
         setTimeout(() => {
-            html2pdf().set(opt).from(htmlContent).save().then(function() {
+            html2pdf().set(opt).from(htmlContent).output('blob').then(function(pdfBlob) {
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = opt.filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(blobUrl);
+                }, 1000);
+
                 if (typeof document !== 'undefined' && document.body && document.body.classList) {
                     document.body.classList.remove('is-printing-pdf');
                 }
