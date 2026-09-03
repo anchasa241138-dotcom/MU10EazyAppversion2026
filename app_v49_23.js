@@ -99,7 +99,7 @@ const app = {
             let storedUsers = localStorage.getItem('sskmoph_users');
             if (!storedUsers) {
                 this.users = [
-                    { username: 'admin', password: 'password', role: 'admin', fullname: 'ดร. สมภพ รักชาติ', status: 'approved' },
+                    { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
                     { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
                     { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' },
                     { username: 'anchasa', password: 'Password123!', role: 'collector', fullname: 'นางสาว อัญชสา ใจดี', status: 'pending', workplace: 'รพ.ศรีสะเกษ', province: 'ศรีสะเกษ', createdAt: new Date().toISOString() }
@@ -141,7 +141,7 @@ const app = {
         } catch (e) {
             console.warn("Failed to parse users, resetting default users.", e);
             this.users = [
-                { username: 'admin', password: 'password', role: 'admin', fullname: 'ดร. สมภพ รักชาติ', status: 'approved' },
+                { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
                 { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
                 { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
             ];
@@ -186,7 +186,7 @@ const app = {
                 sample_name: 'ผักคะน้า', sample_qty: 1, distributor: 'แผงผัก ป้าแดง', source: 'ตลาดไท',
                 status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-21',
                 analysis_details: 'ไม่พบการตกค้างของยาฆ่าแมลงกลุ่มออร์กาโนฟอสเฟต',
-                analysis_summary: 'ผ่านเกณฑ์มาตรฐาน', approver_name: 'ดร. สมภพ รักชาติ',
+                analysis_summary: 'ผ่านเกณฑ์มาตรฐาน', approver_name: 'Admin Mobile Unit 10',
                 created_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
             },
             {
@@ -197,7 +197,7 @@ const app = {
                 sample_name: 'ลูกชิ้นหมู', sample_qty: 2, distributor: 'เฮียชัย', source: 'ผลิตเอง',
                 status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-22',
                 analysis_details: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
-                analysis_summary: 'ไม่ผ่านเกณฑ์มาตรฐาน', approver_name: 'ดร. สมภพ รักชาติ',
+                analysis_summary: 'ไม่ผ่านเกณฑ์มาตรฐาน', approver_name: 'Admin Mobile Unit 10',
                 created_at: new Date(Date.now() - 86400000).toISOString()
             },
             {
