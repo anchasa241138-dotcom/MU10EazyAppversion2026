@@ -99,12 +99,39 @@ const app = {
             let storedUsers = localStorage.getItem('sskmoph_users');
             if (!storedUsers) {
                 this.users = [
-                    { username: 'admin', password: 'password', role: 'lab', fullname: 'ดร. สมภพ รักชาติ' },
-                    { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี' },
-                    { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ' }
+                    { username: 'admin', password: 'password', role: 'admin', fullname: 'ดร. สมภพ รักชาติ', status: 'approved' },
+                    { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
+                    { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
                 ];
                 localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
             } else {
+                this.users = JSON.parse(storedUsers);
+                
+                // Ensure all existing users have an approved status for backwards compatibility
+                this.users.forEach(u => {
+                    if (!u.status) u.status = 'approved';
+                });
+
+                // Force reset admin user to be sure
+                const adminUser = this.users.find(u => u.username === 'admin');
+                if (adminUser) {
+                    adminUser.password = 'password';
+                    adminUser.role = 'admin'; // upgrade to admin
+                    adminUser.status = 'approved';
+                }
+                else this.users.push({ username: 'admin', password: 'password', role: 'admin', fullname: 'Admin', status: 'approved' });
+                
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+            }
+        } catch (e) {
+            console.warn("Failed to parse users, resetting default users.", e);
+            this.users = [
+                { username: 'admin', password: 'password', role: 'admin', fullname: 'ดร. สมภพ รักชาติ', status: 'approved' },
+                { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
+                { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
+            ];
+            localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+        } else {
                 this.users = JSON.parse(storedUsers);
                 // Force reset default users just in case of corruption or forgotten password
                 const adminUser = this.users.find(u => u.username === 'admin');
@@ -3710,6 +3737,86 @@ const app = {
     },
 
     // Excel Export Logic
+    renderManageUsers() {
+        const pendingTbody = document.querySelector('#pending-users-table tbody');
+        const approvedTbody = document.querySelector('#approved-users-table tbody');
+        
+        if (!pendingTbody || !approvedTbody) return;
+        
+        const pendingUsers = this.users.filter(u => u.status === 'pending');
+        const approvedUsers = this.users.filter(u => u.status === 'approved' && u.username !== 'admin');
+        
+        pendingTbody.innerHTML = pendingUsers.length === 0 
+            ? '<tr><td colspan="6" class="text-center">ไม่มีผู้ใช้งานรออนุมัติ</td></tr>'
+            : pendingUsers.map(u => `
+                <tr>
+                    <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH') : '-'}</td>
+                    <td>${u.fullname} (${u.username})</td>
+                    <td>${u.workplace || '-'} / ${u.province || '-'}</td>
+                    <td>${u.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</td>
+                    <td><span class="badge" style="background-color: #f59e0b; color: white;">รออนุมัติ</span></td>
+                    <td>
+                        <button class="btn btn-success" style="padding: 4px 8px; font-size: 12px; margin-right: 5px;" onclick="app.approveUser('${u.username}')">อนุมัติ</button>
+                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="app.rejectUser('${u.username}')">ปฏิเสธ</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+        approvedTbody.innerHTML = approvedUsers.length === 0
+            ? '<tr><td colspan="5" class="text-center">ไม่มีผู้ใช้งานในระบบ</td></tr>'
+            : approvedUsers.map(u => `
+                <tr>
+                    <td>${u.fullname}</td>
+                    <td>${u.username}</td>
+                    <td>${u.workplace || '-'}</td>
+                    <td>${u.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</td>
+                    <td><span class="badge" style="background-color: #10b981; color: white;">ใช้งานได้</span></td>
+                </tr>
+            `).join('');
+    },
+
+    approveUser(username) {
+        Swal.fire({
+            title: 'ยืนยันการอนุมัติ?',
+            text: `คุณต้องการอนุมัติบัญชี ${username} ใช่หรือไม่`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'ยืนยันอนุมัติ',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const user = this.users.find(u => u.username === username);
+                if (user) {
+                    user.status = 'approved';
+                    localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+                    Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                    this.renderManageUsers();
+                    this.updateBadges();
+                }
+            }
+        });
+    },
+
+    rejectUser(username) {
+        Swal.fire({
+            title: 'ปฏิเสธและลบบัญชี?',
+            text: `คุณต้องการปฏิเสธและลบบัญชี ${username} ออกจากระบบใช่หรือไม่`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'ยืนยันการลบ',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.users = this.users.filter(u => u.username !== username);
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+                Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
+                this.renderManageUsers();
+                this.updateBadges();
+            }
+        });
+    },
+
     renderExportTable() {
         const province = document.getElementById('filter-province').value;
         const formType = document.getElementById('filter-form-type').value;
