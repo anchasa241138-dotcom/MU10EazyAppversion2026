@@ -414,6 +414,13 @@ const app = {
 
         // View-specific initialization / Access control
         switch(viewId) {
+            case 'manage-users':
+                if (this.currentUser && this.currentUser.role === 'admin') {
+                    this.renderManageUsers();
+                } else {
+                    Swal.fire('ไม่มีสิทธิ์', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้', 'error');
+                }
+                break;
             case 'dashboard':
                 this.updateDashboardStats();
                 if (window.updateDashboardCharts) updateDashboardCharts(this.samples);
