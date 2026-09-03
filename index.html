@@ -1145,8 +1145,9 @@
                             <div class="input-icon-wrapper light-label">
                                 <label for="reg-password">รหัสผ่าน <span class="required">*</span></label>
                                 <small style="display:block; color:#bae6fd; font-size:12px; margin-bottom:5px;">รหัสผ่านอย่างน้อย 8 ตัว มีพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข อักขระพิเศษ</small>
-                                <input type="password" id="reg-password" required placeholder="รหัสผ่าน">
+                                <input type="password" id="reg-password" required placeholder="รหัสผ่าน" style="padding-right: 40px;">
                                 <i class="fa-solid fa-key"></i>
+                                <i class="fa-solid fa-eye toggle-password" style="left: auto !important; right: 16px; cursor: pointer; pointer-events: auto; color: #94a3b8;" onclick="const input = document.getElementById('reg-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash');} else {input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye');}"></i>
                                 
                                 <div class="password-meter mt-2">
                                     <div class="meter-steps">
@@ -1160,8 +1161,9 @@
                             </div>
                             <div class="input-icon-wrapper light-label">
                                 <label for="reg-confirm-password">ยืนยันรหัสผ่าน <span class="required">*</span></label>
-                                <input type="password" id="reg-confirm-password" required placeholder="กรอกรหัสผ่านอีกครั้ง">
+                                <input type="password" id="reg-confirm-password" required placeholder="กรอกรหัสผ่านอีกครั้ง" style="padding-right: 40px;">
                                 <i class="fa-solid fa-check-double"></i>
+                                <i class="fa-solid fa-eye toggle-password" style="left: auto !important; right: 16px; cursor: pointer; pointer-events: auto; color: #94a3b8;" onclick="const input = document.getElementById('reg-confirm-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash');} else {input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye');}"></i>
                             </div>
                         </div>
 
@@ -1471,7 +1473,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1100"></script>
+    <script src="app_v49_23.js?v=1101"></script>
 </body>
 </html>
 
