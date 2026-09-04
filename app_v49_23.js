@@ -2899,23 +2899,16 @@ const app = {
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
-        // Temporarily move the live container to the body to escape modal clipping
-        const modalBody = container.parentElement;
-        const nextSibling = container.nextSibling;
-        document.body.appendChild(container);
-        
-        const oldClassName = container.className;
-        const oldCssText = container.style.cssText;
-        
-        // Put it in the viewport so html2canvas renders it without skipping
-        const viewportY = window.scrollY || document.documentElement.scrollTop || 0;
-        container.className = '';
-        container.style.cssText = `position: absolute; top: ${viewportY}px; left: 0; width: 794px; background: white; z-index: 1050; padding: 0 !important; margin: 0 !important; overflow: visible !important; max-height: none !important; font-size: 0; line-height: 0;`;
-
         if (document.fonts) {
             await document.fonts.load('16px SarabunPDF');
             await document.fonts.ready;
         }
+
+        // We wrap the inner HTML in a new container string with the exact ID needed for CSS,
+        // and we set the width to 794px so html2canvas renders the exact width.
+        // We pass this STRING to html2pdf, which will safely render it in an isolated iframe,
+        // completely bypassing all modal, viewport, scroll, and z-index issues!
+        const htmlString = `<div id="certificatePDFContainer" style="width: 794px; background: white; font-size: 0; line-height: 0; margin: 0; padding: 0;">${container.innerHTML}</div>`;
 
         const opt = {
             margin: 0,
@@ -2923,7 +2916,8 @@ const app = {
             image: { type: 'png' },
             html2canvas: { 
                 scale: 4, 
-                useCORS: true
+                useCORS: true,
+                letterRendering: true
             },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
             pagebreak: { mode: ['css', 'legacy'] }
@@ -2935,17 +2929,9 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        html2pdf().set(opt).from(container).save().then(() => {
-            container.className = oldClassName;
-            container.style.cssText = oldCssText;
-            if (nextSibling) modalBody.insertBefore(container, nextSibling);
-            else modalBody.appendChild(container);
+        html2pdf().set(opt).from(htmlString).save().then(() => {
             Swal.close();
         }).catch(err => {
-            container.className = oldClassName;
-            container.style.cssText = oldCssText;
-            if (nextSibling) modalBody.insertBefore(container, nextSibling);
-            else modalBody.appendChild(container);
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         });
