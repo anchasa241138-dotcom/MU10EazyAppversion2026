@@ -2668,13 +2668,13 @@ const app = {
                         <table class="cert-multi-table">
                             <thead>
                                 <tr>
-                                    <th width="6%">ลำดับ</th>
-                                    <th width="18%">ชื่อผู้จำหน่าย</th>
-                                    <th width="12%">รหัสตัวอย่าง</th>
-                                    <th width="18%">ตัวอย่าง</th>
-                                    <th width="15%">แหล่งที่มา</th>
-                                    <th width="19%" style="${tableHeaderSubstance.length > 10 ? 'font-size: 11.5px;' : ''}">${tableHeaderSubstance}</th>
-                                    <th width="12%">สรุปผล</th>
+                                    <th style="width:1%; white-space:nowrap;">ลำดับ</th>
+                                    <th>ชื่อผู้จำหน่าย</th>
+                                    <th style="width:1%; white-space:nowrap;">รหัสตัวอย่าง</th>
+                                    <th>ตัวอย่าง</th>
+                                    <th>แหล่งที่มา</th>
+                                    <th style="${tableHeaderSubstance.length > 10 ? 'font-size: 11.5px;' : ''}">${tableHeaderSubstance}</th>
+                                    <th style="width:1%; white-space:nowrap;">สรุปผล</th>
                                 </tr>
                             </thead>
                             <tbody>
