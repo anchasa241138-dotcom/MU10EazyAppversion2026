@@ -2624,18 +2624,14 @@ const app = {
                 
                 let rowsHtml = '';
                 chunk.forEach(item => {
-                    const vendorFontSize = item.distributor.length > 20 ? 'font-size: 11.5px;' : '';
-                    const sampleFontSize = item.sampleName.length > 20 ? 'font-size: 11.5px;' : '';
-                    const detailsFontSize = item.details.length > 20 ? 'font-size: 11.5px;' : '';
-                    const srcFontSize = item.source.length > 20 ? 'font-size: 11.5px;' : '';
                     rowsHtml += `
                         <tr style="${!item.isPass ? 'background-color:#fef08a;' : ''}">
                             <td style="text-align:center;">${item.idx}</td>
-                            <td style="text-align:center; ${vendorFontSize}">${item.distributor}</td>
+                            <td style="text-align:center;">${item.distributor}</td>
                             <td style="text-align:center;">${item.labId}</td>
-                            <td style="text-align:center; ${sampleFontSize}">${item.sampleName}</td>
-                            <td style="text-align:center; ${srcFontSize}">${item.source}</td>
-                            <td style="text-align:center; ${detailsFontSize}">${item.details}</td>
+                            <td style="text-align:center;">${item.sampleName}</td>
+                            <td style="text-align:center;">${item.source}</td>
+                            <td style="text-align:center;">${item.details}</td>
                             <td style="text-align:center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
@@ -2668,13 +2664,13 @@ const app = {
                         <table class="cert-multi-table">
                             <thead>
                                 <tr>
-                                    <th style="width:1%; white-space:nowrap;">ลำดับ</th>
-                                    <th>ชื่อผู้จำหน่าย</th>
-                                    <th style="width:1%; white-space:nowrap;">รหัสตัวอย่าง</th>
-                                    <th>ตัวอย่าง</th>
-                                    <th>แหล่งที่มา</th>
-                                    <th style="${tableHeaderSubstance.length > 10 ? 'font-size: 11.5px;' : ''}">${tableHeaderSubstance}</th>
-                                    <th style="width:1%; white-space:nowrap;">สรุปผล</th>
+                                    <th width="5%">ลำดับ</th>
+                                    <th width="20%">ชื่อผู้จำหน่าย</th>
+                                    <th width="15%">รหัสตัวอย่าง</th>
+                                    <th width="15%">ตัวอย่าง</th>
+                                    <th width="15%">แหล่งที่มา</th>
+                                    <th width="15%">${tableHeaderSubstance}</th>
+                                    <th width="15%">สรุปผล</th>
                                 </tr>
                             </thead>
                             <tbody>
