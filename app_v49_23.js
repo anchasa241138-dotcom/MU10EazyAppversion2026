@@ -2904,11 +2904,12 @@ const app = {
             await document.fonts.ready;
         }
 
-        // Temporarily prepare container layout for stacking
-        const oldClassName = container.className;
-        const oldCssText = container.style.cssText;
-        container.className = '';
-        container.style.cssText = 'width: 794px; display: block; padding: 0 !important; margin: 0 auto !important; background: transparent !important; font-size: 0; line-height: 0;';
+        // Create a detached wrapper at EXACTLY 0,0 to prevent offset bugs
+        const printWrap = document.createElement('div');
+        printWrap.id = 'certificatePDFContainer'; // Important for applying CSS rules
+        printWrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; background: white; z-index: 1050; margin: 0; padding: 0; font-size: 0; line-height: 0;';
+        printWrap.innerHTML = container.innerHTML;
+        document.body.appendChild(printWrap);
 
         const opt = {
             margin: 0,
@@ -2917,29 +2918,17 @@ const app = {
             html2canvas: { 
                 scale: 4, 
                 useCORS: true,
+                scrollX: 0,
+                scrollY: 0, // Force capture from top of document
+                windowWidth: 794,
                 onclone: (clonedDoc) => {
-                    // Unlock the body (Swal.fire adds overflow: hidden which clips html2canvas!)
+                    // Unlock the body so html2canvas doesn't clip to 100vh!
+                    // Swal.fire adds overflow: hidden which breaks full-height canvas capture
                     clonedDoc.body.style.setProperty('overflow', 'visible', 'important');
                     clonedDoc.body.style.setProperty('overflow-y', 'visible', 'important');
                     clonedDoc.body.classList.remove('swal2-shown');
-                    clonedDoc.documentElement.style.setProperty('overflow', 'visible', 'important');
                     clonedDoc.body.classList.remove('swal2-height-auto');
-                    
-                    // Unlock all ancestors of the container inside the clone
-                    let curr = clonedDoc.getElementById('certificatePDFContainer');
-                    if (curr) {
-                        curr.style.setProperty('overflow', 'visible', 'important');
-                        curr.style.setProperty('max-height', 'none', 'important');
-                        curr = curr.parentElement;
-                        while (curr && curr !== clonedDoc.body) {
-                            curr.style.setProperty('overflow', 'visible', 'important');
-                            curr.style.setProperty('overflow-y', 'visible', 'important');
-                            curr.style.setProperty('max-height', 'none', 'important');
-                            curr.style.setProperty('height', 'auto', 'important');
-                            curr.style.setProperty('position', 'relative', 'important');
-                            curr = curr.parentElement;
-                        }
-                    }
+                    clonedDoc.documentElement.style.setProperty('overflow', 'visible', 'important');
                 }
             },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
@@ -2952,20 +2941,18 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        // Small delay to ensure Swal has settled before capture
-        await new Promise(r => setTimeout(r, 200));
+        // Give the browser time to paint the new DOM node and load base64 images
+        await new Promise(r => setTimeout(r, 500));
 
-        html2pdf().set(opt).from(container).save().then(() => {
-            container.className = oldClassName;
-            container.style.cssText = oldCssText;
+        html2pdf().set(opt).from(printWrap).save().then(() => {
+            document.body.removeChild(printWrap);
             Swal.close();
         }).catch(err => {
-            container.className = oldClassName;
-            container.style.cssText = oldCssText;
+            document.body.removeChild(printWrap);
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         });
-    },
+    }
 
     async generateSubmissionPDF(e) {
         try {
