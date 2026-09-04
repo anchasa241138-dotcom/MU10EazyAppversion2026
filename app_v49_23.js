@@ -2950,6 +2950,8 @@ const app = {
             }
             container.style.overflow = oldOverflowElement;
             container.style.maxHeight = oldMaxHeightElement;
+            container.style.padding = oldPaddingElement;
+            container.style.backgroundColor = oldBgElement;
             Swal.close();
         }).catch(err => {
             if (modalBody) {
@@ -2958,6 +2960,8 @@ const app = {
             }
             container.style.overflow = oldOverflowElement;
             container.style.maxHeight = oldMaxHeightElement;
+            container.style.padding = oldPaddingElement;
+            container.style.backgroundColor = oldBgElement;
             Swal.fire('Error', err.toString(), 'error');
         });
     },
