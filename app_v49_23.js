@@ -2899,16 +2899,30 @@ const app = {
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
-        // Create an off-screen wrapper to bypass all modal restrictions (max-height, overflow)
-        const printWrap = document.createElement('div');
-        printWrap.id = 'certificatePDFContainer'; // Must match CSS selectors
-        printWrap.style.cssText = 'position: absolute; top: -9999px; left: 0; width: 794px; background: transparent; font-size: 0; line-height: 0; z-index: -1000;';
-        printWrap.innerHTML = container.innerHTML;
-        document.body.appendChild(printWrap);
-        const element = printWrap;
+        // Expand all ancestors to prevent clipping by modal max-height
+        const ancestors = [];
+        let curr = container.parentElement;
+        while (curr && curr !== document.body) {
+            ancestors.push({
+                el: curr,
+                overflow: curr.style.overflow,
+                overflowY: curr.style.overflowY,
+                maxHeight: curr.style.maxHeight,
+                height: curr.style.height
+            });
+            curr.style.setProperty('overflow', 'visible', 'important');
+            curr.style.setProperty('overflow-y', 'visible', 'important');
+            curr.style.setProperty('max-height', 'none', 'important');
+            curr.style.setProperty('height', 'auto', 'important');
+            curr = curr.parentElement;
+        }
+        
+        // Temporarily style the container itself to stack perfectly
+        const oldClassName = container.className;
+        const oldCssText = container.style.cssText;
+        container.className = '';
+        container.style.cssText = 'width: 794px; display: block; padding: 0 !important; margin: 0 auto !important; background: transparent !important; overflow: visible !important; max-height: none !important; font-size: 0; line-height: 0;';
 
-        // Target the inner .cert-pdf-border directly. It has 794x1123 dimension.
-        // Set margin: 0 to force html2pdf to stretch this perfectly to A4 borders.
         if (document.fonts) {
             await document.fonts.load('16px SarabunPDF');
             await document.fonts.ready;
@@ -2916,45 +2930,42 @@ const app = {
 
         const opt = {
             margin: 0,
-            filename:     `Certificate_${pdfNo}.pdf`,
-            image:        { type: 'png' },
-            html2canvas:  { 
-                scale: 4, 
-                useCORS: true,
-                scrollX: 0,
-                scrollY: 0
-            },
-            jsPDF:        { unit: 'px', format: [794, 1123], orientation: 'portrait' },
-            pagebreak:    { mode: ['css', 'legacy'] }
+            filename: `Certificate_${pdfNo}.pdf`,
+            image: { type: 'png' },
+            html2canvas: { scale: 4, useCORS: true, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'] }
         };
         
         Swal.fire({
             title: 'กำลังสร้าง PDF...',
             allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+            didOpen: () => Swal.showLoading()
         });
 
-        html2pdf().set(opt).from(element).save().then(() => {
-            if (modalBody) {
-                modalBody.style.overflowY = oldOverflowBody;
-                modalBody.style.maxHeight = oldMaxHeightBody;
-            }
+        html2pdf().set(opt).from(container).save().then(() => {
+            ancestors.forEach(a => {
+                a.el.style.overflow = a.overflow;
+                a.el.style.overflowY = a.overflowY;
+                a.el.style.maxHeight = a.maxHeight;
+                a.el.style.height = a.height;
+            });
             container.className = oldClassName;
             container.style.cssText = oldCssText;
             Swal.close();
         }).catch(err => {
-            if (modalBody) {
-                modalBody.style.overflowY = oldOverflowBody;
-                modalBody.style.maxHeight = oldMaxHeightBody;
-            }
+            ancestors.forEach(a => {
+                a.el.style.overflow = a.overflow;
+                a.el.style.overflowY = a.overflowY;
+                a.el.style.maxHeight = a.maxHeight;
+                a.el.style.height = a.height;
+            });
             container.className = oldClassName;
             container.style.cssText = oldCssText;
-            Swal.fire('Error', err.toString(), 'error');
+            console.error(err);
+            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         });
-    },
-
+    }
 
     async generateSubmissionPDF(e) {
         try {
