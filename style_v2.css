@@ -1506,8 +1506,8 @@ body.is-printing-pdf *,
 }
 
 #certificatePDFContainer .cert-pdf-border {
-    height: 1122px !important;
-    width: 793px !important;
+    height: 296mm !important;
+    width: 210mm !important;
     overflow: hidden !important;
 }
 
