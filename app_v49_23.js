@@ -2948,24 +2948,16 @@ const app = {
                 modalBody.style.overflowY = oldOverflowBody;
                 modalBody.style.maxHeight = oldMaxHeightBody;
             }
-            container.style.overflow = oldOverflowElement;
-            container.style.maxHeight = oldMaxHeightElement;
-            container.style.padding = oldPaddingElement;
-            container.style.backgroundColor = oldBgElement;
-            container.style.width = oldWidthElement;
-            container.style.display = oldDisplayElement;
+            container.className = oldClassName;
+            container.style.cssText = oldCssText;
             Swal.close();
         }).catch(err => {
             if (modalBody) {
                 modalBody.style.overflowY = oldOverflowBody;
                 modalBody.style.maxHeight = oldMaxHeightBody;
             }
-            container.style.overflow = oldOverflowElement;
-            container.style.maxHeight = oldMaxHeightElement;
-            container.style.padding = oldPaddingElement;
-            container.style.backgroundColor = oldBgElement;
-            container.style.width = oldWidthElement;
-            container.style.display = oldDisplayElement;
+            container.className = oldClassName;
+            container.style.cssText = oldCssText;
             Swal.fire('Error', err.toString(), 'error');
         });
     },
