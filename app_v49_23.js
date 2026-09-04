@@ -2896,23 +2896,16 @@ const app = {
 
     async generateCertificatePDF() {
         const container = document.getElementById('certificatePDFContainer');
-        const element = container;
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
-        // Temporarily remove overflow to prevent html2canvas clipping
-        const modalBody = container.closest('.modal-body');
-        const oldOverflowBody = modalBody ? modalBody.style.overflowY : '';
-        const oldMaxHeightBody = modalBody ? modalBody.style.maxHeight : '';
-        if (modalBody) {
-            modalBody.style.overflowY = 'visible';
-            modalBody.style.maxHeight = 'none';
-        }
-        
-        const oldClassName = container.className;
-        const oldCssText = container.style.cssText;
-        container.className = '';
-        container.style.cssText = 'width: 794px; display: block; padding: 0 !important; margin: 0 auto !important; background: transparent !important; overflow: visible !important; max-height: none !important; font-size: 0; line-height: 0;';
+        // Create an off-screen wrapper to bypass all modal restrictions (max-height, overflow)
+        const printWrap = document.createElement('div');
+        printWrap.id = 'certificatePDFContainer'; // Must match CSS selectors
+        printWrap.style.cssText = 'position: absolute; top: -9999px; left: 0; width: 794px; background: transparent; font-size: 0; line-height: 0; z-index: -1000;';
+        printWrap.innerHTML = fullHtml;
+        document.body.appendChild(printWrap);
+        const element = printWrap;
 
         // Target the inner .cert-pdf-border directly. It has 794x1123 dimension.
         // Set margin: 0 to force html2pdf to stretch this perfectly to A4 borders.
