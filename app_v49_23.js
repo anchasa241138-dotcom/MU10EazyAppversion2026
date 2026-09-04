@@ -2902,7 +2902,7 @@ const app = {
         // Expand all ancestors to prevent clipping by modal max-height
         const ancestors = [];
         let curr = container.parentElement;
-        while (curr && curr !== document.body) {
+        while (curr) {
             ancestors.push({
                 el: curr,
                 overflow: curr.style.overflow,
@@ -2932,7 +2932,7 @@ const app = {
             margin: 0,
             filename: `Certificate_${pdfNo}.pdf`,
             image: { type: 'png' },
-            html2canvas: { scale: 4, useCORS: true, scrollX: 0, scrollY: 0 },
+            html2canvas: { scale: 4, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: container.scrollWidth, windowHeight: container.scrollHeight },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
             pagebreak: { mode: ['css', 'legacy'] }
         };
