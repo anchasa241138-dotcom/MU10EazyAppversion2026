@@ -2921,13 +2921,7 @@ const app = {
             image: { type: 'png' },
             html2canvas: { 
                 scale: 4, 
-                useCORS: true, 
-                scrollX: 0, 
-                scrollY: 0,
-                x: 0,
-                y: 0,
-                windowWidth: 794,
-                windowHeight: printWrap.scrollHeight
+                useCORS: true
             },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
             pagebreak: { mode: ['css', 'legacy'] }
