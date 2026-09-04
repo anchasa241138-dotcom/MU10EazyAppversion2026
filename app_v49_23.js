@@ -2896,19 +2896,29 @@ const app = {
 
     async generateCertificatePDF() {
         const container = document.getElementById('certificatePDFContainer');
+        const dynamicContent = document.getElementById('cert-dynamic-content');
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
         if (document.fonts) {
             try {
                 await document.fonts.load('16px "SarabunPDF"');
+                await document.fonts.load('16px "TH SarabunPSK"');
                 await document.fonts.ready;
             } catch (e) {
                 console.warn('Font load error', e);
             }
         }
 
-        const pages = Array.from(container.children);
+        // CRITICAL FIX: The actual pages are inside cert-dynamic-content!
+        // The outer container only has 1 child (the wrapper), which caused the 1-page bug.
+        let pages = [];
+        if (dynamicContent && dynamicContent.children.length > 0) {
+            pages = Array.from(dynamicContent.children);
+        } else {
+            pages = Array.from(container.children);
+        }
+        
         if (pages.length === 0) return;
 
         Swal.fire({
@@ -2917,11 +2927,8 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        // Store original scroll
         const originalScrollY = window.scrollY;
         const originalScrollX = window.scrollX;
-        
-        // Scroll to top-left to completely eliminate html2canvas viewport offset bugs
         window.scrollTo(0, 0);
 
         try {
@@ -2954,10 +2961,16 @@ const app = {
                 clone.style.pageBreakAfter = 'auto';
                 clone.style.pageBreakBefore = 'auto';
                 
+                // FORCE FONT TO TH SarabunPSK
+                clone.style.fontFamily = '"TH SarabunPSK", "SarabunPDF", "Sarabun", sans-serif';
+                const allElems = clone.querySelectorAll('*');
+                allElems.forEach(el => {
+                    el.style.setProperty('font-family', '"TH SarabunPSK", "SarabunPDF", "Sarabun", sans-serif', 'important');
+                });
+                
                 wrap.appendChild(clone);
                 document.body.appendChild(wrap);
                 
-                // Wait longer for fonts and layout
                 await new Promise(r => setTimeout(r, 200));
                 
                 const canvas = await html2canvas(wrap, {
@@ -2974,7 +2987,7 @@ const app = {
                 const imgData = canvas.toDataURL('image/png', 1.0);
                 
                 if (i > 0) {
-                    pdf.addPage(); // Default args to prevent version crashes
+                    pdf.addPage();
                 }
                 pdf.addImage(imgData, 'PNG', 0, 0, 794, 1123);
             }
@@ -2985,7 +2998,6 @@ const app = {
             console.error("Manual PDF failed:", err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         } finally {
-            // Restore scroll
             window.scrollTo(originalScrollX, originalScrollY);
             Swal.close();
         }
@@ -3106,7 +3118,7 @@ const app = {
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) =>{
-            return `<span style="font-family: 'SarabunPDF', 'Sarabun', sans-serif !important; word-break: break-word; white-space: normal;">${checked ? '[✓]' : '[ ]'} ${txt}</span>`;
+            return `<span style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; word-break: break-word; white-space: normal;">${checked ? '[✓]' : '[ ]'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -3278,12 +3290,12 @@ const app = {
 
         htmlContent = `
             <style>* {
-                    font-family: 'SarabunPDF', 'Sarabun', sans-serif !important;
+                    font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
                                         letter-spacing: normal !important;
                 }
             @page { size: ${sample.form_type === 'MU.10-004' ? 'A4 portrait' : 'A4 landscape'}; margin: 10mm; }
                 th { text-align: center !important; }
-            </style> <div class="pdf-document" style="font-family: 'SarabunPDF', 'Sarabun', sans-serif !important; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #000;"> <!-- HEADER --> <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:11px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">MU.10-004</span></div> <div style="margin-top:6px; font-size:11px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <div style="width: 100%; line-height:1.6; margin-bottom:6px; color:#000; font-size:9.5px;"> <div>(เจ้าหน้าที่) หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || '......................................................'}</u>.... อำเภอ ....<u>${sample.amphoe || '........................................'}</u>.... จังหวัด ....<u>${sample.province || '..........................................'}</u>....</div> <div style="margin-top:2px;">(ผู้ประกอบการ) ชื่อสถานที่ ....<u>${sample.location_name || '..............................................................'}</u>.... เจ้าของร้าน/ผู้ดูแล ..........................................................................</div> <div style="margin-top:2px;">ที่อยู่ ........................................................................................... เบอร์โทร ........................................................................................</div> </div> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;"> <!-- QUESTIONNAIRE --> <div style="width: 100%; line-height:1.5; color:#000; font-size:9.5px; margin-bottom:8px;"> <div><strong>ประเภท</strong>${isFlour ? '[✓]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
+            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 780px !important; min-height: 1414px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #000;"> <!-- HEADER --> <table style="width: 100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:11px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">MU.10-004</span></div> <div style="margin-top:6px; font-size:11px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <div style="width: 100%; line-height:1.6; margin-bottom:6px; color:#000; font-size:9.5px;"> <div>(เจ้าหน้าที่) หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || '......................................................'}</u>.... อำเภอ ....<u>${sample.amphoe || '........................................'}</u>.... จังหวัด ....<u>${sample.province || '..........................................'}</u>....</div> <div style="margin-top:2px;">(ผู้ประกอบการ) ชื่อสถานที่ ....<u>${sample.location_name || '..............................................................'}</u>.... เจ้าของร้าน/ผู้ดูแล ..........................................................................</div> <div style="margin-top:2px;">ที่อยู่ ........................................................................................... เบอร์โทร ........................................................................................</div> </div> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;"> <!-- QUESTIONNAIRE --> <div style="width: 100%; line-height:1.5; color:#000; font-size:9.5px; margin-bottom:8px;"> <div><strong>ประเภท</strong>${isFlour ? '[✓]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div> <div style="margin-top:1px; padding-left:38px;">${isMeat ? '[✓]' : '[ ]'} เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMeat ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div> <div style="margin-top:1px; padding-left:38px;">${isMeatProduct ? '[✓]' : '[ ]'} ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ ระบุชนิดอาหาร ....<u>${isMeatProduct ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
                     </div> <div style="margin-top:1px; padding-left:38px;">${isMix ? '[✓]' : '[ ]'} พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ ระบุชนิดอาหาร ....<u>${isMix ? (firstItem.food_type || '..................................................') : '..................................................'}</u>....
@@ -3318,10 +3330,10 @@ const app = {
 
             htmlContent = `
             <style>* {
-                    font-family: 'SarabunPDF', 'Sarabun', sans-serif !important;
+                    font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
                                         letter-spacing: normal !important;
                 }
-            </style> <div class="pdf-document" style="font-family: 'SarabunPDF', 'Sarabun', sans-serif !important; width: 1000px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">${documentNum}</span></div> <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:11.5px; font-weight:bold;"> <tr> <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td> <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td colspan="2" style="padding:2px 0;">ตำบล ....<u>${sample.tambon || ''}</u>....
+            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 1000px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 0; padding-top: 30px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">${documentNum}</span></div> <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:11.5px; font-weight:bold;"> <tr> <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td> <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td colspan="2" style="padding:2px 0;">ตำบล ....<u>${sample.tambon || ''}</u>....
                             อำเภอ ....<u>${sample.amphoe || ''}</u>....
                             จังหวัด ....<u>${sample.province || ''}</u>....
                             วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>....
