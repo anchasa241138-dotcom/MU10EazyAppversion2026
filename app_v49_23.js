@@ -2904,12 +2904,11 @@ const app = {
             await document.fonts.ready;
         }
 
-        // Create a detached wrapper at EXACTLY 0,0 to prevent offset bugs
-        const printWrap = document.createElement('div');
-        printWrap.id = 'certificatePDFContainer'; // Important for applying CSS rules
-        printWrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; background: white; z-index: 1050; margin: 0; padding: 0; font-size: 0; line-height: 0;';
-        printWrap.innerHTML = container.innerHTML;
-        document.body.appendChild(printWrap);
+        // We use htmlString to render in a completely isolated iframe, preventing ALL viewport/scroll/modal clipping issues.
+        // We explicitly calculate the total height so html2canvas doesn't clip to window.innerHeight!
+        const totalHeight = container.children.length * 1122; // 3 pages = 3366px
+        
+        const htmlString = `<div id="certificatePDFContainer" style="width: 794px; height: ${totalHeight}px; background: white; font-size: 0; line-height: 0; margin: 0; padding: 0;">${container.innerHTML}</div>`;
 
         const opt = {
             margin: 0,
@@ -2918,18 +2917,8 @@ const app = {
             html2canvas: { 
                 scale: 4, 
                 useCORS: true,
-                scrollX: 0,
-                scrollY: 0, // Force capture from top of document
                 windowWidth: 794,
-                onclone: (clonedDoc) => {
-                    // Unlock the body so html2canvas doesn't clip to 100vh!
-                    // Swal.fire adds overflow: hidden which breaks full-height canvas capture
-                    clonedDoc.body.style.setProperty('overflow', 'visible', 'important');
-                    clonedDoc.body.style.setProperty('overflow-y', 'visible', 'important');
-                    clonedDoc.body.classList.remove('swal2-shown');
-                    clonedDoc.body.classList.remove('swal2-height-auto');
-                    clonedDoc.documentElement.style.setProperty('overflow', 'visible', 'important');
-                }
+                windowHeight: totalHeight
             },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
             pagebreak: { mode: ['css', 'legacy'] }
@@ -2941,18 +2930,13 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        // Give the browser time to paint the new DOM node and load base64 images
-        await new Promise(r => setTimeout(r, 500));
-
-        html2pdf().set(opt).from(printWrap).save().then(() => {
-            document.body.removeChild(printWrap);
+        html2pdf().set(opt).from(htmlString).save().then(() => {
             Swal.close();
         }).catch(err => {
-            document.body.removeChild(printWrap);
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         });
-    },
+    }
 
     async generateSubmissionPDF(e) {
         try {
