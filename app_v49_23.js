@@ -2909,10 +2909,10 @@ const app = {
             modalBody.style.maxHeight = 'none';
         }
         
-        const oldOverflowElement = container.style.overflow || '';
-        const oldMaxHeightElement = container.style.maxHeight || '';
-        container.style.overflow = 'visible';
-        container.style.maxHeight = 'none';
+        const oldClassName = container.className;
+        const oldCssText = container.style.cssText;
+        container.className = '';
+        container.style.cssText = 'width: 794px; display: block; padding: 0 !important; margin: 0 auto !important; background: transparent !important; overflow: visible !important; max-height: none !important; font-size: 0; line-height: 0;';
 
         // Target the inner .cert-pdf-border directly. It has 794x1123 dimension.
         // Set margin: 0 to force html2pdf to stretch this perfectly to A4 borders.
