@@ -2903,7 +2903,7 @@ const app = {
         const printWrap = document.createElement('div');
         printWrap.id = 'certificatePDFContainer'; 
         // We use top:0, left:0 so x,y are exactly 0. z-index:-1000 hides it behind the main page.
-        printWrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; margin: 0; padding: 0; background: white; font-size: 0; line-height: 0; z-index: -1000;';
+        printWrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; margin: 0; padding: 0; background: white; font-size: 0; line-height: 0; z-index: 1050;';
         printWrap.innerHTML = container.innerHTML;
         document.body.appendChild(printWrap);
 
@@ -2913,7 +2913,7 @@ const app = {
         }
 
         // Wait a tiny bit for images in the new DOM node to be recognized by browser
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 300));
 
         const opt = {
             margin: 0,
@@ -2921,7 +2921,9 @@ const app = {
             image: { type: 'png' },
             html2canvas: { 
                 scale: 4, 
-                useCORS: true
+                useCORS: true,
+                windowWidth: 794,
+                windowHeight: printWrap.scrollHeight
             },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
             pagebreak: { mode: ['css', 'legacy'] }
