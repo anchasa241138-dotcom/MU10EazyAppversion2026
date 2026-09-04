@@ -2900,8 +2900,12 @@ const app = {
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
         if (document.fonts) {
-            await document.fonts.load('16px SarabunPDF');
-            await document.fonts.ready;
+            try {
+                await document.fonts.load('16px "SarabunPDF"');
+                await document.fonts.ready;
+            } catch (e) {
+                console.warn('Font load error', e);
+            }
         }
 
         const pages = Array.from(container.children);
@@ -2913,8 +2917,14 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
+        // Store original scroll
+        const originalScrollY = window.scrollY;
+        const originalScrollX = window.scrollX;
+        
+        // Scroll to top-left to completely eliminate html2canvas viewport offset bugs
+        window.scrollTo(0, 0);
+
         try {
-            // Load raw libraries to bypass all html2pdf.js bugs
             if (!window.html2canvas) {
                 await new Promise((r, j) => {
                     const s = document.createElement('script');
@@ -2932,47 +2942,52 @@ const app = {
                 });
             }
 
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'px', [794, 1123]);
+            const JsPdfClass = window.jspdf.jsPDF || window.jsPDF;
+            const pdf = new JsPdfClass('p', 'px', [794, 1123]);
 
             for (let i = 0; i < pages.length; i++) {
-                // Create a temporary container on top of everything, EXACTLY in the current viewport
                 const wrap = document.createElement('div');
-                wrap.style.cssText = `position: absolute; top: ${window.scrollY}px; left: 0; width: 794px; height: 1122px; background: white; z-index: 99999; margin: 0; padding: 0;`;
+                wrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; height: 1122px; background: white; z-index: 99999; margin: 0; padding: 0;';
                 
                 const clone = pages[i].cloneNode(true);
-                clone.style.margin = '0'; // Remove centering margins to prevent shifts
-                clone.style.pageBreakAfter = 'auto'; // Strip useless css
-                wrap.appendChild(clone);
+                clone.style.margin = '0';
+                clone.style.pageBreakAfter = 'auto';
+                clone.style.pageBreakBefore = 'auto';
                 
+                wrap.appendChild(clone);
                 document.body.appendChild(wrap);
                 
-                // Allow browser to render the DOM node
-                await new Promise(r => setTimeout(r, 150));
+                // Wait longer for fonts and layout
+                await new Promise(r => setTimeout(r, 200));
                 
-                // Capture directly using raw html2canvas
                 const canvas = await html2canvas(wrap, {
                     scale: 4,
                     useCORS: true,
                     width: 794,
                     height: 1122,
-                    scrollX: window.scrollX,
-                    scrollY: window.scrollY
+                    scrollX: 0,
+                    scrollY: 0
                 });
                 
                 document.body.removeChild(wrap);
                 
                 const imgData = canvas.toDataURL('image/png', 1.0);
-                if (i > 0) pdf.addPage([794, 1123], 'p');
+                
+                if (i > 0) {
+                    pdf.addPage(); // Default args to prevent version crashes
+                }
                 pdf.addImage(imgData, 'PNG', 0, 0, 794, 1123);
             }
             
             pdf.save(`Certificate_${pdfNo}.pdf`);
-            Swal.close();
             
         } catch (err) {
             console.error("Manual PDF failed:", err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
+        } finally {
+            // Restore scroll
+            window.scrollTo(originalScrollX, originalScrollY);
+            Swal.close();
         }
     },
 
