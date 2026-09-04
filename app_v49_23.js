@@ -2952,6 +2952,8 @@ const app = {
             container.style.maxHeight = oldMaxHeightElement;
             container.style.padding = oldPaddingElement;
             container.style.backgroundColor = oldBgElement;
+            container.style.width = oldWidthElement;
+            container.style.display = oldDisplayElement;
             Swal.close();
         }).catch(err => {
             if (modalBody) {
@@ -2962,6 +2964,8 @@ const app = {
             container.style.maxHeight = oldMaxHeightElement;
             container.style.padding = oldPaddingElement;
             container.style.backgroundColor = oldBgElement;
+            container.style.width = oldWidthElement;
+            container.style.display = oldDisplayElement;
             Swal.fire('Error', err.toString(), 'error');
         });
     },
