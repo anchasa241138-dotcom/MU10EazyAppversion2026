@@ -2907,12 +2907,41 @@ const app = {
         const pages = Array.from(container.children);
         if (pages.length === 0) return;
 
+        // 1. Calculate EXACT total height to prevent html2canvas window bounds clipping
+        const totalHeight = pages.length * 1122;
+
+        // 2. Clone the container so we can manipulate the HTML safely without touching the live DOM
+        const cloneContainer = container.cloneNode(true);
+        const clonedPages = Array.from(cloneContainer.children);
+
+        // 3. Strip CSS page-breaks (they cause layout gaps in the iframe) and add html2pdf explicit break classes
+        for (let i = 0; i < clonedPages.length; i++) {
+            clonedPages[i].style.pageBreakAfter = 'auto'; // Remove CSS page breaks
+            clonedPages[i].style.marginBottom = '0'; // Ensure no layout gaps
+            if (i < clonedPages.length - 1) {
+                clonedPages[i].classList.add('html2pdf__page-break'); // Add html2pdf legacy marker
+            }
+        }
+
+        // 4. Create the final htmlString for isolated rendering
+        const htmlString = `
+        <div id="certificatePDFContainer" style="width: 794px; background: white; font-size: 0; line-height: 0; margin: 0; padding: 0;">
+            ${cloneContainer.innerHTML}
+        </div>`;
+
         const opt = {
             margin: 0,
             filename: `Certificate_${pdfNo}.pdf`,
             image: { type: 'png' },
-            html2canvas: { scale: 4, useCORS: true },
-            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
+            html2canvas: { 
+                scale: 4, 
+                useCORS: true,
+                windowWidth: 794,
+                windowHeight: totalHeight,
+                letterRendering: true
+            },
+            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
+            pagebreak: { mode: ['legacy'] } // ONLY use legacy mode to rely on our injected classes!
         };
         
         Swal.fire({
@@ -2921,44 +2950,13 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        try {
-            let worker = html2pdf().set(opt);
-            
-            for (let i = 0; i < pages.length; i++) {
-                // Remove auto margins and page-breaks to prevent ANY layout shifts inside the iframe
-                const pageOuterHTML = pages[i].outerHTML
-                    .replace(/margin-left:s*auto;/g, 'margin-left: 0;')
-                    .replace(/margin-right:s*auto;/g, 'margin-right: 0;')
-                    .replace(/page-break-after:s*always;/g, 'page-break-after: auto;');
-                
-                // standard block container, expands naturally to 1122px, no position:absolute 0x0 bug!
-                const htmlString = `
-                <div style="width: 794px; background: white; margin: 0; padding: 0;">
-                    <div id="certificatePDFContainer" style="width: 794px; background: white; margin: 0; padding: 0; font-size: 0; line-height: 0;">
-                        ${pageOuterHTML}
-                    </div>
-                </div>`;
-
-                if (i === 0) {
-                    worker = worker.from(htmlString).toPdf();
-                } else {
-                    worker = worker.get('pdf').then(pdf => {
-                        pdf.addPage();
-                    }).from(htmlString).toContainer().toCanvas().toPdf();
-                }
-            }
-
-            worker.save().then(() => {
-                Swal.close();
-            }).catch(err => {
-                console.error(err);
-                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
-            });
-        } catch (err) {
+        html2pdf().set(opt).from(htmlString).save().then(() => {
+            Swal.close();
+        }).catch(err => {
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
-        }
-    },
+        });
+    }
 
     async generateSubmissionPDF(e) {
         try {
