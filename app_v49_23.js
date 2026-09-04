@@ -2646,7 +2646,7 @@ const app = {
                 });
                 
                 const pageHtml = `
-                    <div class="cert-pdf-border" style="width: 210mm; height: 297mm; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 210mm 297mm; background-position: top left;">
+                    <div class="cert-pdf-border" style="width: 793px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
                         <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
                             ${documentCode}
                         </div>
