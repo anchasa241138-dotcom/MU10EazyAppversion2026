@@ -2899,21 +2899,23 @@ const app = {
         const pdfNoEl = document.getElementById('cert-pdf-no');
         const pdfNo = pdfNoEl ? pdfNoEl.innerText.trim() : new Date().getTime();
         
-        // Create wrapper at EXACTLY 0,0 to avoid html2canvas offset issues
-        const printWrap = document.createElement('div');
-        printWrap.id = 'certificatePDFContainer'; 
-        // We use top:0, left:0 so x,y are exactly 0. z-index:-1000 hides it behind the main page.
-        printWrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; margin: 0; padding: 0; background: white; font-size: 0; line-height: 0; z-index: 1050;';
-        printWrap.innerHTML = container.innerHTML;
-        document.body.appendChild(printWrap);
+        // Temporarily move the live container to the body to escape modal clipping
+        const modalBody = container.parentElement;
+        const nextSibling = container.nextSibling;
+        document.body.appendChild(container);
+        
+        const oldClassName = container.className;
+        const oldCssText = container.style.cssText;
+        
+        // Put it in the viewport so html2canvas renders it without skipping
+        const viewportY = window.scrollY || document.documentElement.scrollTop || 0;
+        container.className = '';
+        container.style.cssText = `position: absolute; top: ${viewportY}px; left: 0; width: 794px; background: white; z-index: 1050; padding: 0 !important; margin: 0 !important; overflow: visible !important; max-height: none !important; font-size: 0; line-height: 0;`;
 
         if (document.fonts) {
             await document.fonts.load('16px SarabunPDF');
             await document.fonts.ready;
         }
-
-        // Wait a tiny bit for images in the new DOM node to be recognized by browser
-        await new Promise(r => setTimeout(r, 300));
 
         const opt = {
             margin: 0,
@@ -2921,9 +2923,7 @@ const app = {
             image: { type: 'png' },
             html2canvas: { 
                 scale: 4, 
-                useCORS: true,
-                windowWidth: 794,
-                windowHeight: printWrap.scrollHeight
+                useCORS: true
             },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
             pagebreak: { mode: ['css', 'legacy'] }
@@ -2935,11 +2935,17 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        html2pdf().set(opt).from(printWrap).save().then(() => {
-            document.body.removeChild(printWrap);
+        html2pdf().set(opt).from(container).save().then(() => {
+            container.className = oldClassName;
+            container.style.cssText = oldCssText;
+            if (nextSibling) modalBody.insertBefore(container, nextSibling);
+            else modalBody.appendChild(container);
             Swal.close();
         }).catch(err => {
-            document.body.removeChild(printWrap);
+            container.className = oldClassName;
+            container.style.cssText = oldCssText;
+            if (nextSibling) modalBody.insertBefore(container, nextSibling);
+            else modalBody.appendChild(container);
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         });
