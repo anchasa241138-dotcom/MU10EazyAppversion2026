@@ -2925,12 +2925,16 @@ const app = {
             let worker = html2pdf().set(opt);
             
             for (let i = 0; i < pages.length; i++) {
-                // Ensure no auto margins cause shifting in the iframe
-                const pageOuterHTML = pages[i].outerHTML.replace(/margin-left:s*auto;/g, 'margin-left: 0;').replace(/margin-right:s*auto;/g, 'margin-right: 0;');
+                // Remove auto margins and page-breaks to prevent ANY layout shifts inside the iframe
+                const pageOuterHTML = pages[i].outerHTML
+                    .replace(/margin-left:s*auto;/g, 'margin-left: 0;')
+                    .replace(/margin-right:s*auto;/g, 'margin-right: 0;')
+                    .replace(/page-break-after:s*always;/g, 'page-break-after: auto;');
                 
+                // standard block container, expands naturally to 1122px, no position:absolute 0x0 bug!
                 const htmlString = `
-                <div style="position: absolute; top: 0; left: 0; margin: 0; padding: 0; background: white; width: 794px; height: 1122px;">
-                    <div id="certificatePDFContainer" style="width: 794px; height: 1122px; margin: 0; padding: 0; font-size: 0; line-height: 0;">
+                <div style="width: 794px; background: white; margin: 0; padding: 0;">
+                    <div id="certificatePDFContainer" style="width: 794px; background: white; margin: 0; padding: 0; font-size: 0; line-height: 0;">
                         ${pageOuterHTML}
                     </div>
                 </div>`;
@@ -2954,7 +2958,7 @@ const app = {
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         }
-    },
+    }
 
     async generateSubmissionPDF(e) {
         try {
