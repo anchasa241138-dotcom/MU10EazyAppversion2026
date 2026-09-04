@@ -1221,8 +1221,8 @@ body {
 .cert-pdf-border {
     width: 794px;
     min-width: 794px;
-    height: 297mm; /* Force exactly A4 height at 96dpi so background doesn't squish */
-    min-height: 297mm;
+    height: 1122px; /* Force exactly A4 height at 96dpi so background doesn't squish */
+    min-height: 1122px;
     margin: 0 auto;
     padding: 160px 45px 80px 45px;
     border-radius: 2px;
@@ -1506,8 +1506,8 @@ body.is-printing-pdf *,
 }
 
 #certificatePDFContainer .cert-pdf-border {
-    height: 297mm !important;
-    width: 210mm !important;
+    height: 1122px !important;
+    width: 794px !important;
     overflow: hidden !important;
 }
 
