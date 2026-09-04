@@ -2903,7 +2903,7 @@ const app = {
         const printWrap = document.createElement('div');
         printWrap.id = 'certificatePDFContainer'; // Must match CSS selectors
         printWrap.style.cssText = 'position: absolute; top: -9999px; left: 0; width: 794px; background: transparent; font-size: 0; line-height: 0; z-index: -1000;';
-        printWrap.innerHTML = fullHtml;
+        printWrap.innerHTML = container.innerHTML;
         document.body.appendChild(printWrap);
         const element = printWrap;
 

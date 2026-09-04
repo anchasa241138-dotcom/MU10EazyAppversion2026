@@ -425,7 +425,10 @@ body {
     min-height: 280px;
     max-height: 380px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -754,7 +757,10 @@ body {
 /* Auth required blocks */
 .auth-required-wrapper {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
     align-items: center;
     min-height: 400px;
 }
@@ -799,7 +805,10 @@ body {
     backdrop-filter: blur(4px);
     z-index: 200;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
     align-items: center;
     opacity: 0;
     pointer-events: none;
@@ -1005,7 +1014,10 @@ body {
 
 .search-bar-center {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
     gap: 12px;
     max-width: 600px;
     margin: 20px auto 0 auto;
@@ -1175,7 +1187,10 @@ body {
 
 .tracking-action-bar {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
     margin-top: 20px;
     border-top: 1px solid var(--border-color);
     padding-top: 24px;
@@ -1215,7 +1230,10 @@ body {
     max-height: 65vh;
     border-radius: 8px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
 }
 
 .cert-pdf-border {
