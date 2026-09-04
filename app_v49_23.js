@@ -2952,7 +2952,7 @@ const app = {
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
         });
-    }
+    },
 
     async generateSubmissionPDF(e) {
         try {
