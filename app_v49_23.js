@@ -2904,24 +2904,15 @@ const app = {
             await document.fonts.ready;
         }
 
-        // We use htmlString to render in a completely isolated iframe, preventing ALL viewport/scroll/modal clipping issues.
-        // We explicitly calculate the total height so html2canvas doesn't clip to window.innerHeight!
-        const totalHeight = container.children.length * 1122; // 3 pages = 3366px
-        
-        const htmlString = `<div id="certificatePDFContainer" style="width: 794px; height: ${totalHeight}px; background: white; font-size: 0; line-height: 0; margin: 0; padding: 0;">${container.innerHTML}</div>`;
+        const pages = Array.from(container.children);
+        if (pages.length === 0) return;
 
         const opt = {
             margin: 0,
             filename: `Certificate_${pdfNo}.pdf`,
             image: { type: 'png' },
-            html2canvas: { 
-                scale: 4, 
-                useCORS: true,
-                windowWidth: 794,
-                windowHeight: totalHeight
-            },
-            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
-            pagebreak: { mode: ['css', 'legacy'] }
+            html2canvas: { scale: 4, useCORS: true },
+            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
         };
         
         Swal.fire({
@@ -2930,13 +2921,40 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        html2pdf().set(opt).from(htmlString).save().then(() => {
-            Swal.close();
-        }).catch(err => {
+        try {
+            let worker = html2pdf().set(opt);
+            
+            for (let i = 0; i < pages.length; i++) {
+                // Ensure no auto margins cause shifting in the iframe
+                const pageOuterHTML = pages[i].outerHTML.replace(/margin-left:s*auto;/g, 'margin-left: 0;').replace(/margin-right:s*auto;/g, 'margin-right: 0;');
+                
+                const htmlString = `
+                <div style="position: absolute; top: 0; left: 0; margin: 0; padding: 0; background: white; width: 794px; height: 1122px;">
+                    <div id="certificatePDFContainer" style="width: 794px; height: 1122px; margin: 0; padding: 0; font-size: 0; line-height: 0;">
+                        ${pageOuterHTML}
+                    </div>
+                </div>`;
+
+                if (i === 0) {
+                    worker = worker.from(htmlString).toPdf();
+                } else {
+                    worker = worker.get('pdf').then(pdf => {
+                        pdf.addPage();
+                    }).from(htmlString).toContainer().toCanvas().toPdf();
+                }
+            }
+
+            worker.save().then(() => {
+                Swal.close();
+            }).catch(err => {
+                console.error(err);
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
+            });
+        } catch (err) {
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
-        });
-    },
+        }
+    }
 
     async generateSubmissionPDF(e) {
         try {
