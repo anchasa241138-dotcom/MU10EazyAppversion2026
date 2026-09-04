@@ -2907,13 +2907,45 @@ const app = {
         const pages = Array.from(container.children);
         if (pages.length === 0) return;
 
+        // Calculate total height to ensure html2canvas captures EVERYTHING
+        const totalHeight = pages.length * 1122;
+
+        const cloneContainer = container.cloneNode(true);
+        const clonedPages = Array.from(cloneContainer.children);
+
+        // Prepare the layout for a single continuous capture
+        for (let i = 0; i < clonedPages.length; i++) {
+            clonedPages[i].style.pageBreakAfter = 'auto'; // Remove browser layout gaps
+            clonedPages[i].style.marginBottom = '0';
+            
+            // Insert explicit html2pdf page break AFTER each page (except the last)
+            if (i < clonedPages.length - 1) {
+                const breakEl = document.createElement('div');
+                breakEl.className = 'html2pdf__page-break'; // Legacy mode marker
+                clonedPages[i].after(breakEl);
+            }
+        }
+
+        // Put it in an isolated container to avoid swal/modal clipping
+        const htmlString = `
+        <div id="certificatePDFContainer" style="width: 794px; background: white; font-size: 0; line-height: 0; margin: 0; padding: 0;">
+            ${cloneContainer.innerHTML}
+        </div>`;
+
         const opt = {
             margin: 0,
             filename: `Certificate_${pdfNo}.pdf`,
             image: { type: 'png' },
-            // CRITICAL: scrollX and scrollY prevent the iframe capture from inheriting parent window scroll offsets!
-            html2canvas: { scale: 4, useCORS: true, scrollX: 0, scrollY: 0 },
-            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
+            html2canvas: { 
+                scale: 4, 
+                useCORS: true,
+                scrollX: 0,
+                scrollY: 0, // Fix shift bug!
+                windowWidth: 794,
+                windowHeight: totalHeight // Ensure full height capture
+            },
+            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
+            pagebreak: { mode: ['legacy'] } // Strictly use legacy markers
         };
         
         Swal.fire({
@@ -2922,46 +2954,13 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        try {
-            let worker = html2pdf().set(opt);
-            
-            const processPage = (index) => {
-                if (index >= pages.length) {
-                    return worker.save().then(() => Swal.close());
-                }
-                
-                const pageOuterHTML = pages[index].outerHTML
-                    .replace(/margin-left:s*auto;/g, 'margin-left: 0;')
-                    .replace(/margin-right:s*auto;/g, 'margin-right: 0;')
-                    .replace(/page-break-after:s*always;/g, 'page-break-after: auto;');
-                
-                const htmlString = `
-                <div style="width: 794px; height: 1122px; background: white; margin: 0; padding: 0;">
-                    <div id="certificatePDFContainer" style="width: 794px; height: 1122px; background: white; margin: 0; padding: 0; font-size: 0; line-height: 0;">
-                        ${pageOuterHTML}
-                    </div>
-                </div>`;
-
-                if (index === 0) {
-                    worker = worker.from(htmlString).toPdf();
-                } else {
-                    worker = worker.get('pdf').then(pdf => {
-                        pdf.addPage();
-                    }).from(htmlString).toContainer().toCanvas().toPdf();
-                }
-                
-                // Asynchronous recursion: wait for current page to finish before queuing next
-                worker.then(() => processPage(index + 1)).catch(err => {
-                    console.error(err);
-                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
-                });
-            };
-            
-            processPage(0);
-        } catch (err) {
+        // Generate in one go! No async chaining bugs!
+        html2pdf().set(opt).from(htmlString).save().then(() => {
+            Swal.close();
+        }).catch(err => {
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
-        }
+        });
     },
 
     async generateSubmissionPDF(e) {
