@@ -2902,6 +2902,12 @@ const app = {
         
         if (document.fonts) {
             try {
+                if (!document.getElementById('th-sarabun-psk-style')) {
+                    const style = document.createElement('style');
+                    style.id = 'th-sarabun-psk-style';
+                    style.innerHTML = `@font-face { font-family: 'TH SarabunPSK'; src: url('fonts/THSarabunNew.ttf') format('truetype'); }`;
+                    document.head.appendChild(style);
+                }
                 await document.fonts.load('16px "SarabunPDF"');
                 await document.fonts.load('16px "TH SarabunPSK"');
                 await document.fonts.ready;
