@@ -2911,7 +2911,8 @@ const app = {
             margin: 0,
             filename: `Certificate_${pdfNo}.pdf`,
             image: { type: 'png' },
-            html2canvas: { scale: 4, useCORS: true },
+            // CRITICAL: scrollX and scrollY prevent the iframe capture from inheriting parent window scroll offsets!
+            html2canvas: { scale: 4, useCORS: true, scrollX: 0, scrollY: 0 },
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
         };
         
@@ -2924,36 +2925,39 @@ const app = {
         try {
             let worker = html2pdf().set(opt);
             
-            for (let i = 0; i < pages.length; i++) {
-                // Remove auto margins and page-breaks to prevent ANY layout shifts inside the iframe
-                const pageOuterHTML = pages[i].outerHTML
+            const processPage = (index) => {
+                if (index >= pages.length) {
+                    return worker.save().then(() => Swal.close());
+                }
+                
+                const pageOuterHTML = pages[index].outerHTML
                     .replace(/margin-left:s*auto;/g, 'margin-left: 0;')
                     .replace(/margin-right:s*auto;/g, 'margin-right: 0;')
                     .replace(/page-break-after:s*always;/g, 'page-break-after: auto;');
                 
-                // Standard block container, expands naturally to 1122px, no position:absolute 0x0 bug!
                 const htmlString = `
-                <div style="width: 794px; background: white; margin: 0; padding: 0;">
-                    <div id="certificatePDFContainer" style="width: 794px; background: white; margin: 0; padding: 0; font-size: 0; line-height: 0;">
+                <div style="width: 794px; height: 1122px; background: white; margin: 0; padding: 0;">
+                    <div id="certificatePDFContainer" style="width: 794px; height: 1122px; background: white; margin: 0; padding: 0; font-size: 0; line-height: 0;">
                         ${pageOuterHTML}
                     </div>
                 </div>`;
 
-                if (i === 0) {
+                if (index === 0) {
                     worker = worker.from(htmlString).toPdf();
                 } else {
                     worker = worker.get('pdf').then(pdf => {
                         pdf.addPage();
                     }).from(htmlString).toContainer().toCanvas().toPdf();
                 }
-            }
-
-            worker.save().then(() => {
-                Swal.close();
-            }).catch(err => {
-                console.error(err);
-                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
-            });
+                
+                // Asynchronous recursion: wait for current page to finish before queuing next
+                worker.then(() => processPage(index + 1)).catch(err => {
+                    console.error(err);
+                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
+                });
+            };
+            
+            processPage(0);
         } catch (err) {
             console.error(err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
