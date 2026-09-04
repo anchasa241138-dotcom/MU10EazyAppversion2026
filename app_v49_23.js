@@ -2907,54 +2907,73 @@ const app = {
         const pages = Array.from(container.children);
         if (pages.length === 0) return;
 
-        // Calculate total height to ensure html2canvas captures EVERYTHING
-        const totalHeight = pages.length * 1122;
-
-        const cloneContainer = container.cloneNode(true);
-        const clonedPages = Array.from(cloneContainer.children);
-
-        // Strip ALL page breaks to ensure the browser renders a single, gapless 3366px block
-        for (let i = 0; i < clonedPages.length; i++) {
-            clonedPages[i].style.pageBreakAfter = 'auto'; 
-            clonedPages[i].style.pageBreakBefore = 'auto';
-            clonedPages[i].style.marginBottom = '0';
-        }
-
-        // Put it in an isolated container to avoid swal/modal clipping
-        const htmlString = `
-        <div id="certificatePDFContainer" style="width: 794px; background: white; font-size: 0; line-height: 0; margin: 0; padding: 0;">
-            ${cloneContainer.innerHTML}
-        </div>`;
-
-        const opt = {
-            margin: 0,
-            filename: `Certificate_${pdfNo}.pdf`,
-            image: { type: 'png' },
-            html2canvas: { 
-                scale: 4, 
-                useCORS: true,
-                scrollX: 0,
-                scrollY: 0,
-                windowWidth: 794,
-                windowHeight: totalHeight // Ensure full 3366px capture!
-            },
-            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
-            // DO NOT specify pagebreak option! Let html2pdf.js automatically slice the tall canvas!
-        };
-        
         Swal.fire({
             title: 'กำลังสร้าง PDF...',
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
 
-        // Generate in one go! 
-        html2pdf().set(opt).from(htmlString).save().then(() => {
+        try {
+            // Load raw libraries to bypass all html2pdf.js bugs
+            if (!window.html2canvas) {
+                await new Promise((r, j) => {
+                    const s = document.createElement('script');
+                    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                    s.onload = r; s.onerror = j;
+                    document.head.appendChild(s);
+                });
+            }
+            if (!window.jspdf) {
+                await new Promise((r, j) => {
+                    const s = document.createElement('script');
+                    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                    s.onload = r; s.onerror = j;
+                    document.head.appendChild(s);
+                });
+            }
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'px', [794, 1123]);
+
+            for (let i = 0; i < pages.length; i++) {
+                // Create a temporary container on top of everything, EXACTLY in the current viewport
+                const wrap = document.createElement('div');
+                wrap.style.cssText = `position: absolute; top: ${window.scrollY}px; left: 0; width: 794px; height: 1122px; background: white; z-index: 99999; margin: 0; padding: 0;`;
+                
+                const clone = pages[i].cloneNode(true);
+                clone.style.margin = '0'; // Remove centering margins to prevent shifts
+                clone.style.pageBreakAfter = 'auto'; // Strip useless css
+                wrap.appendChild(clone);
+                
+                document.body.appendChild(wrap);
+                
+                // Allow browser to render the DOM node
+                await new Promise(r => setTimeout(r, 150));
+                
+                // Capture directly using raw html2canvas
+                const canvas = await html2canvas(wrap, {
+                    scale: 4,
+                    useCORS: true,
+                    width: 794,
+                    height: 1122,
+                    scrollX: window.scrollX,
+                    scrollY: window.scrollY
+                });
+                
+                document.body.removeChild(wrap);
+                
+                const imgData = canvas.toDataURL('image/png', 1.0);
+                if (i > 0) pdf.addPage([794, 1123], 'p');
+                pdf.addImage(imgData, 'PNG', 0, 0, 794, 1123);
+            }
+            
+            pdf.save(`Certificate_${pdfNo}.pdf`);
             Swal.close();
-        }).catch(err => {
-            console.error(err);
+            
+        } catch (err) {
+            console.error("Manual PDF failed:", err);
             Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถสร้างไฟล์ PDF ได้', 'error');
-        });
+        }
     },
 
     async generateSubmissionPDF(e) {
