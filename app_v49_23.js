@@ -2646,7 +2646,7 @@ const app = {
                 });
                 
                 const pageHtml = `
-                    <div class="cert-pdf-border" style="width: 210mm; height: 296mm; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
+                    <div class="cert-pdf-border" style="width: 210mm; height: 297mm; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
                         <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
                             ${documentCode}
                         </div>
@@ -2922,7 +2922,7 @@ const app = {
         }
 
         const opt = {
-            margin:       0,
+            margin: [0, 0, -5, 0],
             filename:     `Certificate_${pdfNo}.pdf`,
             image:        { type: 'png' },
             html2canvas:  { 
