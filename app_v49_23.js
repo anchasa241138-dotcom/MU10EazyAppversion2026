@@ -2472,15 +2472,23 @@ const app = {
                 `;
             }
             const p = PERSON_DATA[personKey];
+            let extraStyle = 'margin-left: -30px; transform-origin: bottom center;';
+            if (personKey === 'surachai') {
+                extraStyle += ' margin-bottom: -12px; transform: scale(0.9);';
+            } else if (personKey === 'anchasa') {
+                extraStyle += ' transform: scale(0.75);';
+            } else if (personKey === 'mallika') {
+                extraStyle += ' transform: scale(1.4);';
+            }
             const sigHtml = (viewOnly || sample.status === 'approved') ? 
-                `<img src="${p.sig}" class="official-signature-img" onerror="this.style.display='none'">` : 
+                `<img src="${p.sig}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` : 
                 `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
             
             return `
                 <div class="cert-signature-area" style="margin-top: 5px;">
-                    <div style="height: 40px; margin-bottom: 5px; position: relative; display: flex; align-items: flex-end; justify-content: center; width: 100%;">
-                        <div style="position: absolute; bottom: 5px; z-index: 10;">${sigHtml}</div>
-                        <span style="font-size: 11.5px; white-space: nowrap; position: relative; z-index: 1;">ลงชื่อ................................................${defaultRole}</span>
+                    <div style="height: 40px; margin-bottom: 5px; position: relative; display: flex; align-items: flex-end; justify-content: flex-start; width: 100%;">
+                        <div style="position: absolute; bottom: 0px; left: 0; width: 100%; text-align: center; z-index: 10;">${sigHtml}</div>
+                        <span style="font-size: 12px; white-space: nowrap; position: relative; z-index: 1;">ลงชื่อ................................................${defaultRole}</span>
                     </div>
                     <p style="margin: 2px 0; white-space: nowrap;">(${p.name})</p>
                     <p style="margin: 2px 0; white-space: nowrap;">${p.title1}</p>
@@ -2607,14 +2615,14 @@ const app = {
             if (sample.form_type === 'MU.10-002') {
                 const usedTestNames = Array.from(usedTests).map(k => testLabels[k]);
                 tableHeaderSubstance = usedTestNames.length > 0 ? usedTestNames.join(', ') : 'สารปนเปื้อน';
-                remarkText = `<p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> - การตรวจวิเคราะห์สารปนเปื้อนในอาหาร โดยชุดทดสอบเบื้องต้น Test kit ได้แก่ ${tableHeaderSubstance}</p>
-                              <p style="margin-left: 65px; margin-bottom:4px;">- ผ่าน หมายถึง ไม่พบสารปนเปื้อน</p>
-                              <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบสารปนเปื้อน</p>`;
+                remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> - การตรวจวิเคราะห์สารปนเปื้อนในอาหาร โดยชุดทดสอบเบื้องต้น Test kit ได้แก่ ${tableHeaderSubstance}</div>
+                              <div style="margin-left: 65px; margin-bottom:4px;">- ผ่าน หมายถึง ไม่พบสารปนเปื้อน</div>
+                              <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบสารปนเปื้อน</div>`;
             } else {
                 tableHeaderSubstance = (sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
-                remarkText = `<p style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</p>
-                              <p style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</p>
-                              <p style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</p>`;
+                remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
+                              <div style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
+                              <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
             }
 
             let fullHtml = '';
@@ -2639,24 +2647,24 @@ const app = {
                 
                 const pageHtml = `
                     <div class="cert-pdf-border" style="height: 297mm; ${page < totalPages - 1 ? 'page-break-after: always; margin-bottom: 30px;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 210mm 297mm; background-position: top left;">
-                        <div style="position: absolute; top: 140px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
                             ${documentCode}
                         </div>
-                        <div style="position: absolute; top: 140px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 12.5px; color: #1e293b;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
-                        <div class="cert-pdf-header-mu10" style="margin-bottom: 20px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 25px; font-size: 18px; color: #1e3a8a;">${reportTitle}</h4>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 14.5px;">
+                        <div class="cert-pdf-header-mu10" style="margin-top: 20px; margin-bottom: 15px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #1e3a8a;">${reportTitle}</h4>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size: 12px;">
                                 <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
                             </div>
-                            <div style="margin-bottom:8px; font-size: 14.5px;">
+                            <div style="margin-bottom:6px; font-size: 12px;">
                                 <strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}
                             </div>
-                            <div style="margin-bottom:8px; font-size: 14.5px;">
+                            <div style="margin-bottom:6px; font-size: 12px;">
                                 <strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}
                             </div>
-                            <div style="margin-bottom:8px; font-size: 14.5px;">
+                            <div style="margin-bottom:6px; font-size: 12px;">
                                 <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;ตรวจ ${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
                             </div>
                         </div>
@@ -2664,13 +2672,13 @@ const app = {
                         <table class="cert-multi-table">
                             <thead>
                                 <tr>
-                                    <th width="5%">ลำดับ</th>
-                                    <th width="20%">ชื่อผู้จำหน่าย</th>
-                                    <th width="15%">รหัสตัวอย่าง</th>
-                                    <th width="15%">ตัวอย่าง</th>
-                                    <th width="15%">แหล่งที่มา</th>
-                                    <th width="15%">${tableHeaderSubstance}</th>
-                                    <th width="15%">สรุปผล</th>
+                                    <th style="white-space: nowrap;">ลำดับ</th>
+                                    <th>ชื่อผู้จำหน่าย</th>
+                                    <th style="white-space: nowrap;">รหัสตัวอย่าง</th>
+                                    <th>ตัวอย่าง</th>
+                                    <th>แหล่งที่มา</th>
+                                    <th>${tableHeaderSubstance}</th>
+                                    <th style="white-space: nowrap;">สรุปผล</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2678,11 +2686,11 @@ const app = {
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:20px; font-size:14px; margin-bottom: 40px; color: #334155;">
+                        <div style="margin-top:15px; font-size:10px; margin-bottom: 20px; color: #334155;">
                             ${remarkText}
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 11.5px; color: #334155; margin-top: 10px; gap: 15px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง')}
@@ -3272,7 +3280,7 @@ const app = {
             let mu10003Note = '';
         if (sample.form_type === 'MU.10-003') {
             mu10003Note = `
-            <div style="width:100%; border:none; padding:4px 0; margin:8px 0; font-size:14px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
+            <div style="width:100%; border:none; padding:4px 0; margin:8px 0; font-size:10px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
                 <strong>หมายเหตุ โปรดระบุพฤติกรรมการใช้น้ำมันทอดอาหารและการกำจัดน้ำมัน ใช้วิธีสอบถามผู้จำหน่าย รายละเอียดดังนี้</strong><br>
                 <span style="display:inline-block; margin-left:15px;">(1) ลักษณะการเปลี่ยนถ่ายน้ำมัน กำหนดให้ A1 = ไม่เปลี่ยนเลย / A2 = เปลี่ยนบางส่วน / A3 = เปลี่ยนใหม่ทั้งหมด</span><br>
                 <span style="display:inline-block; margin-left:15px;">(2) เหตุผลที่เปลี่ยน กำหนดให้ B1 = สภาพน้ำมันเปลี่ยน / B2 = สภาพอาหารเปลี่ยน / B3 = อื่น ๆ โปรดระบุ</span><br>
