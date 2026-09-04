@@ -2913,17 +2913,11 @@ const app = {
         const cloneContainer = container.cloneNode(true);
         const clonedPages = Array.from(cloneContainer.children);
 
-        // Prepare the layout for a single continuous capture
+        // Strip ALL page breaks to ensure the browser renders a single, gapless 3366px block
         for (let i = 0; i < clonedPages.length; i++) {
-            clonedPages[i].style.pageBreakAfter = 'auto'; // Remove browser layout gaps
+            clonedPages[i].style.pageBreakAfter = 'auto'; 
+            clonedPages[i].style.pageBreakBefore = 'auto';
             clonedPages[i].style.marginBottom = '0';
-            
-            // Insert explicit html2pdf page break AFTER each page (except the last)
-            if (i < clonedPages.length - 1) {
-                const breakEl = document.createElement('div');
-                breakEl.className = 'html2pdf__page-break'; // Legacy mode marker
-                clonedPages[i].after(breakEl);
-            }
         }
 
         // Put it in an isolated container to avoid swal/modal clipping
@@ -2940,12 +2934,12 @@ const app = {
                 scale: 4, 
                 useCORS: true,
                 scrollX: 0,
-                scrollY: 0, // Fix shift bug!
+                scrollY: 0,
                 windowWidth: 794,
-                windowHeight: totalHeight // Ensure full height capture
+                windowHeight: totalHeight // Ensure full 3366px capture!
             },
-            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
-            pagebreak: { mode: ['legacy'] } // Strictly use legacy markers
+            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
+            // DO NOT specify pagebreak option! Let html2pdf.js automatically slice the tall canvas!
         };
         
         Swal.fire({
@@ -2954,7 +2948,7 @@ const app = {
             didOpen: () => Swal.showLoading()
         });
 
-        // Generate in one go! No async chaining bugs!
+        // Generate in one go! 
         html2pdf().set(opt).from(htmlString).save().then(() => {
             Swal.close();
         }).catch(err => {
