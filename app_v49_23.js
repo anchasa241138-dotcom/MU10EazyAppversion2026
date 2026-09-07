@@ -2960,19 +2960,13 @@ const app = {
 
             for (let i = 0; i < pages.length; i++) {
                 const wrap = document.createElement('div');
+                wrap.id = 'certificatePDFContainer'; // CRITICAL: This allows all CSS rules to apply!
                 wrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; height: 1122px; background: white; z-index: 99999; margin: 0; padding: 0;';
                 
                 const clone = pages[i].cloneNode(true);
                 clone.style.margin = '0';
                 clone.style.pageBreakAfter = 'auto';
                 clone.style.pageBreakBefore = 'auto';
-                
-                // FORCE FONT TO TH SarabunPSK
-                clone.style.fontFamily = '"TH SarabunPSK", "SarabunPDF", "Sarabun", sans-serif';
-                const allElems = clone.querySelectorAll('*');
-                allElems.forEach(el => {
-                    el.style.setProperty('font-family', '"TH SarabunPSK", "SarabunPDF", "Sarabun", sans-serif', 'important');
-                });
                 
                 wrap.appendChild(clone);
                 document.body.appendChild(wrap);
