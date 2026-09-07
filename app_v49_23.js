@@ -2562,7 +2562,7 @@ const app = {
                 <div class="cert-signature-area" style="margin-top: 5px;">
                     <div style="height: 40px; margin-bottom: 5px; position: relative; display: flex; align-items: flex-end; justify-content: flex-start; width: 100%;">
                         <div style="position: absolute; bottom: 0px; left: 0; width: 100%; text-align: center; z-index: 10;">${sigHtml}</div>
-                        <span style="font-size: 12px; white-space: nowrap; position: relative; z-index: 1;">ลงชื่อ................................................${defaultRole}</span>
+                        <span style="font-size: 11.5px; white-space: nowrap; position: relative; z-index: 1;">ลงชื่อ................................................${defaultRole}</span>
                     </div>
                     <p style="margin: 2px 0; white-space: nowrap;">(${p.name})</p>
                     <p style="margin: 2px 0; white-space: nowrap;">${p.title1}</p>
