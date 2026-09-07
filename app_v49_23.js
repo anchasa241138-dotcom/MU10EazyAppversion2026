@@ -2056,8 +2056,8 @@ const app = {
         if (subEl.value === 'GT และ TM/2') {
             if (c2Interp) c2Interp.style.display = 'block';
             if (c2Result) c2Result.style.display = 'block';
-            if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT) <span class="required">*</span>';
-            if (l1Result) l1Result.innerHTML = 'ผล (GT)';
+            if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT kit) <span class="required">*</span>';
+            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์ (GT kit)';
         } else {
             if (c2Interp) c2Interp.style.display = 'none';
             if (c2Result) c2Result.style.display = 'none';
@@ -2165,6 +2165,8 @@ const app = {
                                     <option value="GT และ TM/2">GT และ TM/2</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="form-grid">
                             <div class="form-group" id="interp-container-1-${item.idx}">
                                 <label id="label-interp-1-${item.idx}">การแปลผล <span class="required">*</span></label>
                                 <select id="analysis-interpretation-${item.idx}" required onchange="app.handleInterpretationChange(${item.idx})">
@@ -2176,8 +2178,13 @@ const app = {
                                     <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
                                 </select>
                             </div>
+                            <div class="form-group" id="result-container-1-${item.idx}">
+                                <label id="label-result-1-${item.idx}">ผลการตรวจวิเคราะห์</label>
+                                <input type="text" id="analysis-detail-results-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
+                                <span class="input-helper">ออโต้</span>
+                            </div>
                             <div class="form-group" id="interp-container-2-${item.idx}" style="display:none;">
-                                <label>การแปลผล (TM/2) <span class="required">*</span></label>
+                                <label>การแปลผล (TM/2 kit) <span class="required">*</span></label>
                                 <select id="analysis-interpretation-2-${item.idx}" onchange="app.handleInterpretationChange(${item.idx})">
                                     <option value="">-- เลือกการแปลผล --</option>
                                     <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
@@ -2187,21 +2194,16 @@ const app = {
                                     <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="form-grid">
-                            <div class="form-group" id="result-container-1-${item.idx}">
-                                <label id="label-result-1-${item.idx}">ผลการตรวจวิเคราะห์</label>
-                                <input type="text" id="analysis-detail-results-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
-                                <span class="input-helper">ออโต้</span>
-                            </div>
                             <div class="form-group" id="result-container-2-${item.idx}" style="display:none;">
-                                <label>ผล (TM/2)</label>
+                                <label>ผลการตรวจวิเคราะห์ (TM/2 kit)</label>
                                 <input type="text" id="analysis-detail-results-2-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
                                 <span class="input-helper">ออโต้</span>
                             </div>
+                        </div>
+                        <div class="form-grid">
                             <div class="form-group">
                                 <label>สรุปผล (รวม)</label>
-                                <input type="text" id="analysis-summary-outcome-${item.idx}" readonly class="readonly-input" style="font-weight:700; font-size:14px;">
+                                <input type="text" id="analysis-summary-outcome-${item.idx}" readonly class="readonly-input" style="font-weight:700; font-size:14px; width: 50%;">
                                 <span class="input-helper">ออโต้</span>
                             </div>
                         </div>
