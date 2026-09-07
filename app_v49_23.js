@@ -2045,6 +2045,30 @@ const app = {
         }
     },
 
+    handleSubstanceChange(idx) {
+        const subEl = document.getElementById('analysis-substance-' + idx);
+        const c2Interp = document.getElementById('interp-container-2-' + idx);
+        const c2Result = document.getElementById('result-container-2-' + idx);
+        const l1Interp = document.getElementById('label-interp-1-' + idx);
+        const l1Result = document.getElementById('label-result-1-' + idx);
+        
+        if (!subEl) return;
+        if (subEl.value === 'GT และ TM/2') {
+            if (c2Interp) c2Interp.style.display = 'block';
+            if (c2Result) c2Result.style.display = 'block';
+            if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT) <span class="required">*</span>';
+            if (l1Result) l1Result.innerHTML = 'ผล (GT)';
+        } else {
+            if (c2Interp) c2Interp.style.display = 'none';
+            if (c2Result) c2Result.style.display = 'none';
+            if (l1Interp) l1Interp.innerHTML = 'การแปลผล <span class="required">*</span>';
+            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์';
+            const el2 = document.getElementById('analysis-interpretation-2-' + idx);
+            if (el2) { el2.value = ''; this.handleInterpretationChange(idx); }
+        }
+        this.handleInterpretationChange(idx);
+    },
+
     handleInterpretationChange(idx) {
         const interpretationMap = {
             'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' },
@@ -2055,31 +2079,59 @@ const app = {
         };
         const el = document.getElementById('analysis-interpretation-' + idx);
         const resultInput = document.getElementById('analysis-detail-results-' + idx);
+        
+        const el2 = document.getElementById('analysis-interpretation-2-' + idx);
+        const resultInput2 = document.getElementById('analysis-detail-results-2-' + idx);
+        
         const summaryInput = document.getElementById('analysis-summary-outcome-' + idx);
+        const subEl = document.getElementById('analysis-substance-' + idx);
+        
         if(!el || !resultInput || !summaryInput) return;
         
-        const mapped = interpretationMap[el.value];
-        if (mapped) {
-            resultInput.value = mapped.result;
-            summaryInput.value = mapped.summary;
-            if (mapped.summary === 'ผ่านเกณฑ์มาตรฐาน') {
-                resultInput.style.color = '#16a34a';
-                resultInput.style.background = '#f0fdf4';
-                summaryInput.style.color = '#16a34a';
-                summaryInput.style.background = '#f0fdf4';
+        let overallPass = true;
+        let anyMapped = false;
+        
+        const mapped1 = interpretationMap[el.value];
+        if (mapped1) {
+            anyMapped = true;
+            resultInput.value = mapped1.result;
+            if (mapped1.summary !== 'ผ่านเกณฑ์มาตรฐาน') overallPass = false;
+            
+            if (mapped1.summary === 'ผ่านเกณฑ์มาตรฐาน') {
+                resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
             } else {
-                resultInput.style.color = '#dc2626';
-                resultInput.style.background = '#fef2f2';
-                summaryInput.style.color = '#dc2626';
-                summaryInput.style.background = '#fef2f2';
+                resultInput.style.color = '#dc2626'; resultInput.style.background = '#fef2f2';
             }
         } else {
-            resultInput.value = '';
-            summaryInput.value = '';
-            resultInput.style.color = '';
-            resultInput.style.background = '';
-            summaryInput.style.color = '';
-            summaryInput.style.background = '';
+            resultInput.value = ''; resultInput.style.color = ''; resultInput.style.background = '';
+        }
+        
+        if (subEl && subEl.value === 'GT และ TM/2' && el2 && resultInput2) {
+            const mapped2 = interpretationMap[el2.value];
+            if (mapped2) {
+                anyMapped = true;
+                resultInput2.value = mapped2.result;
+                if (mapped2.summary !== 'ผ่านเกณฑ์มาตรฐาน') overallPass = false;
+                
+                if (mapped2.summary === 'ผ่านเกณฑ์มาตรฐาน') {
+                    resultInput2.style.color = '#16a34a'; resultInput2.style.background = '#f0fdf4';
+                } else {
+                    resultInput2.style.color = '#dc2626'; resultInput2.style.background = '#fef2f2';
+                }
+            } else {
+                resultInput2.value = ''; resultInput2.style.color = ''; resultInput2.style.background = '';
+            }
+        }
+        
+        if (anyMapped) {
+            summaryInput.value = overallPass ? 'ผ่านเกณฑ์มาตรฐาน' : 'ไม่ผ่านเกณฑ์มาตรฐาน';
+            if (overallPass) {
+                summaryInput.style.color = '#16a34a'; summaryInput.style.background = '#f0fdf4';
+            } else {
+                summaryInput.style.color = '#dc2626'; summaryInput.style.background = '#fef2f2';
+            }
+        } else {
+            summaryInput.value = ''; summaryInput.style.color = ''; summaryInput.style.background = '';
         }
     },
     
@@ -2106,16 +2158,27 @@ const app = {
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>สารที่ตรวจวิเคราะห์ <span class="required">*</span></label>
-                                <select id="analysis-substance-${item.idx}" required>
+                                <select id="analysis-substance-${item.idx}" required onchange="app.handleSubstanceChange(${item.idx})">
                                     <option value="">-- เลือกสารที่ตรวจ --</option>
                                     <option value="GT">GT</option>
                                     <option value="TM/2">TM/2</option>
                                     <option value="GT และ TM/2">GT และ TM/2</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label>การแปลผล <span class="required">*</span></label>
+                            <div class="form-group" id="interp-container-1-${item.idx}">
+                                <label id="label-interp-1-${item.idx}">การแปลผล <span class="required">*</span></label>
                                 <select id="analysis-interpretation-${item.idx}" required onchange="app.handleInterpretationChange(${item.idx})">
+                                    <option value="">-- เลือกการแปลผล --</option>
+                                    <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
+                                    <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
+                                    <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
+                                    <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                    <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="interp-container-2-${item.idx}" style="display:none;">
+                                <label>การแปลผล (TM/2) <span class="required">*</span></label>
+                                <select id="analysis-interpretation-2-${item.idx}" onchange="app.handleInterpretationChange(${item.idx})">
                                     <option value="">-- เลือกการแปลผล --</option>
                                     <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
                                     <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
@@ -2126,15 +2189,20 @@ const app = {
                             </div>
                         </div>
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label>ผลการตรวจวิเคราะห์</label>
+                            <div class="form-group" id="result-container-1-${item.idx}">
+                                <label id="label-result-1-${item.idx}">ผลการตรวจวิเคราะห์</label>
                                 <input type="text" id="analysis-detail-results-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
-                                <span class="input-helper">เติมอัตโนมัติจากการแปลผล</span>
+                                <span class="input-helper">ออโต้</span>
+                            </div>
+                            <div class="form-group" id="result-container-2-${item.idx}" style="display:none;">
+                                <label>ผล (TM/2)</label>
+                                <input type="text" id="analysis-detail-results-2-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
+                                <span class="input-helper">ออโต้</span>
                             </div>
                             <div class="form-group">
-                                <label>สรุปผล</label>
+                                <label>สรุปผล (รวม)</label>
                                 <input type="text" id="analysis-summary-outcome-${item.idx}" readonly class="readonly-input" style="font-weight:700; font-size:14px;">
-                                <span class="input-helper">คำนวณอัตโนมัติจากการแปลผล</span>
+                                <span class="input-helper">ออโต้</span>
                             </div>
                         </div>
                     </div>
@@ -2154,15 +2222,23 @@ const app = {
                 const sub = sample['analysis_substance_' + item.idx] || sample.analysis_substance;
                 if (sub) document.getElementById('analysis-substance-' + item.idx).value = sub;
                 
+                
+                app.handleSubstanceChange(item.idx);
+                
                 const interp = sample['analysis_interpretation_' + item.idx] || sample.analysis_interpretation;
                 if (interp) {
                     const el = document.getElementById('analysis-interpretation-' + item.idx);
                     if (el) {
                         el.value = interp;
-                        // Trigger manual change
-                        app.handleInterpretationChange(item.idx);
                     }
                 }
+                const interp2 = sample['analysis_interpretation_2_' + item.idx];
+                if (interp2) {
+                    const el2 = document.getElementById('analysis-interpretation-2-' + item.idx);
+                    if (el2) el2.value = interp2;
+                }
+                app.handleInterpretationChange(item.idx);
+
             });
 
             if (sample.analysis_comment) document.getElementById('analysis-comment').value = sample.analysis_comment;
@@ -2655,7 +2731,10 @@ const app = {
                         sampleName: sample['sample_name_' + idx],
                         source: sample['source_' + idx] || sample.location_name,
                         details: detailsText,
-                        isPass: isPass, substance: (sample['analysis_substance_' + idx] || sample.analysis_substance || '')});
+                        details2: sample['analysis_details_2_' + idx] || '-',
+                        isPass: isPass,
+                        substance: (sample['analysis_substance_' + idx] || sample.analysis_substance || '')
+                    });
                 }
                 idx++;
             }
@@ -2759,7 +2838,7 @@ const app = {
                             <td style="text-align:center;">${item.source}</td>
                             ${tableHeaderSubstance === 'BOTH' ? 
                                 '<td style="text-align:center;">' + (item.substance.includes('GT') ? item.details : '-') + '</td>' + 
-                                '<td style="text-align:center;">' + (item.substance.includes('TM/2') ? item.details : '-') + '</td>' 
+                  '<td style="text-align:center;">' + (item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')) + '</td>' 
                             : '<td style="text-align:center;">' + item.details + '</td>'}
                             <td style="text-align:center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
