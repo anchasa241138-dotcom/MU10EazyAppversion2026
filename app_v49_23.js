@@ -2535,38 +2535,54 @@ const app = {
         const renderSignatureSlot = (personKey, defaultRole) => {
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
-                    <div class="cert-signature-area" style="margin-top: 5px;">
-                        <div style="height: 40px; margin-bottom: 5px; position: relative; display: flex; align-items: flex-end; justify-content: center; width: 100%;">
-                            <span class="placeholder-signature" style="position: absolute; bottom: 15px;">(รอลงนามรับรอง)</span>
-                            <span style="font-size: 11.5px; white-space: nowrap;">ลงชื่อ................................................${defaultRole}</span>
+                    <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
+                            <div style="padding-top:25px;">ลงชื่อ</div>
+                            <div style="display:flex; flex-direction:column; align-items:center;">
+                                <div style="margin-top:25px; position:relative;">
+                                    <div style="position:absolute; bottom: 5px; text-align:center; width:100%;">
+                                        <span class="placeholder-signature">(รอลงนามรับรอง)</span>
+                                    </div>
+                                    ................................................
+                                </div>
+                                <div style="font-size: 11px; line-height: 1.3; margin-top:4px;">(.......................................)</div>
+                                <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
+                            </div>
+                            <div style="padding-top:25px;">${defaultRole}</div>
                         </div>
-                        <p style="margin: 2px 0; white-space: nowrap;">(.......................................)</p>
-                        <p style="margin: 2px 0; white-space: nowrap;">${defaultRole}</p>
                     </div>
                 `;
             }
             const p = PERSON_DATA[personKey];
-            let extraStyle = 'margin-left: -30px; transform-origin: bottom center;';
+            let extraStyle = 'margin-left: 0px; transform-origin: bottom center;';
             if (personKey === 'surachai') {
-                extraStyle += ' margin-bottom: -12px; transform: scale(0.9);';
+                extraStyle += ' margin-bottom: -15px; transform: scale(0.9);';
             } else if (personKey === 'anchasa') {
-                extraStyle += ' transform: scale(0.75);';
+                extraStyle += ' transform: scale(0.75); margin-bottom: -5px;';
             } else if (personKey === 'mallika') {
-                extraStyle += ' transform: scale(1.4);';
+                extraStyle += ' transform: scale(1.4); margin-bottom: 0px;';
             }
             const sigHtml = (viewOnly || sample.status === 'approved') ? 
                 `<img src="${p.sig}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` : 
                 `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
             
             return `
-                <div class="cert-signature-area" style="margin-top: 5px;">
-                    <div style="height: 40px; margin-bottom: 5px; position: relative; display: flex; align-items: flex-end; justify-content: flex-start; width: 100%;">
-                        <div style="position: absolute; bottom: 0px; left: 0; width: 100%; text-align: center; z-index: 10;">${sigHtml}</div>
-                        <span style="font-size: 11.5px; white-space: nowrap; position: relative; z-index: 1;">ลงชื่อ................................................${defaultRole}</span>
+                <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
+                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
+                        <div style="padding-top:35px;">ลงชื่อ</div>
+                        <div style="display:flex; flex-direction:column; align-items:center;">
+                            <div style="margin-top:35px; position:relative;">
+                                <div style="position:absolute; bottom: 5px; text-align:center; width:100%; z-index:10; display:flex; justify-content:center;">
+                                    ${sigHtml}
+                                </div>
+                                <span style="position:relative; z-index:1;">................................................</span>
+                            </div>
+                            <div style="font-size: 11px; line-height: 1.3; margin-top:4px;">(${p.name})</div>
+                            <div style="font-size: 11px; line-height: 1.3;">${p.title1}</div>
+                            ${p.title2 ? `<div style="font-size: 11px; line-height: 1.3;">${p.title2}</div>` : ''}
+                        </div>
+                        <div style="padding-top:35px;">${defaultRole}</div>
                     </div>
-                    <p style="margin: 2px 0; white-space: nowrap;">(${p.name})</p>
-                    <p style="margin: 2px 0; white-space: nowrap;">${p.title1}</p>
-                    ${p.title2 ? `<p style="margin: 2px 0; white-space: nowrap;">${p.title2}</p>` : ''}
                 </div>
             `;
         };
