@@ -1667,11 +1667,19 @@ const app = {
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${item.weight || '-'}</td>
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0;">${item.source || '-'}</td>
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0;">
-                                        <select class="item-status-select" data-idx="${i+1}" onchange="document.getElementById('item-reject-reason-${i+1}').style.display = this.value === 'rejected' ? 'block' : 'none';" style="width:100%; padding:4px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px;">
-                                            <option value="accepted">✅ รับเข้าระบบ</option>
-                                            <option value="rejected">❌ ปฏิเสธ</option>
-                                        </select>
-                                        <input type="text" id="item-reject-reason-${i+1}" style="display:none; margin-top:4px; padding:4px; font-size:12px; width:100%; border:1px solid #ef4444; border-radius:4px;" placeholder="ระบุเหตุผลที่ปฏิเสธ">
+                                        ${(app.currentUser && app.currentUser.role === 'lab' && sample.status === 'registered') ? `
+                                            <select class="item-status-select" data-idx="${i+1}" onchange="document.getElementById('item-reject-reason-${i+1}').style.display = this.value === 'rejected' ? 'block' : 'none';" style="width:100%; padding:4px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px;">
+                                                <option value="accepted" ${sample['item_status_'+(i+1)] === 'accepted' ? 'selected' : ''}>✅ รับเข้าระบบ</option>
+                                                <option value="rejected" ${sample['item_status_'+(i+1)] === 'rejected' ? 'selected' : ''}>❌ ปฏิเสธ</option>
+                                            </select>
+                                            <input type="text" id="item-reject-reason-${i+1}" value="${sample['item_reject_reason_'+(i+1)] || ''}" style="display:${sample['item_status_'+(i+1)] === 'rejected' ? 'block' : 'none'}; margin-top:4px; padding:4px; font-size:12px; width:100%; border:1px solid #ef4444; border-radius:4px;" placeholder="ระบุเหตุผลที่ปฏิเสธ">
+                                        ` : `
+                                            ${sample['item_status_'+(i+1)] === 'rejected' 
+                                                ? '<span style="color:#ef4444; font-weight:bold;">❌ ปฏิเสธ</span><div style="font-size:11px; color:#dc2626;">เหตุผล: ' + (sample['item_reject_reason_'+(i+1)] || 'ไม่ระบุ') + '</div>' 
+                                                : sample['item_status_'+(i+1)] === 'accepted' 
+                                                    ? '<span style="color:#10b981; font-weight:bold;">✅ รับเข้าระบบ</span>' 
+                                                    : '<span style="color:#f59e0b; font-weight:bold;">⏳ รอตรวจสอบ</span>'}
+                                        `}
                                     </td>
                                 </tr>
                             `).join('')}
@@ -1707,8 +1715,24 @@ const app = {
             ${sampleItemsHTML}
         `;
         
+        
         document.getElementById('sampleDetailPreviewContent').innerHTML = detailHTML;
+        
+        // Hide/Show action buttons based on role and status
+        const acceptBtn = document.getElementById('previewAcceptBtn');
+        const rejectBtn = document.getElementById('previewRejectBtn');
+        if (acceptBtn && rejectBtn) {
+            if (this.currentUser && this.currentUser.role === 'lab' && sample.status === 'registered') {
+                acceptBtn.style.display = 'inline-block';
+                rejectBtn.style.display = 'inline-block';
+            } else {
+                acceptBtn.style.display = 'none';
+                rejectBtn.style.display = 'none';
+            }
+        }
+
         document.getElementById('sampleDetailPreviewModal').classList.add('active');
+
     },
 
     closeSampleDetailPreview() {
@@ -2314,7 +2338,7 @@ const app = {
                 let totalCount = 0;
                 let idx = 1;
                 while (sample['sample_name_' + idx] !== undefined) {
-                    if (sample['sample_name_' + idx]) {
+                    if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                         totalCount++;
                         sample['analysis_substance_' + idx] = document.getElementById('analysis-substance-' + idx)?.value || '';
                         sample['analysis_interpretation_' + idx] = document.getElementById('analysis-interpretation-' + idx)?.value || '';
@@ -2348,7 +2372,7 @@ const app = {
                 let totalCount = 0;
                 let idx = 1;
                 while (sample['sample_name_' + idx] !== undefined) {
-                    if (sample['sample_name_' + idx]) {
+                    if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                         ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(key => {
                             const interpEl = document.getElementById('analysis-interpretation-' + idx + '-' + key);
                             if (interpEl) {
@@ -2569,7 +2593,7 @@ const app = {
 
             let idx = 1;
             while (sample['sample_name_' + idx] !== undefined) {
-                if (sample['sample_name_' + idx]) {
+                if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                     totalCount++;
                     let isPass = false;
                     let detailsText = '-';
