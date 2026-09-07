@@ -2422,6 +2422,11 @@ const app = {
                         sample['analysis_substance_' + idx] = document.getElementById('analysis-substance-' + idx)?.value || '';
                         sample['analysis_interpretation_' + idx] = document.getElementById('analysis-interpretation-' + idx)?.value || '';
                         sample['analysis_details_' + idx] = document.getElementById('analysis-detail-results-' + idx)?.value || '';
+                        const el2 = document.getElementById('analysis-interpretation-2-' + idx);
+                        if (el2) {
+                            sample['analysis_interpretation_2_' + idx] = el2.value;
+                            sample['analysis_details_2_' + idx] = document.getElementById('analysis-detail-results-2-' + idx)?.value || '';
+                        }
                         const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
                         sample['analysis_summary_' + idx] = summary;
                         if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
@@ -2433,6 +2438,11 @@ const app = {
                     sample['analysis_substance_1'] = document.getElementById('analysis-substance-1')?.value || '';
                     sample['analysis_interpretation_1'] = document.getElementById('analysis-interpretation-1')?.value || '';
                     sample['analysis_details_1'] = document.getElementById('analysis-detail-results-1')?.value || '';
+                    const el2_fb = document.getElementById('analysis-interpretation-2-1');
+                    if (el2_fb) {
+                        sample['analysis_interpretation_2_1'] = el2_fb.value;
+                        sample['analysis_details_2_1'] = document.getElementById('analysis-detail-results-2-1')?.value || '';
+                    }
                     const summary = document.getElementById('analysis-summary-outcome-1')?.value || '';
                     sample['analysis_summary_1'] = summary;
                     if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
@@ -2776,7 +2786,7 @@ const app = {
                     sampleName: sample.sample_name || '-',
                     source: sample.source || sample.location_name,
                     details: detailsText,
-                    isPass: isPass, substance: (sample['analysis_substance_' + idx] || sample.analysis_substance || '')});
+                    isPass: isPass, details2: sample['analysis_details_2_1'] || '-', substance: (sample['analysis_substance_1'] || sample.analysis_substance || '')});
             }
 
             const ITEMS_PER_PAGE = sample.form_type === 'MU.10-002' ? 10 : 5;
