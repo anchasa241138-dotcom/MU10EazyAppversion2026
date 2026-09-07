@@ -2110,6 +2110,7 @@ const app = {
                                     <option value="">-- เลือกสารที่ตรวจ --</option>
                                     <option value="GT">GT</option>
                                     <option value="TM/2">TM/2</option>
+                                    <option value="GT และ TM/2">GT และ TM/2</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -2629,8 +2630,7 @@ const app = {
                         sampleName: sample['sample_name_' + idx],
                         source: sample['source_' + idx] || sample.location_name,
                         details: detailsText,
-                        isPass: isPass
-                    });
+                        isPass: isPass, substance: (sample['analysis_substance_' + idx] || sample.analysis_substance || '')});
                 }
                 idx++;
             }
@@ -2670,8 +2670,7 @@ const app = {
                     sampleName: sample.sample_name || '-',
                     source: sample.source || sample.location_name,
                     details: detailsText,
-                    isPass: isPass
-                });
+                    isPass: isPass, substance: (sample['analysis_substance_' + idx] || sample.analysis_substance || '')});
             }
 
             const ITEMS_PER_PAGE = sample.form_type === 'MU.10-002' ? 10 : 5;
@@ -2692,10 +2691,31 @@ const app = {
                               <div style="margin-left: 65px; margin-bottom:4px;">- ผ่าน หมายถึง ไม่พบสารปนเปื้อน</div>
                               <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบสารปนเปื้อน</div>`;
             } else {
-                tableHeaderSubstance = (sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (GT Kit)' ? 'GT' : ((sample.analysis_substance_1 || sample.analysis_substance) === 'ยาฆ่าแมลง (TM/2 Kit)' ? 'TM/2' : (sample.analysis_substance_1 || sample.analysis_substance)) || 'GT';
-                remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
-                              <div style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
-                              <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
+                let hasGT = false;
+                let hasTM2 = false;
+                allItems.forEach(item => {
+                    if (item.substance.includes('GT')) hasGT = true;
+                    if (item.substance.includes('TM/2')) hasTM2 = true;
+                });
+                
+                if (hasGT && hasTM2) {
+                    tableHeaderSubstance = 'BOTH';
+                    remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 4 กลุ่ม ดังนี้</div>
+                                  <div style="margin-left: 65px; margin-bottom:4px;">กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
+                                  <div style="margin-left: 65px; margin-bottom:4px;">กลุ่มออร์แกโนคลอรีน และไพรีทรอยด์ (ชุดตรวจ TM/2-Kit)</div>
+                                  <div style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
+                                  <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
+                } else if (hasTM2) {
+                    tableHeaderSubstance = 'TM/2';
+                    remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนคลอรีน และไพรีทรอยด์ (ชุดตรวจ TM/2-Kit)</div>
+                                  <div style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
+                                  <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
+                } else {
+                    tableHeaderSubstance = 'GT';
+                    remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
+                                  <div style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
+                                  <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
+                }
             }
 
             let fullHtml = '';
@@ -2712,7 +2732,10 @@ const app = {
                             <td style="text-align:center;">${item.labId}</td>
                             <td style="text-align:center;">${item.sampleName}</td>
                             <td style="text-align:center;">${item.source}</td>
-                            <td style="text-align:center;">${item.details}</td>
+                            ${tableHeaderSubstance === 'BOTH' ? 
+                                '<td style="text-align:center;">' + (item.substance.includes('GT') ? item.details : '-') + '</td>' + 
+                                '<td style="text-align:center;">' + (item.substance.includes('TM/2') ? item.details : '-') + '</td>' 
+                            : '<td style="text-align:center;">' + item.details + '</td>'}
                             <td style="text-align:center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
@@ -2750,7 +2773,7 @@ const app = {
                                     <th style="white-space: nowrap;">รหัสตัวอย่าง</th>
                                     <th>ตัวอย่าง</th>
                                     <th>แหล่งที่มา</th>
-                                    <th>${tableHeaderSubstance}</th>
+                                    ${tableHeaderSubstance === 'BOTH' ? '<th>GT</th><th>TM/2</th>' : '<th>' + tableHeaderSubstance + '</th>'}
                                     <th style="white-space: nowrap;">สรุปผล</th>
                                 </tr>
                             </thead>
