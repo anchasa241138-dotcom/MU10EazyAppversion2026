@@ -445,7 +445,7 @@ const app = {
                 }
                 break;
             case 'lab-verify':
-                if (!this.currentUser || this.currentUser.role !== 'lab') {
+                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
                     document.getElementById('verify-auth-block').classList.remove('hidden');
                     document.getElementById('verify-content-wrapper').classList.add('hidden');
                 } else {
@@ -455,7 +455,7 @@ const app = {
                 }
                 break;
             case 'lab-analysis':
-                if (!this.currentUser || this.currentUser.role !== 'lab') {
+                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
                     document.getElementById('analysis-auth-block').classList.remove('hidden');
                     document.getElementById('analysis-content-wrapper').classList.add('hidden');
                 } else {
@@ -465,7 +465,7 @@ const app = {
                 }
                 break;
             case 'lab-certify':
-                if (!this.currentUser || this.currentUser.role !== 'lab') {
+                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
                     document.getElementById('certify-auth-block').classList.remove('hidden');
                     document.getElementById('certify-content-wrapper').classList.add('hidden');
                 } else {
