@@ -1652,21 +1652,27 @@ const app = {
                     <table style="width:100%; border-collapse:collapse; font-size:13px;">
                         <thead>
                             <tr style="background:#f1f5f9;">
-                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center; width:40px;">#</th>
+                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center; width:30px;">#</th>
                                 <th style="padding:8px; border:1px solid #e2e8f0;">ชื่อตัวอย่าง</th>
-                                <th style="padding:8px; border:1px solid #e2e8f0;">ผู้จำหน่าย</th>
-                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center;">น้ำหนัก(กรัม)</th>
+                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center;">น้ำหนัก</th>
                                 <th style="padding:8px; border:1px solid #e2e8f0;">แหล่งที่มา</th>
+                                <th style="padding:8px; border:1px solid #e2e8f0; width:180px; text-align:center;">สถานะการรับ</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${sampleItems.filter(i => i.name).map((item, i) => `
                                 <tr>
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${i+1}</td>
-                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; font-weight:500;">${item.name}</td>
-                                    <td style="padding:6px 8px; border:1px solid #e2e8f0;">${item.distributor || '-'}</td>
+                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; font-weight:500;">${item.name} <div style="font-size:11px; color:#6b7280;">${item.distributor || '-'}</div></td>
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${item.weight || '-'}</td>
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0;">${item.source || '-'}</td>
+                                    <td style="padding:6px 8px; border:1px solid #e2e8f0;">
+                                        <select class="item-status-select" data-idx="${i+1}" onchange="document.getElementById('item-reject-reason-${i+1}').style.display = this.value === 'rejected' ? 'block' : 'none';" style="width:100%; padding:4px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px;">
+                                            <option value="accepted">✅ รับเข้าระบบ</option>
+                                            <option value="rejected">❌ ปฏิเสธ</option>
+                                        </select>
+                                        <input type="text" id="item-reject-reason-${i+1}" style="display:none; margin-top:4px; padding:4px; font-size:12px; width:100%; border:1px solid #ef4444; border-radius:4px;" placeholder="ระบุเหตุผลที่ปฏิเสธ">
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1710,14 +1716,56 @@ const app = {
         this._previewRefId = null;
     },
 
+    saveItemStatusesFromPreview() {
+        const refId = this._previewRefId;
+        const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
+        if (sampleIndex > -1) {
+            const selects = document.querySelectorAll('.item-status-select');
+            let allRejected = true;
+            selects.forEach(select => {
+                const idx = select.getAttribute('data-idx');
+                const status = select.value;
+                this.samples[sampleIndex]['item_status_' + idx] = status;
+                if (status === 'rejected') {
+                    const reason = document.getElementById('item-reject-reason-' + idx).value;
+                    this.samples[sampleIndex]['item_reject_reason_' + idx] = reason;
+                } else {
+                    allRejected = false;
+                }
+            });
+            this.saveSamples();
+            return allRejected;
+        }
+        return false;
+    },
+
     proceedToAcceptFromPreview() {
         const refId = this._previewRefId;
+        const allRejected = this.saveItemStatusesFromPreview();
         this.closeSampleDetailPreview();
-        if (refId) this.openVerifyAcceptModal(refId);
+        if (refId) {
+            if (allRejected) {
+                // If user selected "Reject" for EVERY single item but clicked "Accept" button
+                this.openVerifyRejectModal(refId);
+            } else {
+                this.openVerifyAcceptModal(refId);
+            }
+        }
     },
 
     proceedToRejectFromPreview() {
         const refId = this._previewRefId;
+        const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
+        if (sampleIndex > -1) {
+            // Force all items to rejected
+            let i = 1;
+            while(this.samples[sampleIndex]['sample_name_'+i] !== undefined) {
+                this.samples[sampleIndex]['item_status_'+i] = 'rejected';
+                this.samples[sampleIndex]['item_reject_reason_'+i] = 'ปฏิเสธทั้งชุด';
+                i++;
+            }
+            this.saveSamples();
+        }
         this.closeSampleDetailPreview();
         if (refId) this.openVerifyRejectModal(refId);
     },
@@ -2018,7 +2066,7 @@ const app = {
             const sampleNames = [];
             let idx = 1;
             while (sample['sample_name_' + idx] !== undefined) {
-                if (sample['sample_name_' + idx]) sampleNames.push({ name: sample['sample_name_' + idx], idx: idx });
+                if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') sampleNames.push({ name: sample['sample_name_' + idx], idx: idx });
                 idx++;
             }
             if (sampleNames.length === 0) {
@@ -2098,7 +2146,8 @@ const app = {
             const sampleNames = [];
             let idx = 1;
             while (sample['sample_name_' + idx] !== undefined) {
-                if (sample['sample_name_' + idx]) {
+                if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+
                     const tests = [];
                     if (sample['test_borax_' + idx] || sample.test_borax) tests.push({ key: 'borax', label: 'บอแรกซ์' });
                     if (sample['test_formalin_' + idx] || sample.test_formalin) tests.push({ key: 'formalin', label: 'ฟอร์มาลิน' });
@@ -3875,7 +3924,7 @@ const app = {
             let i = 1;
             let validItemCount = 0;
             while(s['sample_name_'+i] !== undefined) {
-                if (s['sample_name_'+i]) {
+                if (s['sample_name_'+i] && s['item_status_'+i] !== 'rejected') {
                     hasDynamicSamples = true;
                     rows.push(createRowForSample(s, i, false, validItemCount));
                     validItemCount++;
