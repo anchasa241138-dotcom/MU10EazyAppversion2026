@@ -87,7 +87,7 @@ const app = {
 
     getVisibleSamples() {
         if (!this.currentUser) return [];
-        if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab') {
+        if (this.currentUser.role === 'admin' || (this.currentUser.role === 'lab' || this.currentUser.role === 'admin')) {
             return this.samples;
         }
         return this.samples.filter(s => s.created_by === this.currentUser.username);
@@ -440,7 +440,7 @@ const app = {
                     document.getElementById('record-content-wrapper').classList.remove('hidden');
                     // Pre-fill collector name and position
                     document.getElementById('field-collector-name').value = this.currentUser.fullname;
-                    document.getElementById('field-collector-position').value = this.currentUser.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง';
+                    document.getElementById('field-collector-position').value = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง';
                     this.renderSavedRecords();
                 }
                 break;
@@ -588,12 +588,12 @@ const app = {
             authButtons.innerHTML = `<button class="btn btn-secondary" onclick="app.logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>`;
             userStatusCard.innerHTML = `
                 <div class="user-status-name"><i class="fa-solid fa-circle-user"></i> ${this.currentUser.fullname}</div>
-                <div class="user-status-role">${this.currentUser.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : this.currentUser.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</div>
+                <div class="user-status-role">${this.currentUser.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</div>
             `;
             
             // Show lab menus if role is lab
             document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
-                el.style.display = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'flex' : 'none';
+                el.style.display = ((this.currentUser.role === 'lab' || this.currentUser.role === 'admin') || this.currentUser.role === 'admin') ? 'flex' : 'none';
             });
             
             const adminMenu = document.getElementById('menu-manage-users');
@@ -1667,7 +1667,7 @@ const app = {
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${item.weight || '-'}</td>
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0;">${item.source || '-'}</td>
                                     <td style="padding:6px 8px; border:1px solid #e2e8f0;">
-                                        ${(app.currentUser && app.currentUser.role === 'lab' && sample.status === 'registered') ? `
+                                        ${(app.currentUser && (app.currentUser.role === 'lab' || app.currentUser.role === 'admin') && sample.status === 'registered') ? `
                                             <select class="item-status-select" data-idx="${i+1}" onchange="document.getElementById('item-reject-reason-${i+1}').style.display = this.value === 'rejected' ? 'block' : 'none';" style="width:100%; padding:4px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px;">
                                                 <option value="accepted" ${sample['item_status_'+(i+1)] === 'accepted' ? 'selected' : ''}>✅ รับเข้าระบบ</option>
                                                 <option value="rejected" ${sample['item_status_'+(i+1)] === 'rejected' ? 'selected' : ''}>❌ ปฏิเสธ</option>
@@ -1722,7 +1722,7 @@ const app = {
         const acceptBtn = document.getElementById('previewAcceptBtn');
         const rejectBtn = document.getElementById('previewRejectBtn');
         if (acceptBtn && rejectBtn) {
-            if (this.currentUser && this.currentUser.role === 'lab' && sample.status === 'registered') {
+            if (this.currentUser && (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') && sample.status === 'registered') {
                 acceptBtn.style.display = 'inline-block';
                 rejectBtn.style.display = 'inline-block';
             } else {
