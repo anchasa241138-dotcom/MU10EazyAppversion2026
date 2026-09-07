@@ -2545,8 +2545,12 @@ const app = {
                                     </div>
                                     ................................................
                                 </div>
-                                <div style="font-size: 11px; line-height: 1.3; margin-top:4px;">(.......................................)</div>
-                                <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
+                                <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
+                                    <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
+                                        <div style="font-size: 11px; line-height: 1.3;">(.......................................)</div>
+                                        <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
+                                    </div>
+                                </div>
                             </div>
                             <div style="padding-top:25px;">${defaultRole}</div>
                         </div>
@@ -2577,9 +2581,14 @@ const app = {
                                 </div>
                                 <span style="position:relative; z-index:1;">................................................</span>
                             </div>
-                            <div style="font-size: 11px; line-height: 1.3; margin-top:4px;">(${p.name})</div>
-                            <div style="font-size: 11px; line-height: 1.3;">${p.title1}</div>
-                            ${p.title2 ? `<div style="font-size: 11px; line-height: 1.3;">${p.title2}</div>` : ''}
+                            
+                            <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
+                                <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
+                                    <div style="font-size: 11px; line-height: 1.3;">(${p.name})</div>
+                                    <div style="font-size: 11px; line-height: 1.3;">${p.title1}</div>
+                                    ${p.title2 ? `<div style="font-size: 11px; line-height: 1.3;">${p.title2}</div>` : ''}
+                                </div>
+                            </div>
                         </div>
                         <div style="padding-top:35px;">${defaultRole}</div>
                     </div>
