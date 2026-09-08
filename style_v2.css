@@ -501,7 +501,7 @@ body {
     width: 76px;
     height: 76px;
     border-radius: 20px;
-    background: linear-gradient(135deg, var(--primary-light), var(--secondary-color));
+    background: linear-gradient(135deg, #37c5ab, #3677a9);
     color: #ffffff;
     display: flex;
     align-items: center;
