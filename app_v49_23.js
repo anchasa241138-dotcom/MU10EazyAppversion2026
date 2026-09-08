@@ -2804,16 +2804,11 @@ const app = {
         };
 
         
-            const mode = document.querySelector('input[name="pdfSignMode"]:checked')?.value || 'system';
-            sample.pdfSignMode = mode;
-            if (mode === 'draw') {
-                const canvas = document.getElementById('hybridSignaturePad');
-                if(canvas) sample.custom_drawn_sig = canvas.toDataURL();
-            } else {
-                sample.custom_drawn_sig = null;
-            }
+
+
 
             if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
+
             const wrapper = container.parentElement;
             if (wrapper) {
                 wrapper.style.background = 'none';
@@ -3143,6 +3138,7 @@ const app = {
         document.getElementById('certifyModal').classList.remove('active');
     },
 
+
     handleApproveReport(e) {
         try {
             const refId = e.currentTarget.dataset.refId || document.getElementById('btnApproveAndSign').dataset.refId;
@@ -3152,6 +3148,19 @@ const app = {
                 return;
             }
             const sample = this.samples[sampleIndex];
+
+            // Save signature format and custom drawing if present
+            if (document.getElementById('hybridSignaturePad')) {
+                const mode = document.querySelector('input[name="pdfSignMode"]:checked')?.value || 'system';
+                sample.pdfSignMode = mode;
+                if (mode === 'draw') {
+                    const canvas = document.getElementById('hybridSignaturePad');
+                    if(canvas) sample.custom_drawn_sig = canvas.toDataURL();
+                } else {
+                    sample.custom_drawn_sig = null;
+                }
+            }
+
 
             if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
                 if (sample.status === 'summarized') {
