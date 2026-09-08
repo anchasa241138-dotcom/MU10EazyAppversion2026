@@ -2704,8 +2704,12 @@ const app = {
         };
 
         
+        
         const renderSignatureSlot = (personKey, defaultRole) => {
-            if (sample.pdfSignMode === 'wet' && personKey) {
+            // Mallika is locked to E-Signature only
+            const isMallika = (personKey === 'mallika');
+            
+            if (sample.pdfSignMode === 'wet' && personKey && !isMallika) {
                 // If wet signature is selected and there's a person chosen, just print their name and blank space
                 const pName = PERSON_DATA[personKey]?.name || '';
                 return `
@@ -2760,12 +2764,14 @@ const app = {
             } else if (personKey === 'mallika') {
                 extraStyle += ' transform: scale(1.4); margin-bottom: 0px;';
             }
+            
             let imgSrc = p.sig;
-            if (sample.pdfSignMode === 'draw' && sample.custom_drawn_sig) {
+            if (sample.pdfSignMode === 'draw' && sample.custom_drawn_sig && !isMallika) {
                 imgSrc = sample.custom_drawn_sig;
                 // reset extra style for custom drawing so it doesn't get squished based on who they are
                 extraStyle = 'max-height: 40px; margin-bottom: -5px; transform-origin: bottom center; margin-left: 0px;';
             }
+
             
             const sigHtml = (viewOnly || sample.status === 'approved' || sample.status === 'analyst_signed') ? 
                 `<img src="${imgSrc}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` :  
