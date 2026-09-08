@@ -13,7 +13,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v2.css?v=1200">
+    <link rel="stylesheet" href="style_v2.css?v=1201">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="enhancements.css">
 
@@ -48,10 +48,10 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 440px;
+            max-width: 520px;
             max-height: calc(100vh - 40px);
             padding: 0;
-            overflow-y: auto;
+            overflow: hidden;
             transform: translateY(20px);
             opacity: 0;
             animation: authFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -63,7 +63,7 @@
 
         #authModal .modal-header {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            padding: 40px 20px 30px;
+            padding: 30px 20px 20px;
             text-align: center;
             color: white;
             display: block;
@@ -103,7 +103,7 @@
         }
 
         #authModal .modal-body {
-            padding: 35px 30px;
+            padding: 25px 30px;
         }
 
         #authModal .modal-tabs {
@@ -1222,7 +1222,7 @@
                 <h4 style="color:#fff;"><i class="fa-solid fa-microscope"></i> รายละเอียดตัวอย่างที่ส่งตรวจ</h4>
                 <button class="close-modal-btn" onclick="app.closeSampleDetailPreview()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body" style="padding: 20px; max-height: 65vh; overflow-y: auto;">
+            <div class="modal-body" style="padding: 20px; max-height: 65vh; overflow: hidden;">
                 <div id="sampleDetailPreviewContent"></div>
                 <div class="form-actions margin-top" style="display:flex; gap:10px; justify-content:center; padding-top:16px; border-top: 1px solid #e5e7eb;">
                     <button type="button" class="btn btn-success" id="previewAcceptBtn" onclick="app.proceedToAcceptFromPreview()" style="min-width:160px;">
@@ -1346,7 +1346,7 @@
                 <h4 style="color:#fff;"><i class="fa-solid fa-flask-vial"></i> บันทึกผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
                 <button class="close-modal-btn" onclick="app.closeAnalysisInputModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body" style="max-height: 72vh; overflow-y: auto;">
+            <div class="modal-body" style="max-height: 72vh; overflow: hidden;">
                 <form id="analysisResultForm">
                     <input type="hidden" id="analysis-sample-ref-id">
 
