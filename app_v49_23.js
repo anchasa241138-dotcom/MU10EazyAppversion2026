@@ -3015,22 +3015,23 @@ const app = {
                 document.getElementById('cert-standard-inputs').style.display = 'none';
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
                 
+                
                 const s1 = document.getElementById('sel-analyst-1');
-                    const s2 = document.getElementById('sel-analyst-2');
-                    const a1 = document.getElementById('sel-approver-1');
-                    const a2 = document.getElementById('sel-approver-2');
-                    s1.onchange = () => this.checkSignaturePadVisibility();
-                    s2.onchange = () => this.checkSignaturePadVisibility();
-                    a1.onchange = () => this.checkSignaturePadVisibility();
-                    a2.onchange = () => this.checkSignaturePadVisibility();
-                    
-                    // Reset pad when opening
-                    this.clearSignaturePad();
-                    this.checkSignaturePadVisibility();
                 const s2 = document.getElementById('sel-analyst-2');
                 const s3 = document.getElementById('sel-approver-1');
                 const s4 = document.getElementById('sel-approver-2');
+                
+                s1.onchange = () => this.checkSignaturePadVisibility();
+                s2.onchange = () => this.checkSignaturePadVisibility();
+                s3.onchange = () => this.checkSignaturePadVisibility();
+                s4.onchange = () => this.checkSignaturePadVisibility();
+                
+                // Reset pad when opening
+                if (this.clearSignaturePad) this.clearSignaturePad();
+                if (this.checkSignaturePadVisibility) this.checkSignaturePadVisibility();
+                
                 const btnApprove = document.getElementById('btnApproveAndSign');
+
                 
                 if (viewOnly) {
                     s1.value = sample.sel_analyst_1 || "";
