@@ -635,6 +635,19 @@ const app = {
         document.getElementById('authModal').classList.remove('active');
     },
 
+    togglePasswordVisibility(inputId, iconElement) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconElement.classList.remove('fa-eye');
+            iconElement.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            iconElement.classList.remove('fa-eye-slash');
+            iconElement.classList.add('fa-eye');
+        }
+    }
+    
     switchAuthTab(tab) {
         const modalCard = document.querySelector('#authModal .modal-card');
         if (modalCard) {

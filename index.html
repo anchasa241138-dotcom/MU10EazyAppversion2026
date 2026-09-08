@@ -13,7 +13,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v2.css?v=1202">
+    <link rel="stylesheet" href="style_v2.css?v=1203">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="enhancements.css">
 
@@ -1054,8 +1054,9 @@
                     </div>
                     <div class="input-icon-wrapper">
                         <label for="login-password">รหัสผ่าน</label>
-                        <input type="password" id="login-password" required placeholder="Password">
+                        <input type="password" id="login-password" required placeholder="Password" style="padding-right: 40px;">
                         <i class="fa-solid fa-lock"></i>
+                        <i class="fa-solid fa-eye toggle-password" onclick="app.togglePasswordVisibility('login-password', this)" style="position: absolute; right: 15px; left: auto; bottom: 15px; cursor: pointer; color: #94a3b8; font-size: 16px; transition: color 0.3s; z-index: 10;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#94a3b8'"></i>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">เข้าสู่ระบบ</button>
                     <div style="text-align: center; margin-top: 15px;">
@@ -1197,12 +1198,12 @@
                     </div>
                     <div class="input-icon-wrapper">
                         <label for="forgot-new-password">รหัสผ่านใหม่</label>
-                        <input type="password" id="forgot-new-password" required placeholder="รหัสผ่านใหม่อย่างน้อย 6 หลัก" minlength="6">
+                        <input type="password" id="forgot-new-password" required placeholder="รหัสผ่านใหม่อย่างน้อย 6 หลัก" minlength="6" style="padding-right: 40px;">
                         <i class="fa-solid fa-key"></i>
                     </div>
                     <div class="input-icon-wrapper">
                         <label for="forgot-confirm-password">ยืนยันรหัสผ่านใหม่</label>
-                        <input type="password" id="forgot-confirm-password" required placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                        <input type="password" id="forgot-confirm-password" required placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" style="padding-right: 40px;">
                         <i class="fa-solid fa-check-double"></i>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">รีเซ็ตรหัสผ่าน</button>
@@ -1496,7 +1497,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1200"></script>
+    <script src="app_v49_23.js?v=1203"></script>
 </body>
 </html>
 
