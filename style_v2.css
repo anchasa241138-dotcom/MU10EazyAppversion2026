@@ -685,12 +685,12 @@ body {
 }
 
 .btn-primary {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: #ffffff;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: var(--secondary-hover);
+    background-color: #27567b; /* Darker navy */
 }
 
 .btn-success {

@@ -1413,7 +1413,7 @@ const app = {
             const tr = document.createElement('tr');
             tr.style.borderBottom = '1px solid var(--border-color)';
             tr.innerHTML = `
-                <td style="padding: 12px 15px; font-weight: bold; color: var(--primary-light);">${s.ref_id}</td>
+                <td style="padding: 12px 15px; font-weight: bold; color: var(--primary-color);">${s.ref_id}</td>
                 <td style="padding: 12px 15px;"><span class="badge" style="background-color: var(--primary-dark); color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${s.form_type}</span></td>
                 <td style="padding: 12px 15px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${sampleDesc}</td>
                 <td style="padding: 12px 15px; font-size: 12px; line-height: 1.4;">
