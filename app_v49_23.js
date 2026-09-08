@@ -2635,7 +2635,9 @@ const app = {
 
         
         const renderSignatureSlot = (personKey, defaultRole) => {
-            if (personKey === 'wet') {
+            if (sample.pdfSignMode === 'wet' && personKey) {
+                // If wet signature is selected and there's a person chosen, just print their name and blank space
+                const pName = PERSON_DATA[personKey]?.name || '';
                 return `
                     <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
                         <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
@@ -2646,30 +2648,7 @@ const app = {
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div style="font-size: 11px; line-height: 1.3;">(................................................)</div>
-                                        <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            if (personKey === 'draw' && sample.custom_drawn_sig) {
-                return `
-                    <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
-                            <div style="padding-top:25px;">ลงชื่อ</div>
-                            <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div style="margin-top:25px; position:relative;">
-                                    <div style="position:absolute; bottom: 5px; text-align:center; width:100%;">
-                                        <img src="${sample.custom_drawn_sig}" style="max-height: 40px; margin-bottom: -5px; transform-origin: bottom center;">
-                                    </div>
-                                    ................................................
-                                </div>
-                                <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
-                                    <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div style="font-size: 11px; line-height: 1.3;">(ลายมือชื่ออิเล็กทรอนิกส์)</div>
+                                        <div style="font-size: 11px; line-height: 1.3;">(${pName})</div>
                                         <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
                                     </div>
                                 </div>
@@ -2711,8 +2690,15 @@ const app = {
             } else if (personKey === 'mallika') {
                 extraStyle += ' transform: scale(1.4); margin-bottom: 0px;';
             }
-            const sigHtml = (viewOnly || sample.status === 'approved') ? 
-                `<img src="${p.sig}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` : 
+            let imgSrc = p.sig;
+            if (sample.pdfSignMode === 'draw' && sample.custom_drawn_sig) {
+                imgSrc = sample.custom_drawn_sig;
+                // reset extra style for custom drawing so it doesn't get squished based on who they are
+                extraStyle = 'max-height: 40px; margin-bottom: -5px; transform-origin: bottom center; margin-left: 0px;';
+            }
+            
+            const sigHtml = (viewOnly || sample.status === 'approved' || sample.status === 'analyst_signed') ? 
+                `<img src="${imgSrc}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` :  
                 `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
             
             return `
@@ -2742,16 +2728,13 @@ const app = {
         };
 
         
-            const s1v = document.getElementById('sel-analyst-1').value;
-            const s2v = document.getElementById('sel-analyst-2').value;
-            const a1v = document.getElementById('sel-approver-1').value;
-            const a2v = document.getElementById('sel-approver-2').value;
-            
-            if (s1v === 'draw' || s2v === 'draw' || a1v === 'draw' || a2v === 'draw') {
+            const mode = document.querySelector('input[name="pdfSignMode"]:checked')?.value || 'system';
+            sample.pdfSignMode = mode;
+            if (mode === 'draw') {
                 const canvas = document.getElementById('hybridSignaturePad');
-                if(canvas) {
-                    sample.custom_drawn_sig = canvas.toDataURL();
-                }
+                if(canvas) sample.custom_drawn_sig = canvas.toDataURL();
+            } else {
+                sample.custom_drawn_sig = null;
             }
 
             if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
@@ -3021,14 +3004,11 @@ const app = {
                 const s3 = document.getElementById('sel-approver-1');
                 const s4 = document.getElementById('sel-approver-2');
                 
-                s1.onchange = () => this.checkSignaturePadVisibility();
-                s2.onchange = () => this.checkSignaturePadVisibility();
-                s3.onchange = () => this.checkSignaturePadVisibility();
-                s4.onchange = () => this.checkSignaturePadVisibility();
-                
                 // Reset pad when opening
+                const sysRadio = document.querySelector('input[name="pdfSignMode"][value="system"]');
+                if(sysRadio) sysRadio.checked = true;
                 if (this.clearSignaturePad) this.clearSignaturePad();
-                if (this.checkSignaturePadVisibility) this.checkSignaturePadVisibility();
+                if (this.toggleSignMode) this.toggleSignMode();
                 
                 const btnApprove = document.getElementById('btnApproveAndSign');
 
