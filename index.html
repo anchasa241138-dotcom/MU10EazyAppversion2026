@@ -13,7 +13,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v2.css?v=1199">
+    <link rel="stylesheet" href="style_v2.css?v=1200">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="enhancements.css">
 
@@ -37,6 +37,9 @@
         #authModal {
             background: transparent !important;
             z-index: 1001 !important;
+            justify-content: center !important;
+            padding: 20px;
+            box-sizing: border-box;
         }
         
         #authModal .modal-card {
@@ -46,8 +49,9 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
             width: 100%;
             max-width: 440px;
+            max-height: calc(100vh - 40px);
             padding: 0;
-            overflow: hidden;
+            overflow-y: auto;
             transform: translateY(20px);
             opacity: 0;
             animation: authFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -1492,7 +1496,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1198"></script>
+    <script src="app_v49_23.js?v=1200"></script>
 </body>
 </html>
 
