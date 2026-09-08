@@ -58,7 +58,7 @@ const app = {
         
         if (mode === 'draw') {
             container.style.display = 'block';
-            this.initSignaturePad(roleId);
+            setTimeout(() => this.initSignaturePad(roleId), 50);
         } else {
             container.style.display = 'none';
         }
