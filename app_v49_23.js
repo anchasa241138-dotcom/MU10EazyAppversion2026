@@ -102,7 +102,7 @@ const app = {
                     { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
                     { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
                     { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' },
-                    { username: 'anchasa', password: 'Password123!', role: 'collector', fullname: 'นางสาว อัญชสา ใจดี', status: 'pending', workplace: 'รพ.ศรีสะเกษ', province: 'ศรีสะเกษ', createdAt: new Date().toISOString() }
+                    { username: 'anchasa', password: 'anchasa@241138', role: 'collector', fullname: 'นางสาว อัญชสา ใจดี', status: 'approved', workplace: 'รพ.ศรีสะเกษ', province: 'ศรีสะเกษ', createdAt: new Date().toISOString() }
                 ];
                 localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
             } else {
@@ -654,7 +654,7 @@ const app = {
         const username = document.getElementById('login-username').value.trim();
         const pass = document.getElementById('login-password').value.trim();
 
-        const user = this.users.find(u => u.username === username && u.password === pass);
+        const user = this.users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === pass);
         if (user) {
             this.currentUser = user;
             sessionStorage.setItem('sskmoph_session', JSON.stringify(user));
