@@ -646,7 +646,7 @@ const app = {
             iconElement.classList.remove('fa-eye-slash');
             iconElement.classList.add('fa-eye');
         }
-    }
+    },
     
     switchAuthTab(tab) {
         const modalCard = document.querySelector('#authModal .modal-card');
