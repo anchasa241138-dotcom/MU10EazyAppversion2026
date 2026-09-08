@@ -2633,7 +2633,51 @@ const app = {
             }
         };
 
+        
         const renderSignatureSlot = (personKey, defaultRole) => {
+            if (personKey === 'wet') {
+                return `
+                    <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
+                            <div style="padding-top:25px;">ลงชื่อ</div>
+                            <div style="display:flex; flex-direction:column; align-items:center;">
+                                <div style="margin-top:25px; position:relative;">
+                                    ................................................
+                                </div>
+                                <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
+                                    <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
+                                        <div style="font-size: 11px; line-height: 1.3;">(................................................)</div>
+                                        <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            if (personKey === 'draw' && sample.custom_drawn_sig) {
+                return `
+                    <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
+                            <div style="padding-top:25px;">ลงชื่อ</div>
+                            <div style="display:flex; flex-direction:column; align-items:center;">
+                                <div style="margin-top:25px; position:relative;">
+                                    <div style="position:absolute; bottom: 5px; text-align:center; width:100%;">
+                                        <img src="${sample.custom_drawn_sig}" style="max-height: 40px; margin-bottom: -5px; transform-origin: bottom center;">
+                                    </div>
+                                    ................................................
+                                </div>
+                                <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
+                                    <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
+                                        <div style="font-size: 11px; line-height: 1.3;">(ลายมือชื่ออิเล็กทรอนิกส์)</div>
+                                        <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
                     <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
@@ -2697,7 +2741,20 @@ const app = {
             `;
         };
 
-        if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
+        
+            const s1v = document.getElementById('sel-analyst-1').value;
+            const s2v = document.getElementById('sel-analyst-2').value;
+            const a1v = document.getElementById('sel-approver-1').value;
+            const a2v = document.getElementById('sel-approver-2').value;
+            
+            if (s1v === 'draw' || s2v === 'draw' || a1v === 'draw' || a2v === 'draw') {
+                const canvas = document.getElementById('hybridSignaturePad');
+                if(canvas) {
+                    sample.custom_drawn_sig = canvas.toDataURL();
+                }
+            }
+
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
             const wrapper = container.parentElement;
             if (wrapper) {
                 wrapper.style.background = 'none';
@@ -2959,6 +3016,17 @@ const app = {
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
                 
                 const s1 = document.getElementById('sel-analyst-1');
+                    const s2 = document.getElementById('sel-analyst-2');
+                    const a1 = document.getElementById('sel-approver-1');
+                    const a2 = document.getElementById('sel-approver-2');
+                    s1.onchange = () => this.checkSignaturePadVisibility();
+                    s2.onchange = () => this.checkSignaturePadVisibility();
+                    a1.onchange = () => this.checkSignaturePadVisibility();
+                    a2.onchange = () => this.checkSignaturePadVisibility();
+                    
+                    // Reset pad when opening
+                    this.clearSignaturePad();
+                    this.checkSignaturePadVisibility();
                 const s2 = document.getElementById('sel-analyst-2');
                 const s3 = document.getElementById('sel-approver-1');
                 const s4 = document.getElementById('sel-approver-2');

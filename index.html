@@ -13,7 +13,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v2.css?v=1210">
+    <link rel="stylesheet" href="style_v2.css?v=1211">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="enhancements.css">
 
@@ -1431,6 +1431,8 @@
                                     <label>ผู้ตรวจวิเคราะห์คนที่ 1</label>
                                     <select id="sel-analyst-1" class="form-control">
                                         <option value="">-- ไม่ระบุ --</option>
+                                        <option value="wet">-- เซ็นด้วยตัวเอง (Wet Signature) --</option>
+                                        <option value="draw">-- วาดลายเซ็น (E-Signature) --</option>
                                         <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
                                         <option value="surachai">นายสุรชัย รินทอง</option>
                                     </select>
@@ -1439,6 +1441,8 @@
                                     <label>ผู้ตรวจวิเคราะห์คนที่ 2</label>
                                     <select id="sel-analyst-2" class="form-control">
                                         <option value="">-- ไม่ระบุ --</option>
+                                        <option value="wet">-- เซ็นด้วยตัวเอง (Wet Signature) --</option>
+                                        <option value="draw">-- วาดลายเซ็น (E-Signature) --</option>
                                         <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
                                         <option value="surachai">นายสุรชัย รินทอง</option>
                                     </select>
@@ -1447,6 +1451,8 @@
                                     <label>ผู้รับรองคนที่ 1</label>
                                     <select id="sel-approver-1" class="form-control">
                                         <option value="">-- ไม่ระบุ --</option>
+                                        <option value="wet">-- เซ็นด้วยตัวเอง (Wet Signature) --</option>
+                                        <option value="draw">-- วาดลายเซ็น (E-Signature) --</option>
                                         <option value="thitiporn">นางสาวฐิติพร อินศร</option>
                                         <option value="mallika">นางสาวมัลลิกา สุพล</option>
                                     </select>
@@ -1455,11 +1461,23 @@
                                     <label>ผู้รับรองคนที่ 2</label>
                                     <select id="sel-approver-2" class="form-control">
                                         <option value="">-- ไม่ระบุ --</option>
+                                        <option value="wet">-- เซ็นด้วยตัวเอง (Wet Signature) --</option>
+                                        <option value="draw">-- วาดลายเซ็น (E-Signature) --</option>
                                         <option value="thitiporn">นางสาวฐิติพร อินศร</option>
                                         <option value="mallika">นางสาวมัลลิกา สุพล</option>
                                     </select>
                                 </div>
+                            
+                            <div id="drawSignatureContainer" style="display: none; margin-top: 15px; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 15px; background: #f8fafc;">
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: var(--primary-color);">กรุณาวาดลายเซ็นลงในกรอบด้านล่าง</label>
+                                <canvas id="hybridSignaturePad" width="400" height="150" style="background: white; border: 1px solid #e2e8f0; border-radius: 4px; cursor: crosshair; touch-action: none; max-width: 100%;"></canvas>
+                                <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 11px; color: #64748b;">ระบบจะนำลายเซ็นนี้ไปแปะในช่องที่ท่านเลือก "วาดลายเซ็น"</span>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="app.clearSignaturePad()"><i class="fa-solid fa-eraser"></i> ล้างลายเซ็น</button>
+                                </div>
                             </div>
+
+</div>
                         </div>
                     </div>
                     <div id="modal-status-text" style="margin-top: 15px; margin-bottom: 15px; text-align: center; font-size: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;"></div>
@@ -1497,7 +1515,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1209"></script>
+    <script src="app_v49_23.js?v=1211"></script>
 </body>
 </html>
 
