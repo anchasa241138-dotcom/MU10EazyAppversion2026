@@ -262,7 +262,7 @@ const app = {
                 sample_name: 'ผักคะน้า', sample_qty: 1, distributor: 'แผงผัก ป้าแดง', source: 'ตลาดไท',
                 status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-21',
                 analysis_details: 'ไม่พบการตกค้างของยาฆ่าแมลงกลุ่มออร์กาโนฟอสเฟต',
-                analysis_summary: 'ผ่านเกณฑ์มาตรฐาน', approver_name: 'Admin Mobile Unit 10',
+                analysis_summary: 'ผ่าน', approver_name: 'Admin Mobile Unit 10',
                 created_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
             },
             {
@@ -273,7 +273,7 @@ const app = {
                 sample_name: 'ลูกชิ้นหมู', sample_qty: 2, distributor: 'เฮียชัย', source: 'ผลิตเอง',
                 status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-22',
                 analysis_details: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
-                analysis_summary: 'ไม่ผ่านเกณฑ์มาตรฐาน', approver_name: 'Admin Mobile Unit 10',
+                analysis_summary: 'ไม่ผ่าน', approver_name: 'Admin Mobile Unit 10',
                 created_at: new Date(Date.now() - 86400000).toISOString()
             },
             {
@@ -590,7 +590,7 @@ const app = {
             }
             const displayName = sampleNames.join(', ') || '-';
 
-            const summary = s.analysis_summary || 'ผ่านเกณฑ์มาตรฐาน';
+            const summary = s.analysis_summary || 'ผ่าน';
             let summaryBadge = '';
             if (summary.includes('ไม่ผ่าน')) {
                 summaryBadge = `<span class="badge" style="background:#fee2e2; color:#991b1b;">${summary}</span>`;
@@ -2086,17 +2086,17 @@ const app = {
     
     handleMu10002InterpretationChange(idx, key) {
         const interpretationMap = {
-            'สีแดง': { result: 'พบ', summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'สีส้มแดง': { result: 'พบ', summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'สีเหลือง': { result: 'ไม่พบ', summary: 'ผ่านเกณฑ์มาตรฐาน' },
-            'สีชมพู': { result: 'พบ', summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'ไม่มีสี': { result: 'ไม่พบ', summary: 'ผ่านเกณฑ์มาตรฐาน' },
-            'ตะกอนสีเทาดำ': { result: 'พบ', summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'สีฟ้า': { result: 'ไม่พบ', summary: 'ผ่านเกณฑ์มาตรฐาน' },
-            'สีม่วงดำ': { result: 'พบ', summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'สีเขียว': { result: 'ไม่พบ', summary: 'ผ่านเกณฑ์มาตรฐาน' },
-            '1 ขีด (Control)': { result: 'พบ', summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            '2 ขีด (Control) และ (Test)': { result: 'ไม่พบ', summary: 'ผ่านเกณฑ์มาตรฐาน' }
+            'สีแดง': { result: 'พบ', summary: 'ไม่ผ่าน' },
+            'สีส้มแดง': { result: 'พบ', summary: 'ไม่ผ่าน' },
+            'สีเหลือง': { result: 'ไม่พบ', summary: 'ผ่าน' },
+            'สีชมพู': { result: 'พบ', summary: 'ไม่ผ่าน' },
+            'ไม่มีสี': { result: 'ไม่พบ', summary: 'ผ่าน' },
+            'ตะกอนสีเทาดำ': { result: 'พบ', summary: 'ไม่ผ่าน' },
+            'สีฟ้า': { result: 'ไม่พบ', summary: 'ผ่าน' },
+            'สีม่วงดำ': { result: 'พบ', summary: 'ไม่ผ่าน' },
+            'สีเขียว': { result: 'ไม่พบ', summary: 'ผ่าน' },
+            '1 ขีด (Control)': { result: 'พบ', summary: 'ไม่ผ่าน' },
+            '2 ขีด (Control) และ (Test)': { result: 'ไม่พบ', summary: 'ผ่าน' }
         };
         const el = document.getElementById('analysis-interpretation-' + idx + '-' + key);
         const resultInput = document.getElementById('analysis-detail-results-' + idx + '-' + key);
@@ -2107,7 +2107,7 @@ const app = {
         if (mapped) {
             resultInput.value = mapped.result;
             summaryInput.value = mapped.summary;
-            if (mapped.summary === 'ผ่านเกณฑ์มาตรฐาน') {
+            if (mapped.summary === 'ผ่าน') {
                 resultInput.style.color = '#16a34a';
                 resultInput.style.background = '#f0fdf4';
                 summaryInput.style.color = '#16a34a';
@@ -2154,11 +2154,11 @@ const app = {
 
     handleInterpretationChange(idx) {
         const interpretationMap = {
-            'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' },
-            'สีควบคุม>สีตัวอย่าง<สีตัดสิน':       { result: 'พบปลอดภัย',  summary: 'ผ่านเกณฑ์มาตรฐาน' },
-            'สีตัวอย่าง ≥ สีตัดสิน':              { result: 'พบอันตราย',  summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่านเกณฑ์มาตรฐาน' },
-            'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่านเกณฑ์มาตรฐาน' }
+            'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่าน' },
+            'สีควบคุม>สีตัวอย่าง<สีตัดสิน':       { result: 'พบปลอดภัย',  summary: 'ผ่าน' },
+            'สีตัวอย่าง ≥ สีตัดสิน':              { result: 'พบอันตราย',  summary: 'ไม่ผ่าน' },
+            'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่าน' },
+            'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่าน' }
         };
         const el = document.getElementById('analysis-interpretation-' + idx);
         const resultInput = document.getElementById('analysis-detail-results-' + idx);
@@ -2178,9 +2178,9 @@ const app = {
         if (mapped1) {
             anyMapped = true;
             resultInput.value = mapped1.result;
-            if (mapped1.summary !== 'ผ่านเกณฑ์มาตรฐาน') overallPass = false;
+            if (mapped1.summary !== 'ผ่าน') overallPass = false;
             
-            if (mapped1.summary === 'ผ่านเกณฑ์มาตรฐาน') {
+            if (mapped1.summary === 'ผ่าน') {
                 resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
             } else {
                 resultInput.style.color = '#dc2626'; resultInput.style.background = '#fef2f2';
@@ -2194,9 +2194,9 @@ const app = {
             if (mapped2) {
                 anyMapped = true;
                 resultInput2.value = mapped2.result;
-                if (mapped2.summary !== 'ผ่านเกณฑ์มาตรฐาน') overallPass = false;
+                if (mapped2.summary !== 'ผ่าน') overallPass = false;
                 
-                if (mapped2.summary === 'ผ่านเกณฑ์มาตรฐาน') {
+                if (mapped2.summary === 'ผ่าน') {
                     resultInput2.style.color = '#16a34a'; resultInput2.style.background = '#f0fdf4';
                 } else {
                     resultInput2.style.color = '#dc2626'; resultInput2.style.background = '#fef2f2';
@@ -2207,7 +2207,7 @@ const app = {
         }
         
         if (anyMapped) {
-            summaryInput.value = overallPass ? 'ผ่านเกณฑ์มาตรฐาน' : 'ไม่ผ่านเกณฑ์มาตรฐาน';
+            summaryInput.value = overallPass ? 'ผ่าน' : 'ไม่ผ่าน';
             if (overallPass) {
                 summaryInput.style.color = '#16a34a'; summaryInput.style.background = '#f0fdf4';
             } else {
@@ -2445,8 +2445,8 @@ const app = {
                         <label for="analysis-summary-outcome">สรุปผล <span class="required">*</span></label>
                         <select id="analysis-summary-outcome" required>
                             <option value="">-- เลือกสรุปผล --</option>
-                            <option value="ผ่านเกณฑ์มาตรฐาน">ผ่านเกณฑ์มาตรฐาน</option>
-                            <option value="ไม่ผ่านเกณฑ์มาตรฐาน">ไม่ผ่านเกณฑ์มาตรฐาน / ปนเปื้อน</option>
+                            <option value="ผ่าน">ผ่าน</option>
+                            <option value="ไม่ผ่าน">ไม่ผ่าน / ปนเปื้อน</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -2512,7 +2512,7 @@ const app = {
                         }
                         const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
                         sample['analysis_summary_' + idx] = summary;
-                        if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
+                        if (summary === 'ผ่าน') passCount++;
                     }
                     idx++;
                 }
@@ -2528,14 +2528,14 @@ const app = {
                     }
                     const summary = document.getElementById('analysis-summary-outcome-1')?.value || '';
                     sample['analysis_summary_1'] = summary;
-                    if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
+                    if (summary === 'ผ่าน') passCount++;
                 }
                 
                 // Set overall summary string for table views
                 if (passCount === totalCount && totalCount > 0) {
-                    sample.analysis_summary = 'ผ่านเกณฑ์มาตรฐาน';
+                    sample.analysis_summary = 'ผ่าน';
                 } else if (passCount === 0) {
-                    sample.analysis_summary = 'ไม่ผ่านเกณฑ์มาตรฐาน';
+                    sample.analysis_summary = 'ไม่ผ่าน';
                 } else {
                     sample.analysis_summary = `ผ่าน ${passCount} / ไม่ผ่าน ${totalCount - passCount}`;
                 }
@@ -2553,7 +2553,7 @@ const app = {
                                 sample['analysis_details_' + idx + '_' + key] = document.getElementById('analysis-detail-results-' + idx + '-' + key)?.value || '';
                                 const summary = document.getElementById('analysis-summary-outcome-' + idx + '-' + key)?.value || '';
                                 sample['analysis_summary_' + idx + '_' + key] = summary;
-                                if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
+                                if (summary === 'ผ่าน') passCount++;
                             }
                         });
                     }
@@ -2570,16 +2570,16 @@ const app = {
                             sample['analysis_details_1_' + key] = document.getElementById('analysis-detail-results-1-' + key)?.value || '';
                             const summary = document.getElementById('analysis-summary-outcome-1-' + key)?.value || '';
                             sample['analysis_summary_1_' + key] = summary;
-                            if (summary === 'ผ่านเกณฑ์มาตรฐาน') passCount++;
+                            if (summary === 'ผ่าน') passCount++;
                         }
                     });
                 }
 
                 if (totalCount > 0) {
                     if (passCount === totalCount) {
-                        sample.analysis_summary = 'ผ่านเกณฑ์มาตรฐาน';
+                        sample.analysis_summary = 'ผ่าน';
                     } else {
-                        sample.analysis_summary = 'ไม่ผ่านเกณฑ์มาตรฐาน';
+                        sample.analysis_summary = 'ไม่ผ่าน';
                     }
                     sample.analysis_details = 'ดูรายละเอียดในใบรายงานผล';
                 }
@@ -2844,7 +2844,7 @@ const app = {
                                 usedTests.add(k);
                                 const sum = sample['analysis_summary_' + idx + '_' + k];
                                 const det = sample['analysis_details_' + idx + '_' + k];
-                                if (sum !== 'ผ่านเกณฑ์มาตรฐาน') itemPass = false;
+                                if (sum !== 'ผ่าน') itemPass = false;
                                 if (det) itemDetails.push(det);
                             }
                         });
@@ -2854,7 +2854,7 @@ const app = {
                              isPass = true;
                         }
                     } else {
-                        isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
+                        isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่าน';
                         detailsText = sample['analysis_details_' + idx] || sample.analysis_details || '-';
                     }
 
@@ -2888,7 +2888,7 @@ const app = {
                             usedTests.add(k);
                             const sum = sample['analysis_summary_1_' + k];
                             const det = sample['analysis_details_1_' + k];
-                            if (sum !== 'ผ่านเกณฑ์มาตรฐาน') itemPass = false;
+                            if (sum !== 'ผ่าน') itemPass = false;
                             if (det) itemDetails.push(det);
                         }
                     });
@@ -2898,7 +2898,7 @@ const app = {
                         isPass = true;
                     }
                 } else {
-                    isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่านเกณฑ์มาตรฐาน';
+                    isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่าน';
                     detailsText = sample['analysis_details_1'] || sample.analysis_details || '-';
                 }
 
@@ -3500,8 +3500,8 @@ const app = {
                     <tr style="height: 60px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor ? (i + 1) : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_duration}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${formattedDate}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_frequency}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_reason}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_disposal}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; font-weight:bold; border:1px solid #555;">${item.polar_value}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:11px; font-weight:bold; border:1px solid #555;">${summaryText}</td> </tr>`;
             } else if (sample.form_type === 'MU.10-004') {
                 const showChecked = !!item.food_type;
-                const isPassChecked = showChecked && sample.analysis_summary === 'ผ่าน';
-                const isFailChecked = showChecked && sample.analysis_summary === 'ไม่ผ่าน';
+                const isPassChecked = showChecked && (sample.analysis_summary === 'ผ่าน' || sample.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน');
+                const isFailChecked = showChecked && (sample.analysis_summary === 'ไม่ผ่าน' || sample.analysis_summary === 'ไม่ผ่านเกณฑ์มาตรฐาน');
 
                 tableRows += `
                     <tr style="height: 60px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_category}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_duration}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_count}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_frequency}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${chk('ผ่าน', isPassChecked)}  
@@ -3554,7 +3554,7 @@ const app = {
                         <div style="font-size:8px; line-height:1.4;"> <div>${chk('ไม่พบ', b_res === 'ไม่พบ')} ${chk('พบ', b_res === 'พบ')}</div> <div>${chk('ไม่พบ', f_res === 'ไม่พบ')} ${chk('พบ', f_res === 'พบ')}</div> <div>${chk('ไม่พบ', bl_res === 'ไม่พบ')} ${chk('พบ', bl_res === 'พบ')}</div> <div>${chk('ไม่พบ', s_res === 'ไม่พบ')} ${chk('พบ', s_res === 'พบ')}</div> <div>${chk('ไม่พบ', a_res === 'ไม่พบ')} ${chk('พบ', a_res === 'พบ')}</div> </div>`;
                         
                     summaryCell = `
-                        <div style="font-size:8px; line-height:1.4;"> <div>${chk('ผ่าน', b_sum === 'ผ่านเกณฑ์มาตรฐาน')} ${chk('ไม่ผ่าน', b_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน')}</div> <div>${chk('ผ่าน', f_sum === 'ผ่านเกณฑ์มาตรฐาน')} ${chk('ไม่ผ่าน', f_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน')}</div> <div>${chk('ผ่าน', bl_sum === 'ผ่านเกณฑ์มาตรฐาน')} ${chk('ไม่ผ่าน', bl_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน')}</div> <div>${chk('ผ่าน', s_sum === 'ผ่านเกณฑ์มาตรฐาน')} ${chk('ไม่ผ่าน', s_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน')}</div> <div>${chk('ผ่าน', a_sum === 'ผ่านเกณฑ์มาตรฐาน')} ${chk('ไม่ผ่าน', a_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน')}</div> </div>`;
+                        <div style="font-size:8px; line-height:1.4;"> <div>${chk('ผ่าน', (b_sum === 'ผ่าน' || b_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (b_sum === 'ไม่ผ่าน' || b_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (f_sum === 'ผ่าน' || f_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (f_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (bl_sum === 'ผ่าน' || bl_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (bl_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (s_sum === 'ผ่าน' || s_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (s_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (a_sum === 'ผ่าน' || a_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (a_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> </div>`;
                 } else {
                     const sub = showChecked ? (sample['analysis_substance_' + (item.idx || 1)] || '') : '';
                     const interp = showChecked ? (sample['analysis_interpretation_' + (item.idx || 1)] || '') : '';
@@ -3578,8 +3578,8 @@ const app = {
                 }
 
                 const sumValue = sample.form_type === 'MU.10-001' ? (sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary) : sample.analysis_summary;
-                const isPassChecked = showChecked && (sumValue === 'ผ่านเกณฑ์มาตรฐาน' || sumValue === 'ผ่าน');
-                const isFailChecked = showChecked && (sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน' || sumValue === 'ไม่ผ่าน');
+                const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่าน');
+                const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
                 summaryCell = `
                     <div style="font-size:7.5px; line-height:1.2;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
 
@@ -4194,10 +4194,10 @@ const app = {
                 
                 let itemSummary = '-';
                 if (summaries.length > 0) {
-                    if (summaries.some(x => x === 'ไม่ผ่านเกณฑ์มาตรฐาน' || x === 'ไม่ผ่าน')) {
-                        itemSummary = 'ไม่ผ่านเกณฑ์มาตรฐาน';
-                    } else if (summaries.every(x => x === 'ผ่านเกณฑ์มาตรฐาน' || x === 'ผ่าน')) {
-                        itemSummary = 'ผ่านเกณฑ์มาตรฐาน';
+                    if (summaries.some(x => x === 'ไม่ผ่าน' || x === 'ไม่ผ่านเกณฑ์มาตรฐาน')) {
+                        itemSummary = 'ไม่ผ่าน';
+                    } else if (summaries.every(x => x === 'ผ่าน' || x === 'ผ่าน')) {
+                        itemSummary = 'ผ่าน';
                     } else {
                         itemSummary = [...new Set(summaries.filter(Boolean))].join(', ');
                     }
