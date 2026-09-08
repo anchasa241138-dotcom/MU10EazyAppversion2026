@@ -48,75 +48,52 @@ const app = {
 
     // Initialization
     
-    toggleSignMode() {
-        const mode = document.querySelector('input[name="pdfSignMode"]:checked');
-        const container = document.getElementById('drawSignatureContainer');
-        if (mode && mode.value === 'draw') {
-            if(container) container.style.display = 'block';
-            if(!this.sigPadInitialized) {
-                this.initSignaturePad();
-                this.sigPadInitialized = true;
-            }
+
+    signaturePads: {},
+
+    toggleSignMode(roleId) {
+        if (!roleId) return; // safety
+        const mode = document.getElementById('mode-' + roleId).value;
+        const container = document.getElementById('draw-container-' + roleId);
+        
+        if (mode === 'draw') {
+            container.style.display = 'block';
+            this.initSignaturePad(roleId);
         } else {
-            if(container) container.style.display = 'none';
+            container.style.display = 'none';
         }
     },
-    initSignaturePad() {
-        const canvas = document.getElementById('hybridSignaturePad');
-        if(!canvas) return;
-        const ctx = canvas.getContext('2d');
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        let drawing = false;
-        let lastPos = {x: 0, y: 0};
-        
-        const getPos = (e) => {
-            const rect = canvas.getBoundingClientRect();
-            if (e.touches && e.touches.length > 0) {
-                return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+
+    initSignaturePad(roleId) {
+        const canvas = document.getElementById('canvas-' + roleId);
+        if (!canvas) return;
+
+        // Resize canvas correctly to prevent squishing
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        // Only resize if width is 0 or needs update, to prevent clearing on every toggle
+        if (canvas.width === 0 || canvas.width !== canvas.offsetWidth * ratio) {
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+        }
+
+        // Initialize or re-enable
+        if (typeof SignaturePad !== 'undefined') {
+            if (!this.signaturePads[roleId]) {
+                this.signaturePads[roleId] = new SignaturePad(canvas, {
+                    backgroundColor: 'rgba(255, 255, 255, 0)',
+                    penColor: 'rgb(0, 0, 128)' // Dark blue pen
+                });
             }
-            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-        };
-
-        const startDraw = (e) => {
-            e.preventDefault();
-            drawing = true;
-            lastPos = getPos(e);
-        };
-        const draw = (e) => {
-            if(!drawing) return;
-            e.preventDefault();
-            const pos = getPos(e);
-            ctx.beginPath();
-            ctx.moveTo(lastPos.x, lastPos.y);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            lastPos = pos;
-        };
-        const stopDraw = (e) => {
-            if (drawing) e.preventDefault();
-            drawing = false;
-        };
-
-        canvas.onmousedown = startDraw;
-        canvas.onmousemove = draw;
-        canvas.onmouseup = stopDraw;
-        canvas.onmouseout = stopDraw;
-        
-        canvas.ontouchstart = startDraw;
-        canvas.ontouchmove = draw;
-        canvas.ontouchend = stopDraw;
-        canvas.ontouchcancel = stopDraw;
+        }
     },
-    clearSignaturePad() {
-        const canvas = document.getElementById('hybridSignaturePad');
-        if(!canvas) return;
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    clearSignaturePad(roleId) {
+        if (this.signaturePads && this.signaturePads[roleId]) {
+            this.signaturePads[roleId].clear();
+        }
     },
+
     init() {
         try {
             if (typeof document !== 'undefined' && document.fonts) {
@@ -2705,11 +2682,14 @@ const app = {
 
         
         
-        const renderSignatureSlot = (personKey, defaultRole) => {
+        const renderSignatureSlot = (personKey, defaultRole, roleId) => {
             // Mallika is locked to E-Signature only
+
             const isMallika = (personKey === 'mallika');
+            const mode = sample['mode_' + roleId] || 'system';
+            const drawnSig = sample['sig_' + roleId];
             
-            if (sample.pdfSignMode === 'wet' && personKey && !isMallika) {
+            if (mode === 'wet' && personKey && !isMallika) {
                 // If wet signature is selected and there's a person chosen, just print their name and blank space
                 const pName = PERSON_DATA[personKey]?.name || '';
                 return `
@@ -2765,9 +2745,10 @@ const app = {
                 extraStyle += ' transform: scale(1.4); margin-bottom: 0px;';
             }
             
+
             let imgSrc = p.sig;
-            if (sample.pdfSignMode === 'draw' && sample.custom_drawn_sig && !isMallika) {
-                imgSrc = sample.custom_drawn_sig;
+            if (mode === 'draw' && drawnSig && !isMallika) {
+                imgSrc = drawnSig;
                 // reset extra style for custom drawing so it doesn't get squished based on who they are
                 extraStyle = 'max-height: 40px; margin-bottom: -5px; transform-origin: bottom center; margin-left: 0px;';
             }
@@ -3027,10 +3008,10 @@ const app = {
                         </div>
                         
                         <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
-                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์')}
-                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์')}
-                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง')}
-                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง')}
+                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
+                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2')}
                         </div>
                     </div>
                 `;
@@ -3079,35 +3060,72 @@ const app = {
                 const sysRadio = document.querySelector('input[name="pdfSignMode"][value="system"]');
                 if(sysRadio) sysRadio.checked = true;
                 if (this.clearSignaturePad) this.clearSignaturePad();
-                if (this.toggleSignMode) this.toggleSignMode();
-                
-                const btnApprove = document.getElementById('btnApproveAndSign');
+const btnApprove = document.getElementById('btnApproveAndSign');
 
                 
                 if (viewOnly) {
+
                     s1.value = sample.sel_analyst_1 || "";
                     s2.value = sample.sel_analyst_2 || "";
                     s3.value = sample.sel_approver_1 || "";
                     s4.value = sample.sel_approver_2 || "";
+                    
+                    const m1 = document.getElementById('mode-analyst-1');
+                    const m2 = document.getElementById('mode-analyst-2');
+                    const m3 = document.getElementById('mode-approver-1');
+                    if(m1) { m1.value = sample.mode_analyst_1 || 'system'; m1.disabled = true; }
+                    if(m2) { m2.value = sample.mode_analyst_2 || 'system'; m2.disabled = true; }
+                    if(m3) { m3.value = sample.mode_approver_1 || 'system'; m3.disabled = true; }
+
                     s1.disabled = true; s2.disabled = true; s3.disabled = true; s4.disabled = true;
                     btnApprove.style.display = 'none';
                 } else if (sample.status === 'summarized') {
                     // Part 1: Analyst
+
                     s1.value = sample.sel_analyst_1 || "anchasa";
                     s2.value = sample.sel_analyst_2 || "surachai";
                     s3.value = "";
                     s4.value = "";
+                    
+                    document.getElementById('mode-analyst-1').value = sample.mode_analyst_1 || 'system';
+                    document.getElementById('mode-analyst-2').value = sample.mode_analyst_2 || 'system';
+                    document.getElementById('mode-approver-1').value = sample.mode_approver_1 || 'system';
+
+
                     s1.disabled = false; s2.disabled = false;
                     s3.disabled = true; s4.disabled = true;
+                    
+                    const m1 = document.getElementById('mode-analyst-1');
+                    const m2 = document.getElementById('mode-analyst-2');
+                    const m3 = document.getElementById('mode-approver-1');
+                    if(m1) m1.disabled = false;
+                    if(m2) m2.disabled = false;
+                    if(m3) m3.disabled = true;
+
                     btnApprove.innerHTML = '<i class="fa-solid fa-pen-nib"></i> บันทึกลายมือชื่อผู้ตรวจวิเคราะห์';
                     btnApprove.style.display = 'inline-block';
                 } else if (sample.status === 'analyst_signed' || (sample.status === 'approved' && forceEdit)) {
+
                     s1.value = sample.sel_analyst_1 || "anchasa";
                     s2.value = sample.sel_analyst_2 || "surachai";
                     s3.value = sample.sel_approver_1 || "thitiporn";
                     s4.value = sample.sel_approver_2 || "mallika";
+                    
+                    document.getElementById('mode-analyst-1').value = sample.mode_analyst_1 || 'system';
+                    document.getElementById('mode-analyst-2').value = sample.mode_analyst_2 || 'system';
+                    document.getElementById('mode-approver-1').value = sample.mode_approver_1 || 'system';
+
+
                     s1.disabled = false; s2.disabled = false;
                     s3.disabled = false; s4.disabled = true;
+                    
+                    const m1 = document.getElementById('mode-analyst-1');
+                    const m2 = document.getElementById('mode-analyst-2');
+                    const m3 = document.getElementById('mode-approver-1');
+                    if(m1) m1.disabled = false;
+                    if(m2) m2.disabled = false;
+                    if(m3) m3.disabled = false;
+
                     btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
                     btnApprove.style.display = 'inline-block';
                 }
@@ -3117,8 +3135,43 @@ const app = {
                 if(document.getElementById('cert-mu10-signatures')) document.getElementById('cert-mu10-signatures').style.display = 'none';
                 document.getElementById('approve-officer-name').value = this.currentUser.fullname;
             }
+
             // Attach refId to approve button
             btnApprove.dataset.refId = refId;
+            
+            // Sync UI state for modes
+            if (this.toggleSignMode) {
+                this.toggleSignMode('analyst-1');
+                this.toggleSignMode('analyst-2');
+                this.toggleSignMode('approver-1');
+                
+                // If there are existing drawn signatures, draw them onto the canvas!
+                ['analyst-1', 'analyst-2', 'approver-1'].forEach(roleId => {
+                    const dbKey = roleId.replace('-', '_');
+                    const canvas = document.getElementById('canvas-' + roleId);
+                    const mode = document.getElementById('mode-' + roleId)?.value;
+                    if (mode === 'draw' && canvas) {
+                        if (sample['sig_' + dbKey]) {
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+                        img.onload = () => {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            // Also load it into SignaturePad data if needed
+                            if(this.signaturePads && this.signaturePads[roleId]) {
+                                this.signaturePads[roleId].fromDataURL(sample['sig_' + dbKey]);
+                            }
+                        };
+                        img.src = sample['sig_' + dbKey];
+                        } else {
+                            if(this.signaturePads && this.signaturePads[roleId]) {
+                                this.signaturePads[roleId].clear();
+                            }
+                        }
+                    }
+                });
+            }
+
         }
 
         // Ensure refId is always available for edit operations
@@ -3149,17 +3202,25 @@ const app = {
             }
             const sample = this.samples[sampleIndex];
 
-            // Save signature format and custom drawing if present
-            if (document.getElementById('hybridSignaturePad')) {
-                const mode = document.querySelector('input[name="pdfSignMode"]:checked')?.value || 'system';
-                sample.pdfSignMode = mode;
-                if (mode === 'draw') {
-                    const canvas = document.getElementById('hybridSignaturePad');
-                    if(canvas) sample.custom_drawn_sig = canvas.toDataURL();
-                } else {
-                    sample.custom_drawn_sig = null;
+            
+            // Save individual signature formats and custom drawings
+            const roles = ['analyst-1', 'analyst-2', 'approver-1'];
+            roles.forEach(roleId => {
+                const dbKey = roleId.replace('-', '_'); // analyst_1
+                const modeEl = document.getElementById('mode-' + roleId);
+                if (modeEl) {
+                    const mode = modeEl.value;
+                    sample['mode_' + dbKey] = mode;
+                    
+                    if (mode === 'draw') {
+                        const canvas = document.getElementById('canvas-' + roleId);
+                        if (canvas) sample['sig_' + dbKey] = canvas.toDataURL();
+                    } else {
+                        sample['sig_' + dbKey] = null;
+                    }
                 }
-            }
+            });
+
 
 
             if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
