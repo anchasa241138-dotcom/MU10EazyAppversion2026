@@ -3658,11 +3658,18 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <div style="font-size:9.5px; line-height:1.1;"> <div>${chk('ไม่พบ', res === 'ไม่พบ' || res2 === 'ไม่พบ')}</div> <div style="margin-top:2px;">${chk('พบ', res === 'พบ' || res2 === 'พบ')}</div> <div style="margin-top:2px;">${chk('พบปลอดภัย', res === 'พบปลอดภัย' || res2 === 'พบปลอดภัย')}</div> <div style="margin-top:2px;">${chk('พบอันตราย', res === 'พบอันตราย' || res2 === 'พบอันตราย')}</div> </div>`;
                 }
 
-                const sumValue = sample.form_type === 'MU.10-001' ? (sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary) : sample.analysis_summary;
-                const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่าน');
-                const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
-                summaryCell = `
-                    <div style="font-size:7.5px; line-height:1.2;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
+                let sumValue = sample.analysis_summary;
+                    if (sample.form_type === 'MU.10-001') {
+                        sumValue = sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
+                    } else if (sample.form_type === 'MU.10-002') {
+                        const hasFail = b_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่าน';
+                        sumValue = hasFail ? 'ไม่ผ่าน' : 'ผ่าน';
+                    }
+                    const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่านเกณฑ์มาตรฐาน');
+                    const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
+                    
+                    summaryCell = `
+                        <div style="font-size:7.5px; line-height:1.2;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
 
                 tableRows += `
                     <tr style="height: 42px; page-break-inside: avoid;"> <td style="padding:2px 3px; text-align:left; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.distributor}</td> <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;"></td> <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.name}</td> <td style="padding:2px 3px; text-align:left; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.weight}</td> <td style="padding:2px 3px; vertical-align:top; font-size:9.5px; border:1px solid #555;">${item.source}</td> <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${checkboxCell}</td> <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${interpretCell}</td> <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${resultCell}</td> <td style="padding:2px 3px; vertical-align:top; border:1px solid #555;">${summaryCell}</td> </tr>`;
