@@ -3602,17 +3602,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         '2 ขีด (Control) และ (Test)': { result: 'ไม่พบ', summary: 'ผ่าน' }
                     };
                     
-                    const b_res = showChecked ? (interpretationMap[b_interp]?.result || sample['analysis_details_' + (item.idx || 1) + '_borax'] || '') : '';
-                    const f_res = showChecked ? (interpretationMap[f_interp]?.result || sample['analysis_details_' + (item.idx || 1) + '_formalin'] || '') : '';
-                    const bl_res = showChecked ? (interpretationMap[bl_interp]?.result || sample['analysis_details_' + (item.idx || 1) + '_bleach'] || '') : '';
-                    const s_res = showChecked ? (interpretationMap[s_interp]?.result || sample['analysis_details_' + (item.idx || 1) + '_salicylic'] || '') : '';
-                    const a_res = showChecked ? (interpretationMap[a_interp]?.result || sample['analysis_details_' + (item.idx || 1) + '_agonist'] || '') : '';
+                    const b_res = showChecked ? (interpretationMap[b_interp?.trim()]?.result || sample['analysis_details_' + (item.idx || 1) + '_borax'] || '') : '';
+                    const f_res = showChecked ? (interpretationMap[f_interp?.trim()]?.result || sample['analysis_details_' + (item.idx || 1) + '_formalin'] || '') : '';
+                    const bl_res = showChecked ? (interpretationMap[bl_interp?.trim()]?.result || sample['analysis_details_' + (item.idx || 1) + '_bleach'] || '') : '';
+                    const s_res = showChecked ? (interpretationMap[s_interp?.trim()]?.result || sample['analysis_details_' + (item.idx || 1) + '_salicylic'] || '') : '';
+                    const a_res = showChecked ? (interpretationMap[a_interp?.trim()]?.result || sample['analysis_details_' + (item.idx || 1) + '_agonist'] || '') : '';
                     
-                    const b_sum = showChecked ? (interpretationMap[b_interp]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_borax'] || '') : '';
-                    const f_sum = showChecked ? (interpretationMap[f_interp]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_formalin'] || '') : '';
-                    const bl_sum = showChecked ? (interpretationMap[bl_interp]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_bleach'] || '') : '';
-                    const s_sum = showChecked ? (interpretationMap[s_interp]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_salicylic'] || '') : '';
-                    const a_sum = showChecked ? (interpretationMap[a_interp]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_agonist'] || '') : '';
+                    const b_sum = showChecked ? (interpretationMap[b_interp?.trim()]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_borax'] || '') : '';
+                    const f_sum = showChecked ? (interpretationMap[f_interp?.trim()]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_formalin'] || '') : '';
+                    const bl_sum = showChecked ? (interpretationMap[bl_interp?.trim()]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_bleach'] || '') : '';
+                    const s_sum = showChecked ? (interpretationMap[s_interp?.trim()]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_salicylic'] || '') : '';
+                    const a_sum = showChecked ? (interpretationMap[a_interp?.trim()]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_agonist'] || '') : '';
                     
                     // Comment out the old assignments that follow
 
@@ -3639,11 +3639,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': 'พบ',
                         'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': 'ไม่พบ'
                     };
-                    const res = showChecked ? (mapping1[interp] || sample['analysis_details_' + (item.idx || 1)] || '') : '';
+                    const res = showChecked ? (mapping1[interp?.trim()] || sample['analysis_details_' + (item.idx || 1)] || '') : '';
                     const sum = showChecked ? (res === 'พบอันตราย' ? 'ไม่ผ่าน' : (res ? 'ผ่าน' : sample['analysis_summary_' + (item.idx || 1)] || '')) : '';
                     
                     const interp2 = showChecked ? (sample['analysis_interpretation_2_' + (item.idx || 1)] || '') : '';
-                    const res2 = showChecked ? (mapping2[interp2] || sample['analysis_details_2_' + (item.idx || 1)] || '') : '';
+                    const res2 = showChecked ? (mapping2[interp2?.trim()] || sample['analysis_details_2_' + (item.idx || 1)] || '') : '';
 
                     const isGtChecked = showChecked && (sub.includes('GT') || sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true);
                     const isTmChecked = showChecked && (sub.includes('TM/2') || sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
