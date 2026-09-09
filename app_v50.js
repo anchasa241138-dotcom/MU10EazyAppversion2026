@@ -3662,7 +3662,26 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     if (sample.form_type === 'MU.10-001') {
                         sumValue = sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
                     } else if (sample.form_type === 'MU.10-002') {
-                        const hasFail = b_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่าน';
+                        // Re-evaluate the summaries to prevent scoping issues
+                        const getSum = (key) => {
+                            const interp = sample['analysis_interpretation_' + (item.idx || 1) + '_' + key] || '';
+                            const localMap = {
+                                'สีแดง': { summary: 'ไม่ผ่าน' },
+                                'สีส้มแดง': { summary: 'ไม่ผ่าน' },
+                                'สีเหลือง': { summary: 'ผ่าน' },
+                                'สีชมพู': { summary: 'ไม่ผ่าน' },
+                                'ไม่มีสี': { summary: 'ผ่าน' },
+                                'ตะกอนสีเทาดำ': { summary: 'ไม่ผ่าน' },
+                                'สีฟ้า': { summary: 'ผ่าน' },
+                                'สีม่วงดำ': { summary: 'ไม่ผ่าน' },
+                                'สีเขียว': { summary: 'ผ่าน' },
+                                '1 ขีด (Control)': { summary: 'ไม่ผ่าน' },
+                                '2 ขีด (Control) และ (Test)': { summary: 'ผ่าน' }
+                            };
+                            const mapped = localMap[interp.trim()];
+                            return mapped ? mapped.summary : (sample['analysis_summary_' + (item.idx || 1) + '_' + key] || '');
+                        };
+                        const hasFail = getSum('borax') === 'ไม่ผ่าน' || getSum('formalin') === 'ไม่ผ่าน' || getSum('bleach') === 'ไม่ผ่าน' || getSum('salicylic') === 'ไม่ผ่าน' || getSum('agonist') === 'ไม่ผ่าน';
                         sumValue = hasFail ? 'ไม่ผ่าน' : 'ผ่าน';
                     }
                     const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่านเกณฑ์มาตรฐาน');
