@@ -2473,6 +2473,7 @@ const app = {
             sample.status = 'summarized';
             
             sample.analysis_analyst = document.getElementById('analysis-analyst').value;
+            sample.analysis_analyst_position = document.getElementById('analysis-analyst-position') ? document.getElementById('analysis-analyst-position').value : 'นักวิทยาศาสตร์การแพทย์';
             sample.analysis_date = document.getElementById('analysis-date').value;
             sample.analysis_timestamp = new Date().toISOString();
             
