@@ -1,0 +1,9 @@
+﻿const fs = require('fs');
+let html = fs.readFileSync('index.html', 'utf8');
+const lines = html.split('\n');
+const match = lines.findIndex(l => l.includes('id="sampleDetailPreviewModal"'));
+if (match > -1) {
+    for(let i = match; i < match + 30; i++) {
+        if(lines[i]) console.log(`${i+1}: ${lines[i]}`);
+    }
+}
