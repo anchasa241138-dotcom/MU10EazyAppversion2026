@@ -291,8 +291,14 @@
         <!-- Sidebar Navigation -->
         <aside class="app-sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo-container" style="justify-content: center; width: 100%;">
-                    <img src="logo_mobi_smartlab.png" alt="Mobi SmartLab 10 Logo" style="max-width: 100%; max-height: 70px; object-fit: contain;">
+                <div class="logo-container" style="justify-content: flex-start; width: 100%; display: flex; align-items: center; gap: 12px;">
+                    <div style="background: white; padding: 5px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                        <img src="logo_mobi_smartlab.png" alt="Logo" style="height: 38px; width: auto; object-fit: contain;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="color: white; font-weight: 700; font-size: 16px; line-height: 1.2; font-family: 'Outfit', sans-serif;">Mobi SmartLab 10</span>
+                        <span style="color: #94a3b8; font-size: 11px;">version 2026</span>
+                    </div>
                 </div>
                 <button class="toggle-sidebar-btn" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -1544,7 +1550,7 @@
     
     <!-- App Scripts -->
     <script src="charts-dash.js?v=35"></script>
-    <script src="app_v49_23.js?v=1228"></script>
+    <script src="app_v49_23.js?v=1229"></script>
 </body>
 </html>
 
