@@ -2838,20 +2838,20 @@ const app = {
 
                     if (sample.form_type === 'MU.10-002') {
                         let itemPass = true;
-                        let itemDetails = [];
+                        let itemDetailsMap = {};
                         ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
                             if (sample['test_' + k + '_' + idx] || sample['test_' + k] || (sample.tests && sample.tests.includes(testLabels[k]))) {
                                 usedTests.add(k);
                                 const sum = sample['analysis_summary_' + idx + '_' + k];
                                 const det = sample['analysis_details_' + idx + '_' + k];
                                 if (sum !== 'ผ่าน') itemPass = false;
-                                if (det) itemDetails.push(det);
+                                itemDetailsMap[k] = det || 'ไม่พบ';
                             }
                         });
                         isPass = itemPass;
-                        detailsText = itemDetails.length > 0 ? itemDetails.join(', ') : 'ไม่พบ';
-                        if (itemDetails.length === 0) {
-                             isPass = true;
+                        detailsText = itemDetailsMap; // Store object instead of string
+                        if (Object.keys(itemDetailsMap).length === 0) {
+                            isPass = true;
                         }
                     } else {
                         isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่าน';
@@ -2881,23 +2881,23 @@ const app = {
                 let detailsText = '-';
 
                 if (sample.form_type === 'MU.10-002') {
-                    let itemPass = true;
-                    let itemDetails = [];
-                    ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
-                        if (sample['test_' + k] || (sample.tests && sample.tests.includes(testLabels[k]))) {
-                            usedTests.add(k);
-                            const sum = sample['analysis_summary_1_' + k];
-                            const det = sample['analysis_details_1_' + k];
-                            if (sum !== 'ผ่าน') itemPass = false;
-                            if (det) itemDetails.push(det);
+                        let itemPass = true;
+                        let itemDetailsMap = {};
+                        ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
+                            if (sample['test_' + k] || (sample.tests && sample.tests.includes(testLabels[k]))) {
+                                usedTests.add(k);
+                                const sum = sample['analysis_summary_1_' + k];
+                                const det = sample['analysis_details_1_' + k];
+                                if (sum !== 'ผ่าน') itemPass = false;
+                                itemDetailsMap[k] = det || 'ไม่พบ';
+                            }
+                        });
+                        isPass = itemPass;
+                        detailsText = itemDetailsMap; // Store object instead of string
+                        if (Object.keys(itemDetailsMap).length === 0) {
+                            isPass = true;
                         }
-                    });
-                    isPass = itemPass;
-                    detailsText = itemDetails.length > 0 ? itemDetails.join(', ') : 'ไม่พบ';
-                    if (itemDetails.length === 0) {
-                        isPass = true;
-                    }
-                } else {
+                    } else {
                     isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่าน';
                     detailsText = sample['analysis_details_1'] || sample.analysis_details || '-';
                 }
@@ -2972,10 +2972,23 @@ const app = {
                             <td style="text-align:center;">${item.labId}</td>
                             <td style="text-align:center;">${item.sampleName}</td>
                             <td style="text-align:center;">${item.source}</td>
-                            ${tableHeaderSubstance === 'BOTH' ? 
-                                '<td style="text-align:center;">' + (item.substance.includes('GT') ? item.details : '-') + '</td>' + 
-                  '<td style="text-align:center;">' + (item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')) + '</td>' 
-                            : '<td style="text-align:center;">' + item.details + '</td>'}
+                            ${
+                                (() => {
+                                    if (sample.form_type === 'MU.10-002') {
+                                        const usedTestKeys = Array.from(usedTests);
+                                        if (usedTestKeys.length === 0) return '<td style="text-align:center;">-</td>';
+                                        return usedTestKeys.map(k => {
+                                            const det = (item.details && typeof item.details === 'object') ? item.details[k] : undefined;
+                                            return '<td style="text-align:center;">' + (det ? det : '-') + '</td>';
+                                        }).join('');
+                                    } else {
+                                        return tableHeaderSubstance === 'BOTH' ? 
+                                            '<td style="text-align:center;">' + (item.substance.includes('GT') ? item.details : '-') + '</td>' + 
+                                            '<td style="text-align:center;">' + (item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')) + '</td>' 
+                                        : '<td style="text-align:center;">' + item.details + '</td>';
+                                    }
+                                })()
+                            }
                             <td style="text-align:center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
@@ -3013,7 +3026,17 @@ const app = {
                                     <th style="white-space: nowrap;">รหัสตัวอย่าง</th>
                                     <th>ตัวอย่าง</th>
                                     <th>แหล่งที่มา</th>
-                                    ${tableHeaderSubstance === 'BOTH' ? '<th>GT</th><th>TM/2</th>' : '<th>' + tableHeaderSubstance + '</th>'}
+                                    ${
+                                        (() => {
+                                            if (sample.form_type === 'MU.10-002') {
+                                                const usedTestKeys = Array.from(usedTests);
+                                                if (usedTestKeys.length === 0) return '<th>สารปนเปื้อน</th>';
+                                                return usedTestKeys.map(k => '<th>' + testLabels[k] + '</th>').join('');
+                                            } else {
+                                                return tableHeaderSubstance === 'BOTH' ? '<th>GT</th><th>TM/2</th>' : '<th>' + tableHeaderSubstance + '</th>';
+                                            }
+                                        })()
+                                    }
                                     <th style="white-space: nowrap;">สรุปผล</th>
                                 </tr>
                             </thead>
