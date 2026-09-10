@@ -3023,7 +3023,7 @@ const app = {
                                 const numSubstances = Math.max(1, Array.from(usedTests).length);
                                 const totalCols = 5 + numSubstances + 1;
                                 if (totalCols >= 9) {
-                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 4px !important; }</style><table class="cert-multi-table" style="font-size: 9.5px;">';
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 4px 6px !important; letter-spacing: -0.1px; }</style><table class="cert-multi-table" style="font-size: 8.5px;">';
                                 } else if (totalCols >= 7) {
                                     return '<style>.cert-multi-table th, .cert-multi-table td { padding: 6px !important; }</style><table class="cert-multi-table" style="font-size: 10.5px;">';
                                 }
