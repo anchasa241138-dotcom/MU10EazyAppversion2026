@@ -2979,7 +2979,7 @@ const app = {
                                         if (usedTestKeys.length === 0) return '<td style="text-align:center;">-</td>';
                                         return usedTestKeys.map(k => {
                                             const det = (item.details && typeof item.details === 'object') ? item.details[k] : undefined;
-                                            return '<td style="text-align:center;">' + (det ? det : '-') + '</td>';
+                                            return '<td style="text-align:center; white-space: nowrap;">' + (det ? det : '-') + '</td>';
                                         }).join('');
                                     } else {
                                         return tableHeaderSubstance === 'BOTH' ? 
@@ -3042,7 +3042,7 @@ const app = {
                                             if (sample.form_type === 'MU.10-002') {
                                                 const usedTestKeys = Array.from(usedTests);
                                                 if (usedTestKeys.length === 0) return '<th>สารปนเปื้อน</th>';
-                                                return usedTestKeys.map(k => '<th>' + testLabels[k] + '</th>').join('');
+                                                return usedTestKeys.map(k => '<th style="white-space: nowrap;">' + testLabels[k] + '</th>').join('');
                                             } else {
                                                 return tableHeaderSubstance === 'BOTH' ? '<th>GT</th><th>TM/2</th>' : '<th>' + tableHeaderSubstance + '</th>';
                                             }
