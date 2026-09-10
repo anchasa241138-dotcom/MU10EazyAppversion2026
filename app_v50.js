@@ -2823,7 +2823,7 @@ const app = {
             let usedTests = new Set();
             const testLabels = {
                 borax: 'บอแรกซ์',
-                formalin: 'ฟอร์มาลดีไฮด์',
+                formalin: 'ฟอร์มาลิน',
                 bleach: 'ฟอกขาว',
                 salicylic: 'กันรา',
                 agonist: 'สารเร่งเนื้อแดง'
@@ -3018,7 +3018,18 @@ const app = {
                             </div>
                         </div>
                         
-                        <table class="cert-multi-table">
+                        ${(() => {
+                            if (sample.form_type === 'MU.10-002') {
+                                const numSubstances = Math.max(1, Array.from(usedTests).length);
+                                const totalCols = 5 + numSubstances + 1;
+                                if (totalCols >= 9) {
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 4px !important; }</style><table class="cert-multi-table" style="font-size: 9.5px;">';
+                                } else if (totalCols >= 7) {
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 6px !important; }</style><table class="cert-multi-table" style="font-size: 10.5px;">';
+                                }
+                            }
+                            return '<table class="cert-multi-table">';
+                        })()}
                             <thead>
                                 <tr>
                                     <th style="white-space: nowrap;">ลำดับ</th>
