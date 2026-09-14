@@ -3003,7 +3003,7 @@ const app = {
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 20px; margin-bottom: 15px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #1e3a8a;">${reportTitle}</h4>
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #000;">${reportTitle}</h4>
                             <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size: 12px;">
                                 <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
                             </div>
