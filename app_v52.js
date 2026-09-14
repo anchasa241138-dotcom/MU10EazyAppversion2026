@@ -3116,6 +3116,9 @@ const app = {
             }
                         container.innerHTML = fullHtml;
         } else if (sample.form_type === 'MU.10-003') {
+            const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
+            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
+            let remarkText = '';
             const reportTitle = 'ผลการตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ โดยใช้เครื่อง testo 270';
             
             const usedTests = new Set();
