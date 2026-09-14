@@ -3211,24 +3211,24 @@ const app = {
                             <div>RD-003</div>
                             <div>หน้า ${page + 1}/${totalPages}</div>
                         </div>
-                        <div class="cert-header" style="margin-top: 5px;">
-                            <h3 style="font-size: 16px; margin: 0;">${reportTitle}</h3>
+                        <div class="cert-header" style="margin-top: 5px; text-align: center; width: 100%;">
+                            <h3 style="font-size: 16px; margin: 0; text-align: center; width: 100%; display: block;">${reportTitle}</h3>
                         </div>
                         
-                        <div class="cert-info-grid" style="margin-top: 15px; font-size: 12px; line-height: 1.6;">
-                            <div style="display:flex;">
+                        <div class="cert-info-grid" style="margin-top: 15px; font-size: 12px; line-height: 1.8;">
+                            <div style="display:flex; margin-bottom: 6px;">
                                 <div style="width: 140px;"><strong>สถานที่เก็บตัวอย่าง</strong></div>
                                 <div>: ${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</div>
                             </div>
-                            <div style="display:flex;">
+                            <div style="display:flex; margin-bottom: 6px;">
                                 <div style="width: 140px;"><strong>วันที่รับตัวอย่าง</strong></div>
                                 <div>: ${receiveDate}</div>
                             </div>
-                            <div style="display:flex;">
+                            <div style="display:flex; margin-bottom: 6px;">
                                 <div style="width: 140px;"><strong>วันที่ตรวจวิเคราะห์</strong></div>
                                 <div>: ${analysisDate}</div>
                             </div>
-                            <div style="display:flex;">
+                            <div style="display:flex; margin-bottom: 6px;">
                                 <div style="width: 140px;"><strong>จำนวนตัวอย่าง</strong></div>
                                 <div>: ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</div>
                             </div>
@@ -3239,7 +3239,7 @@ const app = {
                                 <tr>
                                     <th rowspan="2" style="white-space: nowrap; width: 5%;">ลำดับ</th>
                                     <th rowspan="2" style="width: 15%;">ชื่อผู้จำหน่าย</th>
-                                    <th rowspan="2" style="width: 12%;">ประเภท/<br>ชนิดอาหาร</th>
+                                    <th rowspan="2" style="width: 12%;">ชนิดอาหาร</th>
                                     <th colspan="4">น้ำมันที่ทอดอาหาร</th>
                                     <th rowspan="2" style="white-space: nowrap; width: 8%;">ค่าโพลาร์</th>
                                     <th rowspan="2" style="white-space: nowrap; width: 8%;">สรุปผล</th>
