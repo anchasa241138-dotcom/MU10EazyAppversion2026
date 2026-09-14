@@ -1877,7 +1877,16 @@ const app = {
         
         document.getElementById('accept-sample-ref-id').value = sample.ref_id;
         document.getElementById('accept-sample-ref-display').value = sample.ref_id;
-        document.getElementById('accept-sample-name-display').value = sample.sample_name;
+        
+        let sName = sample.sample_name;
+        if (!sName) {
+            let names = [];
+            let i = 1;
+            while(sample['sample_name_'+i]) { names.push(sample['sample_name_'+i]); i++; }
+            sName = names.join(', ');
+        }
+        document.getElementById('accept-sample-name-display').value = sName || '-';
+
         
         // Generate auto E-Tracking ID
         const year = new Date().getFullYear() + 543; // Thai year
