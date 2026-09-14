@@ -2074,6 +2074,41 @@ const app = {
         // Render dynamic section based on form type
         this.renderAnalysisDynamicSection(sample);
         
+        // Auto-fill logic for MU.10-003 (Polar value at oil pan)
+        if (sample.form_type === 'MU.10-003' && (!sample.analysis_summary || sample.analysis_summary === '')) {
+            let polarText = [];
+            let isFailed = false;
+            let idx = 1;
+            while (sample['sample_name_' + idx] !== undefined) {
+                if (sample['sample_name_' + idx]) {
+                    const polarStr = sample['polar_value_' + idx] || '-';
+                    const polarVal = parseFloat(polarStr);
+                    polarText.push(sample['sample_name_' + idx] + ' (' + polarStr + '%)');
+                    if (!isNaN(polarVal) && polarVal > 25) {
+                        isFailed = true;
+                    }
+                }
+                idx++;
+            }
+            if(polarText.length === 0 && sample.sample_name) {
+                 const polarStr = sample.polar_value || '-';
+                 const polarVal = parseFloat(polarStr);
+                 polarText.push(sample.sample_name + ' (' + polarStr + '%)');
+                 if (!isNaN(polarVal) && polarVal > 25) {
+                     isFailed = true;
+                 }
+            }
+            
+            const interpEl = document.getElementById('analysis-interpretation');
+            if(interpEl && !interpEl.value) interpEl.value = 'ตรวจและอ่านค่าโพลาร์จากเครื่อง Testo/E-bro ที่หน้ากระทะ';
+            
+            const detailEl = document.getElementById('analysis-detail-results');
+            if(detailEl && !detailEl.value) detailEl.value = 'พบค่าโพลาร์: ' + polarText.join(', ');
+            
+            const summaryEl = document.getElementById('analysis-summary-outcome');
+            if(summaryEl && !summaryEl.value) summaryEl.value = isFailed ? 'ไม่ผ่าน' : 'ผ่าน';
+        }
+        
         document.getElementById('analysisInputModal').classList.add('active');
     },
 
