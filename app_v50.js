@@ -2337,7 +2337,7 @@ const app = {
                     if (sample['test_agonist_' + idx] || sample.test_agonist) tests.push({ key: 'agonist', label: 'สารเร่งเนื้อแดง (ซาลบูทามอล)' });
                     
                     if (tests.length > 0) {
-                        sampleNames.push({ name: sample['sample_name_' + idx], idx: idx, tests: tests });
+                        sampleNames.push({ name: sample['sample_name_' + idx], idx: idx, tests: tests, labId: sample.lab_no ? String(parseInt(sample.lab_no, 10) + idx - 1).padStart(4, '0') : (sample.lab_id ? sample.lab_id + '-' + idx : '-') });
                     }
                 }
                 idx++;
@@ -2350,7 +2350,7 @@ const app = {
                 if (sample.test_salicylic) tests.push({ key: 'salicylic', label: 'กันรา (กรดซาลิซิลิค)' });
                 if (sample.test_agonist) tests.push({ key: 'agonist', label: 'สารเร่งเนื้อแดง (ซาลบูทามอล)' });
                 if (tests.length === 0) tests.push({ key: 'borax', label: 'บอแรกซ์' });
-                sampleNames.push({ name: sample.sample_name, idx: 1, tests: tests });
+                sampleNames.push({ name: sample.sample_name, idx: 1, tests: tests, labId: sample.lab_no || sample.lab_id || '-' });
             }
 
             let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
@@ -3530,8 +3530,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     distributor: sample[`distributor_${idx}`] || '',
                     weight: sample[`weight_${idx}`] || '',
                     source: sample[`source_${idx}`] || '',
-                    idx: idx,
-                    tests: tests
+                    idx: idx, tests: tests, labId: sample.lab_no ? String(parseInt(sample.lab_no, 10) + idx - 1).padStart(4, '0') : (sample.lab_id ? sample.lab_id + '-' + idx : '-')
                 });
             }
             idx++;
