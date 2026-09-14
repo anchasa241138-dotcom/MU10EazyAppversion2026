@@ -3114,6 +3114,137 @@ const app = {
                 `;
                 fullHtml += pageHtml;
             }
+                        container.innerHTML = fullHtml;
+        } else if (sample.form_type === 'MU.10-003') {
+            const reportTitle = 'ผลการตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ โดยใช้เครื่อง testo 270';
+            
+            const usedTests = new Set();
+            let idx = 1;
+            while (sample['polar_value_' + idx] !== undefined) {
+                if (sample['polar_value_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+                    usedTests.add(idx);
+                }
+                idx++;
+            }
+            
+            const validItems = [];
+            idx = 1;
+            while (sample['polar_value_' + idx] !== undefined) {
+                if (sample['polar_value_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+                    validItems.push({
+                        idx: idx,
+                        labId: sample.lab_no ? String(parseInt(sample.lab_no, 10) + validItems.length).padStart(4, '0') : (sample.lab_id ? sample.lab_id + '-' + idx : '-'),
+                        distributor: sample['distributor_' + idx] || '-',
+                        food_type: sample['sample_name_' + idx] || '-',
+                        polar_value: sample['polar_value_' + idx] || '-'
+                    });
+                }
+                idx++;
+            }
+            
+            if (validItems.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px;">ไม่มีข้อมูลตัวอย่างที่รับเข้าระบบ</div>';
+                return;
+            }
+
+            const ITEMS_PER_PAGE = 10;
+            const totalPages = Math.ceil(validItems.length / ITEMS_PER_PAGE);
+            let fullHtml = '';
+            
+            const getCheckMark = (val) => {
+                const num = parseFloat(val);
+                if(isNaN(num)) return { pass: '[ ]', fail: '[ ]' };
+                if(num <= 25) return { pass: '[✓]', fail: '[ ]' };
+                return { pass: '[ ]', fail: '[✓]' };
+            };
+
+            for (let page = 0; page < totalPages; page++) {
+                const isLastPage = (page === totalPages - 1);
+                const pageItems = validItems.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
+                
+                let rowsHtml = '';
+                for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+                    const item = pageItems[i];
+                    if (item) {
+                        const marks = getCheckMark(item.polar_value);
+                        rowsHtml += `
+                            <tr>
+                                <td style="text-align: center;">${page * ITEMS_PER_PAGE + i + 1}</td>
+                                <td>${item.distributor}</td>
+                                <td style="text-align: center;">${item.labId}</td>
+                                <td>${item.food_type}</td>
+                                <td style="text-align: center;">${item.polar_value}</td>
+                                <td style="text-align: center;">${marks.pass}</td>
+                                <td style="text-align: center;">${marks.fail}</td>
+                            </tr>
+                        `;
+                    } else {
+                        rowsHtml += `
+                            <tr>
+                                <td style="text-align: center; color: transparent;">-</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        `;
+                    }
+                }
+
+                const pageHtml = `
+                    <div class="cert-pdf-page">
+                        <div class="cert-header">
+                            <h3>${reportTitle}</h3>
+                        </div>
+                        
+                        <div class="cert-info-grid" style="margin-top: 15px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size: 12px;">
+                                <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
+                            </div>
+                            <div style="margin-bottom:6px; font-size: 12px;">
+                                <strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}
+                            </div>
+                            <div style="margin-bottom:6px; font-size: 12px;">
+                                <strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}
+                            </div>
+                        </div>
+                        
+                        <table class="cert-multi-table" style="font-size: 10.5px;">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="white-space: nowrap; width: 5%;">ลำดับ</th>
+                                    <th rowspan="2" style="width: 25%;">ชื่อผู้จำหน่าย</th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 15%;">รหัสตัวอย่าง</th>
+                                    <th rowspan="2" style="width: 25%;">ชนิดอาหารทอด</th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 10%;">ค่าโพลาร์ (%)</th>
+                                    <th colspan="2" style="white-space: nowrap; width: 20%;">ผลการตรวจวิเคราะห์</th>
+                                </tr>
+                                <tr>
+                                    <th style="white-space: nowrap; width: 10%;">ผ่าน</th>
+                                    <th style="white-space: nowrap; width: 10%;">ไม่ผ่าน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                        
+                        <div style="margin-top:15px; font-size:10px; margin-bottom: 20px; color: #334155;">
+                            ${remarkText}
+                        </div>
+                        
+                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
+                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2')}
+                        </div>
+                    </div>
+                `;
+                fullHtml += pageHtml;
+            }
             container.innerHTML = fullHtml;
         }
         if(viewOnly || (sample.status === 'approved' && !forceEdit)) {
