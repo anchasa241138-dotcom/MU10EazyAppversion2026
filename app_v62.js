@@ -1364,6 +1364,7 @@ const app = {
                 sampleData.sel_analyst_1 = 'anchasa';
                 sampleData.sel_analyst_2 = 'surachai';
                 sampleData.sel_approver_1 = 'thitiporn';
+                sampleData.sel_approver_2 = 'mallika';
                 
                 const year = new Date().getFullYear() + 543;
                 const prefix = this.getProvincePrefix(sampleData.province);
@@ -3143,14 +3144,11 @@ const app = {
                             ${remarkText}
                         </div>
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: #334155;">
-                            <div style="width: 50%; display: flex; flex-direction: column; gap: 10px;">
-                                ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
-                                ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
-                            </div>
-                            <div style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
-                            </div>
+                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
+                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2')}
                         </div>
                     </div>
                 `;
@@ -3162,6 +3160,7 @@ const app = {
                 sample.sel_analyst_1 = sample.sel_analyst_1 || 'anchasa';
                 sample.sel_analyst_2 = sample.sel_analyst_2 || 'surachai';
                 sample.sel_approver_1 = sample.sel_approver_1 || 'thitiporn';
+                sample.sel_approver_2 = sample.sel_approver_2 || 'mallika';
                 this.saveSamples();
             }
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
@@ -3255,13 +3254,15 @@ const app = {
                 }
 
                 const pageHtml = `
-                    <div class="cert-pdf-page">
-                        <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:10px; font-weight:bold;">
-                            <div>RD-003</div>
-                            <div>หน้า ${page + 1}/${totalPages}</div>
+                    <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
+                        <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                            RD-003
                         </div>
-                        <div class="cert-header" style="margin-top: 5px; text-align: center; width: 100%;">
-                            <h3 style="font-size: 16px; margin: 0; text-align: center; width: 100%; display: block;">${reportTitle}</h3>
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                            หน้าที่ ${page + 1}/${totalPages}
+                        </div>
+                        <div class="cert-pdf-header-mu10" style="margin-top: 20px; margin-bottom: 15px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #000;">${reportTitle}</h4>
                         </div>
                         
                         <div class="cert-info-grid" style="margin-top: 15px; font-size: 12px; line-height: 1.8;">
@@ -3286,12 +3287,12 @@ const app = {
                         <table class="cert-multi-table" style="font-size: 9px; margin-top:10px;">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" style="white-space: nowrap; width: 5%;">ลำดับ</th>
-                                    <th rowspan="2" style="width: 15%;">ชื่อผู้จำหน่าย</th>
-                                    <th rowspan="2" style="width: 12%;">ชนิดอาหาร</th>
-                                    <th colspan="4">น้ำมันที่ทอดอาหาร</th>
-                                    <th rowspan="2" style="white-space: nowrap; width: 8%;">ค่าโพลาร์</th>
-                                    <th rowspan="2" style="white-space: nowrap; width: 8%;">สรุปผล</th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center;"><div style="margin-top: 14px;">ลำดับ</div></th>
+                                    <th rowspan="2" style="width: 15%; text-align: center;"><div style="margin-top: 14px;">ชื่อผู้จำหน่าย</div></th>
+                                    <th rowspan="2" style="width: 12%; text-align: center;"><div style="margin-top: 14px;">ชนิดอาหาร</div></th>
+                                    <th colspan="4" style="text-align: center;"><div>น้ำมันที่ทอดอาหาร</div></th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">ค่าโพลาร์</div></th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">สรุปผล</div></th>
                                 </tr>
                                 <tr>
                                     <th style="width: 10%;">ชนิด<br>น้ำมัน</th>
@@ -3313,14 +3314,11 @@ const app = {
                             </div>
                         </div>
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: #334155;">
-                            <div style="width: 50%; display: flex; flex-direction: column; gap: 10px;">
-                                ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
-                                ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
-                            </div>
-                            <div style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
-                            </div>
+                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
+                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2')}
                         </div>
                     </div>
                 `;
