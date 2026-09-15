@@ -1355,6 +1355,40 @@ const app = {
             sampleData.created_at = new Date().toISOString();
             sampleData.created_by = this.currentUser.username; // Save creator!
             
+            if (sampleData.form_type === 'MU.10-003') {
+                sampleData.status = 'summarized';
+                sampleData.lab_receive_date = new Date().toISOString().split('T')[0];
+                sampleData.lab_receive_timestamp = new Date().toISOString();
+                sampleData.analysis_date = new Date().toISOString().split('T')[0];
+                sampleData.analysis_timestamp = new Date().toISOString();
+                sampleData.sel_analyst_1 = 'anchasa';
+                sampleData.sel_analyst_2 = 'surachai';
+                sampleData.sel_approver_1 = 'thitiporn';
+                
+                const year = new Date().getFullYear() + 543;
+                const prefix = this.getProvincePrefix(sampleData.province);
+                const count = this.samples.filter(s => s.lab_id && s.lab_id.startsWith(prefix)).length + 1;
+                sampleData.lab_id = `${prefix}-${year}-${String(count).padStart(4, '0')}`;
+                
+                let maxLabNo = 0;
+                this.samples.forEach(s => {
+                    let baseNo = parseInt(s.lab_no, 10);
+                    if (!isNaN(baseNo) && baseNo > 0) {
+                        let itemCount = 0;
+                        let idx = 1;
+                        while(s['sample_name_'+idx] !== undefined) {
+                            if (s['item_status_'+idx] !== 'rejected') itemCount++;
+                            idx++;
+                        }
+                        if (itemCount === 0) itemCount = 1; // Fallback
+                        if ((baseNo + itemCount - 1) > maxLabNo) {
+                            maxLabNo = (baseNo + itemCount - 1);
+                        }
+                    }
+                });
+                sampleData.lab_no = String(maxLabNo + 1).padStart(4, '0');
+            }
+            
             this.samples.unshift(sampleData);
             this.saveSamples();
             
@@ -3109,11 +3143,14 @@ const app = {
                             ${remarkText}
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
-                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
-                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
-                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
-                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2')}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: #334155;">
+                            <div style="width: 50%; display: flex; flex-direction: column; gap: 10px;">
+                                ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                                ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                            </div>
+                            <div style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -3121,9 +3158,10 @@ const app = {
             }
                         container.innerHTML = fullHtml;
         } else if (sample.form_type === 'MU.10-003') {
-            if (!sample.sel_analyst_1) {
-                sample.sel_analyst_1 = 'anchasa';
-                sample.sel_approver_1 = 'thitiporn';
+            if (!sample.sel_analyst_1 || !sample.sel_analyst_2) {
+                sample.sel_analyst_1 = sample.sel_analyst_1 || 'anchasa';
+                sample.sel_analyst_2 = sample.sel_analyst_2 || 'surachai';
+                sample.sel_approver_1 = sample.sel_approver_1 || 'thitiporn';
                 this.saveSamples();
             }
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
@@ -3275,11 +3313,14 @@ const app = {
                             </div>
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
-                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
-                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
-                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
-                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2')}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: #334155;">
+                            <div style="width: 50%; display: flex; flex-direction: column; gap: 10px;">
+                                ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                                ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                            </div>
+                            <div style="width: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -3314,7 +3355,7 @@ const app = {
             }
             
             
-            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003') {
                 document.getElementById('cert-standard-inputs').style.display = 'none';
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
                 
@@ -3397,11 +3438,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
                     btnApprove.style.display = 'inline-block';
                 }
-            } else if (sample.form_type === 'MU.10-003') {
-                document.getElementById('cert-standard-inputs').style.display = 'none';
-                if(document.getElementById('cert-mu10-signatures')) document.getElementById('cert-mu10-signatures').style.display = 'none';
-                const btnApprove = document.getElementById('btnApproveAndSign');
-                btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติและรับรองผล';
             } else {
                 document.getElementById('cert-standard-inputs').style.display = 'block';
                 if(document.getElementById('cert-mu10-signatures')) document.getElementById('cert-mu10-signatures').style.display = 'none';
@@ -3473,7 +3509,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
 
 
-            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003') {
                 if (sample.status === 'summarized') {
                     sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
                     sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
@@ -3498,9 +3534,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     sample.status = 'approved';
                     sample.approved_timestamp = new Date().toISOString();
                 }
-            } else if (sample.form_type === 'MU.10-003') {
-                sample.status = 'approved';
-                sample.approved_timestamp = new Date().toISOString();
             } else {
                 const approverName = document.getElementById('approve-officer-name').value;
                 if(!approverName) return;
