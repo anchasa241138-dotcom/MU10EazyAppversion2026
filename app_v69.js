@@ -1080,6 +1080,10 @@ const app = {
                         <label>7. ความถี่ในการเปลี่ยนน้ำมัน (วัน) *</label>
                         <input type="number" name="replacement_frequency_${this.globalSampleIndex}" required min="0" placeholder="ระบุจำนวนวัน">
                     </div>
+                    <div class="form-group">
+                        <label>8. วันที่เก็บตัวอย่าง (ถ้ามี)</label>
+                        <input type="date" name="item_sampling_date_${this.globalSampleIndex}" style="height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;">
+                    </div>
                 </div>
             `;
         } else if (formType === 'MU.10-005') {
@@ -3755,7 +3759,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     fry_duration: sample[`fry_duration_${idx}`] || '',
                     fry_count: sample[`fry_count_${idx}`] || '',
                     replacement_type: sample[`replacement_type_${idx}`] || '',
-                    replacement_frequency: sample[`replacement_frequency_${idx}`] || ''
+                    replacement_frequency: sample[`replacement_frequency_${idx}`] || '',
+                    item_sampling_date: sample[`item_sampling_date_${idx}`] || ''
                 });
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({
@@ -4035,8 +4040,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const isPass = sample.status === 'approved' || sample.status === 'summarized' ? (sample.analysis_summary || '').includes('ผ่าน') && !(sample.analysis_summary || '').includes('ไม่ผ่าน') : false;
                     const isFail = sample.status === 'approved' || sample.status === 'summarized' ? (sample.analysis_summary || '').includes('ไม่ผ่าน') : false;
                     
+                    let rowDate = item.item_sampling_date ? new Date(item.item_sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : samplingDate;
+
                     tableRowsHTML += `
-                        <tr style="height: 40px; text-align:left;"> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${i + 1}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${samplingDate}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isPass ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isFail ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isFail ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isPass ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px; font-weight:bold;">${isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : '')}</td> </tr>`;
+                        <tr style="height: 40px; text-align:left;"> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${i + 1}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${rowDate}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isPass ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isFail ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isFail ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${isPass ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px; font-weight:bold;">${isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : '')}</td> </tr>`;
                 } else {
                     tableRowsHTML += `
                         <tr style="height: 40px; text-align:left;"> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">${i + 1}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;"> </td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:13px;"> </td> </tr>`;
