@@ -4598,6 +4598,58 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     itemSummary = s.analysis_summary;
                 }
 
+                if (s.form_type === 'MU.10-003') {
+                    const distributor = isFallback ? (s.distributor || s['distributor_1'] || '-') : (s['distributor_'+idx] || '-');
+                    const polar_val = isFallback ? (s.polar_value || s['polar_value_1'] || '-') : (s['polar_value_'+idx] || '-');
+                    const oil_type = isFallback ? (s.oil_type || s['oil_type_1'] || '-') : (s['oil_type_'+idx] || '-');
+                    const fry_dur = isFallback ? (s.fry_duration || s['fry_duration_1'] || '-') : (s['fry_duration_'+idx] || '-');
+                    const rep_type = isFallback ? (s.replacement_type || s['replacement_type_1'] || '-') : (s['replacement_type_'+idx] || '-');
+                    const last_rep_date = isFallback ? (s.last_replacement_date || s['last_replacement_date_1'] || '-') : (s['last_replacement_date_'+idx] || '-');
+                    const rep_freq = isFallback ? (s.replacement_frequency || s['replacement_frequency_1'] || '-') : (s['replacement_frequency_'+idx] || '-');
+                    const rep_reason = isFallback ? (s.replacement_reason || s['replacement_reason_1'] || '-') : (s['replacement_reason_'+idx] || '-');
+                    const oil_disp = isFallback ? (s.oil_disposal || s['oil_disposal_1'] || '-') : (s['oil_disposal_'+idx] || '-');
+                    
+                    let mu10003Summary = '-';
+                    const num = parseFloat(polar_val);
+                    if (!isNaN(num)) {
+                        mu10003Summary = num <= 25 ? 'ผ่าน' : 'ไม่ผ่าน';
+                    }
+
+                    return {
+                        'รหัสอ้างอิง': s.ref_id || '-',
+                        'ประเภทฟอร์ม': s.form_type || '-',
+                        'รหัสแลป': currentLabNo,
+                        'หน่วยงานที่เก็บ': s.agency || '-',
+                        'ประเภทสถานที่เก็บ': s.location_type || '-',
+                        'สถานที่เก็บ': s.location_name || '-',
+                        'ตำบล': s.sub_district || '-',
+                        'อำเภอ': s.district || '-',
+                        'จังหวัด': s.province || '-',
+                        'ชื่อผู้เก็บตัวอย่าง': s.collector_name || '-',
+                        'ตำแหน่งผู้เก็บตัวอย่าง': s.collector_position || '-',
+                        'วันที่เก็บ': s.sampling_date || '-',
+                        'เวลาที่บันทึกเก็บตัวอย่าง': formatTime(s.created_at),
+                        'ชื่อตัวอย่าง': sampleName,
+                        'น้ำหนัก': weight,
+                        'แหล่งที่มาของตัวอย่าง': source,
+                        'วันที่รับตัวอย่าง': s.lab_receive_date || '-',
+                        'เวลาที่รับตัวอย่าง': formatTime(s.lab_receive_timestamp),
+                        'ชื่อผู้ตรวจวิเคราะห์': s.analysis_analyst || '-',
+                        'วันที่ตรวจวิเคราะห์': s.analysis_date || '-',
+                        'เวลาที่ตรวจวิเคราะห์': formatTime(s.analysis_timestamp),
+                        'ชื่อผู้จำหน่าย': distributor,
+                        'ชนิดน้ำมัน': oil_type,
+                        'ระยะเวลาที่ใช้ทอด': fry_dur,
+                        'ลักษณะการเปลี่ยน': rep_type,
+                        'วันที่เปลี่ยนล่าสุด': last_rep_date,
+                        'ความถี่ในการเปลี่ยน': rep_freq,
+                        'เหตุผลที่เปลี่ยน': rep_reason,
+                        'การกำจัดน้ำมัน': oil_disp,
+                        'ค่าโพลาร์': polar_val,
+                        'สรุปผล': mu10003Summary
+                    };
+                }
+
                 return {
                     'รหัสอ้างอิง': s.ref_id || '-',
                     'ประเภทฟอร์ม': s.form_type || '-',
