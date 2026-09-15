@@ -4036,7 +4036,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             let tableRowsHTML = '';
             for (let i = 0; i < 7; i++) {
                 const item = sampleItems[i];
-                if (item) {
+                if (item && (item.food_category || item.food_type || item.oil_type)) {
                     const isPass = sample.status === 'approved' || sample.status === 'summarized' ? (sample.analysis_summary || '').includes('ผ่าน') && !(sample.analysis_summary || '').includes('ไม่ผ่าน') : false;
                     const isFail = sample.status === 'approved' || sample.status === 'summarized' ? (sample.analysis_summary || '').includes('ไม่ผ่าน') : false;
                     
