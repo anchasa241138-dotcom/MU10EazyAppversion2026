@@ -209,7 +209,10 @@ function updateDashboardCharts(samples) {
 }
 
 
-function updateSubstanceTable(samples) {
+
+let substanceChartInstances = {};
+
+function updateSubstanceCharts(samples) {
     const stats = {
         'pesticide': { label: 'ยาฆ่าแมลง', total: 0, pass: 0, fail: 0 },
         'borax': { label: 'สารบอแรกซ์', total: 0, pass: 0, fail: 0 },
@@ -284,19 +287,71 @@ function updateSubstanceTable(samples) {
         }
     }
 
-    const tbody = document.getElementById('substance-summary-tbody');
-    if (!tbody) return;
+    const grid = document.getElementById('substance-charts-grid');
+    if (!grid) return;
     
-    tbody.innerHTML = '';
+    // Check if we need to build the DOM
+    if (grid.children.length === 0) {
+        for (const key in stats) {
+            const item = stats[key];
+            const col = document.createElement('div');
+            col.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
+            col.innerHTML = `
+                <h6 style="margin: 0 0 10px 0; font-weight: bold; color: #334155; text-align: center; font-size: 14px; min-height: 42px;">${item.label}</h6>
+                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 10px auto;">
+                    <canvas id="substance-chart-${key}"></canvas>
+                </div>
+                <div id="substance-text-${key}" style="font-size: 12px; text-align: center; color: #64748b;"></div>
+            `;
+            grid.appendChild(col);
+        }
+    }
+
+    // Now update charts
     for (const key in stats) {
         const item = stats[key];
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${item.label}</td>
-            <td class="text-center" style="font-weight: 500;">${item.total > 0 ? item.total : '-'}</td>
-            <td class="text-center" style="color: #166534; font-weight: ${item.pass > 0 ? 'bold' : 'normal'};">${item.pass > 0 ? item.pass : '-'}</td>
-            <td class="text-center" style="color: #991b1b; font-weight: ${item.fail > 0 ? 'bold' : 'normal'};">${item.fail > 0 ? item.fail : '-'}</td>
+        const ctx = document.getElementById('substance-chart-' + key);
+        if(!ctx) continue;
+        
+        const dataValues = [item.pass, item.fail];
+        
+        document.getElementById('substance-text-' + key).innerHTML = `
+            <strong style="color:#0f172a;">ตรวจ: ${item.total}</strong><br>
+            <span style="color:#10b981;">ผ่าน: ${item.pass}</span> | 
+            <span style="color:#ef4444;">ไม่ผ่าน: ${item.fail}</span>
         `;
-        tbody.appendChild(tr);
+
+        if (substanceChartInstances[key]) {
+            substanceChartInstances[key].data.datasets[0].data = dataValues;
+            substanceChartInstances[key].update();
+        } else {
+            substanceChartInstances[key] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ผ่าน', 'ไม่ผ่าน'],
+                    datasets: [{
+                        data: dataValues,
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ' + context.parsed + ' ตัวอย่าง';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 }

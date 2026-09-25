@@ -446,6 +446,18 @@
                                 <canvas id="formTypeChart"></canvas>
                             </div>
                         </div>
+
+                        <!-- NEW: Substance Table -->
+                        <div class="chart-container large-chart" style="grid-column: 1 / -1; margin-top: 5px;">
+                            <div class="chart-header">
+                                <h4><i class="fa-solid fa-flask"></i> สัดส่วนผลการตรวจวิเคราะห์แยกตามรายสาร (9 รายการ)</h4>
+                            </div>
+                            <div class="chart-body" style="padding: 20px;">
+                                <div id="substance-charts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; padding: 10px;">
+                                    <!-- 9 charts will be dynamically generated here -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -1573,7 +1585,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790327837178"></script>
-    <script src="app_v83.js?v=1790327352527"></script>
+    <script src="charts-dash.js?v=1790328190459"></script>
+    <script src="app_v83.js?v=1790328190459"></script>
 </body>
 </html>
