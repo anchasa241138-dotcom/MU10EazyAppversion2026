@@ -215,7 +215,9 @@ function updateDashboardCharts(samples) {
 
 
 
+
 let substanceChartInstances = {};
+window.currentFailedSamples = {};
 
 function updateSubstanceCharts(samples) {
     const stats = {
@@ -229,6 +231,11 @@ function updateSubstanceCharts(samples) {
         'coliformFood': { label: 'โคลิฟอร์มในอาหาร', total: 0, pass: 0, fail: 0 },
         'coliformWater': { label: 'โคลิฟอร์มในน้ำ', total: 0, pass: 0, fail: 0 }
     };
+    
+    // Reset global failed samples
+    for(let k in stats) {
+        window.currentFailedSamples[k] = [];
+    }
 
     samples.forEach(s => {
         let idx = 1;
@@ -264,8 +271,20 @@ function updateSubstanceCharts(samples) {
 
         const inc = (type, summaryVal) => {
             stats[type].total++;
-            if (summaryVal === 'ผ่าน' || summaryVal === 'ผ่านเกณฑ์มาตรฐาน') stats[type].pass++;
-            else if (summaryVal === 'ไม่ผ่าน' || summaryVal === 'ไม่ผ่านเกณฑ์มาตรฐาน') stats[type].fail++;
+            if (summaryVal === 'ผ่าน' || summaryVal === 'ผ่านเกณฑ์มาตรฐาน') {
+                stats[type].pass++;
+            } else if (summaryVal === 'ไม่ผ่าน' || summaryVal === 'ไม่ผ่านเกณฑ์มาตรฐาน') {
+                stats[type].fail++;
+                // Save this sample info
+                let subName = idx ? s['sample_name_'+idx] : s.sample_name;
+                window.currentFailedSamples[type].push({
+                    name: subName || s.sample_id || '-',
+                    date: s.collection_date || '-',
+                    province: s.province || '-',
+                    location: s.collection_place || s.collection_location || s.location_name || '-',
+                    form_type: s.form_type || '-'
+                });
+            }
         };
 
         if (s.form_type === 'MU.10-001') {
@@ -280,8 +299,19 @@ function updateSubstanceCharts(samples) {
             const num = parseFloat(getVal('polar_value') || getVal('analysis_interpretation'));
             if(!isNaN(num)) {
                  stats['polar'].total++;
-                 if(num <= 25) stats['polar'].pass++;
-                 else stats['polar'].fail++;
+                 if(num <= 25) {
+                     stats['polar'].pass++;
+                 } else {
+                     stats['polar'].fail++;
+                     let subName = idx ? s['sample_name_'+idx] : s.sample_name;
+                     window.currentFailedSamples['polar'].push({
+                         name: subName || s.sample_id || '-',
+                         date: s.collection_date || '-',
+                         province: s.province || '-',
+                         location: s.collection_place || s.collection_location || s.location_name || '-',
+                         form_type: s.form_type || '-'
+                     });
+                 }
             } else {
                  inc('polar', getSingleSummary());
             }
@@ -306,7 +336,7 @@ function updateSubstanceCharts(samples) {
                 <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 10px auto;">
                     <canvas id="substance-chart-${key}"></canvas>
                 </div>
-                <div id="substance-text-${key}" style="font-size: 12px; text-align: center; color: #64748b;"></div>
+                <div id="substance-text-${key}" style="font-size: 12px; text-align: center; color: #64748b; width: 100%;"></div>
             `;
             grid.appendChild(col);
         }
@@ -320,10 +350,15 @@ function updateSubstanceCharts(samples) {
         
         const dataValues = [item.pass, item.fail];
         
+        let viewBtn = item.fail > 0 
+            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="margin-top: 8px; width: 100%; padding: 6px; background-color: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
+            : `<div style="margin-top: 8px; height: 27px;"></div>`;
+            
         document.getElementById('substance-text-' + key).innerHTML = `
             <strong style="color:#0f172a;">ตรวจ: ${item.total}</strong><br>
             <span style="color:#10b981;">ผ่าน: ${item.pass}</span> | 
             <span style="color:#ef4444;">ไม่ผ่าน: ${item.fail}</span>
+            ${viewBtn}
         `;
 
         if (substanceChartInstances[key]) {
@@ -360,3 +395,45 @@ function updateSubstanceCharts(samples) {
         }
     }
 }
+
+// Global functions for modal
+window.openFailedSamplesModal = function(key, label) {
+    document.getElementById('failedSubstanceName').innerText = label;
+    const tbody = document.getElementById('failedSamplesTableBody');
+    tbody.innerHTML = '';
+    
+    const samples = window.currentFailedSamples[key] || [];
+    
+    if (samples.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่พบข้อมูลตัวอย่างที่ไม่ผ่าน</td></tr>';
+    } else {
+        // Use a Map or Set to prevent showing exact duplicates if a single sample has multiple sub-items failing the same substance (rare but possible)
+        let uniqueSamples = [];
+        let seen = new Set();
+        samples.forEach(s => {
+            let identifier = s.name + s.date + s.province;
+            if(!seen.has(identifier)) {
+                seen.add(identifier);
+                uniqueSamples.push(s);
+            }
+        });
+
+        uniqueSamples.forEach(s => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${s.name}</td>
+                <td>${s.date}</td>
+                <td>${s.province}</td>
+                <td>${s.location}</td>
+                <td>${s.form_type}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+    
+    document.getElementById('failedSamplesModal').style.display = 'flex';
+};
+
+window.closeFailedSamplesModal = function() {
+    document.getElementById('failedSamplesModal').style.display = 'none';
+};
