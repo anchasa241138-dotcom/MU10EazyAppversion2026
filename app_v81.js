@@ -3496,7 +3496,7 @@ const app = {
                     validItems.push({
                         idx: i,
                         owner_name: sample.owner_name || sample.location_name || '-',
-                        food_category: sample['food_category_1'] || '-',
+                        food_category: sample['sample_name_1'] || '-',
                         oil_type: sample['oil_type_1'] || '-',
                         fry_duration: sample['fry_duration_1'] ? sample['fry_duration_1'] + ' นาที/ครั้ง' : '-',
                         replacement_type: sample['replacement_type_1'] || '-',
@@ -3599,7 +3599,7 @@ const app = {
                                 <tr>
                                     <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center;"><div style="margin-top: 14px;">ลำดับ</div></th>
                                     <th rowspan="2" style="width: 15%; text-align: center;"><div style="margin-top: 14px;">ชื่อผู้จำหน่าย</div></th>
-                                    <th rowspan="2" style="width: 12%; text-align: center;"><div style="margin-top: 14px;">ประเภท</div></th>
+                                    <th rowspan="2" style="width: 12%; text-align: center;"><div style="margin-top: 14px;">ชนิดอาหาร</div></th>
                                     <th colspan="4" style="text-align: center;"><div>น้ำมันที่ทอดอาหาร</div></th>
                                     <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">ค่าโพลาร์</div></th>
                                     <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">สรุปผล</div></th>
