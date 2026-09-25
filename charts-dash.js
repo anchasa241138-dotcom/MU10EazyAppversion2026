@@ -431,9 +431,9 @@ window.openFailedSamplesModal = function(key, label) {
         });
     }
     
-    document.getElementById('failedSamplesModal').style.display = 'flex';
+    document.getElementById('failedSamplesModal').classList.add('active');
 };
 
 window.closeFailedSamplesModal = function() {
-    document.getElementById('failedSamplesModal').style.display = 'none';
+    document.getElementById('failedSamplesModal').classList.remove('active');
 };
