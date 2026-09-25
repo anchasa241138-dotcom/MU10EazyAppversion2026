@@ -3477,6 +3477,164 @@ const app = {
                 fullHtml += pageHtml;
             }
             container.innerHTML = fullHtml;
+        } else if (sample.form_type === 'MU.10-004') {
+            if (!sample.sel_analyst_1 || !sample.sel_analyst_2) {
+                sample.sel_analyst_1 = sample.sel_analyst_1 || 'anchasa';
+                sample.sel_analyst_2 = sample.sel_analyst_2 || 'surachai';
+                sample.sel_approver_1 = sample.sel_approver_1 || 'thitiporn';
+                sample.sel_approver_2 = sample.sel_approver_2 || 'mallika';
+                this.saveSamples();
+            }
+            const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
+            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
+            const reportTitle = 'ผลการตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ โดยใช้ชุดทดสอบเบื้องต้น (Test kit)';
+
+            const validItems = [];
+            for (let i = 1; i <= 7; i++) {
+                const interp = sample['analysis_interpretation_4_' + i];
+                if (interp) {
+                    validItems.push({
+                        idx: i,
+                        owner_name: sample.owner_name || sample.location_name || '-',
+                        food_category: sample['food_category_1'] || '-',
+                        oil_type: sample['oil_type_1'] || '-',
+                        fry_duration: sample['fry_duration_1'] ? sample['fry_duration_1'] + ' นาที/ครั้ง' : '-',
+                        replacement_type: sample['replacement_type_1'] || '-',
+                        replacement_frequency: sample['replacement_frequency_1'] ? sample['replacement_frequency_1'] + ' วัน' : '-',
+                        polar_value: interp,
+                        isPass: (interp === '<20%' || interp === '20-25%')
+                    });
+                }
+            }
+            
+            if (validItems.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px;">ไม่มีข้อมูลตัวอย่างที่รับเข้าระบบ</div>';
+                return;
+            }
+
+            let passCount = 0;
+            validItems.forEach(item => {
+                if (item.isPass) {
+                    passCount++;
+                }
+            });
+            const totalItemsCount = validItems.length;
+            const passItemsCount = passCount;
+            const passItemsPercent = totalItemsCount > 0 ? ((passCount / totalItemsCount) * 100).toFixed(2) : '0.00';
+
+            const ITEMS_PER_PAGE = 10;
+            const totalPages = Math.ceil(validItems.length / ITEMS_PER_PAGE);
+            let fullHtml = '';
+            
+            for (let page = 0; page < totalPages; page++) {
+                const pageItems = validItems.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
+                
+                let rowsHtml = '';
+                for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+                    const item = pageItems[i];
+                    if (item) {
+                        rowsHtml += `
+                            <tr>
+                                <td style="text-align: center;">${page * ITEMS_PER_PAGE + i + 1}</td>
+                                <td>${item.owner_name}</td>
+                                <td style="text-align: center;">${item.food_category}</td>
+                                <td style="text-align: center;">${item.oil_type}</td>
+                                <td style="text-align: center;">${item.fry_duration}</td>
+                                <td style="text-align: center;">${item.replacement_type}</td>
+                                <td style="text-align: center;">${item.replacement_frequency}</td>
+                                <td style="text-align: center;">${item.polar_value}</td>
+                                <td style="text-align: center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                            </tr>
+                        `;
+                    } else {
+                        rowsHtml += `
+                            <tr>
+                                <td style="text-align: center; color: transparent;">-</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        `;
+                    }
+                }
+
+                const pageHtml = `
+                    <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
+                        <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                            RD-004
+                        </div>
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                            หน้าที่ ${page + 1}/${totalPages}
+                        </div>
+                        <div class="cert-pdf-header-mu10" style="margin-top: 20px; margin-bottom: 15px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #000;">${reportTitle}</h4>
+                        </div>
+                        
+                        <div class="cert-info-grid" style="margin-top: 15px; font-size: 12px; line-height: 1.8;">
+                            <div style="display:flex; margin-bottom: 6px;">
+                                <div style="width: 140px;"><strong>สถานที่เก็บตัวอย่าง</strong></div>
+                                <div>: ${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</div>
+                            </div>
+                            <div style="display:flex; margin-bottom: 6px;">
+                                <div style="width: 140px;"><strong>วันที่รับตัวอย่าง</strong></div>
+                                <div>: ${receiveDate}</div>
+                            </div>
+                            <div style="display:flex; margin-bottom: 6px;">
+                                <div style="width: 140px;"><strong>วันที่ตรวจวิเคราะห์</strong></div>
+                                <div>: ${analysisDate}</div>
+                            </div>
+                            <div style="display:flex; margin-bottom: 6px;">
+                                <div style="width: 140px;"><strong>จำนวนตัวอย่าง</strong></div>
+                                <div>: ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</div>
+                            </div>
+                        </div>
+                        
+                        <table class="cert-multi-table" style="font-size: 9px; margin-top:10px;">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center;"><div style="margin-top: 14px;">ลำดับ</div></th>
+                                    <th rowspan="2" style="width: 15%; text-align: center;"><div style="margin-top: 14px;">ชื่อผู้จำหน่าย</div></th>
+                                    <th rowspan="2" style="width: 12%; text-align: center;"><div style="margin-top: 14px;">ประเภท</div></th>
+                                    <th colspan="4" style="text-align: center;"><div>น้ำมันที่ทอดอาหาร</div></th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">ค่าโพลาร์</div></th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">สรุปผล</div></th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 10%;">ชนิด<br>น้ำมัน</th>
+                                    <th style="width: 10%;">ระยะเวลาที่<br>ใช้ทอด</th>
+                                    <th style="width: 10%;">การใช้<br>น้ำมัน</th>
+                                    <th style="width: 10%;">ระยะเวลาใน<br>การเปลี่ยน<br>น้ำมัน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                        
+                        <div style="margin-top:10px; font-size:10px; margin-bottom: 10px; color: #334155;">
+                            <div style="display:flex;">
+                                <div style="width:45px;"><strong>หมายเหตุ</strong></div>
+                                <div>- การตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ เกณฑ์ผ่านมาตรฐานสารโพลาร์ในน้ำมันทอดซ้ำ คือ ไม่เกิน 25%<br>
+                                - น้ำมันทอดซ้ำมีค่าโพลาร์มากกว่า 25% เป็นน้ำมันเสื่อมสภาพแล้วไม่ควรใช้</div>
+                            </div>
+                        </div>
+                        
+                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                            ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                            ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                            ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
+                            ${renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2')}
+                        </div>
+                    </div>
+                `;
+                fullHtml += pageHtml;
+            }
+            container.innerHTML = fullHtml;
         }
         if(viewOnly || (sample.status === 'approved' && !forceEdit)) {
             document.getElementById('certApprovalControls').classList.add('hidden');
