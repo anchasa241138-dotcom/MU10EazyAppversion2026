@@ -1591,7 +1591,39 @@
         <!-- Filled dynamically by js before converting to PDF -->
     </div>
 
-        <!-- Third party JS libraries -->
+        
+    <!-- Failed Samples Modal -->
+    <div class="modal-overlay" id="failedSamplesModal">
+        <div class="modal-card" style="max-width: 800px; width: 90%;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff;">
+                <h4 style="color:#fff; margin:0;"><i class="fa-solid fa-triangle-exclamation"></i> รายชื่อตัวอย่างที่ไม่ผ่าน: <span id="failedSubstanceName"></span></h4>
+                <button class="close-modal-btn" onclick="closeFailedSamplesModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px; max-height: 65vh; overflow-y: auto;">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" style="font-size: 14px;">
+                        <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th style="width: 25%;">ชื่อตัวอย่าง/รหัส</th>
+                                <th style="width: 20%;">วันที่เก็บ</th>
+                                <th style="width: 20%;">จังหวัด</th>
+                                <th style="width: 20%;">สถานที่เก็บ</th>
+                                <th style="width: 15%;">แบบฟอร์ม</th>
+                            </tr>
+                        </thead>
+                        <tbody id="failedSamplesTableBody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align:center; margin-top:15px;">
+                    <button class="btn btn-secondary" onclick="closeFailedSamplesModal()">ปิดหน้าต่าง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Third party JS libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1599,7 +1631,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790328895968"></script>
-    <script src="app_v83.js?v=1790328715652"></script>
+    <script src="charts-dash.js?v=1790329076190"></script>
+    <script src="app_v83.js?v=1790329076191"></script>
 </body>
 </html>
