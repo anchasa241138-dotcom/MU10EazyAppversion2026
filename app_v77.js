@@ -2536,7 +2536,7 @@ const app = {
                 const commentEl = document.getElementById('analysis-comment');
                 if (commentEl) commentEl.value = sample.analysis_comment;
             }
-        else if (sample.form_type === 'MU.10-004') {
+        } else if (sample.form_type === 'MU.10-004') {
             const sampleNames = [];
             for (let i = 1; i <= 7; i++) {
                 if (sample['sample_name_' + i] !== undefined) {
