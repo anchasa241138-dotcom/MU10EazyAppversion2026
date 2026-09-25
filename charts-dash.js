@@ -207,3 +207,96 @@ function updateDashboardCharts(samples) {
     });
     formTypeChartInstance.update();
 }
+
+
+function updateSubstanceTable(samples) {
+    const stats = {
+        'pesticide': { label: 'ยาฆ่าแมลง', total: 0, pass: 0, fail: 0 },
+        'borax': { label: 'สารบอแรกซ์', total: 0, pass: 0, fail: 0 },
+        'formalin': { label: 'สารฟอร์มาลิน', total: 0, pass: 0, fail: 0 },
+        'bleach': { label: 'สารฟอกขาว', total: 0, pass: 0, fail: 0 },
+        'salicylic': { label: 'สารกันรา', total: 0, pass: 0, fail: 0 },
+        'agonist': { label: 'สารเร่งเนื้อแดง', total: 0, pass: 0, fail: 0 },
+        'polar': { label: 'สารโพลาร์ในน้ำมันทอดอาหาร', total: 0, pass: 0, fail: 0 },
+        'coliformFood': { label: 'โคลิฟอร์มในอาหาร', total: 0, pass: 0, fail: 0 },
+        'coliformWater': { label: 'โคลิฟอร์มในน้ำ', total: 0, pass: 0, fail: 0 }
+    };
+
+    samples.forEach(s => {
+        let idx = 1;
+        let hasItems = false;
+        while (s['sample_name_' + idx] !== undefined) {
+            hasItems = true;
+            if (s['item_status_' + idx] !== 'rejected') {
+                checkItem(s, idx, stats);
+            }
+            idx++;
+        }
+        if (!hasItems && s.sample_name && s.status !== 'rejected') {
+            checkItem(s, null, stats);
+        }
+    });
+
+    function checkItem(s, idx, stats) {
+        const getVal = (key) => idx ? s[key + '_' + idx] : s[key];
+        const getSummary = (key) => {
+            const val = idx ? s['analysis_summary_' + idx + '_' + key] : s['analysis_summary_' + key];
+            if (val === 'ผ่าน' || val === 'ไม่ผ่าน') return val;
+            const det = idx ? s['analysis_detail_results_' + idx + '_' + key] : s['analysis_detail_results_' + key];
+            if (det === 'ไม่พบ') return 'ผ่าน';
+            if (det === 'พบ') return 'ไม่ผ่าน';
+            return null;
+        };
+        const getSingleSummary = () => {
+             const sum = idx ? s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] : s['analysis_summary_outcome'] || s['analysis_summary'];
+             if(sum && sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+             if(sum && sum.includes('ผ่าน')) return 'ผ่าน';
+             return sum;
+        };
+
+        const inc = (type, summaryVal) => {
+            stats[type].total++;
+            if (summaryVal === 'ผ่าน' || summaryVal === 'ผ่านเกณฑ์มาตรฐาน') stats[type].pass++;
+            else if (summaryVal === 'ไม่ผ่าน' || summaryVal === 'ไม่ผ่านเกณฑ์มาตรฐาน') stats[type].fail++;
+        };
+
+        if (s.form_type === 'MU.10-001') {
+            inc('pesticide', getSingleSummary());
+        } else if (s.form_type === 'MU.10-002') {
+            if (getVal('test_borax')) inc('borax', getSummary('borax'));
+            if (getVal('test_formalin')) inc('formalin', getSummary('formalin'));
+            if (getVal('test_bleach')) inc('bleach', getSummary('bleach'));
+            if (getVal('test_salicylic')) inc('salicylic', getSummary('salicylic'));
+            if (getVal('test_agonist')) inc('agonist', getSummary('agonist'));
+        } else if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
+            const num = parseFloat(getVal('polar_value') || getVal('analysis_interpretation'));
+            if(!isNaN(num)) {
+                 stats['polar'].total++;
+                 if(num <= 25) stats['polar'].pass++;
+                 else stats['polar'].fail++;
+            } else {
+                 inc('polar', getSingleSummary());
+            }
+        } else if (s.form_type === 'MU.10-007') {
+            inc('coliformFood', getSingleSummary());
+        } else if (s.form_type === 'MU.10-006') {
+            inc('coliformWater', getSingleSummary());
+        }
+    }
+
+    const tbody = document.getElementById('substance-summary-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    for (const key in stats) {
+        const item = stats[key];
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${item.label}</td>
+            <td class="text-center" style="font-weight: 500;">${item.total > 0 ? item.total : '-'}</td>
+            <td class="text-center" style="color: #166534; font-weight: ${item.pass > 0 ? 'bold' : 'normal'};">${item.pass > 0 ? item.pass : '-'}</td>
+            <td class="text-center" style="color: #991b1b; font-weight: ${item.fail > 0 ? 'bold' : 'normal'};">${item.fail > 0 ? item.fail : '-'}</td>
+        `;
+        tbody.appendChild(tr);
+    }
+}
