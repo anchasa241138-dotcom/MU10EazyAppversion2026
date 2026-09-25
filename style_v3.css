@@ -1549,3 +1549,12 @@ body.is-printing-pdf *,
     break-inside: avoid;
     page-break-inside: avoid;
 }
+
+#cert-dynamic-content {
+    transform: scale(0.95);
+    transform-origin: top center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
