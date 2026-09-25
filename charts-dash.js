@@ -170,6 +170,15 @@ function updateDashboardCharts(samples) {
     if (filterEl && filterEl.value !== 'all') {
         samples = samples.filter(s => s.province === filterEl.value);
     }
+    
+    const startDateEl = document.getElementById('dashStartDate');
+    const endDateEl = document.getElementById('dashEndDate');
+    if (startDateEl && startDateEl.value) {
+        samples = samples.filter(s => s.collection_date && s.collection_date >= startDateEl.value);
+    }
+    if (endDateEl && endDateEl.value) {
+        samples = samples.filter(s => s.collection_date && s.collection_date <= endDateEl.value);
+    }
 
     // 1. Calculate Province distribution
     const provinces = ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'];

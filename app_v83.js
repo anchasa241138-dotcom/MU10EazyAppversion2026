@@ -622,6 +622,15 @@ const app = {
         if (filterEl && filterEl.value !== 'all') {
             visible = visible.filter(s => s.province === filterEl.value);
         }
+        
+        const startDateEl = document.getElementById('dashStartDate');
+        const endDateEl = document.getElementById('dashEndDate');
+        if (startDateEl && startDateEl.value) {
+            visible = visible.filter(s => s.collection_date && s.collection_date >= startDateEl.value);
+        }
+        if (endDateEl && endDateEl.value) {
+            visible = visible.filter(s => s.collection_date && s.collection_date <= endDateEl.value);
+        }
         const total = visible.length;
         const pending = visible.filter(s => s.status === 'registered').length;
         const analyzing = visible.filter(s => s.status === 'accepted').length;
