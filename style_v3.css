@@ -1573,16 +1573,22 @@ body.is-printing-pdf *,
     .sci-food-banner {
         flex-direction: column !important;
         text-align: center;
-        padding: 20px !important;
+        padding: 30px 20px !important;
     }
     .sci-food-banner .banner-text {
         max-width: 100% !important;
-        margin-bottom: 20px;
+        padding: 0 !important;
+        margin-bottom: 30px;
     }
     .sci-food-banner .banner-text div {
         justify-content: center !important;
     }
+    .sci-food-banner .banner-logo {
+        padding: 0 !important;
+        justify-content: center !important;
+        width: 100%;
+    }
     .sci-food-banner img {
-        max-width: 200px !important;
+        max-width: 240px !important;
     }
 }
