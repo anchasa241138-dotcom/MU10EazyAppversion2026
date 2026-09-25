@@ -206,6 +206,11 @@ function updateDashboardCharts(samples) {
         return index % 2 === 0 ? 'rgba(13, 148, 136, 0.8)' : 'rgba(30, 41, 59, 0.8)';
     });
     formTypeChartInstance.update();
+    
+    // Call Substance Charts Update
+    if (typeof updateSubstanceCharts === 'function') {
+        updateSubstanceCharts(samples);
+    }
 }
 
 
