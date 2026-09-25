@@ -13,7 +13,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v3.css?v=1213">
+    <link rel="stylesheet" href="style_v3.css?v=1790329773128">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="enhancements.css">
 
@@ -376,16 +376,26 @@
                     </div>
 
                     
-                    <div class="dashboard-filter" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                        <label for="dashProvinceFilter" style="font-weight: 600; color: #334155; margin: 0;"><i class="fa-solid fa-filter"></i> เลือกดูข้อมูลตามพื้นที่:</label>
-                        <select id="dashProvinceFilter" class="form-control" style="width: 300px; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: none;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
-                            <option value="all">🌐 ภาพรวมเขตสุขภาพที่ 10 (ทั้งหมด)</option>
-                            <option value="ศรีสะเกษ">📍 ศรีสะเกษ</option>
-                            <option value="อุบลราชธานี">📍 อุบลราชธานี</option>
-                            <option value="อำนาจเจริญ">📍 อำนาจเจริญ</option>
-                            <option value="มุกดาหาร">📍 มุกดาหาร</option>
-                            <option value="ยโสธร">📍 ยโสธร</option>
-                        </select>
+                    <div class="dashboard-filter" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <label style="font-weight: 600; color: #334155; margin: 0;"><i class="fa-regular fa-calendar"></i> ตั้งแต่วันที่:</label>
+                            <input type="date" id="dashStartDate" class="form-control" style="width: auto; border-radius: 6px; border: 1px solid #cbd5e1;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                            
+                            <label style="font-weight: 600; color: #334155; margin: 0;">ถึง:</label>
+                            <input type="date" id="dashEndDate" class="form-control" style="width: auto; border-radius: 6px; border: 1px solid #cbd5e1;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <label for="dashProvinceFilter" style="font-weight: 600; color: #334155; margin: 0;"><i class="fa-solid fa-filter"></i> เลือกดูข้อมูลตามพื้นที่:</label>
+                            <select id="dashProvinceFilter" class="form-control" style="width: 250px; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: none;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                                <option value="all">🌐 ภาพรวมเขตสุขภาพที่ 10 (ทั้งหมด)</option>
+                                <option value="ศรีสะเกษ">📍 ศรีสะเกษ</option>
+                                <option value="อุบลราชธานี">📍 อุบลราชธานี</option>
+                                <option value="อำนาจเจริญ">📍 อำนาจเจริญ</option>
+                                <option value="มุกดาหาร">📍 มุกดาหาร</option>
+                                <option value="ยโสธร">📍 ยโสธร</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Statistics Summary Cards -->
@@ -489,10 +499,10 @@
                     <div id="record-content-wrapper">
                         <!-- Form Selection Cards -->
                         <div class="section-title-wrapper">
-                            <h3>เลือกประเภทแบบบันทึกการเก็บตัวอย่าง (MU.10-001 - MU.10-008)</h3>
+                            <h3>เลือกประเภทแบบบันทึกการเก็บตัวอย่าง (MU.10-001 - MU.10-007)</h3>
                             <p>กรุณาเลือกฟอร์มที่ต้องการบันทึกข้อมูลและส่งวิเคราะห์</p>
                         </div>
-                        <div class="form-selection-grid">
+                        <div class="form-selection-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
                             <button class="form-select-card" data-form-type="MU.10-001">
                                 <div class="form-card-badge">MU.10-001</div>
                                 <i class="fa-solid fa-carrot form-icon"></i>
@@ -528,11 +538,7 @@
                                 <i class="fa-solid fa-biohazard form-icon"></i>
                                 <span>เชื้อโคลิฟอร์มขั้นต้น (SI-2)</span>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-008">
-                                <div class="form-card-badge">MU.10-008</div>
-                                <i class="fa-solid fa-tags form-icon"></i>
-                                <span>ตรวจฉลากอาหาร</span>
-                            </button>
+                            
                         </div>
 
                         <!-- Saved Records List moved inside formEditorContainer -->
@@ -1631,7 +1637,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790329246811"></script>
-    <script src="app_v83.js?v=1790329076191"></script>
+    <script src="charts-dash.js?v=1790329575548"></script>
+    <script src="app_v83.js?v=1790329575548"></script>
 </body>
 </html>
