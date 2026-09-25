@@ -3663,7 +3663,7 @@ const app = {
             }
             
             
-            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003' || sample.form_type === 'MU.10-004') {
                 document.getElementById('cert-standard-inputs').style.display = 'none';
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
                 
@@ -3817,7 +3817,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
 
 
-            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003' || sample.form_type === 'MU.10-004') {
                 if (sample.status === 'summarized') {
                     sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
                     sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
