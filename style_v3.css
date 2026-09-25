@@ -1560,3 +1560,29 @@ body.is-printing-pdf *,
     flex-direction: column;
     align-items: center;
 }
+
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+
+@media (max-width: 768px) {
+    .sci-food-banner {
+        flex-direction: column !important;
+        text-align: center;
+        padding: 20px !important;
+    }
+    .sci-food-banner .banner-text {
+        max-width: 100% !important;
+        margin-bottom: 20px;
+    }
+    .sci-food-banner .banner-text div {
+        justify-content: center !important;
+    }
+    .sci-food-banner img {
+        max-width: 200px !important;
+    }
+}
