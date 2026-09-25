@@ -626,11 +626,16 @@ const app = {
         const pending = visible.filter(s => s.status === 'registered').length;
         const analyzing = visible.filter(s => s.status === 'accepted').length;
         const completed = visible.filter(s => s.status === 'approved').length;
+        
+        const passed = visible.filter(s => s.status === 'approved' && s.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน').length;
+        const failed = visible.filter(s => s.status === 'approved' && s.analysis_summary === 'ไม่ผ่านเกณฑ์มาตรฐาน').length;
 
-        document.getElementById('stats-total').innerText = total;
-        document.getElementById('stats-pending').innerText = pending;
-        document.getElementById('stats-analyzing').innerText = analyzing;
-        document.getElementById('stats-completed').innerText = completed;
+        const elTotal = document.getElementById('stats-total'); if (elTotal) elTotal.innerText = total;
+        const elPending = document.getElementById('stats-pending'); if (elPending) elPending.innerText = pending;
+        const elAnalyzing = document.getElementById('stats-analyzing'); if (elAnalyzing) elAnalyzing.innerText = analyzing;
+        const elCompleted = document.getElementById('stats-completed'); if (elCompleted) elCompleted.innerText = completed;
+        const elPassed = document.getElementById('stats-passed'); if (elPassed) elPassed.innerText = passed;
+        const elFailed = document.getElementById('stats-failed'); if (elFailed) elFailed.innerText = failed;
     },
 
     // Authentication Logic
