@@ -375,6 +375,19 @@
                         </div>
                     </div>
 
+                    
+                    <div class="dashboard-filter" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                        <label for="dashProvinceFilter" style="font-weight: 600; color: #334155; margin: 0;"><i class="fa-solid fa-filter"></i> เลือกดูข้อมูลตามพื้นที่:</label>
+                        <select id="dashProvinceFilter" class="form-control" style="width: 300px; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: none;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                            <option value="all">🌐 ภาพรวมเขตสุขภาพที่ 10 (ทั้งหมด)</option>
+                            <option value="ศรีสะเกษ">📍 ศรีสะเกษ</option>
+                            <option value="อุบลราชธานี">📍 อุบลราชธานี</option>
+                            <option value="อำนาจเจริญ">📍 อำนาจเจริญ</option>
+                            <option value="มุกดาหาร">📍 มุกดาหาร</option>
+                            <option value="ยโสธร">📍 ยโสธร</option>
+                        </select>
+                    </div>
+
                     <!-- Statistics Summary Cards -->
                     <div class="stats-grid">
                         <div class="stat-card total">
@@ -1560,7 +1573,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=35"></script>
-    <script src="app_v83.js?v=1790308465092"></script>
+    <script src="charts-dash.js?v=1790327352526"></script>
+    <script src="app_v83.js?v=1790327352527"></script>
 </body>
 </html>

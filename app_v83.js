@@ -617,7 +617,11 @@ const app = {
     },
 
     updateDashboardStats() {
-        const visible = this.getVisibleSamples();
+        let visible = this.getVisibleSamples();
+        const filterEl = document.getElementById('dashProvinceFilter');
+        if (filterEl && filterEl.value !== 'all') {
+            visible = visible.filter(s => s.province === filterEl.value);
+        }
         const total = visible.length;
         const pending = visible.filter(s => s.status === 'registered').length;
         const analyzing = visible.filter(s => s.status === 'accepted').length;

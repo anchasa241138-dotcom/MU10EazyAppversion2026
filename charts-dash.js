@@ -166,6 +166,11 @@ function updateDashboardCharts(samples) {
     }
     if (!provinceChartInstance || !resultRatioChartInstance || !formTypeChartInstance) return;
 
+    const filterEl = document.getElementById('dashProvinceFilter');
+    if (filterEl && filterEl.value !== 'all') {
+        samples = samples.filter(s => s.province === filterEl.value);
+    }
+
     // 1. Calculate Province distribution
     const provinces = ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'];
     const provinceCounts = provinces.map(prov => 
