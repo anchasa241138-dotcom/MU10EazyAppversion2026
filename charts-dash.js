@@ -121,37 +121,53 @@ function initDashboardCharts() {
                 'MU.10-007 (โคลิฟอร์ม SI-2)',
                 'MU.10-008 (ตรวจฉลาก)'
             ],
-            datasets: [{
-                label: 'จำนวนตัวอย่างสะสม',
-                data: [0, 0, 0, 0, 0, 0, 0, 0],
-                backgroundColor: 'rgba(15, 23, 42, 0.08)',
-                borderColor: '#0f172a',
-                borderWidth: 1.5,
-                borderRadius: 4,
-                barPercentage: 0.7
-            }]
+            datasets: [
+                {
+                    label: 'ผ่านเกณฑ์',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                    borderColor: '#10b981',
+                    borderWidth: 1,
+                    borderRadius: 4
+                },
+                {
+                    label: 'ไม่ผ่านเกณฑ์',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                    borderColor: '#ef4444',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }
+            ]
         },
         options: {
-            indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false }
+                legend: { 
+                    display: true,
+                    position: 'top',
+                    labels: { font: { family: 'Sarabun' }, usePointStyle: true }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.dataset.label}: ${context.parsed.y} ตัวอย่าง`;
+                        }
+                    }
+                }
             },
             scales: {
                 x: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        font: { family: 'Sarabun' }
-                    },
-                    grid: { color: '#f1f5f9' }
+                    stacked: true,
+                    ticks: { font: { family: 'Sarabun', size: 10 }, maxRotation: 45, minRotation: 45 },
+                    grid: { display: false }
                 },
                 y: {
-                    ticks: {
-                        font: { family: 'Sarabun', size: 11 }
-                    },
-                    grid: { display: false }
+                    stacked: true,
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, font: { family: 'Sarabun' } },
+                    grid: { color: '#f1f5f9' }
                 }
             }
         }
@@ -204,16 +220,17 @@ function updateDashboardCharts(samples) {
         'MU.10-001', 'MU.10-002', 'MU.10-003', 'MU.10-004',
         'MU.10-005', 'MU.10-006', 'MU.10-007', 'MU.10-008'
     ];
-    const formCounts = forms.map(f => 
-        samples.filter(s => s.form_type === f).length
+    
+    const passedCounts = forms.map(f => 
+        samples.filter(s => s.form_type === f && s.status === 'approved' && s.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน').length
+    );
+    const failedCounts = forms.map(f => 
+        samples.filter(s => s.form_type === f && s.status === 'approved' && s.analysis_summary === 'ไม่ผ่านเกณฑ์มาตรฐาน').length
     );
 
-    formTypeChartInstance.data.datasets[0].data = formCounts;
+    formTypeChartInstance.data.datasets[0].data = passedCounts;
+    formTypeChartInstance.data.datasets[1].data = failedCounts;
     
-    // Dynamically colour horizontal bars to match theme
-    formTypeChartInstance.data.datasets[0].backgroundColor = formCounts.map((count, index) => {
-        return index % 2 === 0 ? 'rgba(13, 148, 136, 0.8)' : 'rgba(30, 41, 59, 0.8)';
-    });
     formTypeChartInstance.update();
     
     // Call Substance Charts Update
