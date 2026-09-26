@@ -2708,14 +2708,14 @@ const app = {
                     if (item.test_outcome === 'ผ่าน') passCount++;
                     tableRowsHTML += `
                         <tr style="page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.food_type}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:center; font-size:14px; border:1px solid #000;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.iodate_value}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.test_outcome}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${i + 1}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.distributor}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_type}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_serial_no}</td> 
+                            <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000;">${item.manufacturer_info}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.has_mfg_exp}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.iodate_value}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.test_outcome}</td> 
                         </tr>`;
                 }
             });
@@ -2728,55 +2728,55 @@ const app = {
             const fullHtmlResult = `
               <style>* { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
               <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style>
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 130px 40px 100px 40px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 155px 45px 100px 45px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
                   
                   <!-- HEADER -->
-                  <div style="position: relative; height: 30px; margin-bottom: 5px;">
-                      <div style="position: absolute; top: -20px; left: 0; font-size: 14px;">
+                  <div style="position: relative; height: 20px; margin-bottom: 5px;">
+                      <div style="position: absolute; top: 0; left: 0; font-size: 13px;">
                           RD-005
                       </div>
-                      <div style="position: absolute; top: -20px; right: 0; text-align: right; font-size: 14px;">
+                      <div style="position: absolute; top: 0; right: 0; text-align: right; font-size: 13px;">
                           หน้าที่ 1/1
                       </div>
                   </div>
                   
                   <!-- TITLE -->
-                  <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px;">
+                  <div style="text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 10px;">
                       ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader
                   </div>
                   
                   <!-- META INFO -->
-                  <table style="width: 100%; border: none; font-size: 15px; margin-bottom: 10px; line-height: 1.5;">
+                  <table style="width: 100%; border: none; font-size: 14px; margin-bottom: 5px; line-height: 1.2;">
                       <tr>
-                          <td style="width: 170px; font-weight: bold;">สถานที่เก็บตัวอย่าง</td>
-                          <td>: <u>${locationTxt}</u></td>
+                          <td style="width: 150px; font-weight: bold; padding: 2px 0;">สถานที่เก็บตัวอย่าง</td>
+                          <td style="padding: 2px 0;">: <u>${locationTxt}</u></td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold;">วันที่รับตัวอย่าง</td>
-                          <td>: <u>${samplingDate}</u></td>
+                          <td style="font-weight: bold; padding: 2px 0;">วันที่รับตัวอย่าง</td>
+                          <td style="padding: 2px 0;">: <u>${samplingDate}</u></td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold;">วันที่ตรวจวิเคราะห์</td>
-                          <td>: <u>${analysisDate}</u></td>
+                          <td style="font-weight: bold; padding: 2px 0;">วันที่ตรวจวิเคราะห์</td>
+                          <td style="padding: 2px 0;">: <u>${analysisDate}</u></td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold;">จำนวนตัวอย่างทั้งหมด</td>
-                          <td>: <u>${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct}</u> ดังนี้</td>
+                          <td style="font-weight: bold; padding: 2px 0;">จำนวนตัวอย่างทั้งหมด</td>
+                          <td style="padding: 2px 0;">: <u>${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct}</u> ดังนี้</td>
                       </tr>
                   </table>
                   
                   <!-- TABLE -->
-                  <table style="width: 100%; border-collapse: collapse; font-size: 14px; border: 1px solid #000;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #000; margin-top: 5px;">
                       <thead>
                           <tr style="text-align: center; font-weight: bold;">
-                              <th style="padding: 4px; width: 4%; border: 1px solid #000;">ลำดับ</th>
-                              <th style="padding: 4px; width: 15%; border: 1px solid #000;">ชื่อ</th>
-                              <th style="padding: 4px; width: 14%; border: 1px solid #000;">ตัวอย่าง</th>
-                              <th style="padding: 4px; width: 15%; border: 1px solid #000;">เลขสารบบอาหาร</th>
-                              <th style="padding: 4px; width: 22%; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
-                              <th style="padding: 4px; width: 12%; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
-                              <th style="padding: 4px; width: 9%; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
-                              <th style="padding: 4px; width: 9%; border: 1px solid #000;">สรุปผล</th>
+                              <th style="padding: 4px 2px; width: 4%; border: 1px solid #000;">ลำดับ</th>
+                              <th style="padding: 4px 2px; width: 15%; border: 1px solid #000;">ชื่อ</th>
+                              <th style="padding: 4px 2px; width: 14%; border: 1px solid #000;">ตัวอย่าง</th>
+                              <th style="padding: 4px 2px; width: 15%; border: 1px solid #000;">เลขสารบบอาหาร</th>
+                              <th style="padding: 4px 2px; width: 22%; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
+                              <th style="padding: 4px 2px; width: 12%; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">สรุปผล</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -2785,7 +2785,7 @@ const app = {
                   </table>
                   
                   <!-- NOTE -->
-                  <div style="font-size: 12px; margin-top: 5px; line-height: 1.4;">
+                  <div style="font-size: 12px; margin-top: 5px; line-height: 1.3;">
                       <table style="width: 100%; border: none;">
                           <tr>
                               <td style="width: 50px; font-weight: bold; vertical-align: top;">หมายเหตุ</td>
@@ -2795,9 +2795,9 @@ const app = {
                   </div>
                   
                   <!-- SIGNATURES -->
-                  <div class="cert-signatures-grid" style="font-size: 14px; color: #000; margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; text-align: center;">
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:15px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:15px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
+                  <div class="cert-signatures-grid" style="font-size: 13px; color: #000; margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center;">
+                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
+                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
                       ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ</div>`}
                       ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวมัลลิกา สุพล)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</div>`}
                   </div>
@@ -3885,14 +3885,14 @@ const app = {
                     if (item.test_outcome === 'ผ่าน') passCount++;
                     tableRowsHTML += `
                         <tr style="page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.food_type}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:center; font-size:14px; border:1px solid #000;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.iodate_value}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #000;">${item.test_outcome}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${i + 1}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.distributor}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_type}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_serial_no}</td> 
+                            <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000;">${item.manufacturer_info}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.has_mfg_exp}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.iodate_value}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.test_outcome}</td> 
                         </tr>`;
                 }
             });
@@ -3905,55 +3905,55 @@ const app = {
             const fullHtmlResult = `
               <style>* { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
               <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style>
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 130px 40px 100px 40px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 155px 45px 100px 45px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
                   
                   <!-- HEADER -->
-                  <div style="position: relative; height: 30px; margin-bottom: 5px;">
-                      <div style="position: absolute; top: -20px; left: 0; font-size: 14px;">
+                  <div style="position: relative; height: 20px; margin-bottom: 5px;">
+                      <div style="position: absolute; top: 0; left: 0; font-size: 13px;">
                           RD-005
                       </div>
-                      <div style="position: absolute; top: -20px; right: 0; text-align: right; font-size: 14px;">
+                      <div style="position: absolute; top: 0; right: 0; text-align: right; font-size: 13px;">
                           หน้าที่ 1/1
                       </div>
                   </div>
                   
                   <!-- TITLE -->
-                  <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px;">
+                  <div style="text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 10px;">
                       ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader
                   </div>
                   
                   <!-- META INFO -->
-                  <table style="width: 100%; border: none; font-size: 15px; margin-bottom: 10px; line-height: 1.5;">
+                  <table style="width: 100%; border: none; font-size: 14px; margin-bottom: 5px; line-height: 1.2;">
                       <tr>
-                          <td style="width: 170px; font-weight: bold;">สถานที่เก็บตัวอย่าง</td>
-                          <td>: <u>${locationTxt}</u></td>
+                          <td style="width: 150px; font-weight: bold; padding: 2px 0;">สถานที่เก็บตัวอย่าง</td>
+                          <td style="padding: 2px 0;">: <u>${locationTxt}</u></td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold;">วันที่รับตัวอย่าง</td>
-                          <td>: <u>${samplingDate}</u></td>
+                          <td style="font-weight: bold; padding: 2px 0;">วันที่รับตัวอย่าง</td>
+                          <td style="padding: 2px 0;">: <u>${samplingDate}</u></td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold;">วันที่ตรวจวิเคราะห์</td>
-                          <td>: <u>${analysisDate}</u></td>
+                          <td style="font-weight: bold; padding: 2px 0;">วันที่ตรวจวิเคราะห์</td>
+                          <td style="padding: 2px 0;">: <u>${analysisDate}</u></td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold;">จำนวนตัวอย่างทั้งหมด</td>
-                          <td>: <u>${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct}</u> ดังนี้</td>
+                          <td style="font-weight: bold; padding: 2px 0;">จำนวนตัวอย่างทั้งหมด</td>
+                          <td style="padding: 2px 0;">: <u>${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct}</u> ดังนี้</td>
                       </tr>
                   </table>
                   
                   <!-- TABLE -->
-                  <table style="width: 100%; border-collapse: collapse; font-size: 14px; border: 1px solid #000;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #000; margin-top: 5px;">
                       <thead>
                           <tr style="text-align: center; font-weight: bold;">
-                              <th style="padding: 4px; width: 4%; border: 1px solid #000;">ลำดับ</th>
-                              <th style="padding: 4px; width: 15%; border: 1px solid #000;">ชื่อ</th>
-                              <th style="padding: 4px; width: 14%; border: 1px solid #000;">ตัวอย่าง</th>
-                              <th style="padding: 4px; width: 15%; border: 1px solid #000;">เลขสารบบอาหาร</th>
-                              <th style="padding: 4px; width: 22%; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
-                              <th style="padding: 4px; width: 12%; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
-                              <th style="padding: 4px; width: 9%; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
-                              <th style="padding: 4px; width: 9%; border: 1px solid #000;">สรุปผล</th>
+                              <th style="padding: 4px 2px; width: 4%; border: 1px solid #000;">ลำดับ</th>
+                              <th style="padding: 4px 2px; width: 15%; border: 1px solid #000;">ชื่อ</th>
+                              <th style="padding: 4px 2px; width: 14%; border: 1px solid #000;">ตัวอย่าง</th>
+                              <th style="padding: 4px 2px; width: 15%; border: 1px solid #000;">เลขสารบบอาหาร</th>
+                              <th style="padding: 4px 2px; width: 22%; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
+                              <th style="padding: 4px 2px; width: 12%; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">สรุปผล</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -3962,7 +3962,7 @@ const app = {
                   </table>
                   
                   <!-- NOTE -->
-                  <div style="font-size: 12px; margin-top: 5px; line-height: 1.4;">
+                  <div style="font-size: 12px; margin-top: 5px; line-height: 1.3;">
                       <table style="width: 100%; border: none;">
                           <tr>
                               <td style="width: 50px; font-weight: bold; vertical-align: top;">หมายเหตุ</td>
@@ -3972,9 +3972,9 @@ const app = {
                   </div>
                   
                   <!-- SIGNATURES -->
-                  <div class="cert-signatures-grid" style="font-size: 14px; color: #000; margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; text-align: center;">
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:15px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:15px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
+                  <div class="cert-signatures-grid" style="font-size: 13px; color: #000; margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center;">
+                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
+                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
                       ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ</div>`}
                       ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวมัลลิกา สุพล)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</div>`}
                   </div>
