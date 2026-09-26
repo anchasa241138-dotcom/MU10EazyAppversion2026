@@ -2729,9 +2729,9 @@ const app = {
             const locationTxt = `${sample.location_name || ''} ${sample.amphoe ? 'อำเภอ'+sample.amphoe : ''} ${sample.province ? 'จังหวัด'+sample.province : ''}`;
 
             const fullHtmlResult = `
-              <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
-              <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style>
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 155px 45px 100px 45px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 155px 45px 100px 45px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;">
+                  <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
+                  <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style> 
                   
                   <!-- HEADER -->
                   <div style="position: relative; height: 20px; margin-bottom: 5px;">
@@ -3909,9 +3909,9 @@ const app = {
             const locationTxt = `${sample.location_name || ''} ${sample.amphoe ? 'อำเภอ'+sample.amphoe : ''} ${sample.province ? 'จังหวัด'+sample.province : ''}`;
 
             const fullHtmlResult = `
-              <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
-              <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style>
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 155px 45px 100px 45px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 155px 45px 100px 45px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;">
+                  <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
+                  <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style> 
                   
                   <!-- HEADER -->
                   <div style="position: relative; height: 20px; margin-bottom: 5px;">
@@ -4287,9 +4287,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         // The outer container only has 1 child (the wrapper), which caused the 1-page bug.
         let pages = [];
         if (dynamicContent && dynamicContent.children.length > 0) {
-            pages = Array.from(dynamicContent.children);
+            pages = Array.from(dynamicContent.children).filter(el => el.tagName !== 'STYLE' && el.tagName !== 'SCRIPT');
         } else {
-            pages = Array.from(container.children);
+            pages = Array.from(container.children).filter(el => el.tagName !== 'STYLE' && el.tagName !== 'SCRIPT');
         }
         
         if (pages.length === 0) return;
@@ -4945,7 +4945,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             document.body.appendChild(iframe);
             const doc = iframe.contentWindow.document;
             doc.open();
-            const pageOrientation = sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape';
+            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 'portrait' : 'landscape';
             doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="style_v2.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
             doc.write(htmlContent);
             doc.write('</body></html>');
