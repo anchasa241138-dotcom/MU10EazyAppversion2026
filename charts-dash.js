@@ -159,7 +159,7 @@ function initDashboardCharts() {
             scales: {
                 x: {
                     stacked: true,
-                    ticks: { font: { family: 'Sarabun', size: 10 }, maxRotation: 45, minRotation: 45 },
+                    ticks: { font: { family: 'Sarabun', size: 11 }, maxRotation: 0, minRotation: 0 },
                     grid: { display: false }
                 },
                 y: {
