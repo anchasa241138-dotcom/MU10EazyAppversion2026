@@ -377,22 +377,45 @@ function updateSubstanceCharts(samples) {
         const dataValues = [item.pass, item.fail];
         
         let viewBtn = item.fail > 0 
-            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="margin-top: 8px; width: 100%; padding: 6px; background-color: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
-            : `<div style="margin-top: 8px; height: 27px;"></div>`;
+            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="width: 100%; padding: 6px; background-color: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
+            : `<div style="height: 27px;"></div>`;
             
         const passPct = item.total > 0 ? ((item.pass / item.total) * 100).toFixed(1) : 0;
         const failPct = item.total > 0 ? ((item.fail / item.total) * 100).toFixed(1) : 0;
         
+        const miniCardStyle = "display: flex; align-items: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; width: 31%; box-sizing: border-box;";
+        const iconStyle = "display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 4px; color: #fff; font-size: 10px; margin-right: 4px; flex-shrink: 0;";
+
         document.getElementById('substance-text-' + key).innerHTML = `
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
-                <div style="color:#0f172a; font-weight: bold; font-size: 13px; margin-bottom: 5px;">ตรวจ: ${item.total}</div>
-                <div style="display: flex; justify-content: center; gap: 15px; font-size: 12px;">
-                    <span style="color:#10b981; font-weight: bold;">ผ่าน: ${item.pass} (${passPct}%)</span>
-                    <span style="color:#ef4444; font-weight: bold;">ไม่ผ่าน: ${item.fail} (${failPct}%)</span>
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+                <div style="${miniCardStyle}">
+                    <div style="${iconStyle} background-color: #3b82f6;"><i class="fa-solid fa-database"></i></div>
+                    <div style="text-align: left; line-height: 1.1; overflow: hidden;">
+                        <div style="font-size: 9px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
+                        <div style="font-size: 11px; font-weight: bold; color: #0f172a;">${item.total}</div>
+                    </div>
+                </div>
+                <div style="${miniCardStyle}">
+                    <div style="${iconStyle} background-color: #10b981;"><i class="fa-solid fa-check"></i></div>
+                    <div style="text-align: left; line-height: 1.1; overflow: hidden;">
+                        <div style="font-size: 9px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
+                        <div style="font-size: 11px; font-weight: bold; color: #10b981;">${item.pass} <span style="font-size: 8px; color: #64748b; font-weight: normal;">(${passPct}%)</span></div>
+                    </div>
+                </div>
+                <div style="${miniCardStyle}">
+                    <div style="${iconStyle} background-color: #ef4444;"><i class="fa-solid fa-xmark"></i></div>
+                    <div style="text-align: left; line-height: 1.1; overflow: hidden;">
+                        <div style="font-size: 9px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
+                        <div style="font-size: 11px; font-weight: bold; color: #ef4444;">${item.fail} <span style="font-size: 8px; color: #64748b; font-weight: normal;">(${failPct}%)</span></div>
+                    </div>
                 </div>
             </div>
-            ${viewBtn}
         `;
+
+        const actionDiv = document.getElementById('substance-action-' + key);
+        if (actionDiv) {
+            actionDiv.innerHTML = viewBtn;
+        }
 
         // Build failed samples breakdown pie chart
         let failedSamplesList = window.currentFailedSamples[key] || [];
