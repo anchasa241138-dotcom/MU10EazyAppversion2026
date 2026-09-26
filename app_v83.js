@@ -165,6 +165,7 @@ const app = {
                 this.users = [
                     { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
                     { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
+                    { username: 'certifier', password: 'password', role: 'certifier', fullname: 'ดร.ผู้รับรอง ตรวจสอบดี', status: 'approved' },
                     { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' },
                     { username: 'anchasa', password: 'anchasa@241138', role: 'collector', fullname: 'นางสาว อัญชสา ใจดี', status: 'approved', workplace: 'รพ.ศรีสะเกษ', province: 'ศรีสะเกษ', createdAt: new Date().toISOString() }
                 ];
@@ -186,7 +187,21 @@ const app = {
                     adminUser.role = 'admin'; // upgrade to admin
                     adminUser.status = 'approved';
                 }
-                else this.users.push({ username: 'admin', password: 'password', role: 'admin', fullname: 'Admin', status: 'approved' });
+
+                else { this.users.push({ username: 'admin', password: 'password', role: 'admin', fullname: 'Admin', status: 'approved' }); }
+
+                // Force inject certifier test user
+                const certifierUser = this.users.find(u => u.username === 'certifier');
+                if (!certifierUser) {
+                    this.users.push({
+                        username: 'certifier',
+                        password: 'password',
+                        role: 'certifier',
+                        fullname: 'ดร.ผู้รับรอง ตรวจสอบดี',
+                        status: 'approved'
+                    });
+                }
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
                 
                 // Add mock pending user for demonstration if not exists
                 if (!this.users.some(u => u.username === 'anchasa')) {
