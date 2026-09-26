@@ -567,14 +567,34 @@ window.openFailedSamplesModal = function(key, label) {
             }
         }
 
-        uniqueSamples.forEach(s => {
+        uniqueSamples.forEach((s, idx) => {
             let tr = document.createElement('tr');
+            const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+            tr.style.backgroundColor = rowBg;
+            tr.style.borderBottom = '1px solid #e2e8f0';
+            tr.style.transition = 'background-color 0.2s';
+            tr.onmouseover = () => tr.style.backgroundColor = '#f1f5f9';
+            tr.onmouseout = () => tr.style.backgroundColor = rowBg;
+
             tr.innerHTML = `
-                <td>${s.name}</td>
-                <td>${s.date}</td>
-                <td>${s.province}</td>
-                <td>${s.location}</td>
-                <td>${s.form_type}</td>
+                <td style="padding: 12px 16px;">
+                    <div style="font-weight: 600; color: #0f172a;">${s.name || '-'}</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
+                </td>
+                <td style="padding: 12px 16px; color: #334155;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
+                <td style="padding: 12px 16px;">
+                    <div style="color: #0f172a; font-weight: 500;">${s.source || '-'}</div>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
+                </td>
+                <td style="padding: 12px 16px;">
+                    <div style="color: #0f172a;">อ.${s.district || '-'}</div>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
+                </td>
+                <td style="padding: 12px 16px;">
+                    <span style="display: inline-block; padding: 4px 8px; border-radius: 6px; background-color: #e0e7ff; color: #4338ca; font-size: 12px; font-weight: 600; border: 1px solid #c7d2fe; white-space: nowrap;">
+                        ${s.form_type || '-'}
+                    </span>
+                </td>
             `;
             tbody.appendChild(tr);
         });
