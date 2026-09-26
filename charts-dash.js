@@ -384,29 +384,29 @@ function updateSubstanceCharts(samples) {
         const failPct = item.total > 0 ? ((item.fail / item.total) * 100).toFixed(1) : 0;
         
         const miniCardStyle = "display: flex; align-items: center; background: #fff; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 8px; padding: 8px 6px; width: 31%; box-sizing: border-box; transition: transform 0.2s;";
-        const iconStyle = "display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 4px; color: #fff; font-size: 10px; margin-right: 4px; flex-shrink: 0;";
+        const iconStyle = "display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 4px; color: #fff; font-size: 14px; margin-right: 4px; flex-shrink: 0;";
 
         document.getElementById('substance-text-' + key).innerHTML = `
             <div style="display: flex; justify-content: space-between; width: 100%;">
                 <div style="${miniCardStyle}">
                     <div style="${iconStyle} background-color: #3b82f6;"><i class="fa-solid fa-database"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 9px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
-                        <div style="font-size: 11px; font-weight: bold; color: #0f172a;">${item.total}</div>
+                        <div style="font-size: 13px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #0f172a;">${item.total}</div>
                     </div>
                 </div>
                 <div style="${miniCardStyle}">
                     <div style="${iconStyle} background-color: #10b981;"><i class="fa-solid fa-check"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 9px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
-                        <div style="font-size: 11px; font-weight: bold; color: #10b981;">${item.pass} <span style="font-size: 8px; color: #64748b; font-weight: normal;">(${passPct}%)</span></div>
+                        <div style="font-size: 13px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #10b981;">${item.pass} <span style="font-size: 12px; color: #64748b; font-weight: normal;">(${passPct}%)</span></div>
                     </div>
                 </div>
                 <div style="${miniCardStyle}">
                     <div style="${iconStyle} background-color: #ef4444;"><i class="fa-solid fa-xmark"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 9px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
-                        <div style="font-size: 11px; font-weight: bold; color: #ef4444;">${item.fail} <span style="font-size: 8px; color: #64748b; font-weight: normal;">(${failPct}%)</span></div>
+                        <div style="font-size: 13px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #ef4444;">${item.fail} <span style="font-size: 12px; color: #64748b; font-weight: normal;">(${failPct}%)</span></div>
                     </div>
                 </div>
             </div>
