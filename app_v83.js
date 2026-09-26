@@ -4328,7 +4328,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             for (let i = 0; i < pages.length; i++) {
                 const wrap = document.createElement('div');
                 wrap.id = 'certificatePDFContainer'; // CRITICAL: This allows all CSS rules to apply!
-                wrap.style.cssText = 'position: absolute; top: 0; left: 0; width: 794px; height: 1122px; background: white; z-index: 99999; margin: 0; padding: 0;';
+                wrap.style.cssText = 'position: absolute; top: -9999px; left: -9999px; width: 794px; height: 1122px; background: white; z-index: -1; margin: 0; padding: 0;';
                 
                 const clone = pages[i].cloneNode(true);
                 clone.style.margin = '0';
