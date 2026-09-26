@@ -357,12 +357,12 @@ function updateSubstanceCharts(samples) {
             const col = document.createElement('div');
             col.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
             col.innerHTML = `
-                <h6 style="margin: 0 0 10px 0; font-weight: bold; color: #334155; text-align: center; font-size: 14px; min-height: 42px;">${item.label}</h6>
-                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 10px auto;">
-                    <canvas id="substance-chart-${key}"></canvas>
-                </div>
-                <div id="substance-text-${key}" style="font-size: 12px; text-align: center; color: #64748b; width: 100%;"></div>
-            `;
+                  <h6 style="margin: 0 0 10px 0; font-weight: bold; color: #334155; text-align: center; font-size: 14px;">${item.label}</h6>
+                  <div id="substance-text-${key}" style="font-size: 12px; text-align: center; color: #64748b; width: 100%; margin-bottom: 10px;"></div>
+                  <div style="position: relative; width: 100%; height: 180px; margin: 0 auto;">
+                      <canvas id="substance-chart-${key}"></canvas>
+                  </div>
+              `;
             grid.appendChild(col);
         }
     }
@@ -443,7 +443,11 @@ function updateSubstanceCharts(samples) {
                     maintainAspectRatio: false,
                     cutout: '60%',
                     plugins: {
-                        legend: { display: false },
+                        legend: { 
+                            display: true,
+                            position: 'bottom',
+                            labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true, boxWidth: 6, padding: 8 }
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
