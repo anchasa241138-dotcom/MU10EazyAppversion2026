@@ -355,7 +355,7 @@ function updateSubstanceCharts(samples) {
         for (const key in stats) {
             const item = stats[key];
             const col = document.createElement('div');
-            col.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
+            col.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
             col.innerHTML = `
                   <h6 style="margin: 0 0 10px 0; font-weight: bold; color: #334155; text-align: center; font-size: 14px;">${item.label}</h6>
                   <div id="substance-text-${key}" style="width: 100%; margin-bottom: 10px;"></div>
@@ -383,7 +383,7 @@ function updateSubstanceCharts(samples) {
         const passPct = item.total > 0 ? ((item.pass / item.total) * 100).toFixed(1) : 0;
         const failPct = item.total > 0 ? ((item.fail / item.total) * 100).toFixed(1) : 0;
         
-        const miniCardStyle = "display: flex; align-items: center; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; width: 31%; box-sizing: border-box;";
+        const miniCardStyle = "display: flex; align-items: center; background: #fff; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 8px; padding: 8px 6px; width: 31%; box-sizing: border-box; transition: transform 0.2s;";
         const iconStyle = "display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 4px; color: #fff; font-size: 10px; margin-right: 4px; flex-shrink: 0;";
 
         document.getElementById('substance-text-' + key).innerHTML = `
