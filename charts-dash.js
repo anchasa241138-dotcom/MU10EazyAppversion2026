@@ -393,17 +393,47 @@ function updateSubstanceCharts(samples) {
             ${viewBtn}
         `;
 
+        // Build failed samples breakdown pie chart
+        let failedSamplesList = window.currentFailedSamples[key] || [];
+        let uniqueFails = [];
+        let seenFails = new Set();
+        failedSamplesList.forEach(s => {
+            let identifier = s.name + s.date + s.province;
+            if(!seenFails.has(identifier)) {
+                seenFails.add(identifier);
+                uniqueFails.push(s);
+            }
+        });
+
+        let nameCounts = {};
+        uniqueFails.forEach(s => {
+            let n = s.name || 'ไม่ระบุ';
+            nameCounts[n] = (nameCounts[n] || 0) + 1;
+        });
+        
+        let chartLabels = Object.keys(nameCounts).map(name => `${name} (${nameCounts[name]})`);
+        let chartData = Object.values(nameCounts);
+        let bgColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'];
+
+        if (chartData.length === 0) {
+            chartLabels = ['ไม่มีตัวอย่างที่ไม่ผ่าน'];
+            chartData = [1];
+            bgColors = ['#e2e8f0']; // Grey ring
+        }
+
         if (substanceChartInstances[key]) {
-            substanceChartInstances[key].data.datasets[0].data = dataValues;
+            substanceChartInstances[key].data.labels = chartLabels;
+            substanceChartInstances[key].data.datasets[0].data = chartData;
+            substanceChartInstances[key].data.datasets[0].backgroundColor = bgColors;
             substanceChartInstances[key].update();
         } else {
             substanceChartInstances[key] = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['ผ่าน', 'ไม่ผ่าน'],
+                    labels: chartLabels,
                     datasets: [{
-                        data: dataValues,
-                        backgroundColor: ['#10b981', '#ef4444'],
+                        data: chartData,
+                        backgroundColor: bgColors,
                         borderWidth: 2,
                         borderColor: '#ffffff'
                     }]
@@ -417,7 +447,8 @@ function updateSubstanceCharts(samples) {
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ' ' + context.label + ': ' + context.parsed + ' ตัวอย่าง';
+                                    if (context.label === 'ไม่มีตัวอย่างที่ไม่ผ่าน') return ' ไม่มีตัวอย่างที่ไม่ผ่าน';
+                                    return ' ' + context.label + ' ตัวอย่าง';
                                 }
                             }
                         }
