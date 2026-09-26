@@ -2728,7 +2728,7 @@ const app = {
             const fullHtmlResult = `
               <style>* { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
               <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style>
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; min-height: 1100px; display: block; position: relative; margin: 0 auto; padding: 130px 40px 100px 40px; box-sizing: border-box; background: white; color: black;"> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 130px 40px 100px 40px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
                   
                   <!-- HEADER -->
                   <div style="position: relative; height: 30px; margin-bottom: 5px;">
@@ -3905,7 +3905,7 @@ const app = {
             const fullHtmlResult = `
               <style>* { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
               <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style>
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; min-height: 1100px; display: block; position: relative; margin: 0 auto; padding: 130px 40px 100px 40px; box-sizing: border-box; background: white; color: black;"> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 130px 40px 100px 40px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;"> 
                   
                   <!-- HEADER -->
                   <div style="position: relative; height: 30px; margin-bottom: 5px;">
@@ -4774,7 +4774,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             
             htmlContent = `
               <style>* { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; min-height: 1100px; display: block; position: relative; margin: 0; padding: 25px 30px; box-sizing: border-box;"> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0; padding: 25px 30px; box-sizing: border-box;"> 
                   
                   <!-- HEADER -->
                   <div style="position: relative; height: 100px; margin-bottom: 25px;">
