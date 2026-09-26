@@ -2791,7 +2791,7 @@ const app = {
                   <div style="font-size: 11px; margin-top: 5px; line-height: 1.2;">
                       <table style="width: 100%; border: none;">
                           <tr>
-                              <td style="white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 8px;">หมายเหตุ</td>
+                              <td style="width: 1%; white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 8px;">หมายเหตุ</td>
                               <td>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
                           </tr>
                       </table>
@@ -3971,7 +3971,7 @@ const app = {
                   <div style="font-size: 11px; margin-top: 5px; line-height: 1.2;">
                       <table style="width: 100%; border: none;">
                           <tr>
-                              <td style="white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 8px;">หมายเหตุ</td>
+                              <td style="width: 1%; white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 8px;">หมายเหตุ</td>
                               <td>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
                           </tr>
                       </table>
@@ -4837,7 +4837,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                   <div style="font-size: 11.5px; margin-top: 5px; line-height: 1.3;">
                       <table style="width: 100%; border: none;">
                           <tr>
-                              <td style="white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 8px;">หมายเหตุ</td>
+                              <td style="width: 1%; white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 8px;">หมายเหตุ</td>
                               <td>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
                           </tr>
                       </table>
