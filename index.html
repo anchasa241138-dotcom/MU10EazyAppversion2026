@@ -1640,6 +1640,16 @@
                 <button class="close-modal-btn" onclick="closeFailedSamplesModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" style="padding: 20px; max-height: 65vh; overflow-y: auto;">
+                
+                <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <div style="background: #f8fafc; padding: 15px 25px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; display: flex; flex-direction: column; align-items: center;">
+                        <h6 style="margin: 0 0 15px 0; font-weight: bold; color: #334155; font-size: 14px;"><i class="fa-solid fa-chart-pie"></i> สัดส่วนตัวอย่างที่ไม่ผ่าน (แยกตามชื่อตัวอย่าง)</h6>
+                        <div style="position: relative; width: 220px; height: 220px;">
+                            <canvas id="failedSamplesPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped" style="font-size: 14px;">
                         <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
@@ -1671,7 +1681,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790406857584"></script>
+    <script src="charts-dash.js?v=1790407350313"></script>
     <script src="app_v83.js?v=1790345679147"></script>
 </body>
 </html>
