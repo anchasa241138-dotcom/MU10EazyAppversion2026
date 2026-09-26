@@ -2711,14 +2711,14 @@ const app = {
                     
                     tableRowsHTML += `
                         <tr style="page-break-inside: avoid; text-align: center; ${rowBg}"> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${i + 1}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${i + 1}</td> 
                             <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.distributor}</td> 
                             <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_type}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; word-break: break-all;">${item.food_serial_no}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_serial_no}</td> 
                             <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000;">${item.manufacturer_info}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${item.has_mfg_exp}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${item.iodate_value}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${item.test_outcome}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.has_mfg_exp}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.iodate_value}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.test_outcome}</td> 
                         </tr>`;
                 }
             });
@@ -2772,14 +2772,14 @@ const app = {
                   <table style="width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #000; margin-top: 5px;">
                       <thead>
                           <tr style="text-align: center; font-weight: bold;">
-                              <th style="padding: 4px 2px; width: auto; white-space: nowrap; border: 1px solid #000;">ลำดับ</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">ชื่อ</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">ตัวอย่าง</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">เลขสารบบอาหาร</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
-                              <th style="padding: 4px 2px; width: auto; white-space: nowrap; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
-                              <th style="padding: 4px 2px; width: auto; white-space: nowrap; border: 1px solid #000;">สรุปผล</th>
+                              <th style="padding: 4px 2px; width: 5%; border: 1px solid #000;">ลำดับ</th>
+                              <th style="padding: 4px 2px; width: 14%; border: 1px solid #000;">ชื่อ</th>
+                              <th style="padding: 4px 2px; width: 13%; border: 1px solid #000;">ตัวอย่าง</th>
+                              <th style="padding: 4px 2px; width: 15%; border: 1px solid #000;">เลขสารบบอาหาร</th>
+                              <th style="padding: 4px 2px; width: 23%; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
+                              <th style="padding: 4px 2px; width: 12%; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">สรุปผล</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -2791,7 +2791,7 @@ const app = {
                   <div style="font-size: 11px; margin-top: 5px; line-height: 1.2;">
                       <table style="width: 100%; border: none;">
                           <tr>
-                              <td style="width: 45px; font-weight: bold; vertical-align: top;">หมายเหตุ</td>
+                              <td style="width: 1%; white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 5px;">หมายเหตุ</td>
                               <td>- ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุขว่าด้วยเรื่อง เกลือบริโภค<br>อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522 รัฐมนตรีว่าการกระทรวงสาธารณสุข<br>ออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
                           </tr>
                       </table>
@@ -3891,14 +3891,14 @@ const app = {
                     
                     tableRowsHTML += `
                         <tr style="page-break-inside: avoid; text-align: center; ${rowBg}"> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${i + 1}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${i + 1}</td> 
                             <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.distributor}</td> 
                             <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_type}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; word-break: break-all;">${item.food_serial_no}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_serial_no}</td> 
                             <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000;">${item.manufacturer_info}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${item.has_mfg_exp}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${item.iodate_value}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; white-space: nowrap;">${item.test_outcome}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.has_mfg_exp}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.iodate_value}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.test_outcome}</td> 
                         </tr>`;
                 }
             });
@@ -3952,14 +3952,14 @@ const app = {
                   <table style="width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #000; margin-top: 5px;">
                       <thead>
                           <tr style="text-align: center; font-weight: bold;">
-                              <th style="padding: 4px 2px; width: auto; white-space: nowrap; border: 1px solid #000;">ลำดับ</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">ชื่อ</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">ตัวอย่าง</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">เลขสารบบอาหาร</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
-                              <th style="padding: 4px 2px; width: auto; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
-                              <th style="padding: 4px 2px; width: auto; white-space: nowrap; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
-                              <th style="padding: 4px 2px; width: auto; white-space: nowrap; border: 1px solid #000;">สรุปผล</th>
+                              <th style="padding: 4px 2px; width: 5%; border: 1px solid #000;">ลำดับ</th>
+                              <th style="padding: 4px 2px; width: 14%; border: 1px solid #000;">ชื่อ</th>
+                              <th style="padding: 4px 2px; width: 13%; border: 1px solid #000;">ตัวอย่าง</th>
+                              <th style="padding: 4px 2px; width: 15%; border: 1px solid #000;">เลขสารบบอาหาร</th>
+                              <th style="padding: 4px 2px; width: 23%; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
+                              <th style="padding: 4px 2px; width: 12%; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
+                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">สรุปผล</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -3971,7 +3971,7 @@ const app = {
                   <div style="font-size: 11px; margin-top: 5px; line-height: 1.2;">
                       <table style="width: 100%; border: none;">
                           <tr>
-                              <td style="width: 45px; font-weight: bold; vertical-align: top;">หมายเหตุ</td>
+                              <td style="width: 1%; white-space: nowrap; font-weight: bold; vertical-align: top; padding-right: 5px;">หมายเหตุ</td>
                               <td>- ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุขว่าด้วยเรื่อง เกลือบริโภค<br>อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522 รัฐมนตรีว่าการกระทรวงสาธารณสุข<br>ออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
                           </tr>
                       </table>
