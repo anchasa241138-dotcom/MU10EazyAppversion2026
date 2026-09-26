@@ -431,6 +431,8 @@ window.openFailedSamplesModal = function(key, label) {
     
     if (samples.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่พบข้อมูลตัวอย่างที่ไม่ผ่าน</td></tr>';
+        const pieWrapper = document.getElementById('failedSamplesPieChart')?.parentElement?.parentElement;
+        if(pieWrapper) pieWrapper.style.display = 'none';
     } else {
         // Use a Map or Set to prevent showing exact duplicates if a single sample has multiple sub-items failing the same substance (rare but possible)
         let uniqueSamples = [];
@@ -442,6 +444,62 @@ window.openFailedSamplesModal = function(key, label) {
                 uniqueSamples.push(s);
             }
         });
+
+        // Aggregate counts for pie chart
+        let nameCounts = {};
+        uniqueSamples.forEach(s => {
+            let n = s.name || 'ไม่ระบุ';
+            nameCounts[n] = (nameCounts[n] || 0) + 1;
+        });
+        
+        let chartLabels = Object.keys(nameCounts);
+        let chartData = Object.values(nameCounts);
+        
+        let pieCtx = document.getElementById('failedSamplesPieChart');
+        if (pieCtx) {
+            if (window.failedSamplesPieChartInstance) {
+                window.failedSamplesPieChartInstance.destroy();
+            }
+            // Only draw chart if there is data
+            if (chartData.length > 0) {
+                pieCtx.parentElement.parentElement.style.display = 'flex';
+                window.failedSamplesPieChartInstance = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: [
+                                '#ef4444', '#f97316', '#eab308', '#84cc16', 
+                                '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', 
+                                '#d946ef', '#f43f5e', '#64748b'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true, padding: 12 }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ' ' + context.label + ': ' + context.parsed + ' ตัวอย่าง';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                pieCtx.parentElement.parentElement.style.display = 'none';
+            }
+        }
 
         uniqueSamples.forEach(s => {
             let tr = document.createElement('tr');
