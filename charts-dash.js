@@ -379,10 +379,17 @@ function updateSubstanceCharts(samples) {
             ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="margin-top: 8px; width: 100%; padding: 6px; background-color: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
             : `<div style="margin-top: 8px; height: 27px;"></div>`;
             
+        const passPct = item.total > 0 ? ((item.pass / item.total) * 100).toFixed(1) : 0;
+        const failPct = item.total > 0 ? ((item.fail / item.total) * 100).toFixed(1) : 0;
+        
         document.getElementById('substance-text-' + key).innerHTML = `
-            <strong style="color:#0f172a;">ตรวจ: ${item.total}</strong><br>
-            <span style="color:#10b981;">ผ่าน: ${item.pass}</span> | 
-            <span style="color:#ef4444;">ไม่ผ่าน: ${item.fail}</span>
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
+                <div style="color:#0f172a; font-weight: bold; font-size: 13px; margin-bottom: 5px;">ตรวจ: ${item.total}</div>
+                <div style="display: flex; justify-content: center; gap: 15px; font-size: 12px;">
+                    <span style="color:#10b981; font-weight: bold;">ผ่าน: ${item.pass} (${passPct}%)</span>
+                    <span style="color:#ef4444; font-weight: bold;">ไม่ผ่าน: ${item.fail} (${failPct}%)</span>
+                </div>
+            </div>
             ${viewBtn}
         `;
 
@@ -452,7 +459,7 @@ window.openFailedSamplesModal = function(key, label) {
             nameCounts[n] = (nameCounts[n] || 0) + 1;
         });
         
-        let chartLabels = Object.keys(nameCounts);
+        let chartLabels = Object.keys(nameCounts).map(name => `${name} (${nameCounts[name]})`);
         let chartData = Object.values(nameCounts);
         
         let pieCtx = document.getElementById('failedSamplesPieChart');
