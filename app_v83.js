@@ -4548,6 +4548,123 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </div> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;"> <!-- NOTE BOX --> <table style="width: 100%; border:1px solid #000; border-collapse:collapse; font-size: 11px; line-height:1.4; color:#000; margin-bottom:8px;"> <tr> <td style="padding:6px 12px; border-right:1px solid #000; width:50%; vertical-align:top;"> <div style="font-weight:bold; text-decoration:underline; margin-bottom:4px; font-size: 11.5px;">การเก็บตัวอย่างน้ำมัน</div> <strong>๑. การนับวันเก็บตัวอย่างน้ำมัน</strong><br>- ให้นับวันที่เริ่มใช้น้ำมันใหม่เป็นวันที่ ๑<br>- เก็บตัวอย่างน้ำมันหลังจากการทอดทุกวัน จนกว่าจะเปลี่ยนน้ำมันใหม่
                         </td> <td style="padding:6px 12px; width:50%; vertical-align:top;"> <div style="font-weight:bold; visibility:hidden; margin-bottom:4px; font-size: 11.5px;">การเก็บตัวอย่างน้ำมัน</div> <strong>๒. วิธีการเก็บตัวอย่างน้ำมัน</strong><br>- ตั้งน้ำมันทิ้งไว้ให้เย็น<br>- ใช้ช้อนตักประมาณ ๒ ช้อนโต๊ะ เทใส่ภาชนะกันร้อน เก็บไว้ในที่เย็นให้พ้นแสง<br>- เขียนวันที่เก็บตัวอย่างที่ข้างภาชนะโดยใช้ปากกากันสีกันน้ำ
                         </td> </tr> </table> <!-- FOOTER SIGNATURES --> <table style="width: 100%; margin:8px 0 0 0; border-collapse:collapse; font-size:10px; color: #000; line-height:1.6;"> <tr> <td style="width:33%; vertical-align:top; padding-right:10px;"> <div>ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '................................................'}</u>....</div> <div style="margin-top:4px;">ตำแหน่ง ....<u>${sample.collector_position || '........................................................'}</u>....</div> <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '............................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:left; padding:0 10px;"> <div>ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '................................................'}</u>....</div> <div style="margin-top:4px;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '........................................................') : '........................................................'}</u>....</div> <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:right;"> <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div> <div style="margin-top:4px;">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div> </td> </tr> </table>  </div> </div>`;
+        } else if (sample.form_type === 'MU.10-005') {
+            let passCount = 0;
+            let totalCount = 0;
+            
+            // Build table rows specifically for MU.10-005 PDF format
+            let tableRowsHTML = '';
+            sampleItems.forEach((item, i) => {
+                if (item.food_type) {
+                    totalCount++;
+                    if (item.test_outcome === 'ผ่าน') passCount++;
+                    tableRowsHTML += `
+                        <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_type}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.iodate_value}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.test_outcome}</td> 
+                        </tr>`;
+                }
+            });
+            
+            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
+            const analyst1 = sample.analysis_analyst || '..............................................';
+            
+            htmlContent = `
+              <style>* { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; min-height: 1100px; display: block; position: relative; margin: 0; padding: 25px 30px; box-sizing: border-box;"> 
+                  
+                  <!-- HEADER -->
+                  <div style="position: relative; height: 100px; margin-bottom: 25px;">
+                      <div style="position: absolute; top: 0; right: 0; text-align: right; font-size: 13px;">
+                          RD-005<br>หน้าที่ 1/1
+                      </div>
+                  </div>
+                  
+                  <!-- TITLE -->
+                  <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px;">
+                      ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader
+                  </div>
+                  
+                  <!-- META INFO -->
+                  <table style="width: 100%; border: none; font-size: 15px; margin-bottom: 15px; line-height: 1.5;">
+                      <tr>
+                          <td style="width: 160px; font-weight: bold;">สถานที่เก็บตัวอย่าง</td>
+                          <td>: ${sample.location_name || ''} ${sample.amphoe ? 'อำเภอ'+sample.amphoe : ''} ${sample.province ? 'จังหวัด'+sample.province : ''}</td>
+                      </tr>
+                      <tr>
+                          <td style="font-weight: bold;">วันที่รับตัวอย่าง</td>
+                          <td>: ${samplingDate}</td>
+                      </tr>
+                      <tr>
+                          <td style="font-weight: bold;">วันที่ตรวจวิเคราะห์</td>
+                          <td>: ${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : ''}</td>
+                      </tr>
+                      <tr>
+                          <td style="font-weight: bold;">จำนวนตัวอย่างทั้งหมด</td>
+                          <td>: ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
+                      </tr>
+                  </table>
+                  
+                  <!-- TABLE -->
+                  <table style="width: 100%; border-collapse: collapse; font-size: 14px;" border="1">
+                      <thead>
+                          <tr style="background: #f5f5f5; text-align: center; font-weight: bold;">
+                              <th style="padding: 6px 2px; width: 5%; border: 1px solid #555;">ลำดับ</th>
+                              <th style="padding: 6px 2px; width: 14%; border: 1px solid #555;">ชื่อ</th>
+                              <th style="padding: 6px 2px; width: 14%; border: 1px solid #555;">ตัวอย่าง</th>
+                              <th style="padding: 6px 2px; width: 15%; border: 1px solid #555;">เลขสารบบอาหาร</th>
+                              <th style="padding: 6px 2px; width: 22%; border: 1px solid #555;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
+                              <th style="padding: 6px 2px; width: 10%; border: 1px solid #555;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
+                              <th style="padding: 6px 2px; width: 10%; border: 1px solid #555;">ไอโอดีน<br>(ppm)</th>
+                              <th style="padding: 6px 2px; width: 10%; border: 1px solid #555;">สรุปผล</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          ${tableRowsHTML}
+                      </tbody>
+                  </table>
+                  
+                  <!-- NOTE -->
+                  <div style="font-size: 11.5px; margin-top: 5px; line-height: 1.3;">
+                      <table style="width: 100%; border: none;">
+                          <tr>
+                              <td style="width: 50px; font-weight: bold; vertical-align: top;">หมายเหตุ</td>
+                              <td>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
+                          </tr>
+                      </table>
+                  </div>
+                  
+                  <!-- SIGNATURES -->
+                  <table style="width: 100%; margin-top: 35px; border: none; font-size: 14px; text-align: center;">
+                      <tr>
+                          <td style="width: 50%; padding: 10px;">
+                              ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>
+                              (นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข
+                          </td>
+                          <td style="width: 50%; padding: 10px;">
+                              ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>
+                              (นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข
+                          </td>
+                      </tr>
+                      <tr>
+                          <td style="width: 50%; padding: 10px; padding-top: 25px;">
+                              ลงชื่อ..........................................................ผู้รับรอง<br>
+                              (นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ
+                          </td>
+                          <td style="width: 50%; padding: 10px; padding-top: 25px;">
+                              ลงชื่อ..........................................................ผู้รับรอง<br>
+                              (นางสาวมัลลิกา สุพล)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข
+                          </td>
+                      </tr>
+                  </table>
+                  
+              </div>`;
         } else {
             let mu10003Note = '';
         if (sample.form_type === 'MU.10-003') {
@@ -4587,10 +4704,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 scrollY: 0,
                 x: 0,
                 y: 0,
-                width: sample.form_type === 'MU.10-004' ? 780 : 1100,
-                windowWidth: sample.form_type === 'MU.10-004' ? 780 : 1200
+                width: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 780 : 1100,
+                windowWidth: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 780 : 1200
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-004' ? 'portrait' : 'landscape' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['css', 'legacy'] }
         };
 
