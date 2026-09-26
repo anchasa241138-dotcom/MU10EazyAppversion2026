@@ -151,7 +151,7 @@ const app = {
 
     getVisibleSamples() {
         if (!this.currentUser) return [];
-        if (this.currentUser.role === 'admin' || (this.currentUser.role === 'lab' || this.currentUser.role === 'admin')) {
+        if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier') {
             return this.samples;
         }
         return this.samples.filter(s => s.created_by === this.currentUser.username);
@@ -512,7 +512,7 @@ const app = {
                     document.getElementById('record-content-wrapper').classList.remove('hidden');
                     // Pre-fill collector name and position
                     document.getElementById('field-collector-name').value = this.currentUser.fullname;
-                    document.getElementById('field-collector-position').value = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง';
+                    document.getElementById('field-collector-position').value = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : (this.currentUser.role === 'certifier') ? 'ผู้รับรองผลตรวจวิเคราะห์' : 'ผู้เก็บตัวอย่าง';
                     this.renderSavedRecords();
                 }
                 break;
@@ -537,7 +537,7 @@ const app = {
                 }
                 break;
             case 'lab-certify':
-                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
+                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin' && this.currentUser.role !== 'certifier')) {
                     document.getElementById('certify-auth-block').classList.remove('hidden');
                     document.getElementById('certify-content-wrapper').classList.add('hidden');
                 } else {
@@ -684,12 +684,15 @@ const app = {
             authButtons.innerHTML = `<button class="btn btn-secondary" onclick="app.logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>`;
             userStatusCard.innerHTML = `
                 <div class="user-status-name"><i class="fa-solid fa-circle-user"></i> ${this.currentUser.fullname}</div>
-                <div class="user-status-role">${this.currentUser.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</div>
+                <div class="user-status-role">${this.currentUser.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : this.currentUser.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : this.currentUser.role === 'certifier' ? 'ผู้รับรองผลตรวจวิเคราะห์' : 'ผู้เก็บตัวอย่าง'}</div>
             `;
             
-            // Show lab menus if role is lab
-            document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
-                el.style.display = ((this.currentUser.role === 'lab' || this.currentUser.role === 'admin') || this.currentUser.role === 'admin') ? 'flex' : 'none';
+            // Show lab menus based on role
+            document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis').forEach(el => {
+                el.style.display = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'flex' : 'none';
+            });
+            document.querySelectorAll('#menu-lab-certify').forEach(el => {
+                el.style.display = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin' || this.currentUser.role === 'certifier') ? 'flex' : 'none';
             });
             
             const adminMenu = document.getElementById('menu-manage-users');
