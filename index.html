@@ -480,7 +480,7 @@
 
                     <!-- Dashboard Charts Layout -->
                     <div class="dashboard-grid">
-                        <div class="chart-container large-chart">
+                        <div class="chart-container" style="grid-column: span 2;">
                             <div class="chart-header">
                                 <h4><i class="fa-solid fa-map-location-dot"></i> จำนวนการส่งตัวอย่างตรวจวิเคราะห์แยกตามรายจังหวัด</h4>
                             </div>
@@ -488,7 +488,7 @@
                                 <canvas id="provinceChart"></canvas>
                             </div>
                         </div>
-                        <div class="chart-container">
+                        <div class="chart-container" style="grid-column: span 1;">
                             <div class="chart-header">
                                 <h4><i class="fa-solid fa-chart-pie"></i> สัดส่วนผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
                             </div>
@@ -496,7 +496,7 @@
                                 <canvas id="resultRatioChart"></canvas>
                             </div>
                         </div>
-                        <div class="chart-container" style="grid-column: span 2;">
+                        <div class="chart-container large-chart">
                             <div class="chart-header">
                                 <h4><i class="fa-solid fa-list-check"></i> จำนวนตัวอย่างแยกตามประเภทฟอร์มบันทึก (MU.10-001 - 007)</h4>
                             </div>
@@ -1681,7 +1681,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790409841970"></script>
+    <script src="charts-dash.js?v=1790410106715"></script>
     <script src="app_v83.js?v=1790345679147"></script>
 </body>
 </html>
