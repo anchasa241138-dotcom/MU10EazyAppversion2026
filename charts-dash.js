@@ -118,13 +118,12 @@ function initDashboardCharts() {
                 'MU.10-004 (น้ำมัน Kit)',
                 'MU.10-005 (เกลือบริโภค)',
                 'MU.10-006 (น้ำบริโภค)',
-                'MU.10-007 (โคลิฟอร์ม SI-2)',
-                'MU.10-008 (ตรวจฉลาก)'
+                'MU.10-007 (โคลิฟอร์ม SI-2)'
             ],
             datasets: [
                 {
                     label: 'ผ่านเกณฑ์',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: 'rgba(16, 185, 129, 0.8)',
                     borderColor: '#10b981',
                     borderWidth: 1,
@@ -132,7 +131,7 @@ function initDashboardCharts() {
                 },
                 {
                     label: 'ไม่ผ่านเกณฑ์',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: 'rgba(239, 68, 68, 0.8)',
                     borderColor: '#ef4444',
                     borderWidth: 1,
@@ -218,7 +217,7 @@ function updateDashboardCharts(samples) {
     // 3. Calculate Form type distribution
     const forms = [
         'MU.10-001', 'MU.10-002', 'MU.10-003', 'MU.10-004',
-        'MU.10-005', 'MU.10-006', 'MU.10-007', 'MU.10-008'
+        'MU.10-005', 'MU.10-006', 'MU.10-007'
     ];
     
     const passedCounts = forms.map(f => 
