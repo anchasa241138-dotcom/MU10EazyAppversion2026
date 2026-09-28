@@ -837,7 +837,7 @@ const app = {
     },
 
 
-    handleRegister(e) {
+    ﻿handleRegister(e) {
         e.preventDefault();
         
         const title = document.getElementById('reg-title') ? document.getElementById('reg-title').value : '';
@@ -863,39 +863,84 @@ const app = {
             return;
         }
 
-        const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
-        if (!passRegex.test(pass)) {
-            Swal.fire('ข้อผิดพลาด', 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร ประกอบด้วยอักษรพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และอักขระพิเศษ', 'error');
-            return;
+        if (typeof auth !== 'undefined') {
+            Swal.fire({ title: 'กำลังลงทะเบียน...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            const email = username.toLowerCase() + '@mu10.local';
+            
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    const uid = userCredential.user.uid;
+                    const newUser = {
+                        uid: uid,
+                        username: username,
+                        fullname: fullname,
+                        role: role,
+                        status: 'pending',
+                        createdAt: new Date().toISOString(),
+                        cid: cid,
+                        birthdate: birthdate,
+                        position: position,
+                        workplace: workplace,
+                        province: province,
+                        district: district,
+                        subdistrict: subdistrict
+                    };
+                    
+                    return db.ref('users/' + uid).set(newUser);
+                })
+                .then(() => {
+                    // Sign out immediately so they remain pending
+                    return auth.signOut();
+                })
+                .then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ลงทะเบียนสำเร็จ!',
+                        text: 'กรุณารอผู้ดูแลระบบอนุมัติการใช้งาน',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        document.getElementById('registerForm').reset();
+                        this.showLoginModal();
+                    });
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/email-already-in-use') {
+                        Swal.fire('ข้อผิดพลาด', 'ชื่อผู้ใช้งานนี้มีในระบบแล้ว กรุณาใช้ชื่ออื่น', 'error');
+                    } else {
+                        Swal.fire('ข้อผิดพลาด', error.message, 'error');
+                    }
+                });
+        } else {
+            // Local Storage fallback
+            if (this.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+                Swal.fire('ข้อผิดพลาด', 'ชื่อผู้ใช้งานนี้มีในระบบแล้ว', 'error');
+                return;
+            }
+            
+            this.users.push({
+                username: username,
+                password: pass,
+                fullname: fullname,
+                role: role,
+                status: 'pending'
+            });
+            
+            if (typeof db === 'undefined') {
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+            }
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'ลงทะเบียนสำเร็จ!',
+                text: 'กรุณารอผู้ดูแลระบบอนุมัติการใช้งาน (โหมด Local)',
+                confirmButtonText: 'ตกลง'
+            }).then(() => {
+                document.getElementById('registerForm').reset();
+                this.showLoginModal();
+            });
         }
-
-        if (this.users.some(u => u.username === username)) {
-            Swal.fire('ข้อผิดพลาด', 'ชื่อผู้ใช้งานนี้มีอยู่ในระบบแล้ว', 'error');
-            return;
-        }
-
-        const newUser = { 
-            username, fullname, cid, role, password: pass,
-            title, firstname, lastname, birthdate, position, workplace, province, district, subdistrict,
-            status: 'pending',
-            createdAt: new Date().toISOString()
-        };
-
-        this.users.push(newUser);
-        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
-        
-        Swal.fire({
-            icon: 'success',
-            title: 'สมัครสมาชิกสำเร็จ',
-            text: 'บัญชีของคุณถูกสร้างแล้ว กรุณารอผู้ดูแลระบบอนุมัติก่อนเข้าใช้งาน',
-            confirmButtonText: 'ตกลง'
-        }).then(() => {
-            this.switchAuthTab('login');
-            e.target.reset();
-        });
     },
 
-    
     logout() {
         if (typeof auth !== 'undefined') {
             auth.signOut().then(() => {
