@@ -184,7 +184,7 @@ const app = {
             db.ref('samples').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    this.samples = data;
+                    this.samples = Array.isArray(data) ? data : Object.values(data);
                 } else {
                     this.resetDefaultSamples();
                     db.ref('samples').set(this.samples);
@@ -196,7 +196,7 @@ const app = {
             db.ref('users').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    this.users = data;
+                    this.users = Object.values(data);
                 } else {
                     // Default users
                     this.users = [
@@ -741,68 +741,103 @@ const app = {
         document.getElementById(`${tab}Form`).classList.add('active');
     },
 
+    
     handleLogin(e) {
         e.preventDefault();
         const username = document.getElementById('login-username').value.trim();
         const pass = document.getElementById('login-password').value.trim();
-
-        const user = this.users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === pass);
-        if (user) {
-            this.currentUser = user;
-            sessionStorage.setItem('sskmoph_session', JSON.stringify(user));
-            Swal.fire({
-                icon: 'success',
-                title: 'เข้าสู่ระบบสำเร็จ',
-                text: `ยินดีต้อนรับ ${user.fullname}`,
-                timer: 1500,
-                showConfirmButton: false
-            });
-            document.body.classList.remove('require-login-mode');
-            const closeBtn = document.querySelector('#authModal .close-modal-btn');
-            if (closeBtn) closeBtn.style.display = 'block';
-            this.closeAuthModal();
-            this.updateAuthUI();
-            e.target.reset();
+        
+        if (typeof auth !== 'undefined') {
+            Swal.fire({ title: 'กำลังเข้าสู่ระบบ...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            auth.signInWithEmailAndPassword(username.toLowerCase() + '@mu10.local', pass)
+                .then((userCredential) => {
+                    const uid = userCredential.user.uid;
+                    return db.ref('users/' + uid).once('value');
+                })
+                .then((snapshot) => {
+                    const user = snapshot.val();
+                    if (user) {
+                        this.currentUser = user;
+                        sessionStorage.setItem('sskmoph_session', JSON.stringify(user));
+                        Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', text: `ยินดีต้อนรับ ${user.fullname}`, timer: 1500, showConfirmButton: false });
+                        document.body.classList.remove('require-login-mode');
+                        const closeBtn = document.querySelector('#authModal .close-modal-btn');
+                        if (closeBtn) closeBtn.style.display = 'block';
+                        this.closeAuthModal();
+                        this.updateAuthUI();
+                        document.getElementById('loginForm').reset();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'ไม่พบข้อมูลผู้ใช้ในระบบ', text: 'โปรดติดต่อผู้ดูแลระบบ' });
+                        auth.signOut();
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบล้มเหลว', text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' });
+                });
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'เข้าสู่ระบบล้มเหลว',
-                text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง'
-            });
+            const user = this.users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === pass);
+            if (user) {
+                this.currentUser = user;
+                sessionStorage.setItem('sskmoph_session', JSON.stringify(user));
+                Swal.fire({ icon: 'success', title: 'เข้าสู่ระบบสำเร็จ', text: `ยินดีต้อนรับ ${user.fullname}`, timer: 1500, showConfirmButton: false });
+                document.body.classList.remove('require-login-mode');
+                const closeBtn = document.querySelector('#authModal .close-modal-btn');
+                if (closeBtn) closeBtn.style.display = 'block';
+                this.closeAuthModal();
+                this.updateAuthUI();
+                e.target.reset();
+            } else {
+                Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบล้มเหลว', text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' });
+            }
         }
     },
 
+    
     handleForgotPassword(e) {
         e.preventDefault();
         const username = document.getElementById('forgot-username').value.trim();
         const cid = document.getElementById('forgot-cid').value.trim();
-        const newPass = document.getElementById('forgot-new-password').value;
-        const confirmPass = document.getElementById('forgot-confirm-password').value;
 
-        if (newPass !== confirmPass) {
-            Swal.fire('ข้อผิดพลาด', 'รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน', 'error');
-            return;
+        if (typeof auth !== 'undefined') {
+            Swal.fire({
+                icon: 'info',
+                title: 'ขออภัย',
+                text: 'เนื่องจากมีการอัปเกรดความปลอดภัยสูงสุด กรุณาแจ้งผู้ดูแลระบบเพื่อรีเซ็ตรหัสผ่านชั่วคราวครับ',
+                confirmButtonText: 'ตกลง'
+            }).then(() => {
+                this.switchAuthTab('login');
+                e.target.reset();
+            });
+        } else {
+            const newPass = document.getElementById('forgot-new-password').value;
+            const confirmPass = document.getElementById('forgot-confirm-password').value;
+
+            if (newPass !== confirmPass) {
+                Swal.fire('ข้อผิดพลาด', 'รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน', 'error');
+                return;
+            }
+
+            const userIndex = this.users.findIndex(u => u.username === username && u.cid === cid);
+            if (userIndex === -1) {
+                Swal.fire('ข้อผิดพลาด', 'ข้อมูล Username หรือ เลขบัตรประชาชน (CID) ไม่ถูกต้อง', 'error');
+                return;
+            }
+
+            this.users[userIndex].password = newPass;
+            if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'เปลี่ยนรหัสผ่านสำเร็จ',
+                text: 'คุณสามารถเข้าสู่ระบบด้วยรหัสผ่านใหม่ได้ทันที',
+                confirmButtonText: 'เข้าสู่ระบบ'
+            }).then(() => {
+                this.switchAuthTab('login');
+                e.target.reset();
+            });
         }
-
-        const userIndex = this.users.findIndex(u => u.username === username && u.cid === cid);
-        if (userIndex === -1) {
-            Swal.fire('ข้อผิดพลาด', 'ข้อมูล Username หรือ เลขบัตรประชาชน (CID) ไม่ถูกต้อง', 'error');
-            return;
-        }
-
-        this.users[userIndex].password = newPass;
-        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
-
-        Swal.fire({
-            icon: 'success',
-            title: 'เปลี่ยนรหัสผ่านสำเร็จ',
-            text: 'คุณสามารถเข้าสู่ระบบด้วยรหัสผ่านใหม่ได้ทันที',
-            confirmButtonText: 'เข้าสู่ระบบ'
-        }).then(() => {
-            this.switchAuthTab('login');
-            e.target.reset();
-        });
     },
+
 
     handleRegister(e) {
         e.preventDefault();
@@ -862,17 +897,23 @@ const app = {
         });
     },
 
+    
     logout() {
-        this.currentUser = null;
-        sessionStorage.removeItem('sskmoph_session');
-        this.updateAuthUI();
-        this.switchView('dashboard');
-        Swal.fire({ icon: 'info', title: 'ออกจากระบบแล้ว', timer: 1000, showConfirmButton: false });
-        document.body.classList.add('require-login-mode');
-        this.showLoginModal();
-        const closeBtn = document.querySelector('#authModal .close-modal-btn');
-        if (closeBtn) closeBtn.style.display = 'none';
+        if (typeof auth !== 'undefined') {
+            auth.signOut().then(() => {
+                this.currentUser = null;
+                sessionStorage.removeItem('sskmoph_session');
+                this.updateAuthUI();
+                this.showLoginModal();
+            });
+        } else {
+            this.currentUser = null;
+            sessionStorage.removeItem('sskmoph_session');
+            this.updateAuthUI();
+            this.showLoginModal();
+        }
     },
+
 
     // Forms Logic
     openFormEditor(formType) {
@@ -5133,10 +5174,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (modal) modal.classList.remove('active');
     },
 
+    
     deleteUser(username) {
         Swal.fire({
             title: 'ยืนยันการลบบัญชี?',
-            text: `คุณต้องการลบบัญชี "${username}" ใช่หรือไม่? ข้อมูลผู้ใช้นี้จะถูกลบออกจากระบบอย่างถาวร`,
+            text: `คุณต้องการลบบัญชี "${username}" ใช่หรือไม่? ข้อมูลผู้ใช้นี้จะถูกลบออกจากระบบ`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
@@ -5145,15 +5187,25 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.users = this.users.filter(u => u.username !== username);
-                if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
-                this.renderManageUsers();
-                this.updateBadges();
-                Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
+                const user = this.users.find(u => u.username === username);
+                if (user) {
+                    if (typeof db !== 'undefined' && user.uid) {
+                        db.ref('users/' + user.uid).remove();
+                        Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
+                    } else {
+                        this.users = this.users.filter(u => u.username !== username);
+                        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
+                        this.renderManageUsers();
+                        this.updateBadges();
+                        Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
+                    }
+                }
             }
         });
     },
 
+
+    
     approveUser(username) {
         Swal.fire({
             title: 'ยืนยันการอนุมัติ?',
@@ -5166,15 +5218,21 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             if (result.isConfirmed) {
                 const user = this.users.find(u => u.username === username);
                 if (user) {
-                    user.status = 'approved';
-                    if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
-                    Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
-                    this.renderManageUsers();
-                    this.updateBadges();
+                    if (typeof db !== 'undefined' && user.uid) {
+                        db.ref('users/' + user.uid).update({ status: 'approved' });
+                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                    } else {
+                        user.status = 'approved';
+                        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
+                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                        this.renderManageUsers();
+                        this.updateBadges();
+                    }
                 }
             }
         });
     },
+
 
     rejectUser(username) {
         Swal.fire({
