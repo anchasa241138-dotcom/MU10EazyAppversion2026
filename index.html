@@ -104,6 +104,8 @@
             font-size: 14.5px;
         }
 
+        #authModal .auth-subform.active { display: block !important; }
+        #authModal .auth-subform.active > * { margin-bottom: 15px; }
         #authModal .modal-body {
             flex: 1;
             min-height: 0;
@@ -1152,7 +1154,7 @@
                 </form>
 
                 <!-- Form: Register -->
-                <form id="registerForm" class="auth-subform" style="padding-bottom: 30px;">
+                <form id="registerForm" class="auth-subform">
                     
                     <div class="reg-grid">
                         <div class="input-icon-wrapper">
@@ -1269,7 +1271,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block mt-4" style="height: 54px; font-size: 18px;">ลงทะเบียนสมัครสมาชิก</button>
+                    <button type="submit" class="btn btn-primary btn-block mt-4" style="height: 54px; font-size: 18px; margin-top: 20px !important;">ลงทะเบียนสมัครสมาชิก</button>
                 </form>
 
                 <!-- Form: Forgot Password -->
@@ -1688,7 +1690,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790569786805"></script>
+    <script src="charts-dash.js?v=1790570028322"></script>
     <script src="app_v83.js?v=1790436280116"></script>
 </body>
 </html>
