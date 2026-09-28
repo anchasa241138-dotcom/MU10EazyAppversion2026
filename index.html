@@ -43,6 +43,8 @@
         }
         
         #authModal .modal-card {
+            display: flex;
+            flex-direction: column;
             background: rgba(255, 255, 255, 0.98);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.6);
@@ -103,6 +105,10 @@
         }
 
         #authModal .modal-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            max-height: none !important;
             padding: 25px 30px;
         }
 
@@ -1682,7 +1688,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790569451529"></script>
+    <script src="charts-dash.js?v=1790569786805"></script>
     <script src="app_v83.js?v=1790436280116"></script>
 </body>
 </html>
