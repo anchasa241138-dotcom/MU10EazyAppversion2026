@@ -207,11 +207,11 @@
         
         .reg-bottom-grid {
             display: grid;
-            grid-template-columns: 3fr 2fr;
+            grid-template-columns: 3fr 2fr; align-items: start;
             gap: 20px;
         }
 
-        .reg-auth-block {
+        .reg-auth-block { min-height: 300px; padding-bottom: 30px;
             background: linear-gradient(135deg, #1e40af, #2563eb);
             padding: 20px;
             border-radius: 12px;
@@ -1146,7 +1146,7 @@
                 </form>
 
                 <!-- Form: Register -->
-                <form id="registerForm" class="auth-subform">
+                <form id="registerForm" class="auth-subform" style="padding-bottom: 30px;">
                     
                     <div class="reg-grid">
                         <div class="input-icon-wrapper">
@@ -1682,7 +1682,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1790567009333"></script>
+    <script src="charts-dash.js?v=1790569451529"></script>
     <script src="app_v83.js?v=1790436280116"></script>
 </body>
 </html>
