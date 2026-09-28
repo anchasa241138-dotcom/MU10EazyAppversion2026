@@ -177,92 +177,40 @@ const app = {
         return this.samples.filter(s => s.created_by === this.currentUser.username);
     },
 
+    
     initData() {
-        // Init Users
-        try {
-            let storedUsers = localStorage.getItem('sskmoph_users');
-            if (!storedUsers) {
-                this.users = [
-                    { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
-                    { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
-                    { username: 'certifier', password: 'password', role: 'certifier', fullname: 'ดร.ผู้รับรอง ตรวจสอบดี', status: 'approved' },
-                    { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' },
-                    { username: 'anchasa', password: 'anchasa@241138', role: 'collector', fullname: 'นางสาว อัญชสา ใจดี', status: 'approved', workplace: 'รพ.ศรีสะเกษ', province: 'ศรีสะเกษ', createdAt: new Date().toISOString() }
-                ];
-                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-            } else {
-                this.users = JSON.parse(storedUsers);
-                
-                // Ensure all existing users have an approved status for backwards compatibility
-                this.users.forEach(u => {
-                    if (!u.status) u.status = 'approved';
-                    if (u.username === 'admin') u.fullname = 'Admin Mobile Unit 10';
-                });
-                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-
-                // Force reset admin user to be sure
-                const adminUser = this.users.find(u => u.username === 'admin');
-                if (adminUser) {
-                    adminUser.password = 'password';
-                    adminUser.role = 'admin'; // upgrade to admin
-                    adminUser.status = 'approved';
+        if (typeof db !== 'undefined') {
+            // Firebase real-time listeners
+            db.ref('samples').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    this.samples = data;
+                } else {
+                    this.resetDefaultSamples();
+                    db.ref('samples').set(this.samples);
                 }
+                if (window.updateDashboardCharts) updateDashboardCharts(this.samples);
+                this.renderSamplesList();
+            });
 
-                else { this.users.push({ username: 'admin', password: 'password', role: 'admin', fullname: 'Admin', status: 'approved' }); }
-
-                // Force inject certifier test user
-                const certifierUser = this.users.find(u => u.username === 'certifier');
-                if (!certifierUser) {
-                    this.users.push({
-                        username: 'certifier',
-                        password: 'password',
-                        role: 'certifier',
-                        fullname: 'ดร.ผู้รับรอง ตรวจสอบดี',
-                        status: 'approved'
-                    });
+            db.ref('users').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    this.users = data;
+                } else {
+                    // Default users
+                    this.users = [
+                        { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
+                        { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
+                        { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
+                    ];
+                    db.ref('users').set(this.users);
                 }
-                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-                
-                // Add mock pending user for demonstration if not exists
-                if (!this.users.some(u => u.username === 'anchasa')) {
-                    this.users.push({
-                        username: 'anchasa',
-                        password: 'Password123!',
-                        role: 'collector',
-                        fullname: 'นางสาว อัญชสา ใจดี',
-                        status: 'pending',
-                        workplace: 'รพ.ศรีสะเกษ',
-                        province: 'ศรีสะเกษ',
-                        createdAt: new Date().toISOString()
-                    });
+                this.updateAuthUI();
+                if (document.getElementById('manage-users-view').style.display === 'block') {
+                    this.renderManageUsers();
                 }
-                
-                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-            }
-        } catch (e) {
-            console.warn("Failed to parse users, resetting default users.", e);
-            this.users = [
-                { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
-                { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
-                { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
-            ];
-            localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
-        }
-
-
-            try {
-            let storedSamples = localStorage.getItem('sskmoph_samples');
-            if (!storedSamples) {
-                this.resetDefaultSamples();
-            } else {
-                this.samples = JSON.parse(storedSamples);
-                if (!Array.isArray(this.samples)) {
-                    throw new Error("Stored samples is not an array");
-                }
-            }
-        } catch (e) {
-            console.warn("Failed to parse samples, resetting default samples.", e);
-            this.resetDefaultSamples();
+            });
         }
         
         // Restore session
@@ -270,13 +218,8 @@ const app = {
             const session = sessionStorage.getItem('sskmoph_session');
             if (session) {
                 this.currentUser = JSON.parse(session);
-            if (this.currentUser && this.currentUser.username === 'admin') {
-                this.currentUser.fullname = 'Admin Mobile Unit 10';
-                sessionStorage.setItem('sskmoph_session', JSON.stringify(this.currentUser));
-            }
             }
         } catch (e) {
-            console.warn("Failed to parse session", e);
             this.currentUser = null;
         }
     },
@@ -326,10 +269,12 @@ const app = {
     },
 
     saveSamples() {
-        localStorage.setItem('sskmoph_samples', JSON.stringify(this.samples));
-        if (window.updateDashboardCharts) {
-            updateDashboardCharts(this.samples);
+        if (typeof db !== 'undefined') {
+            db.ref('samples').set(this.samples);
+        } else {
+            localStorage.setItem('sskmoph_samples', JSON.stringify(this.samples));
         }
+    }
         this.updateSidebarBadges();
     },
 
@@ -846,7 +791,7 @@ const app = {
         }
 
         this.users[userIndex].password = newPass;
-        localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
 
         Swal.fire({
             icon: 'success',
@@ -904,7 +849,7 @@ const app = {
         };
 
         this.users.push(newUser);
-        localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
         
         Swal.fire({
             icon: 'success',
@@ -5201,7 +5146,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         }).then((result) => {
             if (result.isConfirmed) {
                 this.users = this.users.filter(u => u.username !== username);
-                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+                if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
                 this.renderManageUsers();
                 this.updateBadges();
                 Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
@@ -5222,7 +5167,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 const user = this.users.find(u => u.username === username);
                 if (user) {
                     user.status = 'approved';
-                    localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+                    if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
                     Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
                     this.renderManageUsers();
                     this.updateBadges();
@@ -5243,7 +5188,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         }).then((result) => {
             if (result.isConfirmed) {
                 this.users = this.users.filter(u => u.username !== username);
-                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+                if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
                 Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
                 this.renderManageUsers();
                 this.updateBadges();
