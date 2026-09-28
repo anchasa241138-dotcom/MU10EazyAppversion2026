@@ -169,11 +169,25 @@ const app = {
 
     // Initialize mock database in localStorage
 
-    getVisibleSamples() {
+    ﻿getVisibleSamples() {
         if (!this.currentUser) return [];
         if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier') {
             return this.samples;
         }
+        
+        const workplace = this.currentUser.workplace || '';
+        const ssjMap = {
+            'สำนักงานสาธารณสุขจังหวัดศรีสะเกษ': 'ศรีสะเกษ',
+            'สำนักงานสาธารณสุขจังหวัดอุบลราชธานี': 'อุบลราชธานี',
+            'สำนักงานสาธารณสุขจังหวัดยโสธร': 'ยโสธร',
+            'สำนักงานสาธารณสุขจังหวัดอำนาจเจริญ': 'อำนาจเจริญ',
+            'สำนักงานสาธารณสุขจังหวัดมุกดาหาร': 'มุกดาหาร'
+        };
+        
+        if (ssjMap[workplace]) {
+            return this.samples.filter(s => s.province === ssjMap[workplace]);
+        }
+        
         return this.samples.filter(s => s.created_by === this.currentUser.username);
     },
 
@@ -595,7 +609,7 @@ const app = {
     },
 
     updateDashboardStats() {
-        let visible = this.samples; // Show global stats to everyone
+        let visible = this.getVisibleSamples();
         const filterEl = document.getElementById('dashProvinceFilter');
         if (filterEl && filterEl.value !== 'all') {
             visible = visible.filter(s => s.province === filterEl.value);
