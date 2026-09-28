@@ -274,8 +274,6 @@ const app = {
         } else {
             localStorage.setItem('sskmoph_samples', JSON.stringify(this.samples));
         }
-    }
-        this.updateSidebarBadges();
     },
 
     updateSidebarBadges() {
