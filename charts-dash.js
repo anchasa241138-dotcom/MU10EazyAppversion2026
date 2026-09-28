@@ -217,22 +217,7 @@ function updateDashboardCharts(samples) {
     resultRatioChartInstance.update();
 
     // 3. Calculate Form type distribution
-    const forms = [
-        'MU.10-001', 'MU.10-002', 'MU.10-003', 'MU.10-004',
-        'MU.10-005', 'MU.10-006', 'MU.10-007'
-    ];
     
-    const passedCounts = forms.map(f => 
-        samples.filter(s => s.form_type === f && s.status === 'approved' && s.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน').length
-    );
-    const failedCounts = forms.map(f => 
-        samples.filter(s => s.form_type === f && s.status === 'approved' && s.analysis_summary === 'ไม่ผ่านเกณฑ์มาตรฐาน').length
-    );
-
-    formTypeChartInstance.data.datasets[0].data = passedCounts;
-    formTypeChartInstance.data.datasets[1].data = failedCounts;
-    
-    formTypeChartInstance.update();
     
     // Call Substance Charts Update
     if (typeof updateSubstanceCharts === 'function') {
@@ -354,8 +339,17 @@ function updateSubstanceCharts(samples) {
     
     // Check if we need to build the DOM
     if (grid.children.length === 0) {
-        for (const key in stats) {
-            const item = stats[key];
+            if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
+        const passedCounts = Object.values(stats).map(s => s.pass);
+        const failedCounts = Object.values(stats).map(s => s.fail);
+        formTypeChartInstance.data.labels = Object.values(stats).map(s => s.label);
+        formTypeChartInstance.data.datasets[0].data = passedCounts;
+        formTypeChartInstance.data.datasets[1].data = failedCounts;
+        formTypeChartInstance.update();
+    }
+    
+    for (const key in stats) {
+        const item = stats[key];
             const col = document.createElement('div');
             col.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
             col.innerHTML = `
