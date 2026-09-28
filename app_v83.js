@@ -203,7 +203,7 @@ const app = {
                     this.resetDefaultSamples();
                     db.ref('samples').set(this.samples);
                 }
-                if (window.updateDashboardCharts) updateDashboardCharts(this.samples);
+                if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
                 this.renderSamplesList();
             });
 
@@ -493,7 +493,7 @@ const app = {
                 break;
             case 'dashboard':
                 this.updateDashboardStats();
-                if (window.updateDashboardCharts) updateDashboardCharts(this.samples);
+                if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
                 break;
             case 'sample-record':
                 if (!this.currentUser) {
@@ -1540,7 +1540,7 @@ const app = {
 
         this.renderSavedRecords();
         this.updateDashboardStats();
-        if (window.updateDashboardCharts) updateDashboardCharts(this.samples);
+        if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
     },
 
     renderSavedRecords() {
@@ -1695,7 +1695,7 @@ const app = {
                     this.saveSamples();
                     this.renderSavedRecords();
                     this.updateDashboardStats();
-                    if (window.updateDashboardCharts) updateDashboardCharts(this.samples);
+                    if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
                     Swal.fire(
                         'ลบข้อมูลสำเร็จ!',
                         'ข้อมูลตัวอย่างถูกลบออกจากระบบแล้ว',
