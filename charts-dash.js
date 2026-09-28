@@ -339,7 +339,8 @@ function updateSubstanceCharts(samples) {
     
     // Check if we need to build the DOM
     if (grid.children.length === 0) {
-            if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
+            
+    if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
         const passedCounts = Object.values(stats).map(s => s.pass);
         const failedCounts = Object.values(stats).map(s => s.fail);
         formTypeChartInstance.data.labels = Object.values(stats).map(s => s.label);
@@ -347,7 +348,7 @@ function updateSubstanceCharts(samples) {
         formTypeChartInstance.data.datasets[1].data = failedCounts;
         formTypeChartInstance.update();
     }
-    
+
     for (const key in stats) {
         const item = stats[key];
             const col = document.createElement('div');
