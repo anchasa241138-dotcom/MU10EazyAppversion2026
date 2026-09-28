@@ -169,23 +169,21 @@ const app = {
 
     // Initialize mock database in localStorage
 
-    ﻿getVisibleSamples() {
+    ﻿﻿getVisibleSamples() {
         if (!this.currentUser) return [];
         if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier') {
             return this.samples;
         }
         
-        const workplace = this.currentUser.workplace || '';
-        const ssjMap = {
-            'สำนักงานสาธารณสุขจังหวัดศรีสะเกษ': 'ศรีสะเกษ',
-            'สำนักงานสาธารณสุขจังหวัดอุบลราชธานี': 'อุบลราชธานี',
-            'สำนักงานสาธารณสุขจังหวัดยโสธร': 'ยโสธร',
-            'สำนักงานสาธารณสุขจังหวัดอำนาจเจริญ': 'อำนาจเจริญ',
-            'สำนักงานสาธารณสุขจังหวัดมุกดาหาร': 'มุกดาหาร'
-        };
+        const workplace = (this.currentUser.workplace || '').trim();
+        const isSSJ = workplace.includes('สสจ') || workplace.includes('สำนักงานสาธารณสุขจังหวัด');
         
-        if (ssjMap[workplace]) {
-            return this.samples.filter(s => s.province === ssjMap[workplace]);
+        if (isSSJ) {
+            if (workplace.includes('ศรีสะเกษ')) return this.samples.filter(s => s.province === 'ศรีสะเกษ');
+            if (workplace.includes('อุบลราชธานี')) return this.samples.filter(s => s.province === 'อุบลราชธานี');
+            if (workplace.includes('ยโสธร')) return this.samples.filter(s => s.province === 'ยโสธร');
+            if (workplace.includes('อำนาจเจริญ')) return this.samples.filter(s => s.province === 'อำนาจเจริญ');
+            if (workplace.includes('มุกดาหาร')) return this.samples.filter(s => s.province === 'มุกดาหาร');
         }
         
         return this.samples.filter(s => s.created_by === this.currentUser.username);
