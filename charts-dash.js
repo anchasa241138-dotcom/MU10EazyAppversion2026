@@ -161,7 +161,7 @@ function initDashboardCharts() {
             scales: {
                 x: {
                     stacked: true,
-                    ticks: { font: { family: 'Sarabun', size: 11 }, maxRotation: 0, minRotation: 0 },
+                    ticks: { font: { family: 'Sarabun', size: 11 }, autoSkip: false, maxRotation: 45, minRotation: 0 },
                     grid: { display: false }
                 },
                 y: {
@@ -337,9 +337,6 @@ function updateSubstanceCharts(samples) {
     const grid = document.getElementById('substance-charts-grid');
     if (!grid) return;
     
-    // Check if we need to build the DOM
-    if (grid.children.length === 0) {
-            
     if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
         const passedCounts = Object.values(stats).map(s => s.pass);
         const failedCounts = Object.values(stats).map(s => s.fail);
@@ -348,6 +345,10 @@ function updateSubstanceCharts(samples) {
         formTypeChartInstance.data.datasets[1].data = failedCounts;
         formTypeChartInstance.update();
     }
+
+    // Check if we need to build the DOM
+    if (grid.children.length === 0) {
+            
 
     for (const key in stats) {
         const item = stats[key];
