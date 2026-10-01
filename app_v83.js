@@ -621,13 +621,40 @@ const app = {
         if (endDateEl && endDateEl.value) {
             visible = visible.filter(s => s.collection_date && s.collection_date <= endDateEl.value);
         }
-        const total = visible.length;
-        const pending = visible.filter(s => s.status === 'registered').length;
-        const analyzing = visible.filter(s => s.status === 'accepted').length;
-        const completed = visible.filter(s => s.status === 'approved').length;
-        
-        const passed = visible.filter(s => s.status === 'approved' && s.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน').length;
-        const failed = visible.filter(s => s.status === 'approved' && s.analysis_summary === 'ไม่ผ่านเกณฑ์มาตรฐาน').length;
+        let cStats = { total: 0, pending: 0, analyzing: 0, completed: 0, passed: 0, failed: 0 };
+        visible.forEach(s => {
+            let idx = 1;
+            let hasItems = false;
+            
+            const processItem = (index) => {
+                hasItems = true;
+                cStats.total++;
+                
+                if (s.status === 'registered') cStats.pending++;
+                else if (s.status === 'accepted' || s.status === 'analyzed' || s.status === 'summarized' || s.status === 'analyst_signed') cStats.analyzing++;
+                else if (s.status === 'approved') {
+                    cStats.completed++;
+                    let sum = index ? (s['analysis_summary_outcome_' + index] || s['analysis_summary_' + index] || '') : (s['analysis_summary_outcome'] || s['analysis_summary'] || '');
+                    if (sum.includes('ไม่ผ่าน')) cStats.failed++;
+                    else if (sum.includes('ผ่าน')) cStats.passed++;
+                }
+            };
+
+            while (s['sample_name_' + idx] !== undefined) {
+                processItem(idx);
+                idx++;
+            }
+            if (!hasItems && s.sample_name) {
+                processItem(null);
+            }
+        });
+
+        const total = cStats.total;
+        const pending = cStats.pending;
+        const analyzing = cStats.analyzing;
+        const completed = cStats.completed;
+        const passed = cStats.passed;
+        const failed = cStats.failed;
 
         const elTotal = document.getElementById('stats-total'); if (elTotal) elTotal.innerText = total;
         const elPending = document.getElementById('stats-pending'); if (elPending) elPending.innerText = pending;
