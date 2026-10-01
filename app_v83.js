@@ -985,14 +985,22 @@ const app = {
             auth.signOut().then(() => {
                 this.currentUser = null;
                 sessionStorage.removeItem('sskmoph_session');
+                document.body.classList.add('require-login-mode'); // Make sure background is locked
+                const closeBtn = document.querySelector('#authModal .close-modal-btn');
+                if (closeBtn) closeBtn.style.display = 'none'; // Prevent closing
+                this.switchView('dashboard'); // Redirect to dashboard first
                 this.updateAuthUI();
                 this.showLoginModal();
             });
         } else {
             this.currentUser = null;
-            sessionStorage.removeItem('sskmoph_session');
-            this.updateAuthUI();
-            this.showLoginModal();
+                sessionStorage.removeItem('sskmoph_session');
+                document.body.classList.add('require-login-mode'); // Make sure background is locked
+                const closeBtn = document.querySelector('#authModal .close-modal-btn');
+                if (closeBtn) closeBtn.style.display = 'none'; // Prevent closing
+                this.switchView('dashboard'); // Redirect to dashboard first
+                this.updateAuthUI();
+                this.showLoginModal();
         }
     },
 
