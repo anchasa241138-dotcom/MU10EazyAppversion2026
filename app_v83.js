@@ -2863,14 +2863,16 @@ const app = {
                     </div>
                     
                     <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.agency || '................................................'}</div>
-                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.location_name || '................................................'}</div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <div style="flex:1;">ตำบล: ${sample.tambon || '...................'} อำเภอ: ${sample.amphoe || '...................'} จังหวัด: ${sample.province || '...................'}</div>
-                            <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
-                        </div>
+                        <table style="width:100%; margin-bottom:12px; font-size:13px; color:#000; border:none; border-collapse:collapse;">
+                              <tr>
+                                  <td style="width:50%; padding:4px 0;">หน่วยงานที่เก็บตัวอย่าง ${sample.agency ? '....<u>' + sample.agency + '</u>....' : '.....................................................................'}</td>
+                                  <td style="width:50%; padding:4px 0; text-align:left;">สถานที่เก็บตัวอย่าง ${sample.location_name ? '....<u>' + sample.location_name + '</u>....' : '.................................................................'}</td>
+                              </tr>
+                              <tr>
+                                  <td style="width:50%; padding:4px 0;">ตำบล ${sample.tambon ? '....<u>' + sample.tambon + '</u>....' : '...................'} อำเภอ ${sample.amphoe ? '....<u>' + sample.amphoe + '</u>....' : '...................'} จังหวัด ${sample.province ? '....<u>' + sample.province + '</u>....' : '...................'}</td>
+                                  <td style="width:50%; padding:4px 0; text-align:left;">วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '.................................................................'}</td>
+                              </tr>
+                          </table>
                         
                         <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
                             <thead style="text-align:center;">
@@ -3247,14 +3249,16 @@ const app = {
                     </div>
                     
                     <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.agency || '................................................'}</div>
-                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.location_name || '................................................'}</div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <div style="flex:1;">ตำบล: ${sample.tambon || '...................'} อำเภอ: ${sample.amphoe || '...................'} จังหวัด: ${sample.province || '...................'}</div>
-                            <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
-                        </div>
+                        <table style="width:100%; margin-bottom:12px; font-size:13px; color:#000; border:none; border-collapse:collapse;">
+                              <tr>
+                                  <td style="width:50%; padding:4px 0;">หน่วยงานที่เก็บตัวอย่าง ${sample.agency ? '....<u>' + sample.agency + '</u>....' : '.....................................................................'}</td>
+                                  <td style="width:50%; padding:4px 0; text-align:left;">สถานที่เก็บตัวอย่าง ${sample.location_name ? '....<u>' + sample.location_name + '</u>....' : '.................................................................'}</td>
+                              </tr>
+                              <tr>
+                                  <td style="width:50%; padding:4px 0;">ตำบล ${sample.tambon ? '....<u>' + sample.tambon + '</u>....' : '...................'} อำเภอ ${sample.amphoe ? '....<u>' + sample.amphoe + '</u>....' : '...................'} จังหวัด ${sample.province ? '....<u>' + sample.province + '</u>....' : '...................'}</td>
+                                  <td style="width:50%; padding:4px 0; text-align:left;">วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '.................................................................'}</td>
+                              </tr>
+                          </table>
                         
                         <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
                             <thead style="text-align:center;">
@@ -5184,14 +5188,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     </div>
                     
                     <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.agency || '................................................'}</div>
-                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.location_name || '................................................'}</div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <div style="flex:1;">ตำบล: ${sample.tambon || '...................'} อำเภอ: ${sample.amphoe || '...................'} จังหวัด: ${sample.province || '...................'}</div>
-                            <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
-                        </div>
+                        <table style="width:100%; margin-bottom:12px; font-size:13px; color:#000; border:none; border-collapse:collapse;">
+                              <tr>
+                                  <td style="width:50%; padding:4px 0;">หน่วยงานที่เก็บตัวอย่าง ${sample.agency ? '....<u>' + sample.agency + '</u>....' : '.....................................................................'}</td>
+                                  <td style="width:50%; padding:4px 0; text-align:left;">สถานที่เก็บตัวอย่าง ${sample.location_name ? '....<u>' + sample.location_name + '</u>....' : '.................................................................'}</td>
+                              </tr>
+                              <tr>
+                                  <td style="width:50%; padding:4px 0;">ตำบล ${sample.tambon ? '....<u>' + sample.tambon + '</u>....' : '...................'} อำเภอ ${sample.amphoe ? '....<u>' + sample.amphoe + '</u>....' : '...................'} จังหวัด ${sample.province ? '....<u>' + sample.province + '</u>....' : '...................'}</td>
+                                  <td style="width:50%; padding:4px 0; text-align:left;">วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '.................................................................'}</td>
+                              </tr>
+                          </table>
                         
                         <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
                             <thead style="text-align:center;">
