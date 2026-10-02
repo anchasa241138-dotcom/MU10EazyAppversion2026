@@ -2941,7 +2941,7 @@ const app = {
                         </table>
                     </div>
                 </div>`;
-        } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+        } else if (sample.form_type === 'MU.10-005') {
             let passCount = 0;
             let totalCount = 0;
             const sampleItems = [];
@@ -3327,7 +3327,7 @@ const app = {
                         </table>
                     </div>
                 </div>`;
-        } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+        } else if (sample.form_type === 'MU.10-005') {
             let passCount = 0;
             let totalCount = 0;
                 let idx = 1;
@@ -4218,7 +4218,7 @@ const app = {
                 fullHtml += pageHtml;
             }
             container.innerHTML = fullHtml;
-        } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+        } else if (sample.form_type === 'MU.10-005') {
             if (!sample.sel_analyst_1 || !sample.sel_analyst_2) {
                 sample.sel_analyst_1 = sample.sel_analyst_1 || 'anchasa';
                 sample.sel_analyst_2 = sample.sel_analyst_2 || 'surachai';
@@ -4379,7 +4379,7 @@ const app = {
             }
             
             
-            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003' || sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003' || sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') {
                 document.getElementById('cert-standard-inputs').style.display = 'none';
                 document.getElementById('cert-mu10-signatures').style.display = 'block';
                 
@@ -4533,7 +4533,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
 
 
-            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003' || sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+            if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003' || sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') {
                 if (sample.status === 'summarized') {
                     sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
                     sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
@@ -4751,7 +4751,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         } else if (sample.form_type === 'MU.10-004') {
             documentName = 'แบบบันทึกการเก็บตัวอย่างน้ำมันทอดซ้ำ (ด้วยชุดทดสอบ Test Kit)';
             documentNum = 'MU.10-004';
-        } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+        } else if (sample.form_type === 'MU.10-005') {
             documentName = 'แบบบันทึกการสุ่มตัวอย่างเกลือบริโภค';
             documentNum = 'MU.10-005';
         }
@@ -4796,7 +4796,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     net_weight: sample[`net_weight_${idx}`] || '',
                     label_summary: sample[`label_summary_${idx}`] || ''
                 });
-            } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+            } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({
                     distributor: sample[`distributor_${idx}`] || '',
                     food_type: sample[`sample_name_${idx}`] || '',
@@ -4864,7 +4864,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 });
             } else if (sample.form_type === 'MU.10-008') {
                 sampleItems.push({ distributor:'', name:'', food_serial_no:'', manufacturer_info:'', has_ingredient_pct:'', has_mfg_exp:'', net_weight:'', label_summary:'' });
-            } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+            } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({ distributor:'', food_type:'', food_serial_no:'', manufacturer_info:'', has_mfg_exp:'', net_weight:'', has_storage_warning:'', label_summary:'', iodate_value:'', test_outcome:'' });
             } else {
                 sampleItems.push({ name:'', distributor:'', weight:'', source:'', tests:[] });
@@ -4903,7 +4903,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <tr style="height: 65px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_category}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.oil_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.fry_duration}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.fry_count}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.replacement_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.replacement_frequency}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${chk('ผ่าน', isPassChecked)}  
                             ${chk('ไม่ผ่าน', isFailChecked)}
                         </td> </tr>`;
-            } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+            } else if (sample.form_type === 'MU.10-005') {
                 tableRows += `
                     <tr style="height: 50px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.distributor}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_serial_no}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.manufacturer_info}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.has_mfg_exp}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.net_weight}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.has_storage_warning}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; font-weight:bold; border:1px solid #555;">${item.label_summary}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; font-weight:bold; border:1px solid #555;">${item.iodate_value}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; font-weight:bold; border:1px solid #555;">${item.test_outcome}</td> </tr>`;
             } else {
@@ -5068,7 +5068,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     </tbody>
                 </table>
             `;
-        } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+        } else if (sample.form_type === 'MU.10-005') {
             mainTableHTML = `
                 <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;"> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th> <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th> <th colspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th> </tr> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; font-size:13px;"> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">น้ำหนักสุทธิ</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:9.5%;">แสดงข้อความ<br>“ควรเก็บในที่ร่ม<br>และแห้ง” (มี/ไม่มี)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล<br>ตรวจฉลาก</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:8%;">ค่าไอโอเดท<br>(ppm)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล</th> </tr> </thead> <tbody>${tableRows}
                     </tbody> </table>`;
@@ -5266,7 +5266,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </table>
                     </div>
                 </div>`;
-        } else if (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') {
+        } else if (sample.form_type === 'MU.10-005') {
             let passCount = 0;
             let totalCount = 0;
             
@@ -5422,10 +5422,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 scrollY: 0,
                 x: 0,
                 y: 0,
-                width: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') ? 780 : 1100,
-                windowWidth: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') ? 780 : 1200
+                width: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 780 : 1100,
+                windowWidth: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 780 : 1200
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') ? 'portrait' : 'landscape' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['css', 'legacy'] }
         };
 
@@ -5460,7 +5460,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             document.body.appendChild(iframe);
             const doc = iframe.contentWindow.document;
             doc.open();
-            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008') ? 'portrait' : 'landscape';
+            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 'portrait' : 'landscape';
             doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="style_v2.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
             doc.write(htmlContent);
             doc.write('</body></html>');
