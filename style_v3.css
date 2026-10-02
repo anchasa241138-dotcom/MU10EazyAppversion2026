@@ -461,21 +461,22 @@ body {
 }
 
 .form-select-card {
-    background: var(--bg-light);
-    border: none;
-    border-radius: 28px;
-    padding: 40px 25px;
-    width: 260px;
-    flex: 0 0 260px;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+    padding: 16px 20px;
+    width: 100%;
+    flex: 1 1 340px;
+    max-width: 450px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
     position: relative;
     overflow: hidden;
     outline: none;
-    box-shadow: -10px -10px 20px rgba(255, 255, 255, 0.8), 10px 10px 20px rgba(163, 177, 198, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -484,72 +485,80 @@ body {
 }
 
 .form-select-card:hover {
-    transform: translateY(0) scale(0.98);
-    box-shadow: inset -8px -8px 16px rgba(255, 255, 255, 0.8), inset 8px 8px 16px rgba(163, 177, 198, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.3);
 }
 
 .form-card-badge {
     position: absolute;
-    top: 18px;
-    right: 18px;
-    left: auto;
-    background: var(--bg-light);
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    background: #f1f5f9;
     color: #64748b;
     font-size: 11px;
-    font-weight: 800;
-    padding: 6px 14px;
-    border-radius: 20px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
     font-family: 'Sarabun', sans-serif;
     letter-spacing: 0.5px;
     border: none;
     z-index: 1;
     transition: all 0.3s ease;
-    box-shadow: -3px -3px 8px rgba(255, 255, 255, 0.8), 3px 3px 8px rgba(163, 177, 198, 0.4);
+    box-shadow: none;
 }
 
 .form-select-card:hover .form-card-badge {
+    background: rgba(37, 99, 235, 0.1);
     color: #2563eb;
-    box-shadow: inset -3px -3px 6px rgba(255, 255, 255, 0.8), inset 3px 3px 6px rgba(163, 177, 198, 0.4);
 }
 
 .form-icon {
-    width: 86px;
-    height: 86px;
-    border-radius: 50%;
-    background: var(--bg-light);
-    color: #64748b;
-    font-size: 36px;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    color: white;
+    font-size: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 24px;
-    box-shadow: -6px -6px 12px rgba(255, 255, 255, 0.8), 6px 6px 12px rgba(163, 177, 198, 0.4);
+    margin-bottom: 0;
+    margin-right: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     transition: all 0.3s ease;
     z-index: 1;
     position: relative;
+    flex-shrink: 0;
 }
 
 .form-select-card:hover .form-icon {
-    transform: scale(0.95);
-    box-shadow: inset -4px -4px 8px rgba(255, 255, 255, 0.8), inset 4px 4px 8px rgba(163, 177, 198, 0.4);
+    transform: scale(1.1) rotate(5deg);
 }
 
-.form-select-card[data-form-type="MU.10-001"] .form-icon { color: #059669; }
-.form-select-card[data-form-type="MU.10-002"] .form-icon { color: #d97706; }
-.form-select-card[data-form-type="MU.10-003"] .form-icon { color: #2563eb; }
-.form-select-card[data-form-type="MU.10-004"] .form-icon { color: #7c3aed; }
-.form-select-card[data-form-type="MU.10-005"] .form-icon { color: #db2777; }
-.form-select-card[data-form-type="MU.10-006"] .form-icon { color: #0284c7; }
-.form-select-card[data-form-type="MU.10-007"] .form-icon { color: #e11d48; }
+/* Gradient background for icons */
+.form-select-card[data-form-type="MU.10-001"] .form-icon { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 15px rgba(16,185,129,0.25); }
+.form-select-card[data-form-type="MU.10-002"] .form-icon { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 15px rgba(245,158,11,0.25); }
+.form-select-card[data-form-type="MU.10-003"] .form-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 15px rgba(59,130,246,0.25); }
+.form-select-card[data-form-type="MU.10-004"] .form-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 8px 15px rgba(139,92,246,0.25); }
+.form-select-card[data-form-type="MU.10-005"] .form-icon { background: linear-gradient(135deg, #ec4899, #db2777); box-shadow: 0 8px 15px rgba(236,72,153,0.25); }
+.form-select-card[data-form-type="MU.10-006"] .form-icon { background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 8px 15px rgba(14,165,233,0.25); }
+.form-select-card[data-form-type="MU.10-007"] .form-icon { background: linear-gradient(135deg, #f43f5e, #e11d48); box-shadow: 0 8px 15px rgba(244,63,94,0.25); }
 
 .form-select-card span {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 700;
-    color: #475569;
-    margin-top: 5px;
+    color: #1e293b;
+    margin-top: 0;
     z-index: 1;
     position: relative;
     transition: color 0.3s ease;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 75px; /* leave room for badge on the right */
 }
 
 .form-select-card:hover span {
