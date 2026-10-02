@@ -559,6 +559,7 @@ body {
 .form-select-card[data-form-type="MU.10-005"] .form-icon { background: linear-gradient(135deg, #ec4899, #db2777); box-shadow: 0 8px 15px rgba(236,72,153,0.25); }
 .form-select-card[data-form-type="MU.10-006"] .form-icon { background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 8px 15px rgba(14,165,233,0.25); }
 .form-select-card[data-form-type="MU.10-007"] .form-icon { background: linear-gradient(135deg, #f43f5e, #e11d48); box-shadow: 0 8px 15px rgba(244,63,94,0.25); }
+.form-select-card[data-form-type="MU.10-008"] .form-icon { background: linear-gradient(135deg, #a855f7, #9333ea); box-shadow: 0 8px 15px rgba(168,85,247,0.25); }
 
 .form-select-card span {
     font-size: 15px;
