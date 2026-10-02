@@ -200,7 +200,7 @@ const app = {
                     
                     let hasMigration = false;
                     this.samples.forEach(s => {
-                        if (s.form_type === 'MU.10-008' && (s.status === 'pending' || s.status === 'verified' || s.status === 'lab_received' || s.status === 'analyzed')) {
+                        if (s.form_type === 'MU.10-008' && (s.status === 'pending' || s.status === 'registered' || s.status === 'accepted' || s.status === 'analyzed')) {
                             s.status = 'summarized';
                             if (!s.lab_receive_date) s.lab_receive_date = new Date().toISOString().split('T')[0];
                             if (!s.lab_receive_timestamp) s.lab_receive_timestamp = new Date().toISOString();
