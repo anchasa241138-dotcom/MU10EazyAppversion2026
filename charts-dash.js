@@ -331,6 +331,8 @@ function updateSubstanceCharts(samples) {
             inc('coliformFood', getSingleSummary());
         } else if (s.form_type === 'MU.10-006') {
             inc('coliformWater', getSingleSummary());
+        } else if (s.form_type === 'MU.10-008') {
+            inc('foodLabel', idx ? s['label_summary_' + idx] : s['label_summary']);
         }
     }
 
