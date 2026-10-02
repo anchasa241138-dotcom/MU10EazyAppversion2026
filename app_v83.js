@@ -1305,6 +1305,59 @@ const app = {
                     
                 </div>
             `;
+        } else if (formType === 'MU.10-008') {
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <h4 style="color: var(--primary-light); margin: 0; font-size: 16px;"><i class="fa-solid fa-tags"></i> รายการตรวจฉลากอาหาร #${this.globalSampleIndex}</h4>
+                    <button type="button" class="btn btn-text remove-sample-btn" style="color: #ef4444; padding: 5px; font-weight: 500;" onclick="app.removeGlobalSample(this)"><i class="fa-solid fa-trash"></i> ลบรายการนี้</button>
+                </div>
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label>1. ชื่อผู้จำหน่าย *</label>
+                        <input type="text" name="distributor_${this.globalSampleIndex}" required placeholder="ระบุชื่อร้านค้า/ผู้จำหน่าย">
+                    </div>
+                    <div class="form-group">
+                        <label>2. ชื่ออาหาร/ยี่ห้อ *</label>
+                        <input type="text" name="sample_name_${this.globalSampleIndex}" required placeholder="ระบุชื่อยี่ห้ออาหาร">
+                    </div>
+                    <div class="form-group">
+                        <label>3. เลขสาระบบอาหาร *</label>
+                        <input type="text" name="food_serial_no_${this.globalSampleIndex}" required placeholder="เช่น 10-1-01234-5-6789">
+                    </div>
+                    <div class="form-group">
+                        <label>4. ชื่อผู้ผลิตและที่ตั้ง/นำเข้า *</label>
+                        <input type="text" name="manufacturer_info_${this.globalSampleIndex}" required placeholder="ระบุชื่อผู้ผลิตและที่อยู่">
+                    </div>
+                    <div class="form-group">
+                        <label>5. ส่วนประกอบสำคัญ เป็นร้อยละ *</label>
+                        <select name="has_ingredient_pct_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                            <option value="">-- เลือก --</option>
+                            <option value="มี">มี</option>
+                            <option value="ไม่มี">ไม่มี</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>6. วันผลิตหรือหมดอายุ *</label>
+                        <select name="has_mfg_exp_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                            <option value="">-- เลือก --</option>
+                            <option value="มี">มี</option>
+                            <option value="ไม่มี">ไม่มี</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>7. ปริมาณสุทธิ *</label>
+                        <input type="text" name="net_weight_${this.globalSampleIndex}" required placeholder="เช่น 500 กรัม">
+                    </div>
+                    <div class="form-group">
+                        <label>8. ผลตรวจฉลากอาหาร *</label>
+                        <select name="label_summary_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                            <option value="">-- เลือก --</option>
+                            <option value="ผ่าน">ผ่าน</option>
+                            <option value="ไม่ผ่าน">ไม่ผ่าน</option>
+                        </select>
+                    </div>
+                </div>
+            `;
         } else if (formType === 'MU.10-002') {
             div.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -2758,8 +2811,110 @@ const app = {
                 const commentEl = document.getElementById('analysis-comment');
                 if (commentEl) commentEl.value = sample.analysis_comment;
             }
-        } else if (sample.form_type === 'MU.10-005') {
+        } else if (sample.form_type === 'MU.10-008') {
+            let passCount = 0;
+            let totalCount = 0;
             
+            let tableRowsHTML = '';
+            sampleItems.forEach((item, i) => {
+                if (item.name) {
+                    totalCount++;
+                    if (item.label_summary === 'ผ่าน') passCount++;
+                    tableRowsHTML += `
+                        <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.name}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.net_weight}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.label_summary}</td> 
+                        </tr>`;
+                }
+            });
+            
+            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
+            const analyst1 = sample.analysis_analyst || '..............................................';
+            const analystPos = sample.analysis_analyst ? (sample.analysis_analyst_position || '..............................................') : '..............................................';
+            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
+            
+            htmlContent = `
+                <div class="pdf-container" style="background:white; color:black; font-family:'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
+                    <div style="border:1.5px solid #333; margin-bottom: 0;">
+                        <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
+                            <tr>
+                                <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
+                                    <img src="https://raw.githubusercontent.com/anchasa241138-dotcom/MU10EazyAppversion2026/refs/heads/master/logo_mobi_new.jpg" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
+                                </td>
+                                <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
+                                    <div>ประเภทเอกสาร : แบบบันทึก</div>
+                                    <div>ชื่อเอกสาร : แบบบันทึกตรวจฉลากอาหาร</div>
+                                    <div>วันที่เริ่มใช้ :</div>
+                                    <div>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
+                                </td>
+                                <td style="width:250px; text-align:right; padding:10px 15px; border-bottom:1px solid #333; font-weight:bold; vertical-align:top; line-height:1.5;">
+                                    <div>หมายเลขเอกสาร : MU.10-008</div>
+                                    <div>แก้ไขครั้งที่ : 002</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div style="padding: 10px 15px 15px 15px; font-size:14px; line-height: 1.8;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.collector_agency || '................................................'}</div>
+                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.sampling_location || '................................................'}</div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                            <div style="flex:1;">ตำบล: ${sample.sampling_subdistrict || '...................'} อำเภอ: ${sample.sampling_district || '...................'} จังหวัด: ${sample.sampling_province || '...................'}</div>
+                            <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
+                        </div>
+                        
+                        <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
+                            <thead style="text-align:center;">
+                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
+                                    <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
+                                </tr>
+                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
+                                </tr>
+                            </thead>
+                            <tbody>${tableRowsHTML}</tbody>
+                        </table>
+                        
+                        <!-- FOOTER SIGNATURES -->
+                        <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
+                            <tr>
+                                <td style="width:33%; vertical-align:top; text-align:center; padding-right:10px;">
+                                    <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
+                                </td>
+                                <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
+                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}.... , ................................................</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
+                                </td>
+                                <td style="width:33%; vertical-align:top; text-align:center;">
+                                    <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ผจก.ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div>
+                                    <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>`;
+        } else if (sample.form_type === 'MU.10-005') {
             let passCount = 0;
             let totalCount = 0;
             const sampleItems = [];
@@ -3040,9 +3195,112 @@ const app = {
                     }
                     sample.analysis_details = 'ดูรายละเอียดในใบรายงานผล';
                 }
-            } else if (sample.form_type === 'MU.10-005') {
-                let passCount = 0;
-                let totalCount = 0;
+            } else if (sample.form_type === 'MU.10-008') {
+            let passCount = 0;
+            let totalCount = 0;
+            
+            let tableRowsHTML = '';
+            sampleItems.forEach((item, i) => {
+                if (item.name) {
+                    totalCount++;
+                    if (item.label_summary === 'ผ่าน') passCount++;
+                    tableRowsHTML += `
+                        <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.name}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.net_weight}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.label_summary}</td> 
+                        </tr>`;
+                }
+            });
+            
+            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
+            const analyst1 = sample.analysis_analyst || '..............................................';
+            const analystPos = sample.analysis_analyst ? (sample.analysis_analyst_position || '..............................................') : '..............................................';
+            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
+            
+            htmlContent = `
+                <div class="pdf-container" style="background:white; color:black; font-family:'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
+                    <div style="border:1.5px solid #333; margin-bottom: 0;">
+                        <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
+                            <tr>
+                                <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
+                                    <img src="https://raw.githubusercontent.com/anchasa241138-dotcom/MU10EazyAppversion2026/refs/heads/master/logo_mobi_new.jpg" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
+                                </td>
+                                <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
+                                    <div>ประเภทเอกสาร : แบบบันทึก</div>
+                                    <div>ชื่อเอกสาร : แบบบันทึกตรวจฉลากอาหาร</div>
+                                    <div>วันที่เริ่มใช้ :</div>
+                                    <div>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
+                                </td>
+                                <td style="width:250px; text-align:right; padding:10px 15px; border-bottom:1px solid #333; font-weight:bold; vertical-align:top; line-height:1.5;">
+                                    <div>หมายเลขเอกสาร : MU.10-008</div>
+                                    <div>แก้ไขครั้งที่ : 002</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div style="padding: 10px 15px 15px 15px; font-size:14px; line-height: 1.8;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.collector_agency || '................................................'}</div>
+                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.sampling_location || '................................................'}</div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                            <div style="flex:1;">ตำบล: ${sample.sampling_subdistrict || '...................'} อำเภอ: ${sample.sampling_district || '...................'} จังหวัด: ${sample.sampling_province || '...................'}</div>
+                            <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
+                        </div>
+                        
+                        <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
+                            <thead style="text-align:center;">
+                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
+                                    <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
+                                </tr>
+                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
+                                </tr>
+                            </thead>
+                            <tbody>${tableRowsHTML}</tbody>
+                        </table>
+                        
+                        <!-- FOOTER SIGNATURES -->
+                        <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
+                            <tr>
+                                <td style="width:33%; vertical-align:top; text-align:center; padding-right:10px;">
+                                    <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
+                                </td>
+                                <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
+                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}.... , ................................................</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
+                                </td>
+                                <td style="width:33%; vertical-align:top; text-align:center;">
+                                    <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ผจก.ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div>
+                                    <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>`;
+        } else if (sample.form_type === 'MU.10-005') {
+            let passCount = 0;
+            let totalCount = 0;
                 let idx = 1;
                 while (sample['sample_name_' + idx] !== undefined) {
                     if (sample['sample_name_' + idx]) {
@@ -4498,6 +4756,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     replacement_frequency: sample[`replacement_frequency_${idx}`] || sample[`replacement_frequency_1`] || '',
                     item_sampling_date: sample[`item_sampling_date_${idx}`] || ''
                 });
+            } else if (sample.form_type === 'MU.10-008') {
+                sampleItems.push({
+                    distributor: sample[`distributor_${idx}`] || '',
+                    name: sample[`sample_name_${idx}`] || '',
+                    food_serial_no: sample[`food_serial_no_${idx}`] || '',
+                    manufacturer_info: sample[`manufacturer_info_${idx}`] || '',
+                    has_ingredient_pct: sample[`has_ingredient_pct_${idx}`] || '',
+                    has_mfg_exp: sample[`has_mfg_exp_${idx}`] || '',
+                    net_weight: sample[`net_weight_${idx}`] || '',
+                    label_summary: sample[`label_summary_${idx}`] || ''
+                });
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({
                     distributor: sample[`distributor_${idx}`] || '',
@@ -4553,6 +4822,19 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 sampleItems.push({ distributor:'', food_type:'', oil_type:'', fry_duration:'', replacement_type:'', last_replacement_date:'', replacement_frequency:'', replacement_reason:'', oil_disposal:'', polar_value:'' });
             } else if (sample.form_type === 'MU.10-004') {
                 sampleItems.push({ food_category:'', food_type:'', oil_type:'', fry_duration:'', fry_count:'', replacement_type:'', replacement_frequency:'' });
+            } else if (sample.form_type === 'MU.10-008') {
+                sampleItems.push({
+                    distributor: sample[`distributor_${idx}`] || '',
+                    name: sample[`sample_name_${idx}`] || '',
+                    food_serial_no: sample[`food_serial_no_${idx}`] || '',
+                    manufacturer_info: sample[`manufacturer_info_${idx}`] || '',
+                    has_ingredient_pct: sample[`has_ingredient_pct_${idx}`] || '',
+                    has_mfg_exp: sample[`has_mfg_exp_${idx}`] || '',
+                    net_weight: sample[`net_weight_${idx}`] || '',
+                    label_summary: sample[`label_summary_${idx}`] || ''
+                });
+            } else if (sample.form_type === 'MU.10-008') {
+                sampleItems.push({ distributor:'', name:'', food_serial_no:'', manufacturer_info:'', has_ingredient_pct:'', has_mfg_exp:'', net_weight:'', label_summary:'' });
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({ distributor:'', food_type:'', food_serial_no:'', manufacturer_info:'', has_mfg_exp:'', net_weight:'', has_storage_warning:'', label_summary:'', iodate_value:'', test_outcome:'' });
             } else {
@@ -4734,6 +5016,29 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             mainTableHTML = `
                 <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important; " border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; page-break-inside: avoid;"> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:15%;">ประเภทอาหาร</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:15%;">ระบุชนิดอาหาร</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ชนิดน้ำมัน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ระยะเวลาใช้ทอด<br>(นาที/ครั้ง)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">จำนวนครั้งที่ทอด<br>(ครั้ง/วัน)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ลักษณะการเปลี่ยนน้ำมัน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ความถี่ (วัน)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ผลการตรวจ</th> </tr> </thead> <tbody>${tableRows}
                     </tbody> </table>`;
+        } else if (sample.form_type === 'MU.10-008') {
+            mainTableHTML = `
+                <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
+                    <thead style="text-align:center;">
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
+                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
+                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
+                            <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
+                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
+                        </tr>
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableRows}
+                    </tbody>
+                </table>
+            `;
         } else if (sample.form_type === 'MU.10-005') {
             mainTableHTML = `
                 <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;"> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th> <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th> <th colspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th> </tr> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; font-size:13px;"> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">น้ำหนักสุทธิ</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:9.5%;">แสดงข้อความ<br>“ควรเก็บในที่ร่ม<br>และแห้ง” (มี/ไม่มี)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล<br>ตรวจฉลาก</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:8%;">ค่าไอโอเดท<br>(ppm)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล</th> </tr> </thead> <tbody>${tableRows}
@@ -4827,6 +5132,109 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </div> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:0 0 6px 0;"> <!-- NOTE BOX --> <table style="width: 100%; border:1px solid #000; border-collapse:collapse; font-size: 11px; line-height:1.4; color:#000; margin-bottom:8px;"> <tr> <td style="padding:6px 12px; border-right:1px solid #000; width:50%; vertical-align:top;"> <div style="font-weight:bold; text-decoration:underline; margin-bottom:4px; font-size: 11.5px;">การเก็บตัวอย่างน้ำมัน</div> <strong>๑. การนับวันเก็บตัวอย่างน้ำมัน</strong><br>- ให้นับวันที่เริ่มใช้น้ำมันใหม่เป็นวันที่ ๑<br>- เก็บตัวอย่างน้ำมันหลังจากการทอดทุกวัน จนกว่าจะเปลี่ยนน้ำมันใหม่
                         </td> <td style="padding:6px 12px; width:50%; vertical-align:top;"> <div style="font-weight:bold; visibility:hidden; margin-bottom:4px; font-size: 11.5px;">การเก็บตัวอย่างน้ำมัน</div> <strong>๒. วิธีการเก็บตัวอย่างน้ำมัน</strong><br>- ตั้งน้ำมันทิ้งไว้ให้เย็น<br>- ใช้ช้อนตักประมาณ ๒ ช้อนโต๊ะ เทใส่ภาชนะกันร้อน เก็บไว้ในที่เย็นให้พ้นแสง<br>- เขียนวันที่เก็บตัวอย่างที่ข้างภาชนะโดยใช้ปากกากันสีกันน้ำ
                         </td> </tr> </table> <!-- FOOTER SIGNATURES --> <table style="width: 100%; margin:8px 0 0 0; border-collapse:collapse; font-size:10px; color: #000; line-height:1.6;"> <tr> <td style="width:33%; vertical-align:top; padding-right:10px;"> <div>ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '................................................'}</u>....</div> <div style="margin-top:4px;">ตำแหน่ง ....<u>${sample.collector_position || '........................................................'}</u>....</div> <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '............................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:left; padding:0 10px;"> <div>ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '................................................'}</u>....</div> <div style="margin-top:4px;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '........................................................') : '........................................................'}</u>....</div> <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:right;"> <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div> <div style="margin-top:4px;">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div> </td> </tr> </table>  </div> </div>`;
+        } else if (sample.form_type === 'MU.10-008') {
+            let passCount = 0;
+            let totalCount = 0;
+            
+            let tableRowsHTML = '';
+            sampleItems.forEach((item, i) => {
+                if (item.name) {
+                    totalCount++;
+                    if (item.label_summary === 'ผ่าน') passCount++;
+                    tableRowsHTML += `
+                        <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.name}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.net_weight}</td> 
+                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.label_summary}</td> 
+                        </tr>`;
+                }
+            });
+            
+            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
+            const analyst1 = sample.analysis_analyst || '..............................................';
+            const analystPos = sample.analysis_analyst ? (sample.analysis_analyst_position || '..............................................') : '..............................................';
+            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
+            
+            htmlContent = `
+                <div class="pdf-container" style="background:white; color:black; font-family:'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
+                    <div style="border:1.5px solid #333; margin-bottom: 0;">
+                        <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
+                            <tr>
+                                <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
+                                    <img src="https://raw.githubusercontent.com/anchasa241138-dotcom/MU10EazyAppversion2026/refs/heads/master/logo_mobi_new.jpg" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
+                                </td>
+                                <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
+                                    <div>ประเภทเอกสาร : แบบบันทึก</div>
+                                    <div>ชื่อเอกสาร : แบบบันทึกตรวจฉลากอาหาร</div>
+                                    <div>วันที่เริ่มใช้ :</div>
+                                    <div>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
+                                </td>
+                                <td style="width:250px; text-align:right; padding:10px 15px; border-bottom:1px solid #333; font-weight:bold; vertical-align:top; line-height:1.5;">
+                                    <div>หมายเลขเอกสาร : MU.10-008</div>
+                                    <div>แก้ไขครั้งที่ : 002</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div style="padding: 10px 15px 15px 15px; font-size:14px; line-height: 1.8;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.collector_agency || '................................................'}</div>
+                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.sampling_location || '................................................'}</div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                            <div style="flex:1;">ตำบล: ${sample.sampling_subdistrict || '...................'} อำเภอ: ${sample.sampling_district || '...................'} จังหวัด: ${sample.sampling_province || '...................'}</div>
+                            <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
+                        </div>
+                        
+                        <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
+                            <thead style="text-align:center;">
+                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
+                                    <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
+                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
+                                </tr>
+                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
+                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
+                                </tr>
+                            </thead>
+                            <tbody>${tableRowsHTML}</tbody>
+                        </table>
+                        
+                        <!-- FOOTER SIGNATURES -->
+                        <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
+                            <tr>
+                                <td style="width:33%; vertical-align:top; text-align:center; padding-right:10px;">
+                                    <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
+                                </td>
+                                <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
+                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}.... , ................................................</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
+                                    <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
+                                </td>
+                                <td style="width:33%; vertical-align:top; text-align:center;">
+                                    <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div>
+                                    <div style="margin-top:4px;">ตำแหน่ง ผจก.ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div>
+                                    <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>`;
         } else if (sample.form_type === 'MU.10-005') {
             let passCount = 0;
             let totalCount = 0;
