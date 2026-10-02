@@ -2897,7 +2897,7 @@ const app = {
                         <!-- FOOTER SIGNATURES -->
                         <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
                             <tr>
-                                <td style="width:33%; vertical-align:top; text-align:center; padding-right:10px;">
+                                <td style="width:33%; vertical-align:top; text-align:left; padding-right:10px;">
                                     <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
@@ -3283,7 +3283,7 @@ const app = {
                         <!-- FOOTER SIGNATURES -->
                         <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
                             <tr>
-                                <td style="width:33%; vertical-align:top; text-align:center; padding-right:10px;">
+                                <td style="width:33%; vertical-align:top; text-align:left; padding-right:10px;">
                                     <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
@@ -5222,7 +5222,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <!-- FOOTER SIGNATURES -->
                         <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
                             <tr>
-                                <td style="width:33%; vertical-align:top; text-align:center; padding-right:10px;">
+                                <td style="width:33%; vertical-align:top; text-align:left; padding-right:10px;">
                                     <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
