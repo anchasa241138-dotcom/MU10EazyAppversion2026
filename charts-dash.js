@@ -241,7 +241,8 @@ function updateSubstanceCharts(samples) {
         'agonist': { label: 'สารเร่งเนื้อแดง', total: 0, pass: 0, fail: 0 },
         'polar': { label: 'สารโพลาร์ในน้ำมันทอดอาหาร', total: 0, pass: 0, fail: 0 },
         'coliformFood': { label: 'โคลิฟอร์มในอาหาร', total: 0, pass: 0, fail: 0 },
-        'coliformWater': { label: 'โคลิฟอร์มในน้ำ', total: 0, pass: 0, fail: 0 }
+        'coliformWater': { label: 'โคลิฟอร์มในน้ำ', total: 0, pass: 0, fail: 0 },
+        'foodLabel': { label: 'ฉลากอาหาร', total: 0, pass: 0, fail: 0 }
     };
     
     // Reset global failed samples
