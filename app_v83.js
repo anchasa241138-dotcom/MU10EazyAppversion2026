@@ -2903,7 +2903,7 @@ const app = {
                                     <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
                                 </td>
                                 <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
-                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}.... , ................................................</div>
+                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
                                 </td>
@@ -3289,7 +3289,7 @@ const app = {
                                     <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
                                 </td>
                                 <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
-                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}.... , ................................................</div>
+                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
                                 </td>
@@ -5228,7 +5228,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                                     <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
                                 </td>
                                 <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
-                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}.... , ................................................</div>
+                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
                                     <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
                                 </td>
