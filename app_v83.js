@@ -2822,15 +2822,15 @@ const app = {
                     if (item.label_summary === 'ผ่าน') passCount++;
                     tableRowsHTML += `
                         <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.name}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.net_weight}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.label_summary}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.name}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.net_weight}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.label_summary}</td> 
                         </tr>`;
                 }
             });
@@ -2846,7 +2846,7 @@ const app = {
                         <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
                             <tr>
                                 <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
-                                    <img src="https://raw.githubusercontent.com/anchasa241138-dotcom/MU10EazyAppversion2026/refs/heads/master/logo_mobi_new.jpg" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
+                                    <img src="${typeof logoBase64 !== 'undefined' ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : ''}" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
                                 </td>
                                 <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
                                     <div>ประเภทเอกสาร : แบบบันทึก</div>
@@ -2862,13 +2862,13 @@ const app = {
                         </table>
                     </div>
                     
-                    <div style="padding: 10px 15px 15px 15px; font-size:14px; line-height: 1.8;">
+                    <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.collector_agency || '................................................'}</div>
-                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.sampling_location || '................................................'}</div>
+                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.agency || '................................................'}</div>
+                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.location_name || '................................................'}</div>
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <div style="flex:1;">ตำบล: ${sample.sampling_subdistrict || '...................'} อำเภอ: ${sample.sampling_district || '...................'} จังหวัด: ${sample.sampling_province || '...................'}</div>
+                            <div style="flex:1;">ตำบล: ${sample.tambon || '...................'} อำเภอ: ${sample.amphoe || '...................'} จังหวัด: ${sample.province || '...................'}</div>
                             <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
                         </div>
                         
@@ -3206,15 +3206,15 @@ const app = {
                     if (item.label_summary === 'ผ่าน') passCount++;
                     tableRowsHTML += `
                         <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.name}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.net_weight}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.label_summary}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.name}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.net_weight}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.label_summary}</td> 
                         </tr>`;
                 }
             });
@@ -3230,7 +3230,7 @@ const app = {
                         <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
                             <tr>
                                 <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
-                                    <img src="https://raw.githubusercontent.com/anchasa241138-dotcom/MU10EazyAppversion2026/refs/heads/master/logo_mobi_new.jpg" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
+                                    <img src="${typeof logoBase64 !== 'undefined' ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : ''}" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
                                 </td>
                                 <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
                                     <div>ประเภทเอกสาร : แบบบันทึก</div>
@@ -3246,13 +3246,13 @@ const app = {
                         </table>
                     </div>
                     
-                    <div style="padding: 10px 15px 15px 15px; font-size:14px; line-height: 1.8;">
+                    <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.collector_agency || '................................................'}</div>
-                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.sampling_location || '................................................'}</div>
+                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.agency || '................................................'}</div>
+                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.location_name || '................................................'}</div>
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <div style="flex:1;">ตำบล: ${sample.sampling_subdistrict || '...................'} อำเภอ: ${sample.sampling_district || '...................'} จังหวัด: ${sample.sampling_province || '...................'}</div>
+                            <div style="flex:1;">ตำบล: ${sample.tambon || '...................'} อำเภอ: ${sample.amphoe || '...................'} จังหวัด: ${sample.province || '...................'}</div>
                             <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
                         </div>
                         
@@ -5143,15 +5143,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     if (item.label_summary === 'ผ่าน') passCount++;
                     tableRowsHTML += `
                         <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.name}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.net_weight}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.label_summary}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.name}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.net_weight}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.label_summary}</td> 
                         </tr>`;
                 }
             });
@@ -5167,7 +5167,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
                             <tr>
                                 <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
-                                    <img src="https://raw.githubusercontent.com/anchasa241138-dotcom/MU10EazyAppversion2026/refs/heads/master/logo_mobi_new.jpg" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
+                                    <img src="${typeof logoBase64 !== 'undefined' ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : ''}" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
                                 </td>
                                 <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
                                     <div>ประเภทเอกสาร : แบบบันทึก</div>
@@ -5183,13 +5183,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </table>
                     </div>
                     
-                    <div style="padding: 10px 15px 15px 15px; font-size:14px; line-height: 1.8;">
+                    <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.collector_agency || '................................................'}</div>
-                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.sampling_location || '................................................'}</div>
+                            <div style="flex:1;">หน่วยงานที่เก็บตัวอย่าง: ${sample.agency || '................................................'}</div>
+                            <div style="flex:1; text-align:right;">สถานที่เก็บตัวอย่าง: ${sample.location_name || '................................................'}</div>
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                            <div style="flex:1;">ตำบล: ${sample.sampling_subdistrict || '...................'} อำเภอ: ${sample.sampling_district || '...................'} จังหวัด: ${sample.sampling_province || '...................'}</div>
+                            <div style="flex:1;">ตำบล: ${sample.tambon || '...................'} อำเภอ: ${sample.amphoe || '...................'} จังหวัด: ${sample.province || '...................'}</div>
                             <div style="flex:1; text-align:right;">วันที่เก็บตัวอย่าง: ${samplingDate || '............................................'}</div>
                         </div>
                         
@@ -5247,14 +5247,14 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     if (item.test_outcome === 'ผ่าน') passCount++;
                     tableRowsHTML += `
                         <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_type}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:left; font-size:14px; border:1px solid #555;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.iodate_value}</td> 
-                            <td style="padding:4px; font-size:14px; border:1px solid #555;">${item.test_outcome}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${i + 1}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_type}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no}</td> 
+                            <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.iodate_value}</td> 
+                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.test_outcome}</td> 
                         </tr>`;
                 }
             });
