@@ -4725,45 +4725,6 @@ document.getElementById('formNameTitle').innerText = title;
                 });
             }
 
-            let tableRowsHTML = '';
-            items.forEach((item, i) => {
-                const cVal = item.coliform;
-                const cValNum = parseFloat(cVal);
-                const isCFail = item.coliform_sum === 'ไม่ผ่าน' || (!isNaN(cValNum) && cValNum > 0);
-                const cValStyle = isCFail ? 'color: #dc2626; font-weight: bold;' : '';
-                const cSumStyle = isCFail ? 'color: #dc2626; font-weight: bold;' : '';
-
-                const tVal = item.tds;
-                const tValNum = parseFloat(tVal);
-                const isTFail = item.tds_sum === 'ควรเปลี่ยนไส้กรอง' || (!isNaN(tValNum) && tValNum > 50);
-                const tValStyle = isTFail ? 'color: #dc2626; font-weight: bold;' : '';
-                const tSumStyle = isTFail ? 'color: #dc2626; font-weight: bold;' : '';
-
-                const hVal = item.hardness;
-                const isHFail = item.hardness_sum === 'ไม่ผ่าน';
-                const hValStyle = isHFail ? 'color: #dc2626; font-weight: bold;' : '';
-                const hSumStyle = isHFail ? 'color: #dc2626; font-weight: bold;' : '';
-
-                const pVal = item.ph;
-                const isPFail = item.ph_sum === 'ไม่ผ่าน';
-                const pValStyle = isPFail ? 'color: #dc2626; font-weight: bold;' : '';
-                const pSumStyle = isPFail ? 'color: #dc2626; font-weight: bold;' : '';
-
-                tableRowsHTML += `
-                    <tr style="text-align: center; height: 23px;">
-                        <td style="border: 1px solid #333; padding: 2px 1px;">${i + 1}</td>
-                        <td style="border: 1px solid #333; padding: 2px 6px; text-align: left;">${item.location}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${cValStyle}">${cVal}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${cSumStyle}">${item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${tValStyle}">${tVal || '-'}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${tSumStyle}">${item.tds_sum || (isTFail ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ')}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${hValStyle}">${hVal || '-'}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${hSumStyle}">${item.hardness_sum || 'ผ่าน'}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${pValStyle}">${pVal || '-'}</td>
-                        <td style="border: 1px solid #333; padding: 2px 1px; ${pSumStyle}">${item.ph_sum || 'ผ่าน'}</td>
-                    </tr>`;
-            });
-
             const formatThaiDate = (dStr) => {
                 if (!dStr) return '-';
                 const d = new Date(dStr);
@@ -4774,22 +4735,124 @@ document.getElementById('formNameTitle').innerText = title;
             const locationMain = sample.location_name || (sample.amphoe ? ('อำเภอ' + sample.amphoe) : 'อำเภอเมืองศรีสะเกษ');
             const locationSub = `${sample.amphoe ? 'อำเภอ' + sample.amphoe + ' ' : ''}จังหวัด${sample.province || 'ศรีสะเกษ'}`;
 
-            const fullHtmlResult = `
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 180px 42px 40px 42px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;">
-                  <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
-                  <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style> 
-                  
-                  <!-- RD-006 & Title -->
-                  <div style="margin-top: 5px; margin-bottom: 6px;">
-                      <div style="font-size: 15px; font-weight: bold; margin-bottom: 2px;">RD-006</div>
-                      <div style="font-size: 16.5px; font-weight: bold; text-align: left; margin-bottom: 8px; line-height: 1.3;">
-                          รายงานผลการตรวจวิเคราะห์ น้ำบริโภค/น้ำบริโภคจากตู้น้ำดื่มอัตโนมัติ/น้ำแข็ง โดยชุดทดสอบเบื้องต้น
+            const ITEMS_PER_PAGE = 5;
+            const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE) || 1;
+
+            const renderMu10006SigSlot = (personKey, defaultRole, roleId) => {
+                const p = (personKey && PERSON_DATA[personKey]) ? PERSON_DATA[personKey] : null;
+                if (!p) {
+                    return `
+                        <div style="text-align: center; font-size: 12px; line-height: 1.35;">
+                            <div style="display: inline-flex; align-items: flex-end; justify-content: center; position: relative;">
+                                <span style="white-space: nowrap;">(ลงชื่อ)</span>
+                                <span style="position: relative; display: inline-block; width: 135px; border-bottom: 1px dotted #333; margin: 0 4px 3px 4px; height: 32px; text-align: center;">
+                                    <span style="font-size: 11px; color: #94a3b8; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); white-space: nowrap;">(รอลงนามรับรอง)</span>
+                                </span>
+                                <span style="white-space: nowrap;">${defaultRole}</span>
+                            </div>
+                            <div style="margin-top: 2px; font-size: 11.5px;">(.......................................)</div>
+                            <div style="font-size: 11px;">${defaultRole}</div>
+                        </div>
+                    `;
+                }
+
+                const isAnalyst = roleId.startsWith('analyst');
+                let showSig = viewOnly || sample.status === 'approved';
+                if (isAnalyst && sample.status === 'analyst_signed') showSig = true;
+
+                let extraStyle = 'max-height: 38px; max-width: 120px; object-fit: contain; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                if (personKey === 'phapphon' || personKey === 'sakulkan') {
+                    extraStyle = 'max-height: 42px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                } else if (personKey === 'mallika') {
+                    extraStyle = 'max-height: 44px; max-width: 125px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                } else if (personKey === 'thitiporn') {
+                    extraStyle = 'max-height: 40px; max-width: 120px; object-fit: contain; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                }
+
+                const sigHtml = showSig ? 
+                    `<img src="${p.sig}" style="${extraStyle}" onerror="this.style.display='none'">` :
+                    `<span style="font-size: 10.5px; color: #94a3b8; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); white-space: nowrap;">(รอลงนามรับรอง)</span>`;
+
+                return `
+                    <div style="text-align: center; font-size: 12px; line-height: 1.3;">
+                        <div style="display: inline-flex; align-items: flex-end; justify-content: center; position: relative; margin-bottom: 2px;">
+                            <span style="white-space: nowrap;">(ลงชื่อ)</span>
+                            <span style="position: relative; display: inline-block; width: 135px; border-bottom: 1px dotted #333; margin: 0 4px 3px 4px; height: 32px;">
+                                ${sigHtml}
+                            </span>
+                            <span style="white-space: nowrap;">${defaultRole}</span>
+                        </div>
+                        <div style="font-size: 11.5px; font-weight: normal; margin-top: 1px;">(${p.name})</div>
+                        <div style="font-size: 11px; color: #222;">${p.title1}</div>
+                        ${p.title2 ? `<div style="font-size: 10.5px; color: #222; line-height: 1.15;">${p.title2.replace('และเภสัช', '<br>และเภสัช')}</div>` : ''}
+                    </div>
+                `;
+            };
+
+            let fullHtmlResult = '';
+            for (let page = 0; page < totalPages; page++) {
+                const pageItems = items.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
+                const isLastPage = (page === totalPages - 1);
+                
+                let pageRowsHTML = '';
+                pageItems.forEach((item, i) => {
+                    const rowNum = (page * ITEMS_PER_PAGE) + i + 1;
+                    const cVal = item.coliform;
+                    const cValNum = parseFloat(cVal);
+                    const isCFail = item.coliform_sum === 'ไม่ผ่าน' || (!isNaN(cValNum) && cValNum > 0);
+                    const cValStyle = isCFail ? 'color: #dc2626; font-weight: bold;' : '';
+                    const cSumStyle = isCFail ? 'color: #dc2626; font-weight: bold;' : '';
+
+                    const tVal = item.tds;
+                    const tValNum = parseFloat(tVal);
+                    const isTFail = item.tds_sum === 'ควรเปลี่ยนไส้กรอง' || (!isNaN(tValNum) && tValNum > 50);
+                    const tValStyle = isTFail ? 'color: #dc2626; font-weight: bold;' : '';
+                    const tSumStyle = isTFail ? 'color: #dc2626; font-weight: bold;' : '';
+
+                    const hVal = item.hardness;
+                    const isHFail = item.hardness_sum === 'ไม่ผ่าน';
+                    const hValStyle = isHFail ? 'color: #dc2626; font-weight: bold;' : '';
+                    const hSumStyle = isHFail ? 'color: #dc2626; font-weight: bold;' : '';
+
+                    const pVal = item.ph;
+                    const isPFail = item.ph_sum === 'ไม่ผ่าน';
+                    const pValStyle = isPFail ? 'color: #dc2626; font-weight: bold;' : '';
+                    const pSumStyle = isPFail ? 'color: #dc2626; font-weight: bold;' : '';
+
+                    pageRowsHTML += `
+                        <tr style="text-align: center; height: 23px;">
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px;">${rowNum}</td>
+                            <td style="border: 1px solid #333; padding: 2px 6px; text-align: left; font-size: 11px; line-height: 1.2;">${item.location}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; ${cValStyle}">${cVal}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; ${cSumStyle}">${item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; ${tValStyle}">${tVal || '-'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; white-space: nowrap; font-size: 10px; ${tSumStyle}">${item.tds_sum || (isTFail ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ')}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; ${hValStyle}">${hVal || '-'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; ${hSumStyle}">${item.hardness_sum || 'ผ่าน'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; ${pValStyle}">${pVal || '-'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; ${pSumStyle}">${item.ph_sum || 'ผ่าน'}</td>
+                        </tr>`;
+                });
+
+                fullHtmlResult += `
+                  <div class="pdf-document cert-pdf-border" style="width: 794px !important; height: 1122px !important; min-height: 1122px !important; max-height: 1122px !important; display: block; position: relative; margin: 0 auto ${!isLastPage ? '30px' : '0'} auto; padding: 142px 42px 25px 42px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important; background-image: url('${CERT_BG_BASE64}') !important; ${!isLastPage ? 'page-break-after: always;' : ''}">
+                      <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
+                      
+                      <!-- RD-006 & Page No -->
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                          <div style="font-size: 14.5px; font-weight: bold;">RD-006</div>
+                          ${totalPages > 1 ? `<div style="font-size: 13.5px; color: #334155;">หน้าที่ ${page + 1}/${totalPages}</div>` : ''}
+                      </div>
+
+                      <!-- Title -->
+                      <div style="font-size: 16px; font-weight: bold; text-align: left; margin-bottom: 6px; line-height: 1.3;">
+                          รายงานผลการตรวจวิเคราะห์ น้ำบริโภค/น้ำบริโภคจากตู้น้ำดื่มอัตโนมัติ/น้ำแข็ง โดยชุดทดสอบเบื้องต้น${page > 0 ? ' (ต่อ)' : ''}
                       </div>
                       
                       <!-- Meta Details -->
-                      <table style="width: 100%; border: none; border-collapse: collapse; font-size: 14px; line-height: 1.4; margin-left: 10px;">
+                      <table style="width: 100%; border: none; border-collapse: collapse; font-size: 13.5px; line-height: 1.35; margin-left: 6px; margin-bottom: 4px;">
                           <tr>
-                              <td style="width: 130px; font-weight: bold; vertical-align: top;">สถานที่เก็บตัวอย่าง</td>
+                              <td style="width: 125px; font-weight: bold; vertical-align: top;">สถานที่เก็บตัวอย่าง</td>
                               <td style="vertical-align: top;">${locationMain}</td>
                           </tr>
                           <tr>
@@ -4797,82 +4860,89 @@ document.getElementById('formNameTitle').innerText = title;
                               <td style="vertical-align: top;">${locationSub}</td>
                           </tr>
                           <tr>
-                              <td style="font-weight: bold; vertical-align: top; padding-top: 2px;">วันที่ตรวจวิเคราะห์</td>
-                              <td style="vertical-align: top; padding-top: 2px;">${analysisDateThai}</td>
+                              <td style="font-weight: bold; vertical-align: top; padding-top: 1px;">วันที่ตรวจวิเคราะห์</td>
+                              <td style="vertical-align: top; padding-top: 1px;">${analysisDateThai}</td>
                           </tr>
                       </table>
-                  </div>
 
-                  <!-- Results Table -->
-                  <table style="width: 100%; border-collapse: collapse; border: 1px solid #333; font-size: 11.5px; text-align: center; margin-top: 8px;">
-                      <thead>
-                          <tr style="background: #fff; font-weight: bold;">
-                              <th rowspan="3" style="border: 1px solid #333; width: 4.5%; padding: 3px 1px;">ที่</th>
-                              <th rowspan="3" style="border: 1px solid #333; width: 24%; padding: 3px 2px;">ชื่อสถานที่</th>
-                              <th colspan="2" style="border: 1px solid #333; width: 14%; padding: 3px 2px;">วิเคราะห์ทางจุลชีววิทยา</th>
-                              <th colspan="4" style="border: 1px solid #333; width: 34.5%; padding: 3px 2px;">วิเคราะห์ทางเคมี</th>
-                              <th colspan="2" style="border: 1px solid #333; width: 23%; padding: 3px 2px;">วิเคราะห์ทางกายภาพ</th>
-                          </tr>
-                          <tr style="font-weight: bold;">
-                              <th rowspan="2" style="border: 1px solid #333; padding: 2px 1px; font-size: 11px;">Coliform<br><span style="font-size: 10px; font-weight: normal;">(ต้องไม่พบ)</span></th>
-                              <th rowspan="2" style="border: 1px solid #333; padding: 2px 1px; font-size: 11px;">สรุปผล</th>
-                              <th colspan="2" style="border: 1px solid #333; padding: 2px 1px; background: #5c9c3e; color: #fff; font-size: 11px;">TDS ( ≤50 มก./ล.)</th>
-                              <th colspan="2" style="border: 1px solid #333; padding: 2px 1px; font-size: 11px;">Hardness (≤100 มก./ล.)</th>
-                              <th colspan="2" style="border: 1px solid #333; padding: 2px 1px; background: #ffe699; font-size: 11px;">pH (6.5-8.5)</th>
-                          </tr>
-                          <tr style="font-weight: bold; font-size: 10px;">
-                              <th style="border: 1px solid #333; padding: 2px 1px; width: 9%;">ค่าที่ตรวจพบ</th>
-                              <th style="border: 1px solid #333; padding: 2px 1px; width: 10%;">สรุปผล</th>
-                              <th style="border: 1px solid #333; padding: 2px 1px; width: 7.5%;">ค่าที่ตรวจพบ</th>
-                              <th style="border: 1px solid #333; padding: 2px 1px; width: 8%;">สรุปผล</th>
-                              <th style="border: 1px solid #333; padding: 2px 1px; width: 11%;">ค่าที่ตรวจพบ</th>
-                              <th style="border: 1px solid #333; padding: 2px 1px; width: 12%;">สรุปผล</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${tableRowsHTML}
-                      </tbody>
-                  </table>
+                      <!-- Results Table -->
+                      <table style="width: 100%; border-collapse: collapse; border: 1px solid #333; font-size: 11px; text-align: center; margin-top: 4px;">
+                          <thead>
+                              <tr style="background: #fff; font-weight: bold;">
+                                  <th rowspan="3" style="border: 1px solid #333; width: 4.5%; padding: 2px 1px; font-size: 11.5px;">ที่</th>
+                                  <th rowspan="3" style="border: 1px solid #333; width: 22%; padding: 2px 4px; font-size: 11.5px;">ชื่อสถานที่</th>
+                                  <th colspan="2" style="border: 1px solid #333; width: 14.5%; padding: 2px 1px; font-size: 11.5px;">วิเคราะห์ทางจุลชีววิทยา</th>
+                                  <th colspan="4" style="border: 1px solid #333; width: 35.5%; padding: 2px 1px; font-size: 11.5px;">วิเคราะห์ทางเคมี</th>
+                                  <th colspan="2" style="border: 1px solid #333; width: 13.5%; padding: 2px 1px; font-size: 11.5px;">วิเคราะห์ทางกายภาพ</th>
+                              </tr>
+                              <tr style="font-weight: bold;">
+                                  <th rowspan="2" style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; line-height: 1.15;">Coliform<br><span style="font-size: 9.5px; font-weight: normal;">(ต้องไม่พบ)</span></th>
+                                  <th rowspan="2" style="border: 1px solid #333; padding: 2px 1px; font-size: 11px;">สรุปผล</th>
+                                  <th colspan="2" style="border: 1px solid #333; padding: 2px 1px; background: #5c9c3e; color: #fff; font-size: 11px; white-space: nowrap;">TDS ( ≤50 มก./ล.)</th>
+                                  <th colspan="2" style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap;">Hardness (≤100 มก./ล.)</th>
+                                  <th colspan="2" style="border: 1px solid #333; padding: 2px 1px; background: #ffe699; font-size: 11px; white-space: nowrap;">pH (6.5-8.5)</th>
+                              </tr>
+                              <tr style="font-weight: bold; font-size: 10px;">
+                                  <th style="border: 1px solid #333; padding: 2px 1px; width: 7.5%; white-space: nowrap;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1px solid #333; padding: 2px 1px; width: 14%; white-space: nowrap;">สรุปผล</th>
+                                  <th style="border: 1px solid #333; padding: 2px 1px; width: 8%; white-space: nowrap;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1px solid #333; padding: 2px 1px; width: 6%; white-space: nowrap;">สรุปผล</th>
+                                  <th style="border: 1px solid #333; padding: 2px 1px; width: 7.5%; white-space: nowrap;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1px solid #333; padding: 2px 1px; width: 6%; white-space: nowrap;">สรุปผล</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              ${pageRowsHTML}
+                          </tbody>
+                      </table>
 
-                  <!-- Criteria Standard Reference Table -->
-                  <div style="margin-top: 8px; font-size: 11.5px; font-weight: bold;">
-                      ค่าการตรวจจากชุดทดสอบเบื้องต้น
-                  </div>
-                  <table style="width: 72%; border-collapse: collapse; border: 1px solid #333; font-size: 11px; margin-top: 3px; text-align: center;">
-                      <thead>
-                          <tr style="font-weight: bold; background: #fff;">
-                              <th style="border: 1px solid #333; width: 44%; padding: 2px;">รายการ</th>
-                              <th style="border: 1px solid #333; width: 56%; padding: 2px;">เกณฑ์การตรวจผ่านด้วยชุดทดสอบเบื้องต้น</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr>
-                              <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">กรด - ด่าง (pH)</td>
-                              <td style="border: 1px solid #333; padding: 2px;">6.5 - 8.5</td>
-                          </tr>
-                          <tr>
-                              <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">ความกระด้าง (Hardness)</td>
-                              <td style="border: 1px solid #333; padding: 2px;">Hardness( ≤100 มก./ล.)</td>
-                          </tr>
-                          <tr>
-                              <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">ปริมาณของแข็งละลายน้ำทั้งหมด (TDS)</td>
-                              <td style="border: 1px solid #333; padding: 2px;">TDS (≤50 มก./ล.)</td>
-                          </tr>
-                          <tr>
-                              <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">โคลิฟอร์ม (Coliform)</td>
-                              <td style="border: 1px solid #333; padding: 2px;">ไม่พบ</td>
-                          </tr>
-                      </tbody>
-                  </table>
+                      ${!isLastPage ? `
+                          <!-- Continuation Indicator -->
+                          <div style="text-align: right; font-size: 12px; font-weight: bold; margin-top: 15px; color: #475569; padding-right: 10px;">
+                              (มีต่อหน้าที่ ${page + 2})
+                          </div>
+                      ` : `
+                          <!-- Criteria Standard Reference Table -->
+                          <div style="margin-top: 10px; font-size: 12px; font-weight: bold; text-align: left;">
+                              ค่าการตรวจจากชุดทดสอบเบื้องต้น
+                          </div>
+                          <table style="width: 70%; border-collapse: collapse; border: 1px solid #333; font-size: 11px; margin-top: 4px; text-align: center;">
+                              <thead>
+                                  <tr style="font-weight: bold; background: #fff;">
+                                      <th style="border: 1px solid #333; width: 44%; padding: 2px 4px;">รายการ</th>
+                                      <th style="border: 1px solid #333; width: 56%; padding: 2px 4px;">เกณฑ์การตรวจผ่านด้วยชุดทดสอบเบื้องต้น</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">กรด - ด่าง (pH)</td>
+                                      <td style="border: 1px solid #333; padding: 2px 4px;">6.5 - 8.5</td>
+                                  </tr>
+                                  <tr>
+                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">ความกระด้าง (Hardness)</td>
+                                      <td style="border: 1px solid #333; padding: 2px 4px;">Hardness( ≤100 มก./ล.)</td>
+                                  </tr>
+                                  <tr>
+                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">ปริมาณของแข็งละลายน้ำทั้งหมด (TDS)</td>
+                                      <td style="border: 1px solid #333; padding: 2px 4px;">TDS (≤50 มก./ล.)</td>
+                                  </tr>
+                                  <tr>
+                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">โคลิฟอร์ม (Coliform)</td>
+                                      <td style="border: 1px solid #333; padding: 2px 4px;">ไม่พบ</td>
+                                  </tr>
+                              </tbody>
+                          </table>
 
-                  <!-- Signatures (4 Signatures matching Image 1) -->
-                  <div class="cert-signatures-grid" style="font-size: 13px; color: #000; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px 30px; text-align: center;">
-                      ${renderSignatureSlot(sample.sel_analyst_1 || 'phapphon', 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
-                      ${renderSignatureSlot(sample.sel_analyst_2 || 'sakulkan', 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
-                      ${renderSignatureSlot(sample.sel_approver_1 || 'thitiporn', 'ผู้รับรอง', 'approver_1')}
-                      ${renderSignatureSlot(sample.sel_approver_2 || 'mallika', 'ผู้รับรอง', 'approver_2')}
-                  </div>
-              </div>`;
+                          <!-- Signatures (4 Signatures matching Image 1) -->
+                          <div class="cert-signatures-grid" style="margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 35px; text-align: center;">
+                              ${renderMu10006SigSlot(sample.sel_analyst_1 || 'phapphon', 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                              ${renderMu10006SigSlot(sample.sel_analyst_2 || 'sakulkan', 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                              ${renderMu10006SigSlot(sample.sel_approver_1 || 'thitiporn', 'ผู้รับรอง', 'approver_1')}
+                              ${renderMu10006SigSlot(sample.sel_approver_2 || 'mallika', 'ผู้รับรอง', 'approver_2')}
+                          </div>
+                      `}
+                  </div>`;
+            }
 
             container.innerHTML = fullHtmlResult;
         }
