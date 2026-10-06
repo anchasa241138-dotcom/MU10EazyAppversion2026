@@ -1084,7 +1084,23 @@ const app = {
                 dynamicHTML = `<p class="input-helper">ไม่มีฟิลด์ข้อมูลเฉพาะสำหรับฟอร์มประเภทนี้</p>`;
         }
         
-        document.getElementById('formNameTitle').innerText = title;
+        
+        const toggleField = (id, show) => {
+            const el = document.getElementById(id);
+            if (el) {
+                const group = el.closest('.form-group');
+                if (group) group.style.display = show ? '' : 'none';
+                if (!show) el.removeAttribute('required');
+                else el.setAttribute('required', 'required');
+            }
+        };
+        const isMu10006 = formType === 'MU.10-006';
+        toggleField('field-agency', !isMu10006);
+        toggleField('field-location-type', !isMu10006);
+        toggleField('field-collector-name', !isMu10006);
+        toggleField('field-collector-position', !isMu10006);
+        
+document.getElementById('formNameTitle').innerText = title;
         const dynContainer = document.getElementById('dynamicFormFields'); if(dynContainer) dynContainer.innerHTML = dynamicHTML;
         
         // Initialize global sample entries
@@ -4754,6 +4770,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         } else if (sample.form_type === 'MU.10-005') {
             documentName = 'แบบบันทึกการสุ่มตัวอย่างเกลือบริโภค';
             documentNum = 'MU.10-005';
+        } else if (sample.form_type === 'MU.10-006') {
+            documentName = 'แบบบันทึกการเก็บตัวอย่างเชื้อโคลิฟอร์มขั้นต้น (SI-2)';
+            documentNum = 'MU.10-006';
         }
 
         // Collect all dynamic sample entries from sample object keys
@@ -5400,11 +5419,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
                                         letter-spacing: normal !important;
                 }
-            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 1000px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 30px 20px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">${documentNum}</span></div> <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:11.5px; font-weight:bold;"> <tr> <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td> <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td colspan="2" style="padding:2px 0;">ตำบล ....<u>${sample.tambon || ''}</u>....
-                            อำเภอ ....<u>${sample.amphoe || ''}</u>....
-                            จังหวัด ....<u>${sample.province || ''}</u>....
-                            วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>....
-                        </td> </tr> </table> <!-- MAIN TABLE -->${mainTableHTML}
+            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 1000px !important; min-height: 990px; background: #fff; display: block; position: relative; margin: 0; padding: 30px 20px; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 10.5px; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333;"> <tr> <td style="width:70px; padding:6px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:6px 12px; vertical-align:middle; line-height:1.6; color:#000; font-size:11.5px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span>${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:6px 12px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:12px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap;">${documentNum}</span></div> <div style="margin-top:6px; font-size:12px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
+                    sample.form_type === 'MU.10-006' 
+                    ? `<table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:11.5px; font-weight:bold;"> <tr> <td style="width:100%; padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td style="padding:2px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
+                    : `<table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:11.5px; font-weight:bold;"> <tr> <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....<u>${sample.agency || ''}</u>....</td> <td style="padding:2px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td colspan="2" style="padding:2px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
+                } <!-- MAIN TABLE -->${mainTableHTML}
 
                 ${mu10003Note}
                 <!-- FOOTER SIGNATURES --> <table style="width:100%; margin:10px 0 0 0; border-collapse:collapse; font-size:9.5px; color: #000;"> <tr> <td style="width:33%; vertical-align:top; padding-right:10px;"> <div>ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '................................................'}</u>....</div> <div style="margin-top:6px;">ตำแหน่ง ....<u>${sample.collector_position || '........................................................'}</u>....</div> <div style="margin-top:6px;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '............................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:left; padding:0 10px;"> <div>ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '..............................................'}</u>....</div> <div style="margin-top:6px;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '........................................................') : '........................................................'}</u>....</div> <div style="margin-top:6px;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:right;"> <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div> <div style="margin-top:6px;">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> <div style="margin-top:6px;">วันที่ทบทวนเอกสาร ............................................</div> </td> </tr> </table>  </div> </div>`;
