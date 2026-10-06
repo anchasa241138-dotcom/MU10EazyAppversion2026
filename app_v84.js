@@ -5324,7 +5324,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 
                 tableRowsHTML += `
                     <tr style="height: 30px; page-break-inside: avoid; text-align: center; font-size: 11px;">
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${hasData ? (i + 1) : ''}</td>
+                        <td style="padding:2px; border:1px solid #000; text-align:center;">${i + 1}</td>
                         <td style="padding:2px; border:1px solid #000; text-align:center;">${item.amphoe || ''}</td>
                         <td style="padding:2px; border:1px solid #000; text-align:left;">${item.location || ''}</td>
                         <td style="padding:2px; border:1px solid #000; text-align:left;">${item.sample_name || ''}</td>
@@ -5435,7 +5435,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <div style="text-align:right; min-width:320px; display:flex; flex-direction:column; align-items:flex-end;">
                             <div>ผู้ทบทวนเอกสาร : ................................................(สำหรับผู้ตรวจวิเคราะห์)</div>
                             <div style="margin-top:6px; margin-right: 120px;">วันที่ ............................................</div>
-                            <div style="margin-top:12px; width:18px; height:18px; border:1px solid #000;"></div>
+                            
                         </div>
                     </div>
                 </div>
