@@ -3103,19 +3103,7 @@ document.getElementById('formNameTitle').innerText = title;
                         * <em>ระบบจะประเมินผลอัตโนมัติขณะกรอกตัวเลข (Coliform: 0=ผ่าน, TDS ≤ 50=เกณฑ์ปกติ, Hardness ≤ 100=ผ่าน, pH 6.5-8.5=ผ่าน)</em>
                     </div>
 
-                    <div class="form-grid" style="margin-top:14px; padding-top:12px; border-top:1px dashed #e2e8f0;">
-                        <div class="form-group">
-                            <label for="analysis-summary-outcome">สรุปผลภาพรวม <span class="required">*</span></label>
-                            <select id="analysis-summary-outcome" required style="width:100%; height:40px; padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:14px; font-weight:bold;">
-                                <option value="ผ่าน" ${sample.analysis_summary !== 'ไม่ผ่าน' ? 'selected' : ''}>ผ่าน</option>
-                                <option value="ไม่ผ่าน" ${sample.analysis_summary === 'ไม่ผ่าน' ? 'selected' : ''}>ไม่ผ่าน</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="analysis-comment">ข้อคิดเห็น / ข้อเสนอแนะเพิ่มเติม</label>
-                            <input type="text" id="analysis-comment" value="${sample.analysis_comment || ''}" placeholder="ระบุข้อคิดเห็น (ถ้ามี)" style="width:100%; height:40px; padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:14px;">
-                        </div>
-                    </div>
+                    
                 </div>
             `;
         } else if (sample.form_type === 'MU.10-008') {
