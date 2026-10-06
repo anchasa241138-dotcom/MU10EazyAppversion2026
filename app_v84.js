@@ -4787,7 +4787,7 @@ document.getElementById('formNameTitle').innerText = title;
             const locationSub = `${sample.amphoe ? 'อำเภอ' + sample.amphoe + ' ' : ''}จังหวัด${sample.province || 'ศรีสะเกษ'}`;
 
             const fullHtmlResult = `
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 130px 42px 60px 42px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;">
+              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 180px 42px 40px 42px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;">
                   <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
                   <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style> 
                   
