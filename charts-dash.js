@@ -118,14 +118,15 @@ function initDashboardCharts() {
                 'สารฟอกขาว',
                 'สารกันรา',
                 'สารเร่งเนื้อแดง',
-                'สารโพลาร์',
+                'สารโพลาร์ในน้ำมันทอดอาหาร',
                 'โคลิฟอร์มในอาหาร',
-                'โคลิฟอร์มในน้ำ'
+                'โคลิฟอร์มในน้ำ',
+                'ฉลากอาหาร'
             ],
             datasets: [
                 {
                     label: 'ผ่านเกณฑ์',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: 'rgba(16, 185, 129, 0.8)',
                     borderColor: '#10b981',
                     borderWidth: 1,
@@ -133,7 +134,7 @@ function initDashboardCharts() {
                 },
                 {
                     label: 'ไม่ผ่านเกณฑ์',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: 'rgba(239, 68, 68, 0.8)',
                     borderColor: '#ef4444',
                     borderWidth: 1,
@@ -208,12 +209,55 @@ function updateDashboardCharts(samples) {
 
     // 2. Calculate Outcome ratios
     // Outcomes: Pass, Fail, Under Analysis (Registered/Accepted/Analyzing)
-    const passed = samples.filter(s => s.status === 'approved' && s.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน').length;
-    const failed = samples.filter(s => s.status === 'approved' && s.analysis_summary === 'ไม่ผ่านเกณฑ์มาตรฐาน').length;
-    // Note: pending means not approved or summarized yet
-    const pending = samples.filter(s => s.status !== 'approved' && s.status !== 'rejected').length;
+    let passed = 0;
+    let failed = 0;
+    let pending = 0;
 
-    resultRatioChartInstance.data.datasets[0].data = [passed, failed, pending];
+    samples.forEach(s => {
+        if (s.status === 'rejected') return;
+        if (s.status !== 'approved') {
+            pending++;
+            return;
+        }
+
+        // Status is approved
+        const sum = (s.analysis_summary_outcome || s.analysis_summary || '').toString().trim();
+        if (sum.includes('ไม่ผ่าน')) {
+            failed++;
+        } else if (sum.includes('ผ่าน')) {
+            passed++;
+        } else {
+            // Check item-level summaries
+            let hasFail = false;
+            let hasPass = false;
+            let idx = 1;
+            while (s['sample_name_' + idx] !== undefined) {
+                const itemSum = (
+                    s['analysis_summary_outcome_' + idx] || 
+                    s['analysis_summary_' + idx] || 
+                    s['analysis_coliform_summary_' + idx] || 
+                    s['label_summary_' + idx] || ''
+                ).toString();
+                if (itemSum.includes('ไม่ผ่าน')) hasFail = true;
+                else if (itemSum.includes('ผ่าน')) hasPass = true;
+                idx++;
+            }
+            if (hasFail) failed++;
+            else if (hasPass) passed++;
+            else passed++;
+        }
+    });
+
+    const totalOutcomes = passed + failed + pending;
+    if (totalOutcomes === 0) {
+        resultRatioChartInstance.data.labels = ['ไม่มีข้อมูล'];
+        resultRatioChartInstance.data.datasets[0].data = [1];
+        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#e2e8f0'];
+    } else {
+        resultRatioChartInstance.data.labels = ['ผ่านเกณฑ์มาตรฐาน', 'ไม่ผ่านเกณฑ์มาตรฐาน', 'รอการตรวจวิเคราะห์'];
+        resultRatioChartInstance.data.datasets[0].data = [passed, failed, pending];
+        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#10b981', '#ef4444', '#f59e0b'];
+    }
     resultRatioChartInstance.update();
 
     // 3. Calculate Form type distribution
@@ -266,61 +310,104 @@ function updateSubstanceCharts(samples) {
     });
 
     function checkItem(s, idx, stats) {
-        const getVal = (key) => idx ? s[key + '_' + idx] : s[key];
+        const getVal = (key) => idx ? (s[key + '_' + idx] !== undefined ? s[key + '_' + idx] : s[key]) : s[key];
+        
         const getSummary = (key) => {
-            const val = idx ? s['analysis_summary_' + idx + '_' + key] : s['analysis_summary_' + key];
-            if (val === 'ผ่าน' || val === 'ไม่ผ่าน') return val;
-            const det = idx ? s['analysis_detail_results_' + idx + '_' + key] : s['analysis_detail_results_' + key];
-            if (det === 'ไม่พบ') return 'ผ่าน';
-            if (det === 'พบ') return 'ไม่ผ่าน';
+            const val = (idx ? s['analysis_summary_' + idx + '_' + key] : '') || s['analysis_summary_' + key];
+            if (val && val.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+            if (val && val.includes('ผ่าน')) return 'ผ่าน';
+            const det = (idx ? s['analysis_detail_results_' + idx + '_' + key] : '') || s['analysis_detail_results_' + key] || (idx ? s['analysis_details_' + idx + '_' + key] : '') || s['analysis_details_' + key];
+            if (det && det.includes('ไม่พบ')) return 'ผ่าน';
+            if (det && det.includes('พบ')) return 'ไม่ผ่าน';
             return null;
         };
+
         const getSingleSummary = () => {
-             const sum = idx ? s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] : s['analysis_summary_outcome'] || s['analysis_summary'];
-             if(sum && sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
-             if(sum && sum.includes('ผ่าน')) return 'ผ่าน';
-             return sum;
+             const sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
+                      || s.analysis_summary_outcome 
+                      || s.analysis_summary 
+                      || '';
+             if (sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+             if (sum.includes('ผ่าน')) return 'ผ่าน';
+             return null;
+        };
+
+        const getColiformWaterSummary = () => {
+             const sum = (idx ? (s['analysis_coliform_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
+                      || s.analysis_coliform_summary_1
+                      || s.analysis_coliform_summary
+                      || s.analysis_summary_outcome
+                      || s.analysis_summary
+                      || '';
+             if (sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+             if (sum.includes('ผ่าน')) return 'ผ่าน';
+             
+             // Check numeric coliform value if present
+             const val = idx ? s['analysis_coliform_' + idx] : (s.analysis_coliform_1 !== undefined ? s.analysis_coliform_1 : s.analysis_coliform);
+             if (val !== undefined && val !== null && val !== '') {
+                 const num = parseFloat(val);
+                 if (!isNaN(num)) {
+                     return num > 0 ? 'ไม่ผ่าน' : 'ผ่าน';
+                 }
+             }
+             return null;
         };
 
         const inc = (type, summaryVal) => {
             stats[type].total++;
-            if (summaryVal === 'ผ่าน' || summaryVal === 'ผ่านเกณฑ์มาตรฐาน') {
+            if (summaryVal && summaryVal.includes('ผ่าน') && !summaryVal.includes('ไม่ผ่าน')) {
                 stats[type].pass++;
-            } else if (summaryVal === 'ไม่ผ่าน' || summaryVal === 'ไม่ผ่านเกณฑ์มาตรฐาน') {
+            } else if (summaryVal && summaryVal.includes('ไม่ผ่าน')) {
                 stats[type].fail++;
-                // Save this sample info
                 let subName = idx ? s['sample_name_'+idx] : s.sample_name;
                 window.currentFailedSamples[type].push({
                     name: subName || s.sample_id || '-',
-                    date: s.collection_date || '-',
+                    code: s.lab_id || s.sample_id || s.ref_id || '-',
+                    date: s.collection_date || s.sampling_date || '-',
                     province: s.province || '-',
+                    district: s.amphoe || s.district || '-',
+                    source: s.agency || s.source || '-',
                     location: s.collection_place || s.collection_location || s.location_name || '-',
                     form_type: s.form_type || '-'
                 });
+            } else if (s.status === 'approved') {
+                stats[type].pass++;
             }
         };
 
         if (s.form_type === 'MU.10-001') {
             inc('pesticide', getSingleSummary());
         } else if (s.form_type === 'MU.10-002') {
-            if (getVal('test_borax')) inc('borax', getSummary('borax'));
-            if (getVal('test_formalin')) inc('formalin', getSummary('formalin'));
-            if (getVal('test_bleach')) inc('bleach', getSummary('bleach'));
-            if (getVal('test_salicylic')) inc('salicylic', getSummary('salicylic'));
-            if (getVal('test_agonist')) inc('agonist', getSummary('agonist'));
+            let matchedTest = false;
+            ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
+                if (getVal('test_' + k)) {
+                    matchedTest = true;
+                    inc(k, getSummary(k));
+                }
+            });
+            if (!matchedTest) {
+                ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
+                    const sk = getSummary(k);
+                    if (sk) inc(k, sk);
+                });
+            }
         } else if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
-            const num = parseFloat(getVal('polar_value') || getVal('analysis_interpretation'));
-            if(!isNaN(num)) {
+            const rawVal = getVal('polar_value') || getVal('analysis_interpretation') || getVal('analysis_interpretation_4');
+            const num = parseFloat(rawVal);
+            if (!isNaN(num)) {
                  stats['polar'].total++;
-                 if(num <= 25) {
+                 if (num <= 25) {
                      stats['polar'].pass++;
                  } else {
                      stats['polar'].fail++;
                      let subName = idx ? s['sample_name_'+idx] : s.sample_name;
                      window.currentFailedSamples['polar'].push({
                          name: subName || s.sample_id || '-',
-                         date: s.collection_date || '-',
+                         code: s.lab_id || s.sample_id || s.ref_id || '-',
+                         date: s.collection_date || s.sampling_date || '-',
                          province: s.province || '-',
+                         district: s.amphoe || s.district || '-',
+                         source: s.agency || s.source || '-',
                          location: s.collection_place || s.collection_location || s.location_name || '-',
                          form_type: s.form_type || '-'
                      });
@@ -331,9 +418,14 @@ function updateSubstanceCharts(samples) {
         } else if (s.form_type === 'MU.10-007') {
             inc('coliformFood', getSingleSummary());
         } else if (s.form_type === 'MU.10-006') {
-            inc('coliformWater', getSingleSummary());
+            inc('coliformWater', getColiformWaterSummary());
         } else if (s.form_type === 'MU.10-008') {
-            inc('foodLabel', idx ? s['label_summary_' + idx] : s['label_summary']);
+            const lblSum = (idx ? (s['label_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
+                        || s.label_summary
+                        || s.analysis_summary_outcome
+                        || s.analysis_summary
+                        || '';
+            inc('foodLabel', lblSum.includes('ไม่ผ่าน') ? 'ไม่ผ่าน' : (lblSum.includes('ผ่าน') ? 'ผ่าน' : null));
         }
     }
 

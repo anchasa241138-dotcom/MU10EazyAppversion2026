@@ -659,9 +659,19 @@ const app = {
                 else if (s.status === 'accepted' || s.status === 'analyzed' || s.status === 'summarized' || s.status === 'analyst_signed') cStats.analyzing++;
                 else if (s.status === 'approved') {
                     cStats.completed++;
-                    let sum = index ? (s['analysis_summary_outcome_' + index] || s['analysis_summary_' + index] || '') : (s['analysis_summary_outcome'] || s['analysis_summary'] || '');
+                    let sum = (index ? (s['analysis_summary_outcome_' + index] || s['analysis_summary_' + index] || s['analysis_coliform_summary_' + index] || s['label_summary_' + index]) : '')
+                            || s.analysis_summary_outcome 
+                            || s.analysis_summary 
+                            || '';
+                    if (!sum && s.form_type === 'MU.10-002' && index) {
+                        const keys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
+                        const itemSums = keys.map(k => s['analysis_summary_' + index + '_' + k]).filter(Boolean);
+                        if (itemSums.some(x => x.includes('ไม่ผ่าน'))) sum = 'ไม่ผ่าน';
+                        else if (itemSums.length > 0) sum = 'ผ่าน';
+                    }
                     if (sum.includes('ไม่ผ่าน')) cStats.failed++;
                     else if (sum.includes('ผ่าน')) cStats.passed++;
+                    else cStats.passed++;
                 }
             };
 
@@ -3704,6 +3714,8 @@ document.getElementById('formNameTitle').innerText = title;
 
                         const rowPass = (cSum === 'ผ่าน') && (tSum === 'เกณฑ์ปกติ') && (hSum === 'ผ่าน') && (pSum === 'ผ่าน');
                         if (rowPass) passCount++;
+                        sample['analysis_summary_' + idx] = rowPass ? 'ผ่าน' : 'ไม่ผ่าน';
+                        sample['analysis_summary_outcome_' + idx] = rowPass ? 'ผ่าน' : 'ไม่ผ่าน';
                     }
                 }
                 const overallSum = document.getElementById('analysis-summary-outcome')?.value;
