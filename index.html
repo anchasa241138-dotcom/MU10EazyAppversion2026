@@ -18,7 +18,6 @@
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style_v3.css?v=1790913626673">
 <link rel="stylesheet" href="fonts.css">
-<link rel="stylesheet" href="enhancements.css">
 
     <style>
         /* Modern Login Page Styling */
@@ -295,6 +294,7 @@
         .reg-auth-block .required { color: #fca5a5; }
 
     </style>
+    <link rel="stylesheet" href="enhancements.css?v=1791719354785">
 </head>
 <body>
     <!-- App Container -->
@@ -376,51 +376,62 @@
             <div class="content-body">
                 <!-- VIEW 1: DASHBOARD -->
                 <section class="content-view active" id="view-dashboard">
-                    <div class="welcome-banner sci-food-banner" style="position: relative; overflow: hidden; background: #112240; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; padding: 0; box-shadow: 0 25px 45px -10px rgba(0,0,0,0.4), inset 0 1px 3px rgba(255,255,255,0.15); margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.15); border-bottom: 1px solid rgba(0,0,0,0.3);">
-                        <!-- Premium Ambient Background -->
-                        <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #162a5c 0%, #105953 50%, #064e3b 100%); z-index: 0;"></div>
+                    <div class="welcome-banner sci-food-banner" style="position: relative; overflow: hidden; background: linear-gradient(135deg, #0b1c14 0%, #133324 50%, #0d2218 100%); border-radius: 24px; display: flex; align-items: center; justify-content: space-between; padding: 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7), inset 0 1px 2px rgba(199,242,60,0.2); margin-bottom: 30px; border: 1px solid rgba(199,242,60,0.22);">
+                        <!-- Ambient Forest Glows -->
+                        <div style="position: absolute; top: -120px; left: -80px; width: 450px; height: 450px; background: rgba(199, 242, 60, 0.12); filter: blur(140px); pointer-events: none; z-index: 1;"></div>
+                        <div style="position: absolute; bottom: -140px; right: 10%; width: 500px; height: 500px; background: rgba(16, 185, 129, 0.2); filter: blur(150px); pointer-events: none; z-index: 1;"></div>
                         
-                        <!-- Modern Glass Shapes / Orbs -->
-                        <div style="position: absolute; top: -100px; left: -50px; width: 450px; height: 450px; background: #3b82f6; filter: blur(130px); opacity: 0.35; z-index: 1; pointer-events: none;"></div>
-                        <div style="position: absolute; bottom: -150px; right: 5%; width: 500px; height: 500px; background: #10b981; filter: blur(140px); opacity: 0.3; z-index: 1; pointer-events: none;"></div>
-                        
-                        <!-- Subtle Tech Grid -->
-                        <div style="position: absolute; inset: 0; background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.02\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); z-index: 1; pointer-events: none;"></div>
-
-                        <!-- Sleek Angled Cut Overlay -->
-                        <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 50%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02) 30%, rgba(255,255,255,0.05) 100%); clip-path: polygon(25% 0, 100% 0, 100% 100%, 5% 100%); box-shadow: inset 10px 0 20px rgba(0,0,0,0.1); z-index: 1; pointer-events: none;"></div>
+                        <!-- Subtle Grid Pattern -->
+                        <div style="position: absolute; inset: 0; background-image: radial-gradient(rgba(199, 242, 60, 0.08) 1px, transparent 1px); background-size: 24px 24px; opacity: 0.7; z-index: 1; pointer-events: none;"></div>
 
                         <!-- Text Content Area -->
-                        <div class="banner-text" style="position: relative; z-index: 2; padding: 40px 50px; max-width: 65%;">
-                            <!-- Top Tag -->
-                            <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); padding: 8px 18px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                                <i class="fa-solid fa-flask-vial" style="color: #34d399; font-size: 16px;"></i>
-                                <i class="fa-solid fa-dna" style="color: #60a5fa; font-size: 16px;"></i>
-                                <span style="font-size: 12px; font-weight: 700; letter-spacing: 1.5px; color: #f8fafc; text-transform: uppercase;">MOBILE UNIT FOR FOOD SAFETY</span>
+                        <div class="banner-text" style="position: relative; z-index: 2; padding: 42px 48px; max-width: 62%;">
+                            <!-- Veliora Pill Tag with glowing dot -->
+                            <div class="veliora-pill-tag">
+                                <span class="veliora-dot"></span>
+                                <span>MOBILE UNIT 10 FOR FOOD SAFETY</span>
                             </div>
                             
-                            <!-- Heading -->
-                            <h3 style="font-size: 28px; font-weight: 800; margin-bottom: 16px; line-height: 1.4; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 4px 15px rgba(0,0,0,0.4);">
+                            <!-- Heading with Veliora Lime Accent -->
+                            <h3 style="font-size: 30px; font-weight: 800; margin-bottom: 14px; line-height: 1.35; color: #ffffff; letter-spacing: -0.5px;">
                                 หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร<br>
-                                <span style="background: linear-gradient(to right, #34d399, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">เขตสุขภาพที่ 10</span>
+                                <span style="color: #c7f23c; text-shadow: 0 0 25px rgba(199, 242, 60, 0.35); font-family: 'Outfit', 'Sarabun', sans-serif;">เขตสุขภาพที่ 10</span>
                             </h3>
                             
                             <!-- Subheading -->
-                            <p style="font-size: 15px; color: #94a3b8; line-height: 1.7; font-weight: 400; max-width: 95%;">
-                                <strong style="color: #e2e8f0; font-weight: 600;">ศูนย์สารสนเทศการตรวจสอบความปลอดภัยด้านอาหาร</strong><br>
+                            <p style="font-size: 14.5px; color: #9cb0a4; line-height: 1.7; font-weight: 400; max-width: 95%; margin-bottom: 24px;">
+                                <strong style="color: #ffffff; font-weight: 600;">ศูนย์สารสนเทศการตรวจสอบความปลอดภัยด้านอาหาร</strong><br>
                                 จังหวัดศรีสะเกษ อุบลราชธานี อำนาจเจริญ มุกดาหาร และยโสธร
                             </p>
+
+                            <!-- Veliora Pill Action Buttons -->
+                            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                                <button class="btn btn-primary" onclick="app.switchView('sample-record')">
+                                    <i class="fa-solid fa-plus"></i> บันทึกตัวอย่างใหม่ <i class="fa-solid fa-arrow-right" style="margin-left: 4px;"></i>
+                                </button>
+                                <button class="btn btn-secondary" onclick="app.switchView('download-results')">
+                                    <i class="fa-solid fa-file-lines"></i> ดูรายงานผลตรวจ
+                                </button>
+                            </div>
                         </div>
                         
-                        <!-- Logo Area -->
-                        <div class="banner-logo" style="position: relative; z-index: 2; padding: 20px 50px 20px 0; display: flex; justify-content: flex-end; align-items: center; flex: 1;">
-                            <!-- Subtle Soft Backlight for Logo -->
-                            <div style="position: absolute; right: 70px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 65%); border-radius: 50%; pointer-events: none;"></div>
-                            <img src="logo_mobi_3d.jpg" alt="Mobi SmartLab 10" style="max-width: 280px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.15); animation: float 6s ease-in-out infinite; position: relative; z-index: 3;">
+                        <!-- Logo Area with Floating Stats Bento Card -->
+                        <div class="banner-logo" style="position: relative; z-index: 2; padding: 25px 45px 25px 0; display: flex; justify-content: flex-end; align-items: center; flex: 1;">
+                            <div style="position: absolute; right: 80px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(199,242,60,0.18) 0%, transparent 70%); border-radius: 50%; pointer-events: none;"></div>
+                            <img src="logo_mobi_3d.jpg" alt="Mobi SmartLab 10" style="max-width: 250px; border-radius: 22px; box-shadow: 0 20px 45px rgba(0,0,0,0.7); border: 2px solid rgba(199,242,60,0.25); animation: float 6s ease-in-out infinite; position: relative; z-index: 3;">
+
+                            <!-- Veliora Floating Stats Card -->
+                            <div style="background: rgba(8, 20, 14, 0.88); border: 1px solid rgba(199, 242, 60, 0.32); border-radius: 18px; padding: 12px 18px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 16px 36px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 3px; z-index: 4; position: absolute; bottom: 15px; right: 25px;">
+                                <div style="font-size: 24px; font-weight: 800; color: #c7f23c; font-family: 'Outfit', sans-serif; line-height: 1;">> 100%</div>
+                                <div style="font-size: 11.5px; color: #ffffff; font-weight: 600;">มาตรฐานความปลอดภัย</div>
+                                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                    <span style="background: rgba(199, 242, 60, 0.15); color: #c7f23c; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 700;">5 จังหวัด</span>
+                                    <span style="background: rgba(255, 255, 255, 0.08); color: #9cb0a4; padding: 2px 8px; border-radius: 9999px; font-size: 10px;">เขตสุขภาพที่ 10</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    
                     <div class="dashboard-filter" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
                         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                             <label style="font-weight: 600; color: #334155; margin: 0;"><i class="fa-regular fa-calendar"></i> ตั้งแต่วันที่:</label>
@@ -1699,7 +1710,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1791279504948"></script>
+    <script src="charts-dash.js?v=1791719354785"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
