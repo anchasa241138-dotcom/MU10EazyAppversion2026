@@ -19,7 +19,13 @@ function initDashboardCharts() {
 
     if (!provinceCtx || !resultRatioCtx || !formTypeCtx) return;
 
-    // 1. Province Chart (Bar Chart)
+    // Set Global Chart Defaults for Veliora Dark Forest Theme
+    if (typeof Chart !== 'undefined') {
+        Chart.defaults.color = '#9cb0a4';
+        Chart.defaults.font.family = "'Sarabun', 'Outfit', sans-serif";
+    }
+
+    // 1. Province Chart (Bar Chart) - Veliora Lime & Accents
     provinceChartInstance = new Chart(provinceCtx, {
         type: 'bar',
         data: {
@@ -28,18 +34,18 @@ function initDashboardCharts() {
                 label: 'จำนวนตัวอย่างที่ส่งตรวจ (รายจังหวัด)',
                 data: [0, 0, 0, 0, 0],
                 backgroundColor: [
-                    'rgba(13, 148, 136, 0.75)',  /* Teal */
-                    'rgba(59, 130, 246, 0.75)',  /* Blue */
-                    'rgba(245, 158, 11, 0.75)',  /* Amber */
-                    'rgba(139, 92, 246, 0.75)',  /* Purple */
-                    'rgba(236, 72, 153, 0.75)'   /* Pink */
+                    '#c7f23c',  /* Veliora Lime */
+                    '#38bdf8',  /* Sky Blue */
+                    '#f59e0b',  /* Amber */
+                    '#a78bfa',  /* Purple */
+                    '#2dd4bf'   /* Mint */
                 ],
                 borderColor: [
-                    '#0d9488', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'
+                    '#c7f23c', '#38bdf8', '#f59e0b', '#a78bfa', '#2dd4bf'
                 ],
                 borderWidth: 1.5,
-                borderRadius: 6,
-                barPercentage: 0.6
+                borderRadius: 8,
+                barPercentage: 0.55
             }]
         },
         options: {
@@ -48,6 +54,13 @@ function initDashboardCharts() {
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    backgroundColor: '#07130d',
+                    titleColor: '#c7f23c',
+                    bodyColor: '#ffffff',
+                    borderColor: 'rgba(199, 242, 60, 0.3)',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12,
                     callbacks: {
                         label: function(context) {
                             return ` ${context.parsed.y} ตัวอย่าง`;
@@ -60,12 +73,14 @@ function initDashboardCharts() {
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1,
+                        color: '#9cb0a4',
                         font: { family: 'Sarabun' }
                     },
-                    grid: { color: '#f1f5f9' }
+                    grid: { color: 'rgba(255, 255, 255, 0.07)' }
                 },
                 x: {
                     ticks: {
+                        color: '#ffffff',
                         font: { family: 'Sarabun', weight: 'bold' }
                     },
                     grid: { display: false }
@@ -74,7 +89,7 @@ function initDashboardCharts() {
         }
     });
 
-    // 2. Result Ratio Chart (Doughnut Chart)
+    // 2. Result Ratio Chart (Doughnut Chart) - Veliora Lime / Coral / Amber
     resultRatioChartInstance = new Chart(resultRatioCtx, {
         type: 'doughnut',
         data: {
@@ -82,32 +97,42 @@ function initDashboardCharts() {
             datasets: [{
                 data: [0, 0, 0],
                 backgroundColor: [
-                    '#10b981',  /* Emerald green - Pass */
-                    '#ef4444',  /* Red - Fail */
+                    '#c7f23c',  /* Veliora Lime - Pass */
+                    '#f43f5e',  /* Coral - Fail */
                     '#f59e0b'   /* Amber - Pending */
                 ],
-                borderWidth: 2,
-                borderColor: '#ffffff'
+                borderWidth: 3,
+                borderColor: '#10271d'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '65%',
+            cutout: '68%',
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
                         font: { family: 'Sarabun', size: 12 },
                         padding: 15,
-                        usePointStyle: true
+                        usePointStyle: true,
+                        color: '#ffffff'
                     }
+                },
+                tooltip: {
+                    backgroundColor: '#07130d',
+                    titleColor: '#c7f23c',
+                    bodyColor: '#ffffff',
+                    borderColor: 'rgba(199, 242, 60, 0.3)',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12
                 }
             }
         }
     });
 
-    // 3. Form Type Chart (Horizontal Bar Chart)
+    // 3. Form Type Chart (Horizontal Bar Chart) - Veliora Lime / Coral
     formTypeChartInstance = new Chart(formTypeCtx, {
         type: 'bar',
         data: {
@@ -127,18 +152,18 @@ function initDashboardCharts() {
                 {
                     label: 'ผ่านเกณฑ์',
                     data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(199, 242, 60, 0.85)',
+                    borderColor: '#c7f23c',
                     borderWidth: 1,
-                    borderRadius: 4
+                    borderRadius: 6
                 },
                 {
                     label: 'ไม่ผ่านเกณฑ์',
                     data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
-                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(244, 63, 94, 0.85)',
+                    borderColor: '#f43f5e',
                     borderWidth: 1,
-                    borderRadius: 4
+                    borderRadius: 6
                 }
             ]
         },
@@ -149,9 +174,16 @@ function initDashboardCharts() {
                 legend: { 
                     display: true,
                     position: 'top',
-                    labels: { font: { family: 'Sarabun' }, usePointStyle: true }
+                    labels: { font: { family: 'Sarabun' }, color: '#ffffff', usePointStyle: true }
                 },
                 tooltip: {
+                    backgroundColor: '#07130d',
+                    titleColor: '#c7f23c',
+                    bodyColor: '#ffffff',
+                    borderColor: 'rgba(199, 242, 60, 0.3)',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12,
                     callbacks: {
                         label: function(context) {
                             return ` ${context.dataset.label}: ${context.parsed.y} ตัวอย่าง`;
@@ -162,14 +194,14 @@ function initDashboardCharts() {
             scales: {
                 x: {
                     stacked: true,
-                    ticks: { font: { family: 'Sarabun', size: 11 }, autoSkip: false, maxRotation: 45, minRotation: 0 },
+                    ticks: { font: { family: 'Sarabun', size: 11 }, color: '#9cb0a4', autoSkip: false, maxRotation: 45, minRotation: 0 },
                     grid: { display: false }
                 },
                 y: {
                     stacked: true,
                     beginAtZero: true,
-                    ticks: { stepSize: 1, font: { family: 'Sarabun' } },
-                    grid: { color: '#f1f5f9' }
+                    ticks: { stepSize: 1, color: '#9cb0a4', font: { family: 'Sarabun' } },
+                    grid: { color: 'rgba(255, 255, 255, 0.07)' }
                 }
             }
         }
@@ -252,11 +284,11 @@ function updateDashboardCharts(samples) {
     if (totalOutcomes === 0) {
         resultRatioChartInstance.data.labels = ['ไม่มีข้อมูล'];
         resultRatioChartInstance.data.datasets[0].data = [1];
-        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#e2e8f0'];
+        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#183829'];
     } else {
         resultRatioChartInstance.data.labels = ['ผ่านเกณฑ์มาตรฐาน', 'ไม่ผ่านเกณฑ์มาตรฐาน', 'รอการตรวจวิเคราะห์'];
         resultRatioChartInstance.data.datasets[0].data = [passed, failed, pending];
-        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#10b981', '#ef4444', '#f59e0b'];
+        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#c7f23c', '#f43f5e', '#f59e0b'];
     }
     resultRatioChartInstance.update();
 
@@ -448,14 +480,14 @@ function updateSubstanceCharts(samples) {
     for (const key in stats) {
         const item = stats[key];
             const col = document.createElement('div');
-            col.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
+            col.style.cssText = 'background: rgba(16, 38, 28, 0.85); border: 1px solid rgba(199, 242, 60, 0.16); box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; backdrop-filter: blur(14px);';
             col.innerHTML = `
-                  <h6 style="margin: 0 0 10px 0; font-weight: bold; color: #334155; text-align: center; font-size: 14px;">${item.label}</h6>
-                  <div id="substance-text-${key}" style="width: 100%; margin-bottom: 10px;"></div>
+                  <h6 style="margin: 0 0 12px 0; font-weight: 700; color: #ffffff; text-align: center; font-size: 15px;">${item.label}</h6>
+                  <div id="substance-text-${key}" style="width: 100%; margin-bottom: 12px;"></div>
                   <div style="position: relative; width: 100%; height: 180px; margin: 0 auto;">
                       <canvas id="substance-chart-${key}"></canvas>
                   </div>
-                  <div id="substance-action-${key}" style="width: 100%; margin-top: 10px;"></div>
+                  <div id="substance-action-${key}" style="width: 100%; margin-top: 12px;"></div>
               `;
             grid.appendChild(col);
         }
@@ -470,36 +502,36 @@ function updateSubstanceCharts(samples) {
         const dataValues = [item.pass, item.fail];
         
         let viewBtn = item.fail > 0 
-            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="width: 100%; padding: 6px; background-color: #fee2e2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
-            : `<div style="height: 27px;"></div>`;
+            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="width: 100%; padding: 8px; background-color: rgba(244, 63, 94, 0.16); border: 1px solid rgba(244, 63, 94, 0.38); color: #fca5a5; border-radius: 9999px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
+            : `<div style="height: 33px;"></div>`;
             
         const passPct = item.total > 0 ? ((item.pass / item.total) * 100).toFixed(1) : 0;
         const failPct = item.total > 0 ? ((item.fail / item.total) * 100).toFixed(1) : 0;
         
-        const miniCardStyle = "display: flex; align-items: center; background: #fff; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 8px; padding: 8px 6px; width: 31%; box-sizing: border-box; transition: transform 0.2s;";
-        const iconStyle = "display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 4px; color: #fff; font-size: 14px; margin-right: 4px; flex-shrink: 0;";
+        const miniCardStyle = "display: flex; align-items: center; background: rgba(9, 22, 16, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 8px 8px; width: 31%; box-sizing: border-box; transition: transform 0.2s;";
+        const iconStyle = "display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 10px; color: #fff; font-size: 14px; margin-right: 6px; flex-shrink: 0;";
 
         document.getElementById('substance-text-' + key).innerHTML = `
             <div style="display: flex; justify-content: space-between; width: 100%;">
                 <div style="${miniCardStyle}">
-                    <div style="${iconStyle} background-color: #3b82f6;"><i class="fa-solid fa-database"></i></div>
+                    <div style="${iconStyle} background-color: #0284c7;"><i class="fa-solid fa-database"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 13px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #0f172a;">${item.total}</div>
+                        <div style="font-size: 12px; color: #9cb0a4; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #38bdf8;">${item.total}</div>
                     </div>
                 </div>
                 <div style="${miniCardStyle}">
-                    <div style="${iconStyle} background-color: #10b981;"><i class="fa-solid fa-check"></i></div>
+                    <div style="${iconStyle} background-color: #15803d;"><i class="fa-solid fa-check"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 13px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #10b981;">${item.pass} <span style="font-size: 12px; color: #64748b; font-weight: normal;">(${passPct}%)</span></div>
+                        <div style="font-size: 12px; color: #9cb0a4; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #c7f23c;">${item.pass} <span style="font-size: 11px; color: #9cb0a4; font-weight: normal;">(${passPct}%)</span></div>
                     </div>
                 </div>
                 <div style="${miniCardStyle}">
-                    <div style="${iconStyle} background-color: #ef4444;"><i class="fa-solid fa-xmark"></i></div>
+                    <div style="${iconStyle} background-color: #be123c;"><i class="fa-solid fa-xmark"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 13px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #ef4444;">${item.fail} <span style="font-size: 12px; color: #64748b; font-weight: normal;">(${failPct}%)</span></div>
+                        <div style="font-size: 12px; color: #9cb0a4; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #f43f5e;">${item.fail} <span style="font-size: 11px; color: #9cb0a4; font-weight: normal;">(${failPct}%)</span></div>
                     </div>
                 </div>
             </div>
@@ -535,7 +567,7 @@ function updateSubstanceCharts(samples) {
         if (chartData.length === 0) {
             chartLabels = ['ไม่มีตัวอย่างที่ไม่ผ่าน'];
             chartData = [1];
-            bgColors = ['#e2e8f0']; // Grey ring
+            bgColors = ['#183829']; // Veliora dark forest ring
         }
 
         if (substanceChartInstances[key]) {
@@ -662,29 +694,29 @@ window.openFailedSamplesModal = function(key, label) {
 
         uniqueSamples.forEach((s, idx) => {
             let tr = document.createElement('tr');
-            const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+            const rowBg = idx % 2 === 0 ? 'rgba(14, 34, 25, 0.75)' : 'rgba(18, 42, 31, 0.75)';
             tr.style.backgroundColor = rowBg;
-            tr.style.borderBottom = '1px solid #e2e8f0';
+            tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.06)';
             tr.style.transition = 'background-color 0.2s';
-            tr.onmouseover = () => tr.style.backgroundColor = '#f1f5f9';
+            tr.onmouseover = () => tr.style.backgroundColor = 'rgba(199, 242, 60, 0.12)';
             tr.onmouseout = () => tr.style.backgroundColor = rowBg;
 
             tr.innerHTML = `
                 <td style="padding: 12px 16px;">
-                    <div style="font-weight: 600; color: #0f172a;">${s.name || '-'}</div>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
+                    <div style="font-weight: 600; color: #ffffff;">${s.name || '-'}</div>
+                    <div style="font-size: 12px; color: #9cb0a4; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
                 </td>
-                <td style="padding: 12px 16px; color: #334155;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
+                <td style="padding: 12px 16px; color: #e2e8f0;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
                 <td style="padding: 12px 16px;">
-                    <div style="color: #0f172a; font-weight: 500;">${s.source || '-'}</div>
-                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
-                </td>
-                <td style="padding: 12px 16px;">
-                    <div style="color: #0f172a;">อ.${s.district || '-'}</div>
-                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
+                    <div style="color: #ffffff; font-weight: 500;">${s.source || '-'}</div>
+                    <div style="font-size: 13px; color: #9cb0a4; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
                 </td>
                 <td style="padding: 12px 16px;">
-                    <span style="display: inline-block; padding: 4px 8px; border-radius: 6px; background-color: #e0e7ff; color: #4338ca; font-size: 12px; font-weight: 600; border: 1px solid #c7d2fe; white-space: nowrap;">
+                    <div style="color: #ffffff;">อ.${s.district || '-'}</div>
+                    <div style="font-size: 13px; color: #9cb0a4; margin-top: 2px;">จ.${s.province || '-'}</div>
+                </td>
+                <td style="padding: 12px 16px;">
+                    <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; background-color: rgba(199, 242, 60, 0.15); color: #c7f23c; font-size: 12px; font-weight: 700; border: 1px solid rgba(199, 242, 60, 0.3); white-space: nowrap;">
                         ${s.form_type || '-'}
                     </span>
                 </td>
