@@ -1,105 +1,101 @@
 /* ==========================================================================
-   VELIORA DARK FOREST DESIGN SYSTEM (Theme Inspired by Pixcut Studio / Veliora)
-   Full Dark Mode: Deep Forest Pine Green (#091610) & Chartreuse Lime (#c7f23c)
-   Pill Rounded Buttons, Bento Grid Cards, Glassmorphism & High-End Sci-Tech UI
+   CONCEPTZILLA AI AGENT DESIGN SYSTEM (Inspired by Conceptzilla / AI Agent Design)
+   Deep Midnight Cobalt Blue (#060c18), Celestial Horizon Cyan Glow (#38bdf8),
+   Futuristic Glassmorphism, Pill Control Bars, Floating Action Chips & Bento Grid
    ========================================================================== */
 
 :root {
-  /* Veliora Core Palette */
-  --veliora-bg: #091610;               /* Deepest Pine Forest */
-  --veliora-bg-gradient: radial-gradient(circle at 10% 20%, #153224 0%, #091610 90%);
-  --veliora-surface: rgba(16, 38, 28, 0.85); /* Bento Card Surface */
-  --veliora-surface-solid: #11281e;
-  --veliora-surface-hover: rgba(22, 52, 38, 0.95);
-  --veliora-border: rgba(199, 242, 60, 0.18);
-  --veliora-border-subtle: rgba(255, 255, 255, 0.08);
-  --veliora-lime: #c7f23c;              /* Signature Veliora Chartreuse Lime */
-  --veliora-lime-hover: #d5fa4b;
-  --veliora-lime-glow: rgba(199, 242, 60, 0.35);
-  --veliora-lime-muted: rgba(199, 242, 60, 0.12);
-  --veliora-dark-text: #091610;
-  --veliora-text-primary: #ffffff;
-  --veliora-text-secondary: #9cb0a4;
-  --veliora-text-muted: #6f8277;
-  --veliora-danger: #f43f5e;
-  --veliora-warning: #f59e0b;
-  --veliora-success: #10b981;
-  --veliora-info: #38bdf8;
+  /* Conceptzilla AI Agent Core Palette */
+  --ai-bg-midnight: #060c18;              /* Deep Midnight Obsidian */
+  --ai-bg-gradient: radial-gradient(circle at 50% 10%, #0e275c 0%, #060c18 85%);
+  --ai-surface: rgba(10, 24, 52, 0.82);   /* Midnight Bento Glass */
+  --ai-surface-solid: #0c1c38;
+  --ai-surface-hover: rgba(16, 36, 76, 0.95);
+  --ai-border: rgba(56, 189, 248, 0.22);  /* Electric Cyan Border */
+  --ai-border-subtle: rgba(255, 255, 255, 0.08);
+  --ai-cyan: #38bdf8;                     /* Signature Electric Cyan */
+  --ai-cyan-bright: #00f2fe;
+  --ai-cyan-glow: rgba(56, 189, 248, 0.35);
+  --ai-cyan-muted: rgba(56, 189, 248, 0.12);
+  --ai-blue: #2563eb;                     /* Vibrant Cobalt */
+  --ai-blue-gradient: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  --ai-text-primary: #ffffff;
+  --ai-text-secondary: #94a3b8;
+  --ai-text-muted: #64748b;
+  --ai-danger: #f43f5e;
+  --ai-warning: #f59e0b;
+  --ai-success: #10b981;
   
   /* Framework Variable Overrides */
-  --primary-color: #c7f23c;
-  --primary-light: #d5fa4b;
-  --secondary-color: #163627;
-  --secondary-hover: #1f4a36;
-  --accent-color: #c7f23c;
-  --accent-hover: #b6e22f;
-  --bg-light: #091610;
-  --card-bg: rgba(16, 38, 28, 0.85);
+  --primary-color: #38bdf8;
+  --primary-light: #67e8f9;
+  --secondary-color: #0c1c38;
+  --secondary-hover: #132b54;
+  --accent-color: #38bdf8;
+  --accent-hover: #0284c7;
+  --bg-light: #060c18;
+  --card-bg: rgba(10, 24, 52, 0.82);
   --text-main: #ffffff;
-  --text-muted: #9cb0a4;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --success-color: #c7f23c;
+  --text-muted: #94a3b8;
+  --border-color: rgba(56, 189, 248, 0.18);
+  --success-color: #10b981;
   --danger-color: #f43f5e;
 }
 
-/* 1. Global Reset & Ambient Dark Forest Background */
+/* 1. Global Reset & Ambient Midnight Celestial Horizon */
 body {
-  background: #091610 !important;
+  background: #060c18 !important;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(26, 64, 46, 0.5) 0px, transparent 55%),
-    radial-gradient(at 100% 0%, rgba(199, 242, 60, 0.09) 0px, transparent 45%),
-    radial-gradient(at 50% 100%, rgba(18, 44, 32, 0.6) 0px, transparent 55%) !important;
+    radial-gradient(at 50% 0%, rgba(29, 78, 216, 0.45) 0px, transparent 60%),
+    radial-gradient(at 80% 20%, rgba(14, 165, 233, 0.22) 0px, transparent 50%),
+    radial-gradient(at 20% 40%, rgba(99, 102, 241, 0.2) 0px, transparent 55%),
+    radial-gradient(at 50% 100%, rgba(2, 132, 199, 0.25) 0px, transparent 65%) !important;
   background-attachment: fixed !important;
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
   font-family: 'Sarabun', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
   overflow-x: hidden;
 }
 
-/* Modern Dark Scrollbar */
+/* Modern Cyan-Tinted Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #07130d;
+  background: #040812;
 }
 ::-webkit-scrollbar-thumb {
-  background: #183829;
+  background: #112850;
   border-radius: 9999px;
-  border: 1px solid rgba(199, 242, 60, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.15);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c7f23c;
+  background: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
 /* App Containers */
-.app-container {
-  background: transparent !important;
-}
-.main-content {
-  background: transparent !important;
-}
-.content-body {
+.app-container, .main-content, .content-body {
   background: transparent !important;
 }
 
-/* 2. Veliora Sidebar Navigation */
+/* 2. Conceptzilla AI Sidebar Navigation */
 .app-sidebar {
-  background: #07130d !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
-  box-shadow: 10px 0 35px rgba(0, 0, 0, 0.5) !important;
+  background: #040812 !important;
+  border-right: 1px solid rgba(56, 189, 248, 0.12) !important;
+  box-shadow: 10px 0 35px rgba(0, 0, 0, 0.6) !important;
 }
 
 .app-sidebar .sidebar-header {
-  background: rgba(16, 38, 28, 0.3) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background: rgba(10, 24, 52, 0.35) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.12) !important;
   padding: 22px 20px !important;
 }
 
 .app-sidebar .sidebar-header .logo-container div:first-child {
-  background: rgba(18, 44, 32, 0.9) !important;
-  border: 1px solid rgba(199, 242, 60, 0.3) !important;
-  box-shadow: 0 0 15px rgba(199, 242, 60, 0.15) !important;
+  background: rgba(14, 34, 72, 0.9) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.2) !important;
 }
 
 .app-sidebar .sidebar-menu {
@@ -107,7 +103,7 @@ body {
 }
 
 .app-sidebar .menu-item {
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
   border-radius: 14px !important;
   margin: 4px 8px !important;
   padding: 12px 18px !important;
@@ -123,63 +119,63 @@ body {
 
 .app-sidebar .menu-item i {
   font-size: 16px !important;
-  color: #6f8277 !important;
+  color: #64748b !important;
   transition: all 0.25s ease !important;
 }
 
 .app-sidebar .menu-item:hover {
-  background: rgba(199, 242, 60, 0.08) !important;
+  background: rgba(56, 189, 248, 0.08) !important;
   color: #ffffff !important;
   transform: translateX(4px) !important;
 }
 .app-sidebar .menu-item:hover i {
-  color: #c7f23c !important;
+  color: #38bdf8 !important;
 }
 
 .app-sidebar .menu-item.active {
-  background: rgba(199, 242, 60, 0.14) !important;
-  color: #c7f23c !important;
+  background: rgba(56, 189, 248, 0.14) !important;
+  color: #38bdf8 !important;
   font-weight: 700 !important;
-  border-left: 3px solid #c7f23c !important;
-  box-shadow: inset 0 0 20px rgba(199, 242, 60, 0.06), 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+  border-left: 3px solid #38bdf8 !important;
+  box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.08), 0 4px 15px rgba(0, 0, 0, 0.3) !important;
 }
 .app-sidebar .menu-item.active i {
-  color: #c7f23c !important;
-  filter: drop-shadow(0 0 6px rgba(199, 242, 60, 0.4)) !important;
+  color: #38bdf8 !important;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5)) !important;
 }
 
 .app-sidebar .notification-badge {
-  background-color: #c7f23c !important;
-  color: #07130d !important;
+  background-color: #38bdf8 !important;
+  color: #040812 !important;
   border-radius: 9999px !important;
   padding: 3px 8px !important;
   font-size: 10.5px !important;
   font-weight: 800 !important;
-  box-shadow: 0 0 10px rgba(199, 242, 60, 0.35) !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
 }
 
 .app-sidebar .sidebar-footer {
-  background: rgba(16, 38, 28, 0.2) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background: rgba(10, 24, 52, 0.2) !important;
+  border-top: 1px solid rgba(56, 189, 248, 0.12) !important;
   padding: 16px !important;
 }
 
 .user-status-card {
-  background: rgba(16, 38, 28, 0.7) !important;
-  border: 1px solid rgba(199, 242, 60, 0.15) !important;
+  background: rgba(12, 28, 60, 0.75) !important;
+  border: 1px solid rgba(56, 189, 248, 0.2) !important;
   border-radius: 16px !important;
   color: #ffffff !important;
   padding: 12px 14px !important;
 }
 
-/* 3. Veliora Top Navbar */
+/* 3. Conceptzilla Top Navbar */
 .top-navbar {
-  background: rgba(7, 19, 13, 0.85) !important;
+  background: rgba(5, 11, 22, 0.85) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.12) !important;
   padding: 16px 28px !important;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
 }
 
 .top-navbar .view-title {
@@ -191,37 +187,38 @@ body {
 }
 
 .top-navbar .system-time {
-  background: rgba(199, 242, 60, 0.1) !important;
-  color: #c7f23c !important;
-  border: 1px solid rgba(199, 242, 60, 0.25) !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
   border-radius: 9999px !important;
   padding: 7px 18px !important;
   font-family: 'Outfit', monospace !important;
   font-weight: 600 !important;
   font-size: 13px !important;
-  box-shadow: 0 0 15px rgba(199, 242, 60, 0.1) !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.12) !important;
 }
 
-/* 4. Veliora Hero / Welcome Banner */
+/* 4. Conceptzilla AI Agent Hero Banner */
 .welcome-banner {
-  background: linear-gradient(135deg, #0b1c14 0%, #133324 50%, #0d2218 100%) !important;
-  border: 1px solid rgba(199, 242, 60, 0.22) !important;
-  border-radius: 24px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(199, 242, 60, 0.2) !important;
+  background: radial-gradient(circle at 50% 90%, rgba(30, 96, 242, 0.35) 0%, rgba(8, 20, 48, 0.95) 70%, #050d1e 100%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  border-radius: 26px !important;
+  box-shadow: 0 25px 55px -10px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(56, 189, 248, 0.25) !important;
   position: relative;
+  overflow: hidden !important;
 }
 
 .welcome-banner .banner-text h3 {
   color: #ffffff !important;
   font-family: 'Outfit', 'Sarabun', sans-serif !important;
   font-weight: 800 !important;
-  font-size: 30px !important;
+  font-size: 32px !important;
   line-height: 1.35 !important;
   letter-spacing: -0.5px !important;
 }
 
 .welcome-banner .banner-text p {
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
   font-size: 14.5px !important;
   line-height: 1.7 !important;
 }
@@ -230,54 +227,96 @@ body {
   color: #ffffff !important;
 }
 
-/* Veliora Pill Tag */
-.veliora-pill-tag {
+/* Conceptzilla Pill Tag */
+.ai-agent-pill-tag {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  background: rgba(199, 242, 60, 0.12) !important;
-  color: #c7f23c !important;
-  border: 1px solid rgba(199, 242, 60, 0.28) !important;
+  gap: 10px !important;
+  background: rgba(10, 25, 58, 0.85) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
   border-radius: 9999px !important;
-  padding: 6px 16px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.8px !important;
-  margin-bottom: 18px !important;
+  padding: 6px 18px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.15) !important;
+}
+
+.ai-badge-pulse {
+  background: linear-gradient(135deg, #2563eb, #38bdf8) !important;
+  color: #ffffff !important;
+  padding: 2px 10px !important;
+  border-radius: 9999px !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1px !important;
   text-transform: uppercase !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5) !important;
 }
 
-.veliora-dot {
-  width: 8px !important;
-  height: 8px !important;
-  border-radius: 50% !important;
-  background: #c7f23c !important;
-  box-shadow: 0 0 10px #c7f23c !important;
-  display: inline-block !important;
+/* Floating AI Prompt / Action Pill Container */
+.ai-prompt-pill-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: rgba(14, 30, 64, 0.85) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border-radius: 9999px !important;
+  padding: 8px 14px !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+  margin-top: 24px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  flex-wrap: wrap !important;
 }
 
-/* 5. Veliora Dashboard Filter Bar */
+.ai-prompt-chip {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 9999px !important;
+  padding: 6px 14px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.ai-prompt-chip:hover {
+  background: rgba(56, 189, 248, 0.2) !important;
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 5. Conceptzilla Dashboard Filter Bar */
 .dashboard-filter {
-  background: rgba(16, 38, 28, 0.85) !important;
-  border: 1px solid rgba(199, 242, 60, 0.16) !important;
-  border-radius: 20px !important;
+  background: rgba(10, 24, 52, 0.82) !important;
+  border: 1px solid rgba(56, 189, 248, 0.2) !important;
+  border-radius: 22px !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
   padding: 16px 24px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
   color: #ffffff !important;
 }
 
 .dashboard-filter label {
-  color: #c7f23c !important;
+  color: #38bdf8 !important;
   font-weight: 600 !important;
   font-size: 13.5px !important;
 }
 
 .dashboard-filter input[type="date"],
 .dashboard-filter select {
-  background: #091710 !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  background: #071224 !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.2) !important;
   color: #ffffff !important;
   border-radius: 9999px !important;
   padding: 7px 18px !important;
@@ -287,31 +326,31 @@ body {
 
 .dashboard-filter input[type="date"]:focus,
 .dashboard-filter select:focus {
-  border-color: #c7f23c !important;
-  box-shadow: 0 0 0 3px rgba(199, 242, 60, 0.22) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
   outline: none !important;
 }
 
-/* 6. Veliora Bento Stat Cards */
+/* 6. Conceptzilla Bento Stat Cards */
 .stat-card {
-  background: rgba(16, 38, 28, 0.85) !important;
-  border: 1px solid rgba(199, 242, 60, 0.15) !important;
+  background: rgba(10, 24, 52, 0.82) !important;
+  border: 1px solid rgba(56, 189, 248, 0.18) !important;
   border-radius: 22px !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4) !important;
   padding: 22px 24px !important;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .stat-card:hover {
   transform: translateY(-6px) scale(1.02) !important;
-  border-color: rgba(199, 242, 60, 0.45) !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), 0 0 25px rgba(199, 242, 60, 0.15) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.2) !important;
 }
 
 .stat-card .stat-label {
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
   font-size: 13.5px !important;
   font-weight: 600 !important;
   letter-spacing: 0.2px !important;
@@ -335,29 +374,29 @@ body {
   justify-content: center !important;
   font-size: 20px !important;
   color: #ffffff !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important;
 }
 
 .stat-card.total .stat-icon { background: linear-gradient(135deg, #1e40af, #3b82f6) !important; }
-.stat-card.passed .stat-icon { background: linear-gradient(135deg, #15803d, #22c55e) !important; }
+.stat-card.passed .stat-icon { background: linear-gradient(135deg, #059669, #10b981) !important; }
 .stat-card.failed .stat-icon { background: linear-gradient(135deg, #be123c, #f43f5e) !important; }
 .stat-card.pending .stat-icon { background: linear-gradient(135deg, #b45309, #f59e0b) !important; }
-.stat-card.analyzing .stat-icon { background: linear-gradient(135deg, #0e7490, #06b6d4) !important; }
-.stat-card.completed .stat-icon { background: linear-gradient(135deg, #4d7c0f, #84cc16) !important; }
+.stat-card.analyzing .stat-icon { background: linear-gradient(135deg, #0284c7, #38bdf8) !important; }
+.stat-card.completed .stat-icon { background: linear-gradient(135deg, #4f46e5, #818cf8) !important; }
 
-/* 7. Veliora Chart Containers */
+/* 7. Conceptzilla Chart Containers */
 .chart-container {
-  background: rgba(16, 38, 28, 0.85) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(10, 24, 52, 0.82) !important;
+  border: 1px solid rgba(56, 189, 248, 0.16) !important;
   border-radius: 22px !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4) !important;
   overflow: hidden !important;
 }
 
 .chart-container .chart-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.12) !important;
   padding: 18px 24px !important;
 }
 
@@ -371,36 +410,36 @@ body {
 }
 
 .chart-container .chart-header h4 i {
-  color: #c7f23c !important;
+  color: #38bdf8 !important;
 }
 
-/* 8. Veliora Form Selection Grid (MU.10-001 - 008) */
+/* 8. Conceptzilla Form Selection Grid (MU.10-001 - 008) */
 .form-selection-grid {
   gap: 18px !important;
 }
 
 .form-select-card {
-  background: rgba(16, 38, 28, 0.85) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(10, 24, 52, 0.82) !important;
+  border: 1px solid rgba(56, 189, 248, 0.16) !important;
   border-radius: 22px !important;
   color: #ffffff !important;
   padding: 26px 20px !important;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
   position: relative !important;
 }
 
 .form-select-card:hover {
-  border-color: #c7f23c !important;
+  border-color: #38bdf8 !important;
   transform: translateY(-6px) scale(1.02) !important;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(199, 242, 60, 0.2) !important;
-  background: rgba(20, 48, 35, 0.95) !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.25) !important;
+  background: rgba(14, 32, 68, 0.95) !important;
 }
 
 .form-card-badge {
-  background: rgba(199, 242, 60, 0.15) !important;
-  color: #c7f23c !important;
-  border: 1px solid rgba(199, 242, 60, 0.35) !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
   border-radius: 9999px !important;
   font-weight: 700 !important;
   font-size: 11.5px !important;
@@ -408,9 +447,9 @@ body {
 }
 
 .form-select-card .form-icon {
-  color: #c7f23c !important;
+  color: #38bdf8 !important;
   font-size: 32px !important;
-  filter: drop-shadow(0 0 12px rgba(199, 242, 60, 0.3)) !important;
+  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.4)) !important;
   margin: 12px 0 !important;
 }
 
@@ -420,19 +459,19 @@ body {
   font-size: 14.5px !important;
 }
 
-/* 9. Veliora Form Card & Data Card */
+/* 9. Form Card & Data Card */
 .form-card, .data-card, .form-editor-container {
-  background: rgba(16, 38, 28, 0.85) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(10, 24, 52, 0.82) !important;
+  border: 1px solid rgba(56, 189, 248, 0.16) !important;
   border-radius: 22px !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
   color: #ffffff !important;
 }
 
 .form-editor-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.12) !important;
   padding: 16px 24px !important;
 }
 
@@ -441,17 +480,17 @@ body {
   font-weight: 700 !important;
 }
 .section-title-wrapper p {
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
 }
 
-/* 10. Veliora Data Tables */
+/* 10. Data Tables */
 .data-table,
 .table-responsive table:not(.pdf-container table),
 #verifyTable, #analysisTable, #certifyTable, #resultsTable, #usersTable {
   width: 100% !important;
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(56, 189, 248, 0.16) !important;
   border-radius: 16px !important;
   overflow: hidden !important;
   background: transparent !important;
@@ -459,10 +498,10 @@ body {
 
 .data-table thead th,
 table:not(.pdf-container table) thead th {
-  background: #091710 !important;
-  color: #c7f23c !important;
+  background: #051024 !important;
+  color: #38bdf8 !important;
   font-weight: 700 !important;
-  border-bottom: 1px solid rgba(199, 242, 60, 0.25) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.28) !important;
   padding: 14px 16px !important;
   font-size: 13.5px !important;
   letter-spacing: 0.3px !important;
@@ -470,7 +509,7 @@ table:not(.pdf-container table) thead th {
 
 .data-table tbody tr,
 table:not(.pdf-container table) tbody tr {
-  background: rgba(14, 34, 25, 0.65) !important;
+  background: rgba(8, 20, 44, 0.65) !important;
   color: #e2e8f0 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
   transition: all 0.2s ease !important;
@@ -478,12 +517,12 @@ table:not(.pdf-container table) tbody tr {
 
 .data-table tbody tr:nth-child(even),
 table:not(.pdf-container table) tbody tr:nth-child(even) {
-  background: rgba(18, 42, 31, 0.55) !important;
+  background: rgba(12, 28, 60, 0.55) !important;
 }
 
 .data-table tbody tr:hover,
 table:not(.pdf-container table) tbody tr:hover {
-  background: rgba(199, 242, 60, 0.1) !important;
+  background: rgba(56, 189, 248, 0.12) !important;
   color: #ffffff !important;
 }
 
@@ -495,7 +534,7 @@ table:not(.pdf-container table) tbody td {
   font-size: 13.5px !important;
 }
 
-/* 11. VELIORA PILL BUTTONS (Comprehensive System-wide Style) */
+/* 11. CONCEPTZILLA PILL BUTTONS (Electric Blue & Cyan Gradient) */
 .btn, button.btn {
   border-radius: 9999px !important;
   padding: 10px 24px !important;
@@ -512,19 +551,19 @@ table:not(.pdf-container table) tbody td {
   font-family: inherit !important;
 }
 
-/* Primary & Success: Signature Chartreuse Lime */
+/* Primary & Success: Electric Blue Gradient */
 .btn-primary, .btn-success, .btn-save, #previewAcceptBtn {
-  background: #c7f23c !important;
-  color: #08160f !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
   border: none !important;
-  box-shadow: 0 4px 18px rgba(199, 242, 60, 0.35) !important;
+  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45) !important;
 }
 .btn-primary:hover, .btn-success:hover, .btn-save:hover, #previewAcceptBtn:hover {
-  background: #d5fa4b !important;
-  color: #08160f !important;
+  background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%) !important;
+  color: #ffffff !important;
   transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 8px 25px rgba(199, 242, 60, 0.5) !important;
+  box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5) !important;
 }
 .btn-primary:active, .btn-success:active {
   transform: translateY(0) scale(0.99) !important;
@@ -538,9 +577,9 @@ table:not(.pdf-container table) tbody td {
   box-shadow: none !important;
 }
 .btn-secondary:hover, .btn-cancel:hover, .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.16) !important;
-  border-color: #c7f23c !important;
-  color: #c7f23c !important;
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
   transform: translateY(-2px) !important;
 }
 
@@ -566,14 +605,14 @@ table:not(.pdf-container table) tbody td {
 }
 .btn-warning:hover {
   background: #f59e0b !important;
-  color: #08160f !important;
+  color: #040812 !important;
   transform: translateY(-2px) !important;
 }
 
 /* Text Buttons */
 .btn-text {
   background: transparent !important;
-  color: #c7f23c !important;
+  color: #38bdf8 !important;
   border: none !important;
   padding: 8px 16px !important;
 }
@@ -582,13 +621,13 @@ table:not(.pdf-container table) tbody td {
   transform: translateX(-3px) !important;
 }
 
-/* 12. Veliora Form Inputs & Controls */
+/* 12. Form Inputs & Controls */
 .form-control,
 input[type="text"], input[type="search"], input[type="password"],
 input[type="number"], select.form-control, textarea.form-control {
-  background: #091710 !important;
+  background: #061124 !important;
   color: #ffffff !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.18) !important;
   border-radius: 14px !important;
   padding: 10px 16px !important;
   font-family: inherit !important;
@@ -598,39 +637,39 @@ input[type="number"], select.form-control, textarea.form-control {
 
 .form-control:focus,
 input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus {
-  border-color: #c7f23c !important;
-  box-shadow: 0 0 0 3px rgba(199, 242, 60, 0.22) !important;
-  background: #0c1e15 !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+  background: #081730 !important;
   outline: none !important;
 }
 
 .form-group label {
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
   font-weight: 600 !important;
   font-size: 13.5px !important;
   margin-bottom: 6px !important;
   display: block !important;
 }
 
-/* 13. Veliora Modals */
+/* 13. Modals */
 .modal-overlay {
-  background: rgba(4, 11, 8, 0.85) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(3, 7, 16, 0.88) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
 }
 
 .modal-card {
-  background: #0f241a !important;
-  border: 1px solid rgba(199, 242, 60, 0.22) !important;
-  border-radius: 24px !important;
+  background: #081630 !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  border-radius: 26px !important;
   color: #f1f5f9 !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(199, 242, 60, 0.1) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.12) !important;
   overflow: hidden !important;
 }
 
 .modal-header {
-  background: #0a1811 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #050e20 !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
   color: #ffffff !important;
   padding: 20px 24px !important;
 }
@@ -643,11 +682,11 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   gap: 10px !important;
 }
 .modal-header h4 i {
-  color: #c7f23c !important;
+  color: #38bdf8 !important;
 }
 
 .close-modal-btn {
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
   background: rgba(255, 255, 255, 0.08) !important;
   border-radius: 50% !important;
   width: 34px !important;
@@ -658,51 +697,51 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   transition: all 0.2s !important;
 }
 .close-modal-btn:hover {
-  color: #07130d !important;
-  background: #c7f23c !important;
+  color: #040812 !important;
+  background: #38bdf8 !important;
 }
 
 .modal-tabs {
-  background: #08150f !important;
+  background: #050d1e !important;
   border-radius: 9999px !important;
   padding: 4px !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(56, 189, 248, 0.15) !important;
 }
 
 .modal-tab-btn {
   border-radius: 9999px !important;
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
   font-weight: 600 !important;
 }
 .modal-tab-btn.active {
-  background: #c7f23c !important;
-  color: #08160f !important;
+  background: linear-gradient(135deg, #1d4ed8, #0284c7) !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
-  box-shadow: 0 2px 10px rgba(199, 242, 60, 0.3) !important;
+  box-shadow: 0 2px 12px rgba(56, 189, 248, 0.35) !important;
 }
 
-/* 14. SweetAlert2 Dark Forest Customization */
+/* 14. SweetAlert2 */
 .swal2-popup {
-  background: #0f241a !important;
+  background: #081630 !important;
   color: #ffffff !important;
-  border: 1px solid rgba(199, 242, 60, 0.25) !important;
-  border-radius: 24px !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  border-radius: 26px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85) !important;
 }
 .swal2-title {
   color: #ffffff !important;
   font-family: inherit !important;
 }
 .swal2-html-container {
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
 }
 .swal2-confirm {
-  background: #c7f23c !important;
-  color: #08160f !important;
+  background: linear-gradient(135deg, #1d4ed8, #0284c7) !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
   border-radius: 9999px !important;
   border: none !important;
-  box-shadow: 0 4px 15px rgba(199, 242, 60, 0.35) !important;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
   padding: 10px 24px !important;
 }
 .swal2-cancel {
@@ -712,26 +751,108 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   padding: 10px 24px !important;
 }
 
-/* 15. E-Tracking Timeline Dark Forest */
+/* 15. E-Tracking Timeline */
 .tracking-search-box {
-  background: rgba(16, 38, 28, 0.85) !important;
-  border: 1px solid rgba(199, 242, 60, 0.18) !important;
+  background: rgba(10, 24, 52, 0.82) !important;
+  border: 1px solid rgba(56, 189, 248, 0.2) !important;
   border-radius: 22px !important;
 }
 
 .timeline-step .step-icon {
-  background: #11281e !important;
+  background: #0a1834 !important;
   border: 2px solid rgba(255, 255, 255, 0.15) !important;
-  color: #9cb0a4 !important;
+  color: #94a3b8 !important;
 }
 .timeline-step.completed .step-icon {
-  background: #c7f23c !important;
-  border-color: #c7f23c !important;
-  color: #08160f !important;
-  box-shadow: 0 0 15px rgba(199, 242, 60, 0.4) !important;
+  background: linear-gradient(135deg, #1d4ed8, #38bdf8) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.45) !important;
 }
 
-/* 16. CRITICAL: Strictly Protect Official PDF & Print Layouts */
+/* 16. Login & Register Mode */
+body.require-login-mode::before {
+  background: radial-gradient(circle at 50% 20%, rgba(29, 78, 216, 0.45) 0%, rgba(5, 12, 26, 0.94) 80%) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+#authModal .modal-card {
+  background: #081630 !important;
+  border: 1px solid rgba(56, 189, 248, 0.28) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(56, 189, 248, 0.15) !important;
+  color: #ffffff !important;
+}
+
+#authModal .modal-header {
+  background: linear-gradient(135deg, #050e20, #0c2044) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
+}
+
+#authModal .modal-tabs {
+  background: #050d1e !important;
+  border: 1px solid rgba(56, 189, 248, 0.15) !important;
+}
+
+#authModal .modal-tab-btn {
+  color: #94a3b8 !important;
+}
+
+#authModal .modal-tab-btn.active {
+  background: linear-gradient(135deg, #1d4ed8, #0284c7) !important;
+  color: #ffffff !important;
+}
+
+#authModal .input-icon-wrapper input,
+#authModal .input-icon-wrapper select {
+  background: #061124 !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.18) !important;
+}
+
+#authModal .input-icon-wrapper input:focus,
+#authModal .input-icon-wrapper select:focus {
+  background: #081730 !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+#authModal .input-icon-wrapper label {
+  color: #94a3b8 !important;
+}
+
+#authModal .input-icon-wrapper i {
+  color: #64748b !important;
+}
+
+#authModal .btn-primary {
+  background: linear-gradient(135deg, #1d4ed8, #0284c7) !important;
+  color: #ffffff !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45) !important;
+}
+
+#authModal .btn-primary:hover {
+  background: linear-gradient(135deg, #2563eb, #38bdf8) !important;
+  box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5) !important;
+}
+
+.reg-auth-block {
+  background: linear-gradient(135deg, #0e2246, #16366f) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+}
+
+.reg-note-block {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  color: #fde68a !important;
+}
+
+.reg-note-block h5 {
+  color: #fbbf24 !important;
+}
+
+/* 17. CRITICAL: Strictly Protect Official PDF & Print Layouts */
 .pdf-container,
 .pdf-container *,
 #pdfPreviewModal .pdf-container,
@@ -759,86 +880,4 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   .app-sidebar, .top-navbar, .dashboard-filter {
     display: none !important;
   }
-}
-
-/* 17. Veliora Login & Register Mode */
-body.require-login-mode::before {
-  background: linear-gradient(135deg, rgba(8, 20, 14, 0.92), rgba(16, 42, 30, 0.94)) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-}
-
-#authModal .modal-card {
-  background: #0f241a !important;
-  border: 1px solid rgba(199, 242, 60, 0.25) !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(199, 242, 60, 0.1) !important;
-  color: #ffffff !important;
-}
-
-#authModal .modal-header {
-  background: linear-gradient(135deg, #091710, #133224) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-#authModal .modal-tabs {
-  background: #08150f !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-#authModal .modal-tab-btn {
-  color: #9cb0a4 !important;
-}
-
-#authModal .modal-tab-btn.active {
-  background: #c7f23c !important;
-  color: #08160f !important;
-}
-
-#authModal .input-icon-wrapper input,
-#authModal .input-icon-wrapper select {
-  background: #08150f !important;
-  color: #ffffff !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
-}
-
-#authModal .input-icon-wrapper input:focus,
-#authModal .input-icon-wrapper select:focus {
-  background: #0c1f15 !important;
-  border-color: #c7f23c !important;
-  box-shadow: 0 0 0 3px rgba(199, 242, 60, 0.22) !important;
-}
-
-#authModal .input-icon-wrapper label {
-  color: #9cb0a4 !important;
-}
-
-#authModal .input-icon-wrapper i {
-  color: #6f8277 !important;
-}
-
-#authModal .btn-primary {
-  background: #c7f23c !important;
-  color: #08160f !important;
-  border-radius: 9999px !important;
-  box-shadow: 0 4px 18px rgba(199, 242, 60, 0.35) !important;
-}
-
-#authModal .btn-primary:hover {
-  background: #d5fa4b !important;
-  box-shadow: 0 8px 25px rgba(199, 242, 60, 0.5) !important;
-}
-
-.reg-auth-block {
-  background: linear-gradient(135deg, #11281e, #1a3d2e) !important;
-  border: 1px solid rgba(199, 242, 60, 0.2) !important;
-}
-
-.reg-note-block {
-  background: rgba(245, 158, 11, 0.12) !important;
-  border: 1px solid rgba(245, 158, 11, 0.3) !important;
-  color: #fde68a !important;
-}
-
-.reg-note-block h5 {
-  color: #fbbf24 !important;
 }
