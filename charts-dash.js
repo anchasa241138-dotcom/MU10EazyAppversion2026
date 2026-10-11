@@ -22,7 +22,7 @@ function initDashboardCharts() {
     // Set Global Chart Defaults for Conceptzilla AI Agent Midnight Theme
     if (typeof Chart !== 'undefined') {
         Chart.defaults.color = '#94a3b8';
-        Chart.defaults.font.family = "'Sarabun', 'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.font.family = "'Kanit', sans-serif";
     }
 
     // 1. Province Chart (Bar Chart) - Conceptzilla Electric Cyan & Blue Accents
@@ -74,14 +74,14 @@ function initDashboardCharts() {
                     ticks: {
                         stepSize: 1,
                         color: '#94a3b8',
-                        font: { family: 'Sarabun' }
+                        font: { family: 'Kanit' }
                     },
                     grid: { color: 'rgba(255, 255, 255, 0.08)' }
                 },
                 x: {
                     ticks: {
                         color: '#ffffff',
-                        font: { family: 'Sarabun', weight: 'bold' }
+                        font: { family: 'Kanit', weight: 'bold' }
                     },
                     grid: { display: false }
                 }
@@ -113,7 +113,7 @@ function initDashboardCharts() {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        font: { family: 'Sarabun', size: 12 },
+                        font: { family: 'Kanit', size: 12 },
                         padding: 15,
                         usePointStyle: true,
                         color: '#ffffff'
@@ -174,7 +174,7 @@ function initDashboardCharts() {
                 legend: { 
                     display: true,
                     position: 'top',
-                    labels: { font: { family: 'Sarabun' }, color: '#ffffff', usePointStyle: true }
+                    labels: { font: { family: 'Kanit' }, color: '#ffffff', usePointStyle: true }
                 },
                 tooltip: {
                     backgroundColor: '#081630',
@@ -194,13 +194,13 @@ function initDashboardCharts() {
             scales: {
                 x: {
                     stacked: true,
-                    ticks: { font: { family: 'Sarabun', size: 11 }, color: '#94a3b8', autoSkip: false, maxRotation: 45, minRotation: 0 },
+                    ticks: { font: { family: 'Kanit', size: 11 }, color: '#94a3b8', autoSkip: false, maxRotation: 45, minRotation: 0 },
                     grid: { display: false }
                 },
                 y: {
                     stacked: true,
                     beginAtZero: true,
-                    ticks: { stepSize: 1, color: '#94a3b8', font: { family: 'Sarabun' } },
+                    ticks: { stepSize: 1, color: '#94a3b8', font: { family: 'Kanit' } },
                     grid: { color: 'rgba(255, 255, 255, 0.08)' }
                 }
             }
@@ -595,7 +595,7 @@ function updateSubstanceCharts(samples) {
                         legend: { 
                             display: true,
                             position: 'bottom',
-                            labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true, boxWidth: 6, padding: 8, color: '#94a3b8' }
+                            labels: { font: { family: 'Kanit', size: 11 }, usePointStyle: true, boxWidth: 6, padding: 8, color: '#94a3b8' }
                         },
                         tooltip: {
                             callbacks: {
@@ -675,7 +675,7 @@ window.openFailedSamplesModal = function(key, label) {
                         plugins: {
                             legend: {
                                 position: 'right',
-                                labels: { font: { family: 'Sarabun', size: 11 }, usePointStyle: true, padding: 12 }
+                                labels: { font: { family: 'Kanit', size: 11 }, usePointStyle: true, padding: 12 }
                             },
                             tooltip: {
                                 callbacks: {
