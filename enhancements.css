@@ -79,6 +79,77 @@ body {
   background: transparent !important;
 }
 
+/* ==========================================================
+   Kanit Font Override:
+   เฉพาะแท็บเมนูหน้าหลัก (Sidebar) และแดชบอร์ด (Dashboard)
+   ========================================================== */
+.app-sidebar,
+.app-sidebar .sidebar-header,
+.app-sidebar .sidebar-header *,
+.app-sidebar .sidebar-menu,
+.app-sidebar .menu-item,
+.app-sidebar .menu-item span,
+.app-sidebar .notification-badge,
+.app-sidebar .sidebar-footer,
+.app-sidebar .user-status-card,
+.app-sidebar .user-status-card * {
+  font-family: 'Kanit', sans-serif !important;
+}
+
+.top-navbar .view-title {
+  font-family: 'Kanit', sans-serif !important;
+}
+
+#view-dashboard,
+#view-dashboard h1,
+#view-dashboard h2,
+#view-dashboard h3,
+#view-dashboard h4,
+#view-dashboard h5,
+#view-dashboard h6,
+#view-dashboard p,
+#view-dashboard span,
+#view-dashboard div,
+#view-dashboard label,
+#view-dashboard input,
+#view-dashboard select,
+#view-dashboard button,
+#view-dashboard .welcome-banner,
+#view-dashboard .welcome-banner *,
+#view-dashboard .dashboard-filter,
+#view-dashboard .dashboard-filter *,
+#view-dashboard .stats-grid,
+#view-dashboard .stats-grid *,
+#view-dashboard .stat-card,
+#view-dashboard .stat-card *,
+#view-dashboard .chart-card,
+#view-dashboard .chart-card *,
+#substance-charts-grid,
+#substance-charts-grid *,
+#failedSamplesModal,
+#failedSamplesModal * {
+  font-family: 'Kanit', sans-serif !important;
+}
+
+/* Retain FontAwesome Icon font integrity across sidebar and dashboard */
+.app-sidebar i,
+.app-sidebar .fa,
+.app-sidebar .fas,
+.app-sidebar .fa-solid,
+.app-sidebar .fa-regular,
+#view-dashboard i,
+#view-dashboard .fa,
+#view-dashboard .fas,
+#view-dashboard .fa-solid,
+#view-dashboard .fa-regular,
+#failedSamplesModal i,
+#failedSamplesModal .fa,
+#failedSamplesModal .fas,
+#failedSamplesModal .fa-solid,
+#failedSamplesModal .fa-regular {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+}
+
 /* 2. Conceptzilla AI Sidebar Navigation */
 .app-sidebar {
   background: #040812 !important;
@@ -180,7 +251,7 @@ body {
 
 .top-navbar .view-title {
   color: #ffffff !important;
-  font-family: 'Outfit', 'Sarabun', sans-serif !important;
+  font-family: 'Kanit', sans-serif !important;
   font-weight: 700 !important;
   font-size: 22px !important;
   letter-spacing: -0.3px !important;
@@ -210,7 +281,7 @@ body {
 
 .welcome-banner .banner-text h3 {
   color: #ffffff !important;
-  font-family: 'Outfit', 'Sarabun', sans-serif !important;
+  font-family: 'Kanit', sans-serif !important;
   font-weight: 800 !important;
   font-size: 32px !important;
   line-height: 1.35 !important;
@@ -358,7 +429,7 @@ body {
 
 .stat-card .stat-number {
   color: #ffffff !important;
-  font-family: 'Outfit', sans-serif !important;
+  font-family: 'Kanit', 'Outfit', sans-serif !important;
   font-weight: 700 !important;
   font-size: 32px !important;
   letter-spacing: -0.5px !important;
