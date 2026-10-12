@@ -578,10 +578,9 @@ body {
   color: #94a3b8 !important;
 }
 
-/* 10. Data Tables */
+/* 10. Data Tables (Application Data Grids only) */
 .data-table,
-.table-responsive table:not(.pdf-container table),
-#verifyTable, #analysisTable, #certifyTable, #resultsTable, #usersTable {
+#verifyTable, #analysisTable, #certifyTable, #resultsTable, #usersTable, #trackingTable, .tracking-table {
   width: 100% !important;
   border-collapse: separate !important;
   border-spacing: 0 !important;
@@ -592,7 +591,7 @@ body {
 }
 
 .data-table thead th,
-table:not(.pdf-container table) thead th {
+#verifyTable thead th, #analysisTable thead th, #certifyTable thead th, #resultsTable thead th, #usersTable thead th, #trackingTable thead th, .tracking-table thead th {
   background: #051024 !important;
   color: #38bdf8 !important;
   font-weight: 700 !important;
@@ -603,7 +602,7 @@ table:not(.pdf-container table) thead th {
 }
 
 .data-table tbody tr,
-table:not(.pdf-container table) tbody tr {
+#verifyTable tbody tr, #analysisTable tbody tr, #certifyTable tbody tr, #resultsTable tbody tr, #usersTable tbody tr, #trackingTable tbody tr, .tracking-table tbody tr {
   background: rgba(8, 20, 44, 0.65) !important;
   color: #e2e8f0 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -611,18 +610,18 @@ table:not(.pdf-container table) tbody tr {
 }
 
 .data-table tbody tr:nth-child(even),
-table:not(.pdf-container table) tbody tr:nth-child(even) {
+#verifyTable tbody tr:nth-child(even), #analysisTable tbody tr:nth-child(even), #certifyTable tbody tr:nth-child(even), #resultsTable tbody tr:nth-child(even), #usersTable tbody tr:nth-child(even) {
   background: rgba(12, 28, 60, 0.55) !important;
 }
 
 .data-table tbody tr:hover,
-table:not(.pdf-container table) tbody tr:hover {
+#verifyTable tbody tr:hover, #analysisTable tbody tr:hover, #certifyTable tbody tr:hover, #resultsTable tbody tr:hover, #usersTable tbody tr:hover {
   background: rgba(56, 189, 248, 0.12) !important;
   color: #ffffff !important;
 }
 
 .data-table tbody td,
-table:not(.pdf-container table) tbody td {
+#verifyTable tbody td, #analysisTable tbody td, #certifyTable tbody td, #resultsTable tbody td, #usersTable tbody td, #trackingTable tbody td, .tracking-table tbody td {
   padding: 12px 16px !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
   color: #e2e8f0 !important;
@@ -947,24 +946,168 @@ body.require-login-mode::before {
   color: #fbbf24 !important;
 }
 
-/* 17. CRITICAL: Strictly Protect Official PDF & Print Layouts */
-.pdf-container,
-.pdf-container *,
-#pdfPreviewModal .pdf-container,
-#pdfContent,
-#pdfContent *,
-.cert-preview-card,
-.cert-preview-card * {
-  color: #000000 !important;
-  background-color: transparent;
-  font-family: 'Sarabun', 'SarabunPDF', sans-serif !important;
+/* 17. CRITICAL: Strictly Protect Official Reports & Certificates (RD-001 - RD-008 & Certs) */
+.certificate-pdf-wrapper {
+  background-color: #cbd5e1 !important;
+  padding: 20px !important;
 }
 
+/* Base sheet styles: pure white background and isolated text colors */
+.pdf-document,
+#certificatePDFContainer .pdf-document,
+#cert-dynamic-content .pdf-document,
+#certReportWrapper .pdf-document,
 .pdf-container,
-#pdfPreviewModal .pdf-container,
-#pdfContent {
+#pdfContent,
+.sheet-page {
   background-color: #ffffff !important;
   color: #000000 !important;
+}
+
+.pdf-document *,
+#certificatePDFContainer *,
+#cert-dynamic-content *,
+#certReportWrapper *,
+.pdf-container *,
+#pdfContent *,
+.sheet-page * {
+  font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
+  box-sizing: border-box;
+}
+
+/* Ensure document text is solid black */
+.pdf-document div,
+.pdf-document span,
+.pdf-document p,
+.pdf-document strong,
+.pdf-document td,
+#certificatePDFContainer div,
+#certificatePDFContainer span,
+#certificatePDFContainer p,
+#certificatePDFContainer strong,
+#certificatePDFContainer td,
+#cert-dynamic-content div,
+#cert-dynamic-content span,
+#cert-dynamic-content p,
+#cert-dynamic-content strong,
+#cert-dynamic-content td {
+  color: #000000 !important;
+}
+
+/* Report tables: neutralize dark app theme (colors/backgrounds only;
+   borders, padding and font sizes come from each report's inline styles) */
+.pdf-document table,
+#certificatePDFContainer table,
+#cert-dynamic-content table,
+#certReportWrapper table,
+.pdf-container table,
+.sheet-page table {
+  background: transparent !important;
+  color: #000000 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+.pdf-document table tr,
+#certificatePDFContainer table tr,
+#cert-dynamic-content table tr,
+#certReportWrapper table tr,
+.pdf-container table tr,
+.sheet-page table tr,
+.pdf-document table tr:hover,
+#certificatePDFContainer table tr:hover,
+#cert-dynamic-content table tr:hover {
+  background: transparent !important;
+  color: #000000 !important;
+}
+
+.pdf-document table th,
+#certificatePDFContainer table th,
+#cert-dynamic-content table th,
+#certReportWrapper table th,
+.pdf-container table th,
+.sheet-page table th,
+.pdf-document table td,
+#certificatePDFContainer table td,
+#cert-dynamic-content table td,
+#certReportWrapper table td,
+.pdf-container table td,
+.sheet-page table td {
+  color: #000000 !important;
+  letter-spacing: normal !important;
+}
+
+/* Specific Header Background Colors matching Image 2 (RD-006) */
+
+/* Grey headers (วิเคราะห์ทางจุลชีววิทยา, Coliform, สรุปผล, Hardness) */
+.pdf-document table th[style*="background: #e2e8f0"],
+.pdf-document table th[style*="background:#e2e8f0"],
+#certificatePDFContainer table th[style*="background: #e2e8f0"],
+#certificatePDFContainer table th[style*="background:#e2e8f0"],
+#cert-dynamic-content table th[style*="background: #e2e8f0"],
+#cert-dynamic-content table th[style*="background:#e2e8f0"] {
+  background-color: #e2e8f0 !important;
+  color: #000000 !important;
+}
+
+/* Green header for TDS */
+.pdf-document table th[style*="background: #5c9c3e"],
+.pdf-document table th[style*="background:#5c9c3e"],
+#certificatePDFContainer table th[style*="background: #5c9c3e"],
+#certificatePDFContainer table th[style*="background:#5c9c3e"],
+#cert-dynamic-content table th[style*="background: #5c9c3e"],
+#cert-dynamic-content table th[style*="background:#5c9c3e"] {
+  background-color: #5c9c3e !important;
+  color: #ffffff !important;
+}
+
+/* Yellow header for pH */
+.pdf-document table th[style*="background: #ffe699"],
+.pdf-document table th[style*="background:#ffe699"],
+#certificatePDFContainer table th[style*="background: #ffe699"],
+#certificatePDFContainer table th[style*="background:#ffe699"],
+#cert-dynamic-content table th[style*="background: #ffe699"],
+#cert-dynamic-content table th[style*="background:#ffe699"] {
+  background-color: #ffe699 !important;
+  color: #000000 !important;
+}
+
+/* Sub-headers 'ค่าที่ตรวจพบ' & 'สรุปผล' - Pure White Background & Black Text (Matching Image 2 Red Boxes) */
+.pdf-document table thead tr:last-child th,
+#certificatePDFContainer table thead tr:last-child th,
+#cert-dynamic-content table thead tr:last-child th {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Evaluation result highlight colors matching Image 2 */
+.pdf-document td[style*="color: red"],
+.pdf-document td[style*="color:#dc2626"],
+.pdf-document td[style*="color: #dc2626"],
+.pdf-document td[style*="color: rgb(220, 38, 38)"],
+.pdf-document td[style*="color: #ef4444"],
+#certificatePDFContainer td[style*="color: red"],
+#certificatePDFContainer td[style*="color:#dc2626"],
+#certificatePDFContainer td[style*="color: #dc2626"],
+#certificatePDFContainer td[style*="color: rgb(220, 38, 38)"],
+#certificatePDFContainer td[style*="color: #ef4444"],
+#cert-dynamic-content td[style*="color: red"],
+#cert-dynamic-content td[style*="color:#dc2626"],
+#cert-dynamic-content td[style*="color: #dc2626"] {
+  color: #dc2626 !important;
+  font-weight: bold !important;
+}
+
+.pdf-document td[style*="color: green"],
+.pdf-document td[style*="color:#16a34a"],
+.pdf-document td[style*="color: #16a34a"],
+#certificatePDFContainer td[style*="color: green"],
+#certificatePDFContainer td[style*="color:#16a34a"],
+#certificatePDFContainer td[style*="color: #16a34a"],
+#cert-dynamic-content td[style*="color: green"],
+#cert-dynamic-content td[style*="color:#16a34a"],
+#cert-dynamic-content td[style*="color: #16a34a"] {
+  color: #16a34a !important;
 }
 
 @media print {
