@@ -4303,7 +4303,7 @@ document.getElementById('formNameTitle').innerText = title;
                 const pageItems = validItems.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
                 
                 let rowsHtml = '';
-                for (let i = 0; i < ITEMS_PER_PAGE; i++) {
+                for (let i = 0; i < pageItems.length; i++) {
                     const item = pageItems[i];
                     if (item) {
                         const marks = getCheckMark(item.polar_value);
@@ -4317,21 +4317,7 @@ document.getElementById('formNameTitle').innerText = title;
                                 <td style="text-align: center;">${item.replacement_type}</td>
                                 <td style="text-align: center;">${item.replacement_frequency ? item.replacement_frequency + ' วัน/ครั้ง' : '-'}</td>
                                 <td style="text-align: center;">${item.polar_value ? item.polar_value + '%' : '-'}</td>
-                                <td style="text-align: center;">${marks.text}</td>
-                            </tr>
-                        `;
-                    } else {
-                        rowsHtml += `
-                            <tr>
-                                <td style="text-align: center; color: transparent;">-</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td style="text-align: center; ${marks.text === 'ไม่ผ่าน' ? 'color: #dc2626; font-weight: bold;' : ''}">${marks.text}</td>
                             </tr>
                         `;
                     }
