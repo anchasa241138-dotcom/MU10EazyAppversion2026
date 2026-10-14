@@ -367,68 +367,220 @@ body {
 }
 
 /* ==========================================================
-   Clean Light Dashboard Theme
-   (พื้นหลังแดชบอร์ดสว่าง สะอาด สบายตา มองข้อมูลได้ง่าย)
+   Outcrowd Dribbble Dashboard Theme
+   (Theme inspired by Outcrowd: Dashboard for payment and business analytics)
    ========================================================== */
 #view-dashboard {
-  background: #f8fafc !important;
-  border-radius: 24px !important;
-  padding: 26px !important;
+  background: #eceef2 !important;
+  border-radius: 28px !important;
+  padding: 30px !important;
   color: #0f172a !important;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.14) !important;
+  border: 1px solid #e2e5eb !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
 }
 
-/* 5. Clean Light Dashboard Filter Bar */
-.dashboard-filter {
+/* 1. Outcrowd Hero Welcome Banner */
+#view-dashboard .welcome-banner.sci-food-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f6f8fc 55%, #edf2f9 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 24px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+  position: relative !important;
+  overflow: hidden !important;
+  margin-bottom: 24px !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-text h3 {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-text h3 span {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #0284c7 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-text p {
+  color: #64748b !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-text p strong {
+  color: #0f172a !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .ai-pill-tag {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: 20px !important;
+  color: #1e293b !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .ai-pill-tag .ai-pill-badge {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+  color: #ffffff !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-logo img {
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08) !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-logo > div:last-child {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07) !important;
+  color: #0f172a !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-logo > div:last-child > div:first-child {
+  color: #2563eb !important;
+  text-shadow: none !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-logo > div:last-child > div:nth-child(2) {
+  color: #0f172a !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-logo > div:last-child span:first-child {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border: 1px solid #dbeafe !important;
+}
+
+#view-dashboard .welcome-banner.sci-food-banner .banner-logo > div:last-child span:last-child {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* 2. Outcrowd Overview Header & Filter Toolbar */
+.dashboard-filter {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 24px !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   padding: 16px 24px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03) !important;
   color: #1e293b !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin-bottom: 24px !important;
 }
 
-.dashboard-filter label {
-  color: #334155 !important;
-  font-weight: 600 !important;
-  font-size: 13.5px !important;
+.overview-header-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.dashboard-filter label i {
-  color: #0284c7 !important;
+.overview-title-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.overview-main-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  font-family: 'Kanit', sans-serif;
+}
+
+.overview-link-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.overview-link-icon:hover {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.overview-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.overview-controls-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-pill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+}
+
+.filter-pill-item:hover,
+.filter-pill-item:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filter-pill-icon {
+  color: #2563eb;
+  font-size: 13px;
+}
+
+.filter-pill-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.filter-pill-sep {
+  color: #94a3b8;
+  font-weight: 600;
 }
 
 .dashboard-filter input[type="date"],
 .dashboard-filter select {
-  background: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important;
+  background: transparent !important;
+  border: none !important;
   color: #0f172a !important;
-  border-radius: 9999px !important;
-  padding: 7px 18px !important;
-  font-size: 13.5px !important;
+  padding: 2px 4px !important;
+  font-size: 13px !important;
   font-weight: 500 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
-  transition: all 0.2s ease !important;
-}
-
-.dashboard-filter input[type="date"]:focus,
-.dashboard-filter select:focus {
-  border-color: #0284c7 !important;
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
-  background: #ffffff !important;
+  box-shadow: none !important;
   outline: none !important;
 }
 
-/* Clean calendar picker icon for date inputs on light background */
 .dashboard-filter input[type="date"]::-webkit-calendar-picker-indicator {
   filter: none !important;
   cursor: pointer !important;
   opacity: 0.75 !important;
   padding: 2px !important;
-  border-radius: 4px !important;
   transition: all 0.2s ease !important;
 }
 
@@ -437,28 +589,57 @@ body {
   transform: scale(1.15) !important;
 }
 
-/* 6. Clean Light Bento Stat Cards */
+/* 3. Outcrowd Bento Stat Cards */
+.stats-grid {
+  gap: 18px !important;
+  margin-bottom: 24px !important;
+}
+
 .stat-card {
   background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 22px !important;
+  border: 1px solid #eef1f6 !important;
+  border-radius: 24px !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
   padding: 22px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
 .stat-card:hover {
   transform: translateY(-4px) !important;
   border-color: #cbd5e1 !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06) !important;
 }
+
+.stat-card .stat-icon {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  flex-shrink: 0 !important;
+  box-shadow: none !important;
+}
+
+.stat-card.total .stat-icon { background: #eff6ff !important; color: #2563eb !important; }
+.stat-card.passed .stat-icon { background: #ecfdf5 !important; color: #059669 !important; }
+.stat-card.failed .stat-icon { background: #fff1f2 !important; color: #e11d48 !important; }
+.stat-card.pending .stat-icon { background: #fffbeb !important; color: #d97706 !important; }
+.stat-card.analyzing .stat-icon { background: #f0f9ff !important; color: #0284c7 !important; }
+.stat-card.completed .stat-icon { background: #eef2ff !important; color: #4f46e5 !important; }
 
 .stat-card .stat-label {
   color: #64748b !important;
-  font-size: 13.5px !important;
-  font-weight: 600 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
   letter-spacing: 0.1px !important;
 }
 
@@ -468,61 +649,250 @@ body {
   font-weight: 700 !important;
   font-size: 32px !important;
   letter-spacing: -0.5px !important;
-  margin-top: 4px !important;
+  margin-top: 2px !important;
 }
 
 .stat-card .stat-number span {
   color: #64748b !important;
-  font-size: 16px !important;
+  font-size: 15px !important;
   font-weight: normal !important;
 }
 
-.stat-card .stat-icon {
-  width: 52px !important;
-  height: 52px !important;
-  border-radius: 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 20px !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12) !important;
-}
-
-.stat-card.total .stat-icon { background: linear-gradient(135deg, #1e40af, #3b82f6) !important; }
-.stat-card.passed .stat-icon { background: linear-gradient(135deg, #059669, #10b981) !important; }
-.stat-card.failed .stat-icon { background: linear-gradient(135deg, #be123c, #f43f5e) !important; }
-.stat-card.pending .stat-icon { background: linear-gradient(135deg, #b45309, #f59e0b) !important; }
-.stat-card.analyzing .stat-icon { background: linear-gradient(135deg, #0284c7, #38bdf8) !important; }
-.stat-card.completed .stat-icon { background: linear-gradient(135deg, #4f46e5, #818cf8) !important; }
-
-/* 7. Clean Light Chart Containers */
+/* 4. Outcrowd Chart Containers */
 .chart-container {
   background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 22px !important;
+  border: 1px solid #eef1f6 !important;
+  border-radius: 26px !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
   overflow: hidden !important;
+  padding: 24px 26px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
 }
 
 .chart-container .chart-header {
-  border-bottom: 1px solid #f1f5f9 !important;
-  padding: 18px 24px !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 
 .chart-container .chart-header h4 {
   color: #0f172a !important;
   font-weight: 700 !important;
-  font-size: 16px !important;
+  font-size: 17px !important;
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
+  margin: 0 !important;
 }
 
 .chart-container .chart-header h4 i {
-  color: #0284c7 !important;
+  color: #2563eb !important;
+}
+
+.outcrowd-dots-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.outcrowd-dots-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+/* Province Quick Metrics Row (Outcrowd Payments Top Stat Columns) */
+.outcrowd-province-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  padding: 12px 18px;
+  background: #f8fafc;
+  border: 1px solid #eef1f6;
+  border-radius: 18px;
+}
+
+.p-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.p-metric-label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p-metric-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  font-family: 'Kanit', sans-serif;
+}
+
+/* Outcrowd Explore Card at Bottom of Province Chart */
+.outcrowd-explore-card {
+  background: #f8fafc;
+  border: 1px solid #eef1f6;
+  border-radius: 18px;
+  padding: 12px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.explore-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.explore-header-row i {
+  color: #2563eb;
+}
+
+.explore-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.explore-chip {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+}
+
+.explore-chip:hover {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+/* Outcrowd Signature Insights Card (Sunset Peach to Ocean Cobalt Mesh) */
+.outcrowd-insights-card {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #ff8a65 0%, #ff6b81 32%, #38bdf8 76%, #2563eb 100%) !important;
+  border-radius: 20px;
+  padding: 18px 20px;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.outcrowd-insights-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.insights-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.insights-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.insights-year {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.insights-number {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #ffffff;
+  font-family: 'Kanit', sans-serif;
+  letter-spacing: -0.5px;
+  margin-top: 4px;
+}
+
+.insights-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.insights-sub {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+@media (max-width: 900px) {
+  .outcrowd-province-metrics {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .outcrowd-province-metrics {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .dashboard-filter {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
 }
 
 /* 8. Conceptzilla Form Selection Grid (MU.10-001 - 008) */
