@@ -26,6 +26,20 @@ function initDashboardCharts() {
     }
 
     // 1. Province Chart (Bar Chart) - Clean Blue Accents
+    function createBarGrad(ctx, c1, c2) {
+        const g = ctx.createLinearGradient(0, 0, 0, 280);
+        g.addColorStop(0, c1);
+        g.addColorStop(1, c2);
+        return g;
+    }
+
+    const grad1 = createBarGrad(provinceCtx, '#38bdf8', '#2563eb');
+    const grad2 = createBarGrad(provinceCtx, '#60a5fa', '#1d4ed8');
+    const grad3 = createBarGrad(provinceCtx, '#22d3ee', '#0284c7');
+    const grad4 = createBarGrad(provinceCtx, '#818cf8', '#4338ca');
+    const grad5 = createBarGrad(provinceCtx, '#7dd3fc', '#0369a1');
+
+    // 1. Province Chart (Bar Chart) - Outcrowd Vertical Cobalt Gradients
     provinceChartInstance = new Chart(provinceCtx, {
         type: 'bar',
         data: {
@@ -33,19 +47,11 @@ function initDashboardCharts() {
             datasets: [{
                 label: 'จำนวนตัวอย่างที่ส่งตรวจ (รายจังหวัด)',
                 data: [0, 0, 0, 0, 0],
-                backgroundColor: [
-                    '#38bdf8',  /* Electric Cyan */
-                    '#2563eb',  /* Royal Cobalt */
-                    '#0284c7',  /* Deep Sky */
-                    '#6366f1',  /* Indigo */
-                    '#06b6d4'   /* Teal Cyan */
-                ],
-                borderColor: [
-                    '#38bdf8', '#2563eb', '#0284c7', '#6366f1', '#06b6d4'
-                ],
+                backgroundColor: [grad1, grad2, grad3, grad4, grad5],
+                borderColor: ['#38bdf8', '#60a5fa', '#22d3ee', '#818cf8', '#7dd3fc'],
                 borderWidth: 1.5,
-                borderRadius: 8,
-                barPercentage: 0.55
+                borderRadius: 10,
+                barPercentage: 0.52
             }]
         },
         options: {
@@ -54,13 +60,17 @@ function initDashboardCharts() {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#0f172a',
-                    titleColor: '#38bdf8',
-                    bodyColor: '#ffffff',
-                    borderColor: '#cbd5e1',
+                    backgroundColor: '#ffffff',
+                    titleColor: '#0f172a',
+                    bodyColor: '#334155',
+                    borderColor: '#e2e8f0',
                     borderWidth: 1,
-                    cornerRadius: 10,
+                    cornerRadius: 12,
                     padding: 12,
+                    boxPadding: 4,
+                    usePointStyle: true,
+                    titleFont: { family: 'Kanit', weight: 'bold' },
+                    bodyFont: { family: 'Kanit' },
                     callbacks: {
                         label: function(context) {
                             return ` ${context.parsed.y} ตัวอย่าง`;
@@ -76,7 +86,7 @@ function initDashboardCharts() {
                         color: '#64748b',
                         font: { family: 'Kanit' }
                     },
-                    grid: { color: 'rgba(0, 0, 0, 0.06)' }
+                    grid: { color: 'rgba(0, 0, 0, 0.04)' }
                 },
                 x: {
                     ticks: {
@@ -239,6 +249,13 @@ function updateDashboardCharts(samples) {
     provinceChartInstance.data.datasets[0].data = provinceCounts;
     provinceChartInstance.update();
 
+    // Update Province Quick Metric Badges (Outcrowd Top Metric Columns)
+    const pIds = ['pm-sisaket', 'pm-ubon', 'pm-amnat', 'pm-muk', 'pm-yasothon'];
+    pIds.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = provinceCounts[i] || 0;
+    });
+
     // 2. Calculate Outcome ratios
     // Outcomes: Pass, Fail, Under Analysis (Registered/Accepted/Analyzing)
     let passed = 0;
@@ -291,6 +308,13 @@ function updateDashboardCharts(samples) {
         resultRatioChartInstance.data.datasets[0].backgroundColor = ['#10b981', '#f43f5e', '#f59e0b'];
     }
     resultRatioChartInstance.update();
+
+    // Update Outcrowd Insights Card
+    const insightRateEl = document.getElementById('dash-insight-rate');
+    if (insightRateEl) {
+        const passPercent = (passed + failed) > 0 ? ((passed / (passed + failed)) * 100).toFixed(0) : 100;
+        insightRateEl.innerText = `${passPercent}%`;
+    }
 
     // 3. Calculate Form type distribution
     
@@ -730,4 +754,14 @@ window.openFailedSamplesModal = function(key, label) {
 
 window.closeFailedSamplesModal = function() {
     document.getElementById('failedSamplesModal').classList.remove('active');
+};
+
+
+// Outcrowd Quick Filter Helper
+window.filterProvinceQuick = function(province) {
+    const filterEl = document.getElementById('dashProvinceFilter');
+    if (filterEl) {
+        filterEl.value = province;
+        filterEl.dispatchEvent(new Event('change'));
+    }
 };
