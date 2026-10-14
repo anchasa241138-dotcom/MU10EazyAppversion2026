@@ -2216,42 +2216,42 @@ document.getElementById('formNameTitle').innerText = title;
             ? new Date(sample.created_at).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' }) 
             : '-';
         
-        // Build sample items table
+        // Build sample items table - Clean Dashboard Theme
         let sampleItemsHTML = '';
         if (sampleItems.length > 0 && sampleItems.some(item => item.name)) {
             sampleItemsHTML = `
-                <div style="margin-top:16px;">
-                    <h5 style="margin:0 0 8px 0; color:#1e3a5f; font-size:14px;"><i class="fa-solid fa-list-check"></i> รายการตัวอย่าง (${sampleItems.filter(i => i.name).length} รายการ)</h5>
-                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <div style="margin-top:20px;">
+                    <h5 style="margin:0 0 10px 0; color:#0f172a; font-size:14.5px; font-weight:700;"><i class="fa-solid fa-list-check" style="color:#2563eb;"></i> รายการตัวอย่าง (${sampleItems.filter(i => i.name).length} รายการ)</h5>
+                    <table style="width:100%; border-collapse:collapse; font-size:13px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden;">
                         <thead>
-                            <tr style="background:#f1f5f9;">
-                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center; width:30px;">#</th>
-                                <th style="padding:8px; border:1px solid #e2e8f0;">ชื่อตัวอย่าง</th>
-                                <th style="padding:8px; border:1px solid #e2e8f0; text-align:center;">น้ำหนัก</th>
-                                <th style="padding:8px; border:1px solid #e2e8f0;">แหล่งที่มา</th>
-                                <th style="padding:8px; border:1px solid #e2e8f0; width:180px; text-align:center;">สถานะการรับ</th>
+                            <tr style="background:#f8fafc; color:#334155;">
+                                <th style="padding:10px 12px; border:1px solid #e2e8f0; text-align:center; width:36px; font-weight:700;">#</th>
+                                <th style="padding:10px 12px; border:1px solid #e2e8f0; font-weight:700;">ชื่อตัวอย่าง</th>
+                                <th style="padding:10px 12px; border:1px solid #e2e8f0; text-align:center; font-weight:700;">น้ำหนัก</th>
+                                <th style="padding:10px 12px; border:1px solid #e2e8f0; font-weight:700;">แหล่งที่มา</th>
+                                <th style="padding:10px 12px; border:1px solid #e2e8f0; width:190px; text-align:center; font-weight:700;">สถานะการรับ</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${sampleItems.filter(i => i.name).map((item, i) => `
-                                <tr>
-                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${i+1}</td>
-                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; font-weight:500;">${item.name} <div style="font-size:11px; color:#6b7280;">${item.distributor || '-'}</div></td>
-                                    <td style="padding:6px 8px; border:1px solid #e2e8f0; text-align:center;">${item.weight || '-'}</td>
-                                    <td style="padding:6px 8px; border:1px solid #e2e8f0;">${item.source || '-'}</td>
-                                    <td style="padding:6px 8px; border:1px solid #e2e8f0;">
+                                <tr style="background:${i % 2 === 0 ? '#ffffff' : '#f8fafc'}; color:#1e293b;">
+                                    <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; color:#64748b; font-weight:600;">${i+1}</td>
+                                    <td style="padding:8px 10px; border:1px solid #e2e8f0; font-weight:600; color:#0f172a;">${item.name} <div style="font-size:11.5px; color:#64748b; font-weight:400; margin-top:2px;">${item.distributor ? 'ผู้จำหน่าย: ' + item.distributor : '-'}</div></td>
+                                    <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; color:#334155;">${item.weight || '-'}</td>
+                                    <td style="padding:8px 10px; border:1px solid #e2e8f0; color:#334155;">${item.source || '-'}</td>
+                                    <td style="padding:8px 10px; border:1px solid #e2e8f0;">
                                         ${(app.currentUser && (app.currentUser.role === 'lab' || app.currentUser.role === 'admin') && sample.status === 'registered') ? `
-                                            <select class="item-status-select" data-idx="${i+1}" onchange="document.getElementById('item-reject-reason-${i+1}').style.display = this.value === 'rejected' ? 'block' : 'none';" style="width:100%; padding:4px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px;">
+                                            <select class="item-status-select" data-idx="${i+1}" onchange="document.getElementById('item-reject-reason-${i+1}').style.display = this.value === 'rejected' ? 'block' : 'none';" style="width:100%; padding:5px 8px; font-size:12px; border:1.5px solid #cbd5e1; border-radius:6px; background:#ffffff; color:#0f172a;">
                                                 <option value="accepted" ${sample['item_status_'+(i+1)] === 'accepted' ? 'selected' : ''}>✅ รับเข้าระบบ</option>
                                                 <option value="rejected" ${sample['item_status_'+(i+1)] === 'rejected' ? 'selected' : ''}>❌ ปฏิเสธ</option>
                                             </select>
-                                            <input type="text" id="item-reject-reason-${i+1}" value="${sample['item_reject_reason_'+(i+1)] || ''}" style="display:${sample['item_status_'+(i+1)] === 'rejected' ? 'block' : 'none'}; margin-top:4px; padding:4px; font-size:12px; width:100%; border:1px solid #ef4444; border-radius:4px;" placeholder="ระบุเหตุผลที่ปฏิเสธ">
+                                            <input type="text" id="item-reject-reason-${i+1}" value="${sample['item_reject_reason_'+(i+1)] || ''}" style="display:${sample['item_status_'+(i+1)] === 'rejected' ? 'block' : 'none'}; margin-top:5px; padding:5px 8px; font-size:12px; width:100%; border:1.5px solid #ef4444; border-radius:6px; background:#ffffff; color:#0f172a;" placeholder="ระบุเหตุผลที่ปฏิเสธ">
                                         ` : `
                                             ${sample['item_status_'+(i+1)] === 'rejected' 
-                                                ? '<span style="color:#ef4444; font-weight:bold;">❌ ปฏิเสธ</span><div style="font-size:11px; color:#dc2626;">เหตุผล: ' + (sample['item_reject_reason_'+(i+1)] || 'ไม่ระบุ') + '</div>' 
+                                                ? '<span style="color:#ef4444; font-weight:700;">❌ ปฏิเสธ</span><div style="font-size:11px; color:#dc2626;">เหตุผล: ' + (sample['item_reject_reason_'+(i+1)] || 'ไม่ระบุ') + '</div>' 
                                                 : sample['item_status_'+(i+1)] === 'accepted' 
-                                                    ? '<span style="color:#10b981; font-weight:bold;">✅ รับเข้าระบบ</span>' 
-                                                    : '<span style="color:#f59e0b; font-weight:bold;">⏳ รอตรวจสอบ</span>'}
+                                                    ? '<span style="color:#10b981; font-weight:700;">✅ รับเข้าระบบ</span>' 
+                                                    : '<span style="color:#f59e0b; font-weight:700;">⏳ รอตรวจสอบ</span>'}
                                         `}
                                     </td>
                                 </tr>
@@ -2262,28 +2262,28 @@ document.getElementById('formNameTitle').innerText = title;
         }
         
         const detailHTML = `
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; font-size:13.5px; color:#333;">
-                <div style="grid-column: span 2; background: linear-gradient(135deg, #eff6ff, #dbeafe); padding:12px 16px; border-radius:8px; border-left: 4px solid #2563eb;">
-                    <div style="font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">รหัสอ้างอิง</div>
-                    <div style="font-size:18px; font-weight:700; color:#1e3a5f; margin-top:2px;">${sample.ref_id}</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; font-size:13.5px; color:#1e293b;">
+                <div style="grid-column: span 2; background: linear-gradient(135deg, #f0f7ff, #e0f2fe); padding:14px 18px; border-radius:12px; border:1px solid #bae6fd; border-left:5px solid #2563eb; box-shadow:0 2px 8px rgba(37,99,235,0.06);">
+                    <div style="font-size:11px; color:#0369a1; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">รหัสอ้างอิง</div>
+                    <div style="font-size:19px; font-weight:800; color:#1e3a8a; margin-top:2px;">${sample.ref_id}</div>
                 </div>
                 
-                <div><span style="color:#6b7280; font-size:12px;">ประเภทแบบฟอร์ม</span><br><strong>${sample.form_type || '-'}</strong></div>
-                <div><span style="color:#6b7280; font-size:12px;">วันที่ส่งตัวอย่าง</span><br><strong>${createdDate}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">ประเภทแบบฟอร์ม</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.form_type || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">วันที่ส่งตัวอย่าง</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${createdDate}</strong></div>
                 
-                <div><span style="color:#6b7280; font-size:12px;">หน่วยงานที่เก็บ</span><br><strong>${sample.agency || '-'}</strong></div>
-                <div><span style="color:#6b7280; font-size:12px;">ผู้เก็บตัวอย่าง</span><br><strong>${sample.collector_name || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">หน่วยงานที่เก็บ</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.agency || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">ผู้เก็บตัวอย่าง</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.collector_name || '-'}</strong></div>
                 
-                <div><span style="color:#6b7280; font-size:12px;">ตำแหน่ง</span><br><strong>${sample.collector_position || '-'}</strong></div>
-                <div><span style="color:#6b7280; font-size:12px;">วันที่เก็บตัวอย่าง</span><br><strong>${samplingDate}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">ตำแหน่ง</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.collector_position || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">วันที่เก็บตัวอย่าง</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${samplingDate}</strong></div>
                 
-                <div style="grid-column: span 2; border-top:1px solid #e5e7eb; padding-top:10px; margin-top:2px;"></div>
+                <div style="grid-column: span 2; border-top:1px solid #f1f5f9; padding-top:10px; margin-top:2px;"></div>
                 
-                <div><span style="color:#6b7280; font-size:12px;">ประเภทสถานที่</span><br><strong>${sample.location_type || '-'}</strong></div>
-                <div><span style="color:#6b7280; font-size:12px;">ชื่อสถานที่เก็บ</span><br><strong>${sample.location_name || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">ประเภทสถานที่</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.location_type || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">ชื่อสถานที่เก็บ</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.location_name || '-'}</strong></div>
                 
-                <div><span style="color:#6b7280; font-size:12px;">จังหวัด</span><br><strong>${sample.province || '-'}</strong></div>
-                <div><span style="color:#6b7280; font-size:12px;">อำเภอ / ตำบล</span><br><strong>${sample.amphoe || '-'} / ${sample.tambon || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">จังหวัด</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.province || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">อำเภอ / ตำบล</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.amphoe || '-'} / ${sample.tambon || '-'}</strong></div>
             </div>
             ${sampleItemsHTML}
         `;
