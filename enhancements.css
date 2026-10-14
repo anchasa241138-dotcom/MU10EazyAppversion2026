@@ -127,7 +127,9 @@ body {
 #substance-charts-grid,
 #substance-charts-grid *,
 #failedSamplesModal,
-#failedSamplesModal * {
+#failedSamplesModal *,
+#view-sample-record,
+#view-sample-record * {
   font-family: 'Kanit', sans-serif !important;
 }
 
@@ -146,7 +148,12 @@ body {
 #failedSamplesModal .fa,
 #failedSamplesModal .fas,
 #failedSamplesModal .fa-solid,
-#failedSamplesModal .fa-regular {
+#failedSamplesModal .fa-regular,
+#view-sample-record i,
+#view-sample-record .fa,
+#view-sample-record .fas,
+#view-sample-record .fa-solid,
+#view-sample-record .fa-regular {
   font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
 }
 
@@ -895,7 +902,7 @@ body {
   }
 }
 
-/* 8. Conceptzilla Form Selection Grid (MU.10-001 - 008) */
+/* 8. Sample Record Form Selection Cards (Clean Light Theme) */
 .form-selection-grid {
   gap: 18px !important;
 }
@@ -904,28 +911,28 @@ body {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  background: rgba(10, 24, 52, 0.82) !important;
-  border: 1px solid rgba(56, 189, 248, 0.16) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 20px !important;
-  color: #ffffff !important;
+  color: #0f172a !important;
   padding: 18px 24px !important;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
   position: relative !important;
   text-align: left !important;
 }
 
 .form-select-card:hover {
-  border-color: #38bdf8 !important;
+  border-color: #cbd5e1 !important;
   transform: translateY(-4px) !important;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 22px rgba(56, 189, 248, 0.22) !important;
-  background: rgba(14, 32, 68, 0.95) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06) !important;
+  background: #ffffff !important;
 }
 
 .form-card-badge {
-  background: rgba(56, 189, 248, 0.15) !important;
-  color: #38bdf8 !important;
-  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border: 1px solid #dbeafe !important;
   border-radius: 9999px !important;
   font-weight: 700 !important;
   font-size: 11.5px !important;
@@ -946,9 +953,10 @@ body {
   align-items: center !important;
   justify-content: center !important;
   margin: 0 !important;
-  margin-right: 22px !important; /* Elegant spacing between icon and form title */
+  margin-right: 22px !important;
   flex-shrink: 0 !important;
   transition: transform 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
 .form-select-card:hover .form-icon {
@@ -956,7 +964,7 @@ body {
 }
 
 .form-select-card span {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-weight: 600 !important;
   font-size: 15.5px !important;
   margin: 0 !important;
@@ -965,8 +973,356 @@ body {
   line-height: 1.4 !important;
 }
 
-/* 9. Form Card & Data Card */
-.form-card, .data-card, .form-editor-container {
+/* ==========================================================
+   9. Clean Light Sample Record Theme
+   (พื้นหลังหน้าบันทึกตัวอย่าง โทนสีเดียวกับหน้าแดชบอร์ด กรอกง่าย สบายตา)
+   ========================================================== */
+#view-sample-record {
+  background: #eceef2 !important;
+  border-radius: 28px !important;
+  padding: 30px !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e5eb !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+#view-sample-record .section-title-wrapper h3 {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+#view-sample-record .section-title-wrapper p {
+  color: #64748b !important;
+}
+
+/* Form Editor Container (Pure White Card on Soft Canvas) */
+#view-sample-record .form-editor-container,
+#view-sample-record .form-card {
+  background: #ffffff !important;
+  border: 1px solid #eef1f6 !important;
+  border-radius: 24px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  color: #0f172a !important;
+  padding: 28px 32px !important;
+}
+
+#view-sample-record .form-editor-header {
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding-bottom: 18px !important;
+  margin-bottom: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+#view-sample-record #backToFormSelection {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #334155 !important;
+  border-radius: 9999px !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-sample-record #backToFormSelection:hover {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border-color: #93c5fd !important;
+  transform: translateX(-2px) !important;
+}
+
+#view-sample-record #formBadgeTitle {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border: 1.5px solid #dbeafe !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 6px 18px !important;
+  letter-spacing: 0.3px !important;
+}
+
+#view-sample-record .form-section-title,
+#view-sample-record #formNameTitle {
+  color: #0f172a !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  margin-bottom: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+#view-sample-record .form-section-divider {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 4px solid #2563eb !important;
+  border-radius: 12px !important;
+  padding: 12px 18px !important;
+  font-weight: 700 !important;
+  font-size: 15.5px !important;
+  margin: 30px 0 20px 0 !important;
+}
+
+#view-sample-record label {
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+}
+
+#view-sample-record .required {
+  color: #ef4444 !important;
+  font-weight: bold !important;
+}
+
+/* High-Contrast Crisp Light Form Inputs */
+#view-sample-record input[type="text"],
+#view-sample-record input[type="number"],
+#view-sample-record input[type="date"],
+#view-sample-record input[type="search"],
+#view-sample-record select,
+#view-sample-record textarea,
+#view-sample-record .form-control {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#view-sample-record input[type="text"]:focus,
+#view-sample-record input[type="number"]:focus,
+#view-sample-record input[type="date"]:focus,
+#view-sample-record input[type="search"]:focus,
+#view-sample-record select:focus,
+#view-sample-record textarea:focus,
+#view-sample-record .form-control:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+  background: #ffffff !important;
+  outline: none !important;
+}
+
+#view-sample-record input::placeholder,
+#view-sample-record textarea::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+}
+
+#view-sample-record input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none !important;
+  cursor: pointer !important;
+  opacity: 0.75 !important;
+  padding: 2px !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-sample-record input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1 !important;
+  transform: scale(1.15) !important;
+}
+
+#view-sample-record input[readonly],
+#view-sample-record input[disabled] {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed !important;
+}
+
+/* Sample Section (Dynamic entries for each sample item) */
+#view-sample-record .sample-section {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 18px !important;
+  padding: 22px !important;
+  margin-top: 18px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
+}
+
+#view-sample-record .sample-section h4 {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 15.5px !important;
+}
+
+#view-sample-record .sample-section h4 i {
+  color: #2563eb !important;
+}
+
+#view-sample-record .remove-sample-btn {
+  color: #e11d48 !important;
+  background: #fff1f2 !important;
+  border: 1px solid #fecdd3 !important;
+  border-radius: 9999px !important;
+  padding: 6px 16px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-sample-record .remove-sample-btn:hover {
+  background: #ffe4e6 !important;
+  transform: scale(1.02) !important;
+}
+
+/* Add Sample Button */
+#view-sample-record #addGlobalSampleBtn {
+  background: #eff6ff !important;
+  border: 1.5px dashed #93c5fd !important;
+  color: #2563eb !important;
+  border-radius: 14px !important;
+  padding: 13px !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-sample-record #addGlobalSampleBtn:hover {
+  background: #dbeafe !important;
+  border-color: #2563eb !important;
+}
+
+/* Form Action Buttons */
+#view-sample-record .form-actions {
+  display: flex !important;
+  gap: 14px !important;
+  align-items: center !important;
+  margin-top: 24px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid #f1f5f9 !important;
+}
+
+#view-sample-record .form-actions button[type="submit"] {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  padding: 12px 30px !important;
+  font-weight: 700 !important;
+  font-size: 14.5px !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-sample-record .form-actions button[type="submit"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4) !important;
+}
+
+#view-sample-record #btnExportSubmissionPDF {
+  background: #f1f5f9 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #475569 !important;
+  border-radius: 9999px !important;
+  padding: 12px 26px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-sample-record #btnExportSubmissionPDF:not(:disabled) {
+  background: #ffffff !important;
+  border-color: #2563eb !important;
+  color: #2563eb !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15) !important;
+  cursor: pointer !important;
+}
+
+#view-sample-record #btnExportSubmissionPDF:not(:disabled):hover {
+  background: #eff6ff !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Saved Records List in Sample Record View */
+#view-sample-record #savedRecordsContainerWrapper {
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+#view-sample-record #searchSavedRecords {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  border-radius: 9999px !important;
+  padding-left: 36px !important;
+}
+
+#view-sample-record #searchSavedRecords:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+#view-sample-record .responsive-table table {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+
+#view-sample-record .responsive-table table thead tr {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+#view-sample-record .responsive-table table thead th {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+}
+
+#view-sample-record .responsive-table table tbody tr {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+#view-sample-record .responsive-table table tbody tr:nth-child(even) {
+  background: #f8fafc !important;
+}
+
+#view-sample-record .responsive-table table tbody tr:hover {
+  background: #eff6ff !important;
+}
+
+/* Auth Notice Card in Sample Record */
+#view-sample-record .auth-notice-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 24px !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+}
+
+#view-sample-record .auth-notice-card h3 {
+  color: #0f172a !important;
+}
+
+#view-sample-record .auth-notice-card p {
+  color: #64748b !important;
+}
+
+/* Default Data Cards in other views (keep dark theme intact for non-sample-record views) */
+.data-card {
   background: rgba(10, 24, 52, 0.82) !important;
   border: 1px solid rgba(56, 189, 248, 0.16) !important;
   border-radius: 22px !important;
@@ -974,19 +1330,6 @@ body {
   -webkit-backdrop-filter: blur(16px) !important;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
   color: #ffffff !important;
-}
-
-.form-editor-header {
-  border-bottom: 1px solid rgba(56, 189, 248, 0.12) !important;
-  padding: 16px 24px !important;
-}
-
-.section-title-wrapper h3 {
-  color: #ffffff !important;
-  font-weight: 700 !important;
-}
-.section-title-wrapper p {
-  color: #94a3b8 !important;
 }
 
 /* 10. Data Tables (Application Data Grids only) */
