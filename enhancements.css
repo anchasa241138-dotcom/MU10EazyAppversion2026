@@ -223,13 +223,34 @@ body {
 }
 
 .app-sidebar .notification-badge {
-  background-color: #38bdf8 !important;
-  color: #040812 !important;
+  color: #ffffff !important;
   border-radius: 9999px !important;
-  padding: 3px 8px !important;
-  font-size: 10.5px !important;
-  font-weight: 800 !important;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
+  padding: 2px 7px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  margin-left: auto !important;
+  line-height: 1.2 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+#record-notification-badge {
+  background-color: #ef4444 !important;
+}
+
+#verify-notification-badge {
+  background-color: #f59e0b !important;
+}
+
+#analysis-notification-badge {
+  background-color: #3b82f6 !important;
+}
+
+#certify-notification-badge {
+  background-color: #8b5cf6 !important;
+}
+
+#user-approval-badge {
+  background-color: #ef4444 !important;
 }
 
 .app-sidebar .sidebar-footer {
