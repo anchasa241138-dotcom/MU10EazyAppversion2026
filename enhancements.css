@@ -1242,19 +1242,19 @@ body {
 }
 
 #view-sample-record #btnExportSubmissionPDF:not(:disabled) {
-  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-  border-color: #b91c1c !important;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #047857 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35) !important;
   cursor: pointer !important;
 }
 
 #view-sample-record #btnExportSubmissionPDF:not(:disabled):hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
-  border-color: #991b1b !important;
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  border-color: #065f46 !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45) !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45) !important;
 }
 
 /* Saved Records List in Sample Record View */
@@ -1307,8 +1307,8 @@ body {
   background: #eff6ff !important;
 }
 
-#view-sample-record .responsive-table table .btn-pdf,
-#view-sample-record .responsive-table .btn-pdf {
+#view-sample-record .responsive-table table .btn-danger,
+#view-sample-record .responsive-table .btn-danger {
   background: linear-gradient(135deg, #ef4444, #dc2626) !important;
   color: #ffffff !important;
   border: 1px solid #b91c1c !important;
@@ -1316,13 +1316,39 @@ body {
   box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
 }
 
-#view-sample-record .responsive-table table .btn-pdf:hover,
-#view-sample-record .responsive-table .btn-pdf:hover {
+#view-sample-record .responsive-table table .btn-danger:hover,
+#view-sample-record .responsive-table .btn-danger:hover {
   background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
   border-color: #991b1b !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 10px rgba(220, 38, 38, 0.38) !important;
+}
+
+#view-sample-record .responsive-table table .btn-danger i {
+  color: #ffffff !important;
+}
+
+#view-sample-record .responsive-table table .btn-pdf,
+#view-sample-record .responsive-table .btn-pdf {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+  border: 1px solid #047857 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.28) !important;
+}
+
+#view-sample-record .responsive-table table .btn-pdf:hover,
+#view-sample-record .responsive-table .btn-pdf:hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  border-color: #065f46 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.38) !important;
+}
+
+#view-sample-record .responsive-table table .btn-pdf i {
+  color: #ffffff !important;
 }
 
 #view-sample-record .responsive-table table .btn-secondary {
@@ -1473,13 +1499,13 @@ body {
   box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4) !important;
 }
 
-/* High-Visibility PDF Buttons */
+/* High-Visibility PDF Buttons (Green Theme) */
 .btn-pdf, button.btn-pdf, a.btn-pdf {
-  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
   color: #ffffff !important;
-  border: 1px solid #b91c1c !important;
+  border: 1px solid #047857 !important;
   font-weight: 600 !important;
-  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.28) !important;
   cursor: pointer !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -1491,15 +1517,15 @@ body {
   color: #ffffff !important;
 }
 .btn-pdf:hover, button.btn-pdf:hover, a.btn-pdf:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
-  border-color: #991b1b !important;
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  border-color: #065f46 !important;
   color: #ffffff !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
 }
 .btn-pdf:active, button.btn-pdf:active, a.btn-pdf:active {
   transform: translateY(0) !important;
-  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2) !important;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2) !important;
 }
 
 
