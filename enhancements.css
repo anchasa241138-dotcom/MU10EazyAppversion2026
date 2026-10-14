@@ -1583,54 +1583,269 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   display: block !important;
 }
 
-/* 13. Modals */
+/* 13. Modals - Clean Light Dashboard Theme */
 .modal-overlay {
-  background: rgba(3, 7, 16, 0.88) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
 }
 
 .modal-card {
-  background: #081630 !important;
-  border: 1px solid rgba(56, 189, 248, 0.25) !important;
-  border-radius: 26px !important;
-  color: #f1f5f9 !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.12) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 24px !important;
+  color: #0f172a !important;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.22), 0 4px 16px rgba(15, 23, 42, 0.08) !important;
   overflow: hidden !important;
 }
 
 .modal-header {
-  background: #050e20 !important;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.15) !important;
-  color: #ffffff !important;
-  padding: 20px 24px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #0f172a !important;
+  padding: 18px 24px !important;
 }
 
 .modal-header h4 {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-weight: 700 !important;
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
+  font-size: 16.5px !important;
 }
 .modal-header h4 i {
-  color: #38bdf8 !important;
+  color: #2563eb !important;
 }
 
 .close-modal-btn {
-  color: #94a3b8 !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+  color: #64748b !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 50% !important;
-  width: 34px !important;
-  height: 34px !important;
+  width: 32px !important;
+  height: 32px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   transition: all 0.2s !important;
 }
 .close-modal-btn:hover {
-  color: #040812 !important;
-  background: #38bdf8 !important;
+  color: #ef4444 !important;
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+}
+
+.modal-body {
+  background: #ffffff !important;
+  color: #1e293b !important;
+}
+
+.modal-body .form-group label {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+.modal-body .form-group input,
+.modal-body .form-group select {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Sample Detail Preview Modal Specific Theme */
+#sampleDetailPreviewModal .modal-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 24px !important;
+  color: #0f172a !important;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.22), 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+}
+
+#sampleDetailPreviewModal .modal-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #0f172a !important;
+  padding: 18px 24px !important;
+}
+
+#sampleDetailPreviewModal .modal-header h4 {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 17px !important;
+}
+
+#sampleDetailPreviewModal .modal-header h4 i {
+  color: #2563eb !important;
+}
+
+#sampleDetailPreviewModal .close-modal-btn {
+  color: #64748b !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+#sampleDetailPreviewModal .close-modal-btn:hover {
+  color: #ef4444 !important;
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+}
+
+#sampleDetailPreviewModal .modal-body {
+  background: #ffffff !important;
+  color: #1e293b !important;
+  padding: 22px 24px !important;
+}
+
+#sampleDetailPreviewModal #sampleDetailPreviewContent {
+  color: #1e293b !important;
+}
+
+#sampleDetailPreviewModal [style*="linear-gradient(135deg, #eff6ff, #dbeafe)"] {
+  background: linear-gradient(135deg, #f0f7ff, #e0f2fe) !important;
+  border: 1px solid #bae6fd !important;
+  border-left: 5px solid #2563eb !important;
+  border-radius: 14px !important;
+  padding: 14px 18px !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06) !important;
+}
+
+#sampleDetailPreviewModal [style*="linear-gradient(135deg, #eff6ff, #dbeafe)"] div:first-child {
+  color: #0369a1 !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+}
+
+#sampleDetailPreviewModal [style*="linear-gradient(135deg, #eff6ff, #dbeafe)"] div:last-child {
+  color: #1e3a8a !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+}
+
+#sampleDetailPreviewModal #sampleDetailPreviewContent span[style*="color:#6b7280"] {
+  color: #64748b !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+}
+
+#sampleDetailPreviewModal #sampleDetailPreviewContent strong {
+  color: #0f172a !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+}
+
+#sampleDetailPreviewModal #sampleDetailPreviewContent div[style*="border-top:1px solid #e5e7eb"] {
+  border-top: 1px solid #f1f5f9 !important;
+}
+
+#sampleDetailPreviewModal #sampleDetailPreviewContent h5 {
+  color: #0f172a !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  margin-bottom: 10px !important;
+}
+
+#sampleDetailPreviewModal #sampleDetailPreviewContent h5 i {
+  color: #2563eb !important;
+}
+
+#sampleDetailPreviewModal table {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+}
+
+#sampleDetailPreviewModal table thead tr {
+  background: #f8fafc !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+#sampleDetailPreviewModal table th {
+  background: #f8fafc !important;
+  color: #334155 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 10px 12px !important;
+}
+
+#sampleDetailPreviewModal table tbody tr {
+  background: #ffffff !important;
+}
+
+#sampleDetailPreviewModal table tbody tr:nth-child(even) {
+  background: #f8fafc !important;
+}
+
+#sampleDetailPreviewModal table tbody tr:hover {
+  background: #eff6ff !important;
+}
+
+#sampleDetailPreviewModal table td {
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 10px 12px !important;
+  font-size: 13px !important;
+}
+
+#sampleDetailPreviewModal table select.item-status-select {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 6px 8px !important;
+}
+
+#sampleDetailPreviewModal .form-actions {
+  border-top: 1px solid #f1f5f9 !important;
+  padding-top: 18px !important;
+  margin-top: 20px !important;
+}
+
+#sampleDetailPreviewModal #previewAcceptBtn {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+  border: 1px solid #047857 !important;
+  border-radius: 9999px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+}
+
+#sampleDetailPreviewModal #previewAcceptBtn:hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4) !important;
+}
+
+#sampleDetailPreviewModal #previewRejectBtn {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+  border-radius: 9999px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3) !important;
+}
+
+#sampleDetailPreviewModal #previewRejectBtn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4) !important;
+}
+
+#sampleDetailPreviewModal .btn-secondary {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 9999px !important;
+  font-weight: 600 !important;
+}
+
+#sampleDetailPreviewModal .btn-secondary:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
 .modal-tabs {
