@@ -1840,7 +1840,7 @@ document.getElementById('formNameTitle').innerText = title;
                 <td style="padding: 12px 15px; text-align: center;">
                     <div style="display: flex; gap: 8px; justify-content: center;">
                         ${actionButtons}
-                        <button class="btn btn-sm btn-secondary" onclick="app.downloadSubmissionPDFDirect('${s.ref_id}')" style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #6c757d; border-color: #6c757d;"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                        <button class="btn btn-sm btn-pdf" onclick="app.downloadSubmissionPDFDirect('${s.ref_id}')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; background-color: #dc2626; border-color: #b91c1c; color: #ffffff;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                     </div>
                 </td>
             `;
@@ -3763,7 +3763,7 @@ document.getElementById('formNameTitle').innerText = title;
             
             const isApproved = s.status === 'approved';
             const actionBtn = isApproved 
-        ? `<button class="btn btn-secondary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-file-pdf"></i> ดูรายงาน PDF</button>`
+        ? `<button class="btn btn-sm btn-pdf" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-file-pdf"></i> ดูรายงาน PDF</button>`
         : (s.status === 'summarized' 
             ? `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-pen-nib"></i> ลงนามผู้ตรวจ</button>` 
             : `<button class="btn btn-success btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-stamp"></i> ลงนามผู้รับรอง</button>`);
