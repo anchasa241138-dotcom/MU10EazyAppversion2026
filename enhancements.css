@@ -402,6 +402,24 @@ body {
   outline: none !important;
 }
 
+/* White calendar picker icon for date inputs */
+.dashboard-filter input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2) !important;
+  cursor: pointer !important;
+  opacity: 0.95 !important;
+  padding: 2px !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+.dashboard-filter input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(1) brightness(1.6) !important;
+  opacity: 1 !important;
+  transform: scale(1.15) !important;
+}
+
 /* 6. Conceptzilla Bento Stat Cards */
 .stat-card {
   background: rgba(10, 24, 52, 0.82) !important;
