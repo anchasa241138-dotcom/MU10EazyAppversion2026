@@ -1817,7 +1817,7 @@ document.getElementById('formNameTitle').innerText = title;
             if (canEditOrCancel) {
                 actionButtons = `
                     <button class="btn btn-sm btn-primary" onclick="app.editSavedRecord('${s.ref_id}')" style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px;"><i class="fa-solid fa-pen-to-square"></i> แก้ไข</button>
-                    <button class="btn btn-sm btn-danger" onclick="app.cancelSavedRecord('${s.ref_id}')" style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #dc3545; border-color: #dc3545;"><i class="fa-solid fa-trash"></i> ยกเลิก</button>
+                    <button class="btn btn-sm btn-danger" onclick="app.cancelSavedRecord('${s.ref_id}')" style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #dc2626; border-color: #b91c1c; color: #ffffff;" title="ยกเลิกรายการ"><i class="fa-solid fa-trash"></i> ยกเลิก</button>
                 `;
             } else {
                 actionButtons = `
@@ -1840,7 +1840,7 @@ document.getElementById('formNameTitle').innerText = title;
                 <td style="padding: 12px 15px; text-align: center;">
                     <div style="display: flex; gap: 8px; justify-content: center;">
                         ${actionButtons}
-                        <button class="btn btn-sm btn-pdf" onclick="app.downloadSubmissionPDFDirect('${s.ref_id}')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; background-color: #dc2626; border-color: #b91c1c; color: #ffffff;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                        <button class="btn btn-sm btn-pdf" onclick="app.downloadSubmissionPDFDirect('${s.ref_id}')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; background-color: #059669; border-color: #047857; color: #ffffff;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                     </div>
                 </td>
             `;
