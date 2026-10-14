@@ -287,7 +287,7 @@ const app = {
             },
             {
                 ref_id: 'TEMP-10003', lab_id: '', form_type: 'MU.10-006',
-                agency: 'สสอ.เมือง', location_type: 'โรงงานผลิต', location_name: 'โรงงานน้ำดื่มตราสิงห์',
+                agency: 'สสอ.เมือง', location_type: 'โรงงาน/สถานที่ผลิตอาหาร', location_name: 'โรงงานน้ำดื่มตราสิงห์',
                 province: 'ยโสธร', amphoe: 'เมือง', tambon: 'ในเมือง',
                 collector_name: 'นายมานะ อดทน', collector_position: 'เจ้าหน้าที่สาธารณสุข', sampling_date: '2026-06-22',
                 sample_name: 'น้ำดื่มบรรจุขวด', sample_qty: 5, distributor: 'โรงงานน้ำดื่ม', source: 'ผลิตเอง',
@@ -1917,7 +1917,22 @@ document.getElementById('formNameTitle').innerText = title;
 
         // 3. Pre-fill basic fields
         document.getElementById('field-agency').value = sample.agency || '';
-        document.getElementById('field-location-type').value = sample.location_type || '';
+        let locType = sample.location_type || '';
+        if (locType === 'ห้างสรรพสินค้า' || locType === 'ห้างสรรพสินค้า / ซุปเปอร์มาร์เก็ต') locType = 'ห้างสรรพสินค้า/ซุปเปอร์มาเก็ต';
+        else if (locType === 'โรงงานผลิต' || locType === 'สถานที่ผลิตอาหาร / โรงงาน') locType = 'โรงงาน/สถานที่ผลิตอาหาร';
+        else if (locType === 'โรงเรียน' || locType === 'โรงเรียน / สถานศึกษา') locType = 'โรงเรียน/สถานศึกษา';
+        else if (locType === 'โรงพยาบาล' || locType === 'โรงพยาบาล / สถานพยาบาล') locType = 'โรงพยาบาล/สถานพยาบาล';
+        else if (locType === 'ตลาดสด / ตลาดนัด') locType = 'ตลาดสด';
+        else if (locType === 'ร้านอาหาร / แผงลอยจำหน่ายอาหาร') locType = 'ร้านอาหาร';
+        const locSelect = document.getElementById('field-location-type');
+        if (locSelect) {
+            locSelect.value = locType;
+            if (locType && locSelect.value !== locType) {
+                // If not matched exactly in predefined options, select "อื่นๆ" or keep value
+                const hasOpt = Array.from(locSelect.options).some(o => o.value === locType);
+                if (!hasOpt) locSelect.value = 'อื่นๆ';
+            }
+        }
         document.getElementById('field-location-name').value = sample.location_name || '';
         document.getElementById('field-province').value = sample.province || '';
         document.getElementById('field-amphoe').value = sample.amphoe || '';
