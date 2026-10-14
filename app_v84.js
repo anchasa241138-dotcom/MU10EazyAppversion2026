@@ -171,7 +171,7 @@ const app = {
 
     // Initialize mock database in localStorage
 
-    ﻿﻿getVisibleSamples() {
+    getVisibleSamples() {
         if (!this.currentUser) return [];
         if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier') {
             return this.samples;
@@ -230,6 +230,7 @@ const app = {
                 }
                 if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
                 this.renderSamplesList();
+                this.updateBadges();
             });
 
             db.ref('users').on('value', (snapshot) => {
@@ -249,6 +250,7 @@ const app = {
                 if (document.getElementById('manage-users-view').style.display === 'block') {
                     this.renderManageUsers();
                 }
+                this.updateBadges();
             });
         }
         
@@ -316,52 +318,7 @@ const app = {
     },
 
     updateSidebarBadges() {
-        // 1. บันทึกการเก็บตัวอย่าง (Red badge for new uploads)
-        const recordBadge = document.getElementById('record-notification-badge');
-        if (recordBadge) {
-            if (this.unreadRecordsCount > 0) {
-                recordBadge.innerText = this.unreadRecordsCount;
-                recordBadge.classList.remove('hidden');
-            } else {
-                recordBadge.classList.add('hidden');
-            }
-        }
-
-        // 2. ตรวจสอบตัวอย่าง (แลป) (Orange badge for status = 'registered')
-        const verifyBadge = document.getElementById('verify-notification-badge');
-        if (verifyBadge) {
-            const count = this.samples.filter(s => s.status === 'registered').length;
-            if (count > 0) {
-                verifyBadge.innerText = count;
-                verifyBadge.classList.remove('hidden');
-            } else {
-                verifyBadge.classList.add('hidden');
-            }
-        }
-
-        // 3. ตรวจวิเคราะห์ตัวอย่าง (Blue badge for status = 'accepted')
-        const analysisBadge = document.getElementById('analysis-notification-badge');
-        if (analysisBadge) {
-            const count = this.samples.filter(s => s.status === 'accepted').length;
-            if (count > 0) {
-                analysisBadge.innerText = count;
-                analysisBadge.classList.remove('hidden');
-            } else {
-                analysisBadge.classList.add('hidden');
-            }
-        }
-
-        // 4. รับรองผลตรวจวิเคราะห์ (Purple badge for status = 'summarized')
-        const certifyBadge = document.getElementById('certify-notification-badge');
-        if (certifyBadge) {
-            const count = this.samples.filter(s => s.status === 'summarized').length;
-            if (count > 0) {
-                certifyBadge.innerText = count;
-                certifyBadge.classList.remove('hidden');
-            } else {
-                certifyBadge.classList.add('hidden');
-            }
-        }
+        this.updateBadges();
     },
 
     // Set up all DOM event listeners
@@ -723,24 +680,31 @@ const app = {
 
     // Authentication Logic
     updateBadges() {
-        const counts = {
-            'record-notification-badge': this.getVisibleSamples().length,
-            'verify-notification-badge': this.getVisibleSamples().filter(s => s.status === 'registered').length,
-            'analysis-notification-badge': this.getVisibleSamples().filter(s => s.status === 'accepted').length,
-            'certify-notification-badge': this.getVisibleSamples().filter(s => s.status === 'analyzing' || s.status === 'summarized').length,
-            'user-approval-badge': this.users.filter(u => u.status === 'pending').length
-        };
+        try {
+            const visible = (typeof this.getVisibleSamples === 'function') ? this.getVisibleSamples() : (this.samples || []);
+            const counts = {
+                'record-notification-badge': (this.unreadRecordsCount > 0) ? this.unreadRecordsCount : 0,
+                'verify-notification-badge': visible.filter(s => s.status === 'registered').length,
+                'analysis-notification-badge': visible.filter(s => s.status === 'accepted').length,
+                'certify-notification-badge': visible.filter(s => s.status === 'analyzing' || s.status === 'summarized').length,
+                'user-approval-badge': (this.users || []).filter(u => u.status === 'pending').length
+            };
 
-        for (const [id, count] of Object.entries(counts)) {
-            const badge = document.getElementById(id);
-            if (badge) {
-                if (count > 0) {
-                    badge.innerText = count;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
+            for (const [id, count] of Object.entries(counts)) {
+                const badge = document.getElementById(id);
+                if (badge) {
+                    if (count > 0) {
+                        badge.innerText = count;
+                        badge.classList.remove('hidden');
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.classList.add('hidden');
+                        badge.style.display = 'none';
+                    }
                 }
             }
+        } catch (err) {
+            console.error('Error in updateBadges:', err);
         }
     },
 
@@ -927,7 +891,7 @@ const app = {
     },
 
 
-    ﻿handleRegister(e) {
+    handleRegister(e) {
         e.preventDefault();
         
         const title = document.getElementById('reg-title') ? document.getElementById('reg-title').value : '';
