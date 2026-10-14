@@ -366,92 +366,115 @@ body {
   transform: translateY(-2px) !important;
 }
 
-/* 5. Conceptzilla Dashboard Filter Bar */
+/* ==========================================================
+   Clean Light Dashboard Theme
+   (พื้นหลังแดชบอร์ดสว่าง สะอาด สบายตา มองข้อมูลได้ง่าย)
+   ========================================================== */
+#view-dashboard {
+  background: #f8fafc !important;
+  border-radius: 24px !important;
+  padding: 26px !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.14) !important;
+}
+
+/* 5. Clean Light Dashboard Filter Bar */
 .dashboard-filter {
-  background: rgba(10, 24, 52, 0.82) !important;
-  border: 1px solid rgba(56, 189, 248, 0.2) !important;
-  border-radius: 22px !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 20px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   padding: 16px 24px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
-  color: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+  color: #1e293b !important;
 }
 
 .dashboard-filter label {
-  color: #38bdf8 !important;
+  color: #334155 !important;
   font-weight: 600 !important;
   font-size: 13.5px !important;
 }
 
+.dashboard-filter label i {
+  color: #0284c7 !important;
+}
+
 .dashboard-filter input[type="date"],
 .dashboard-filter select {
-  background: #071224 !important;
-  border: 1.5px solid rgba(56, 189, 248, 0.2) !important;
-  color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
   border-radius: 9999px !important;
   padding: 7px 18px !important;
   font-size: 13.5px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
   transition: all 0.2s ease !important;
 }
 
 .dashboard-filter input[type="date"]:focus,
 .dashboard-filter select:focus {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+  background: #ffffff !important;
   outline: none !important;
 }
 
-/* White calendar picker icon for date inputs */
-.dashboard-filter input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) brightness(1.2) !important;
+/* Clean calendar picker icon for date inputs on light background */
+.dashboard-filter input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none !important;
   cursor: pointer !important;
-  opacity: 0.95 !important;
+  opacity: 0.75 !important;
   padding: 2px !important;
   border-radius: 4px !important;
   transition: all 0.2s ease !important;
 }
 
-.dashboard-filter input[type="date"]::-webkit-calendar-picker-indicator:hover,
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  filter: invert(1) brightness(1.6) !important;
+.dashboard-filter input[type="date"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1 !important;
   transform: scale(1.15) !important;
 }
 
-/* 6. Conceptzilla Bento Stat Cards */
+/* 6. Clean Light Bento Stat Cards */
 .stat-card {
-  background: rgba(10, 24, 52, 0.82) !important;
-  border: 1px solid rgba(56, 189, 248, 0.18) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 22px !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
   padding: 22px 24px !important;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .stat-card:hover {
-  transform: translateY(-6px) scale(1.02) !important;
-  border-color: rgba(56, 189, 248, 0.5) !important;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.2) !important;
+  transform: translateY(-4px) !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08) !important;
 }
 
 .stat-card .stat-label {
-  color: #94a3b8 !important;
+  color: #64748b !important;
   font-size: 13.5px !important;
   font-weight: 600 !important;
-  letter-spacing: 0.2px !important;
+  letter-spacing: 0.1px !important;
 }
 
 .stat-card .stat-number {
-  color: #ffffff !important;
-  font-family: 'Kanit', 'Outfit', sans-serif !important;
+  color: #0f172a !important;
+  font-family: 'Kanit', sans-serif !important;
   font-weight: 700 !important;
   font-size: 32px !important;
   letter-spacing: -0.5px !important;
   margin-top: 4px !important;
+}
+
+.stat-card .stat-number span {
+  color: #64748b !important;
+  font-size: 16px !important;
+  font-weight: normal !important;
 }
 
 .stat-card .stat-icon {
@@ -463,7 +486,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   justify-content: center !important;
   font-size: 20px !important;
   color: #ffffff !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12) !important;
 }
 
 .stat-card.total .stat-icon { background: linear-gradient(135deg, #1e40af, #3b82f6) !important; }
@@ -473,24 +496,24 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .stat-card.analyzing .stat-icon { background: linear-gradient(135deg, #0284c7, #38bdf8) !important; }
 .stat-card.completed .stat-icon { background: linear-gradient(135deg, #4f46e5, #818cf8) !important; }
 
-/* 7. Conceptzilla Chart Containers */
+/* 7. Clean Light Chart Containers */
 .chart-container {
-  background: rgba(10, 24, 52, 0.82) !important;
-  border: 1px solid rgba(56, 189, 248, 0.16) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 22px !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
   overflow: hidden !important;
 }
 
 .chart-container .chart-header {
-  border-bottom: 1px solid rgba(56, 189, 248, 0.12) !important;
+  border-bottom: 1px solid #f1f5f9 !important;
   padding: 18px 24px !important;
 }
 
 .chart-container .chart-header h4 {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-weight: 700 !important;
   font-size: 16px !important;
   display: flex !important;
@@ -499,7 +522,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .chart-container .chart-header h4 i {
-  color: #38bdf8 !important;
+  color: #0284c7 !important;
 }
 
 /* 8. Conceptzilla Form Selection Grid (MU.10-001 - 008) */

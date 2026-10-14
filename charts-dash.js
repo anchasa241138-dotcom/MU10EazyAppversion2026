@@ -19,13 +19,13 @@ function initDashboardCharts() {
 
     if (!provinceCtx || !resultRatioCtx || !formTypeCtx) return;
 
-    // Set Global Chart Defaults for Conceptzilla AI Agent Midnight Theme
+    // Set Global Chart Defaults for Clean Light Dashboard Theme
     if (typeof Chart !== 'undefined') {
-        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.color = '#64748b';
         Chart.defaults.font.family = "'Kanit', sans-serif";
     }
 
-    // 1. Province Chart (Bar Chart) - Conceptzilla Electric Cyan & Blue Accents
+    // 1. Province Chart (Bar Chart) - Clean Blue Accents
     provinceChartInstance = new Chart(provinceCtx, {
         type: 'bar',
         data: {
@@ -54,10 +54,10 @@ function initDashboardCharts() {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#081630',
+                    backgroundColor: '#0f172a',
                     titleColor: '#38bdf8',
                     bodyColor: '#ffffff',
-                    borderColor: 'rgba(56, 189, 248, 0.4)',
+                    borderColor: '#cbd5e1',
                     borderWidth: 1,
                     cornerRadius: 10,
                     padding: 12,
@@ -73,14 +73,14 @@ function initDashboardCharts() {
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1,
-                        color: '#94a3b8',
+                        color: '#64748b',
                         font: { family: 'Kanit' }
                     },
-                    grid: { color: 'rgba(255, 255, 255, 0.08)' }
+                    grid: { color: 'rgba(0, 0, 0, 0.06)' }
                 },
                 x: {
                     ticks: {
-                        color: '#ffffff',
+                        color: '#1e293b',
                         font: { family: 'Kanit', weight: 'bold' }
                     },
                     grid: { display: false }
@@ -89,7 +89,7 @@ function initDashboardCharts() {
         }
     });
 
-    // 2. Result Ratio Chart (Doughnut Chart) - Electric Cyan / Coral / Amber
+    // 2. Result Ratio Chart (Doughnut Chart)
     resultRatioChartInstance = new Chart(resultRatioCtx, {
         type: 'doughnut',
         data: {
@@ -97,12 +97,12 @@ function initDashboardCharts() {
             datasets: [{
                 data: [0, 0, 0],
                 backgroundColor: [
-                    '#38bdf8',  /* Electric Cyan - Pass */
+                    '#10b981',  /* Emerald - Pass */
                     '#f43f5e',  /* Coral - Fail */
                     '#f59e0b'   /* Amber - Pending */
                 ],
                 borderWidth: 3,
-                borderColor: '#081630'
+                borderColor: '#ffffff'
             }]
         },
         options: {
@@ -116,14 +116,14 @@ function initDashboardCharts() {
                         font: { family: 'Kanit', size: 12 },
                         padding: 15,
                         usePointStyle: true,
-                        color: '#ffffff'
+                        color: '#334155'
                     }
                 },
                 tooltip: {
-                    backgroundColor: '#081630',
+                    backgroundColor: '#0f172a',
                     titleColor: '#38bdf8',
                     bodyColor: '#ffffff',
-                    borderColor: 'rgba(56, 189, 248, 0.4)',
+                    borderColor: '#cbd5e1',
                     borderWidth: 1,
                     cornerRadius: 10,
                     padding: 12
@@ -174,13 +174,13 @@ function initDashboardCharts() {
                 legend: { 
                     display: true,
                     position: 'top',
-                    labels: { font: { family: 'Kanit' }, color: '#ffffff', usePointStyle: true }
+                    labels: { font: { family: 'Kanit' }, color: '#334155', usePointStyle: true }
                 },
                 tooltip: {
-                    backgroundColor: '#081630',
+                    backgroundColor: '#0f172a',
                     titleColor: '#38bdf8',
                     bodyColor: '#ffffff',
-                    borderColor: 'rgba(56, 189, 248, 0.4)',
+                    borderColor: '#cbd5e1',
                     borderWidth: 1,
                     cornerRadius: 10,
                     padding: 12,
@@ -194,14 +194,14 @@ function initDashboardCharts() {
             scales: {
                 x: {
                     stacked: true,
-                    ticks: { font: { family: 'Kanit', size: 11 }, color: '#94a3b8', autoSkip: false, maxRotation: 45, minRotation: 0 },
+                    ticks: { font: { family: 'Kanit', size: 11 }, color: '#64748b', autoSkip: false, maxRotation: 45, minRotation: 0 },
                     grid: { display: false }
                 },
                 y: {
                     stacked: true,
                     beginAtZero: true,
-                    ticks: { stepSize: 1, color: '#94a3b8', font: { family: 'Kanit' } },
-                    grid: { color: 'rgba(255, 255, 255, 0.08)' }
+                    ticks: { stepSize: 1, color: '#64748b', font: { family: 'Kanit' } },
+                    grid: { color: 'rgba(0, 0, 0, 0.06)' }
                 }
             }
         }
@@ -284,11 +284,11 @@ function updateDashboardCharts(samples) {
     if (totalOutcomes === 0) {
         resultRatioChartInstance.data.labels = ['ไม่มีข้อมูล'];
         resultRatioChartInstance.data.datasets[0].data = [1];
-        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#0c1f3d'];
+        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#e2e8f0'];
     } else {
         resultRatioChartInstance.data.labels = ['ผ่านเกณฑ์มาตรฐาน', 'ไม่ผ่านเกณฑ์มาตรฐาน', 'รอการตรวจวิเคราะห์'];
         resultRatioChartInstance.data.datasets[0].data = [passed, failed, pending];
-        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#38bdf8', '#f43f5e', '#f59e0b'];
+        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#10b981', '#f43f5e', '#f59e0b'];
     }
     resultRatioChartInstance.update();
 
@@ -480,9 +480,9 @@ function updateSubstanceCharts(samples) {
     for (const key in stats) {
         const item = stats[key];
             const col = document.createElement('div');
-            col.style.cssText = 'background: rgba(10, 22, 44, 0.78); border: 1px solid rgba(56, 189, 248, 0.22); box-shadow: 0 10px 25px rgba(0,0,0,0.4); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; backdrop-filter: blur(14px);';
+            col.style.cssText = 'background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
             col.innerHTML = `
-                  <h6 style="margin: 0 0 12px 0; font-weight: 700; color: #ffffff; text-align: center; font-size: 15px;">${item.label}</h6>
+                  <h6 style="margin: 0 0 12px 0; font-weight: 700; color: #0f172a; text-align: center; font-size: 15px;">${item.label}</h6>
                   <div id="substance-text-${key}" style="width: 100%; margin-bottom: 12px;"></div>
                   <div style="position: relative; width: 100%; height: 180px; margin: 0 auto;">
                       <canvas id="substance-chart-${key}"></canvas>
@@ -502,13 +502,13 @@ function updateSubstanceCharts(samples) {
         const dataValues = [item.pass, item.fail];
         
         let viewBtn = item.fail > 0 
-            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="width: 100%; padding: 8px; background-color: rgba(244, 63, 94, 0.16); border: 1px solid rgba(244, 63, 94, 0.4); color: #fda4af; border-radius: 9999px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
+            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="width: 100%; padding: 8px; background-color: #fff1f2; border: 1px solid #fecdd3; color: #e11d48; border-radius: 9999px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
             : `<div style="height: 33px;"></div>`;
             
         const passPct = item.total > 0 ? ((item.pass / item.total) * 100).toFixed(1) : 0;
         const failPct = item.total > 0 ? ((item.fail / item.total) * 100).toFixed(1) : 0;
         
-        const miniCardStyle = "display: flex; align-items: center; background: rgba(8, 18, 38, 0.85); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 14px; padding: 8px 8px; width: 31%; box-sizing: border-box; transition: transform 0.2s;";
+        const miniCardStyle = "display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 8px 8px; width: 31%; box-sizing: border-box; transition: transform 0.2s;";
         const iconStyle = "display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 10px; color: #fff; font-size: 14px; margin-right: 6px; flex-shrink: 0;";
 
         document.getElementById('substance-text-' + key).innerHTML = `
@@ -516,22 +516,22 @@ function updateSubstanceCharts(samples) {
                 <div style="${miniCardStyle}">
                     <div style="${iconStyle} background-color: #0284c7;"><i class="fa-solid fa-database"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 12px; color: #94a3b8; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #38bdf8;">${item.total}</div>
+                        <div style="font-size: 12px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #0284c7;">${item.total}</div>
                     </div>
                 </div>
                 <div style="${miniCardStyle}">
-                    <div style="${iconStyle} background-color: #0284c7;"><i class="fa-solid fa-check"></i></div>
+                    <div style="${iconStyle} background-color: #059669;"><i class="fa-solid fa-check"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 12px; color: #94a3b8; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #38bdf8;">${item.pass} <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">(${passPct}%)</span></div>
+                        <div style="font-size: 12px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #059669;">${item.pass} <span style="font-size: 11px; color: #64748b; font-weight: normal;">(${passPct}%)</span></div>
                     </div>
                 </div>
                 <div style="${miniCardStyle}">
                     <div style="${iconStyle} background-color: #e11d48;"><i class="fa-solid fa-xmark"></i></div>
                     <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 12px; color: #94a3b8; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #f43f5e;">${item.fail} <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">(${failPct}%)</span></div>
+                        <div style="font-size: 12px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
+                        <div style="font-size: 16px; font-weight: bold; color: #e11d48;">${item.fail} <span style="font-size: 11px; color: #64748b; font-weight: normal;">(${failPct}%)</span></div>
                     </div>
                 </div>
             </div>
@@ -567,7 +567,7 @@ function updateSubstanceCharts(samples) {
         if (chartData.length === 0) {
             chartLabels = ['ไม่มีตัวอย่างที่ไม่ผ่าน'];
             chartData = [1];
-            bgColors = ['#0c1f3d']; // Midnight ring
+            bgColors = ['#e2e8f0']; // Clean light gray ring
         }
 
         if (substanceChartInstances[key]) {
@@ -584,7 +584,7 @@ function updateSubstanceCharts(samples) {
                         data: chartData,
                         backgroundColor: bgColors,
                         borderWidth: 2,
-                        borderColor: '#081630'
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
@@ -595,7 +595,7 @@ function updateSubstanceCharts(samples) {
                         legend: { 
                             display: true,
                             position: 'bottom',
-                            labels: { font: { family: 'Kanit', size: 11 }, usePointStyle: true, boxWidth: 6, padding: 8, color: '#94a3b8' }
+                            labels: { font: { family: 'Kanit', size: 11 }, usePointStyle: true, boxWidth: 6, padding: 8, color: '#64748b' }
                         },
                         tooltip: {
                             callbacks: {
@@ -694,29 +694,29 @@ window.openFailedSamplesModal = function(key, label) {
 
         uniqueSamples.forEach((s, idx) => {
             let tr = document.createElement('tr');
-            const rowBg = idx % 2 === 0 ? 'rgba(10, 24, 48, 0.75)' : 'rgba(8, 18, 38, 0.75)';
+            const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
             tr.style.backgroundColor = rowBg;
-            tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.06)';
+            tr.style.borderBottom = '1px solid #e2e8f0';
             tr.style.transition = 'background-color 0.2s';
-            tr.onmouseover = () => tr.style.backgroundColor = 'rgba(56, 189, 248, 0.12)';
+            tr.onmouseover = () => tr.style.backgroundColor = '#f1f5f9';
             tr.onmouseout = () => tr.style.backgroundColor = rowBg;
 
             tr.innerHTML = `
                 <td style="padding: 12px 16px;">
-                    <div style="font-weight: 600; color: #ffffff;">${s.name || '-'}</div>
-                    <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
+                    <div style="font-weight: 600; color: #0f172a;">${s.name || '-'}</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
                 </td>
-                <td style="padding: 12px 16px; color: #e2e8f0;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
+                <td style="padding: 12px 16px; color: #334155;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
                 <td style="padding: 12px 16px;">
-                    <div style="color: #ffffff; font-weight: 500;">${s.source || '-'}</div>
-                    <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
-                </td>
-                <td style="padding: 12px 16px;">
-                    <div style="color: #ffffff;">อ.${s.district || '-'}</div>
-                    <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;">จ.${s.province || '-'}</div>
+                    <div style="color: #0f172a; font-weight: 500;">${s.source || '-'}</div>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
                 </td>
                 <td style="padding: 12px 16px;">
-                    <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; background-color: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 12px; font-weight: 700; border: 1px solid rgba(56, 189, 248, 0.35); white-space: nowrap;">
+                    <div style="color: #0f172a;">อ.${s.district || '-'}</div>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
+                </td>
+                <td style="padding: 12px 16px;">
+                    <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; background-color: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 700; border: 1px solid #bae6fd; white-space: nowrap;">
                         ${s.form_type || '-'}
                     </span>
                 </td>
