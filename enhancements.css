@@ -1233,7 +1233,7 @@ body {
 #view-sample-record #btnExportSubmissionPDF {
   background: #f1f5f9 !important;
   border: 1.5px solid #cbd5e1 !important;
-  color: #475569 !important;
+  color: #94a3b8 !important;
   border-radius: 9999px !important;
   padding: 12px 26px !important;
   font-weight: 600 !important;
@@ -1242,16 +1242,19 @@ body {
 }
 
 #view-sample-record #btnExportSubmissionPDF:not(:disabled) {
-  background: #ffffff !important;
-  border-color: #2563eb !important;
-  color: #2563eb !important;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15) !important;
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  border-color: #b91c1c !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35) !important;
   cursor: pointer !important;
 }
 
 #view-sample-record #btnExportSubmissionPDF:not(:disabled):hover {
-  background: #eff6ff !important;
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  border-color: #991b1b !important;
+  color: #ffffff !important;
   transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45) !important;
 }
 
 /* Saved Records List in Sample Record View */
@@ -1303,6 +1306,31 @@ body {
 #view-sample-record .responsive-table table tbody tr:hover {
   background: #eff6ff !important;
 }
+
+#view-sample-record .responsive-table table .btn-pdf,
+#view-sample-record .responsive-table .btn-pdf {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
+}
+
+#view-sample-record .responsive-table table .btn-pdf:hover,
+#view-sample-record .responsive-table .btn-pdf:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  border-color: #991b1b !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.38) !important;
+}
+
+#view-sample-record .responsive-table table .btn-secondary {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
 
 /* Auth Notice Card in Sample Record */
 #view-sample-record .auth-notice-card {
@@ -1444,6 +1472,36 @@ body {
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4) !important;
 }
+
+/* High-Visibility PDF Buttons */
+.btn-pdf, button.btn-pdf, a.btn-pdf {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+  border: 1px solid #b91c1c !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28) !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  transition: all 0.2s ease !important;
+}
+.btn-pdf i, button.btn-pdf i, a.btn-pdf i {
+  color: #ffffff !important;
+}
+.btn-pdf:hover, button.btn-pdf:hover, a.btn-pdf:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  border-color: #991b1b !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+}
+.btn-pdf:active, button.btn-pdf:active, a.btn-pdf:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2) !important;
+}
+
 
 /* Warning Buttons */
 .btn-warning {
