@@ -1260,6 +1260,16 @@ document.getElementById('formNameTitle').innerText = title;
         this.globalSampleIndex = (this.globalSampleIndex || 0) + 1;
         const container = document.getElementById('globalSampleEntries');
         if (!container) return;
+
+        // Retrieve distributor from previous sample entry (if any)
+        let previousDistributor = '';
+        const existingDistributorInputs = container.querySelectorAll('input[name^="distributor_"]');
+        if (existingDistributorInputs.length > 0) {
+            const lastDistInput = existingDistributorInputs[existingDistributorInputs.length - 1];
+            if (lastDistInput && lastDistInput.value) {
+                previousDistributor = lastDistInput.value.trim();
+            }
+        }
         
         const div = document.createElement('div');
         div.className = 'sample-section';
@@ -1634,6 +1644,15 @@ document.getElementById('formNameTitle').innerText = title;
             `;
         }
         container.appendChild(div);
+
+        // Pre-fill distributor from previous entry if available
+        if (previousDistributor) {
+            const newDistInput = div.querySelector(`input[name="distributor_${this.globalSampleIndex}"]`);
+            if (newDistInput && !newDistInput.value) {
+                newDistInput.value = previousDistributor;
+            }
+        }
+
         this.updateTotalGlobalSamples();
     },
 
