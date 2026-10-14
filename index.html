@@ -294,7 +294,7 @@
         .reg-auth-block .required { color: #fca5a5; }
 
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1791952500000">
+    <link rel="stylesheet" href="enhancements.css?v=1791953600000">
 </head>
 <body>
     <!-- App Container -->
@@ -423,25 +423,33 @@
                         </div>
                     </div>
 
-                    <div class="dashboard-filter" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                            <label style="font-weight: 600; color: #334155; margin: 0;"><i class="fa-regular fa-calendar"></i> ตั้งแต่วันที่:</label>
-                            <input type="date" id="dashStartDate" class="form-control" style="width: auto; border-radius: 6px; border: 1px solid #cbd5e1;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
-                            
-                            <label style="font-weight: 600; color: #334155; margin: 0;">ถึง:</label>
-                            <input type="date" id="dashEndDate" class="form-control" style="width: auto; border-radius: 6px; border: 1px solid #cbd5e1;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                    <div class="dashboard-filter">
+                        <div class="overview-header-group">
+                            <div class="overview-title-badge">
+                                <span class="overview-main-title">Overview</span>
+                                <span class="overview-link-icon" title="แดชบอร์ดภาพรวม"><i class="fa-solid fa-link"></i></span>
+                            </div>
+                            <span class="overview-subtitle">สรุปสถิติผลการตรวจวิเคราะห์ความปลอดภัยด้านอาหาร</span>
                         </div>
-                        
-                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                            <label for="dashProvinceFilter" style="font-weight: 600; color: #334155; margin: 0;"><i class="fa-solid fa-filter"></i> เลือกดูข้อมูลตามพื้นที่:</label>
-                            <select id="dashProvinceFilter" class="form-control" style="width: 250px; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: none;" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
-                                <option value="all">🌐 ภาพรวมเขตสุขภาพที่ 10 (ทั้งหมด)</option>
-                                <option value="ศรีสะเกษ">📍 ศรีสะเกษ</option>
-                                <option value="อุบลราชธานี">📍 อุบลราชธานี</option>
-                                <option value="อำนาจเจริญ">📍 อำนาจเจริญ</option>
-                                <option value="มุกดาหาร">📍 มุกดาหาร</option>
-                                <option value="ยโสธร">📍 ยโสธร</option>
-                            </select>
+                        <div class="overview-controls-group">
+                            <div class="filter-pill-item">
+                                <i class="fa-regular fa-calendar filter-pill-icon"></i>
+                                <span class="filter-pill-label">วันที่:</span>
+                                <input type="date" id="dashStartDate" class="form-control" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                                <span class="filter-pill-sep">-</span>
+                                <input type="date" id="dashEndDate" class="form-control" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                            </div>
+                            <div class="filter-pill-item">
+                                <i class="fa-solid fa-location-dot filter-pill-icon"></i>
+                                <select id="dashProvinceFilter" class="form-control" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.samples);">
+                                    <option value="all">🌐 ภาพรวมเขตสุขภาพที่ 10 (ทั้งหมด)</option>
+                                    <option value="ศรีสะเกษ">📍 ศรีสะเกษ</option>
+                                    <option value="อุบลราชธานี">📍 อุบลราชธานี</option>
+                                    <option value="อำนาจเจริญ">📍 อำนาจเจริญ</option>
+                                    <option value="มุกดาหาร">📍 มุกดาหาร</option>
+                                    <option value="ยโสธร">📍 ยโสธร</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -495,23 +503,80 @@
                     <div class="dashboard-grid">
                         <div class="chart-container" style="grid-column: span 2;">
                             <div class="chart-header">
-                                <h4><i class="fa-solid fa-map-location-dot"></i> จำนวนการส่งตัวอย่างตรวจวิเคราะห์แยกตามรายจังหวัด</h4>
+                                <h4><i class="fa-solid fa-chart-column"></i> จำนวนการส่งตัวอย่างตรวจวิเคราะห์แยกตามรายจังหวัด</h4>
+                                <div class="chart-header-actions">
+                                    <button type="button" class="outcrowd-dots-btn" title="ตัวเลือกเพิ่มเติม"><i class="fa-solid fa-ellipsis"></i></button>
+                                </div>
+                            </div>
+                            <div id="provinceQuickMetrics" class="outcrowd-province-metrics">
+                                <div class="p-metric-item">
+                                    <span class="p-metric-label">ศรีสะเกษ</span>
+                                    <span class="p-metric-val" id="pm-sisaket">0</span>
+                                </div>
+                                <div class="p-metric-item">
+                                    <span class="p-metric-label">อุบลราชธานี</span>
+                                    <span class="p-metric-val" id="pm-ubon">0</span>
+                                </div>
+                                <div class="p-metric-item">
+                                    <span class="p-metric-label">อำนาจเจริญ</span>
+                                    <span class="p-metric-val" id="pm-amnat">0</span>
+                                </div>
+                                <div class="p-metric-item">
+                                    <span class="p-metric-label">มุกดาหาร</span>
+                                    <span class="p-metric-val" id="pm-muk">0</span>
+                                </div>
+                                <div class="p-metric-item">
+                                    <span class="p-metric-label">ยโสธร</span>
+                                    <span class="p-metric-val" id="pm-yasothon">0</span>
+                                </div>
                             </div>
                             <div class="chart-body">
                                 <canvas id="provinceChart"></canvas>
+                            </div>
+                            <div class="outcrowd-explore-card">
+                                <div class="explore-header-row">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>สำรวจข้อมูลด่วนตามพื้นที่ (Quick Filter):</span>
+                                </div>
+                                <div class="explore-chips">
+                                    <button type="button" class="explore-chip" onclick="window.filterProvinceQuick('all')">🌐 ทั้งหมด</button>
+                                    <button type="button" class="explore-chip" onclick="window.filterProvinceQuick('ศรีสะเกษ')">📍 ศรีสะเกษ</button>
+                                    <button type="button" class="explore-chip" onclick="window.filterProvinceQuick('อุบลราชธานี')">📍 อุบลราชธานี</button>
+                                    <button type="button" class="explore-chip" onclick="window.filterProvinceQuick('อำนาจเจริญ')">📍 อำนาจเจริญ</button>
+                                    <button type="button" class="explore-chip" onclick="window.filterProvinceQuick('มุกดาหาร')">📍 มุกดาหาร</button>
+                                    <button type="button" class="explore-chip" onclick="window.filterProvinceQuick('ยโสธร')">📍 ยโสธร</button>
+                                </div>
                             </div>
                         </div>
                         <div class="chart-container" style="grid-column: span 1;">
                             <div class="chart-header">
                                 <h4><i class="fa-solid fa-chart-pie"></i> สัดส่วนผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
+                                <div class="chart-header-actions">
+                                    <button type="button" class="outcrowd-dots-btn" title="ตัวเลือกเพิ่มเติม"><i class="fa-solid fa-ellipsis"></i></button>
+                                </div>
                             </div>
                             <div class="chart-body small-chart">
                                 <canvas id="resultRatioChart"></canvas>
+                            </div>
+                            <!-- Outcrowd Signature Insights Card -->
+                            <div class="outcrowd-insights-card">
+                                <div class="insights-header">
+                                    <span class="insights-badge"><i class="fa-solid fa-lightbulb"></i> Insights</span>
+                                    <span class="insights-year">2026</span>
+                                </div>
+                                <div class="insights-body">
+                                    <div class="insights-number" id="dash-insight-rate">100%</div>
+                                    <div class="insights-label">มาตรฐานความปลอดภัยอาหาร</div>
+                                    <div class="insights-sub">ภาพรวมการตรวจวิเคราะห์ เขตสุขภาพที่ 10</div>
+                                </div>
                             </div>
                         </div>
                         <div class="chart-container large-chart">
                             <div class="chart-header">
                                 <h4><i class="fa-solid fa-list-check"></i> จำนวนตัวอย่างแยกตามรายการตรวจวิเคราะห์</h4>
+                                <div class="chart-header-actions">
+                                    <button type="button" class="outcrowd-dots-btn" title="ตัวเลือกเพิ่มเติม"><i class="fa-solid fa-ellipsis"></i></button>
+                                </div>
                             </div>
                             <div class="chart-body">
                                 <canvas id="formTypeChart"></canvas>
@@ -522,10 +587,13 @@
                         <div class="chart-container large-chart" style="grid-column: 1 / -1; margin-top: 5px;">
                             <div class="chart-header">
                                 <h4><i class="fa-solid fa-flask"></i> สัดส่วนผลการตรวจวิเคราะห์แยกตามรายสาร (10 รายการ)</h4>
+                                <div class="chart-header-actions">
+                                    <button type="button" class="outcrowd-dots-btn" title="ตัวเลือกเพิ่มเติม"><i class="fa-solid fa-ellipsis"></i></button>
+                                </div>
                             </div>
-                            <div style="padding: 20px;">
+                            <div style="padding: 10px 0;">
                                 <div id="substance-charts-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%;">
-                                    <!-- 9 charts will be dynamically generated here -->
+                                    <!-- 10 charts will be dynamically generated here -->
                                 </div>
                             </div>
                         </div>
@@ -1701,7 +1769,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1791952500000"></script>
+    <script src="charts-dash.js?v=1791953600000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
