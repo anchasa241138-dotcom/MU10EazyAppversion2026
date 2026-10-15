@@ -1027,6 +1027,9 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
   color: #0f172a !important;
   padding: 28px 32px !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
 }
 
 #view-sample-record .form-editor-header {
@@ -1304,14 +1307,75 @@ body {
 }
 
 #view-sample-record .responsive-table table thead tr {
-  background: #f8fafc !important;
-  color: #1e293b !important;
-  border-bottom: 2px solid #e2e8f0 !important;
+  background: #0f274e !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.35) !important;
 }
 
-#view-sample-record .responsive-table table thead th {
-  color: #1e293b !important;
+#view-sample-record .responsive-table table thead th,
+#view-sample-record #savedRecordsContainerWrapper table thead th,
+#savedRecordsContainerWrapper table thead th {
+  background: #0f274e !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0.2px !important;
+  padding: 14px 16px !important;
+  border: none !important;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.35) !important;
+}
+
+#view-sample-record .responsive-table {
+  width: 100% !important;
+  overflow-x: auto !important;
+  border-radius: 16px !important;
+}
+
+#view-sample-record .responsive-table table {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: auto !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+#view-sample-record .responsive-table table th:nth-child(1),
+#view-sample-record .responsive-table table td:nth-child(1) {
+  width: 15% !important;
+  white-space: nowrap !important;
+}
+
+#view-sample-record .responsive-table table th:nth-child(2),
+#view-sample-record .responsive-table table td:nth-child(2) {
+  width: 11% !important;
+  white-space: nowrap !important;
+}
+
+#view-sample-record .responsive-table table th:nth-child(3),
+#view-sample-record .responsive-table table td:nth-child(3) {
+  width: 28% !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+#view-sample-record .responsive-table table th:nth-child(4),
+#view-sample-record .responsive-table table td:nth-child(4) {
+  width: 20% !important;
+  white-space: normal !important;
+}
+
+#view-sample-record .responsive-table table th:nth-child(5),
+#view-sample-record .responsive-table table td:nth-child(5) {
+  width: 12% !important;
+  white-space: nowrap !important;
+}
+
+#view-sample-record .responsive-table table th:nth-child(6),
+#view-sample-record .responsive-table table td:nth-child(6) {
+  width: 14% !important;
+  min-width: 200px !important;
+  white-space: nowrap !important;
+  text-align: center !important;
 }
 
 #view-sample-record .responsive-table table tbody tr {
