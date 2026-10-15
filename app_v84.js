@@ -447,8 +447,34 @@ const app = {
         });
 
         // Export
-        document.getElementById('btnFilterApply').addEventListener('click', this.renderExportTable.bind(this));
-        document.getElementById('btnDownloadExcel').addEventListener('click', this.downloadExcel.bind(this));
+        const btnFilterApply = document.getElementById('btnFilterApply');
+        if (btnFilterApply) {
+            btnFilterApply.addEventListener('click', this.renderExportTable.bind(this));
+        }
+        const btnDownloadExcel = document.getElementById('btnDownloadExcel');
+        if (btnDownloadExcel) {
+            btnDownloadExcel.addEventListener('click', this.downloadExcel.bind(this));
+        }
+        const btnFilterReset = document.getElementById('btnFilterReset');
+        if (btnFilterReset) {
+            btnFilterReset.addEventListener('click', () => {
+                const p = document.getElementById('filter-province');
+                const f = document.getElementById('filter-form-type');
+                const s = document.getElementById('filter-status');
+                const sd = document.getElementById('filter-start-date');
+                const ed = document.getElementById('filter-end-date');
+                if (p) p.value = 'ALL';
+                if (f) f.value = 'ALL';
+                if (s) s.value = 'ALL';
+                if (sd) sd.value = '';
+                if (ed) ed.value = '';
+                this.renderExportTable();
+            });
+        }
+        ['filter-province', 'filter-form-type', 'filter-status', 'filter-start-date', 'filter-end-date'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', this.renderExportTable.bind(this));
+        });
         
         // Live Search Listeners
         document.getElementById('searchVerifyTable').addEventListener('input', this.renderVerifyTable.bind(this));
