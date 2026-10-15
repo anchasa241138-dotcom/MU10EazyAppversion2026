@@ -1965,14 +1965,14 @@ document.getElementById('formNameTitle').innerText = title;
             tr.innerHTML = `
                 <td style="padding: 12px 15px; font-weight: bold; color: var(--primary-color);">${s.ref_id}</td>
                 <td style="padding: 12px 15px;"><span class="badge" style="background-color: var(--primary-dark); color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${s.form_type}</span></td>
-                <td style="padding: 12px 15px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${sampleDesc}</td>
+                <td style="padding: 12px 15px; font-size: 13px; line-height: 1.4; word-break: break-word;">${sampleDesc}</td>
                 <td style="padding: 12px 15px; font-size: 12px; line-height: 1.4;">
                    <div><b>สถานที่:</b> ${s.location_name || '-'}</div>
                    <div><b>ผู้เก็บ:</b> ${s.collector_name || '-'}</div>
                 </td>
                 <td style="padding: 12px 15px; font-size: 12px; color: #666;">${dateStr}</td>
                 <td style="padding: 12px 15px; text-align: center;">
-                    <div style="display: flex; gap: 8px; justify-content: center;">
+                    <div style="display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: nowrap;">
                         ${actionButtons}
                         <button class="btn btn-sm btn-pdf" onclick="app.downloadSubmissionPDFDirect('${s.ref_id}')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; background-color: #059669; border-color: #047857; color: #ffffff;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                     </div>
