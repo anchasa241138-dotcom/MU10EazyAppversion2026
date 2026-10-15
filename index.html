@@ -338,7 +338,7 @@
         .reg-auth-block .required { color: #fca5a5 !important; }
 
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792049755953">
+    <link rel="stylesheet" href="enhancements.css?v=1792055279531">
 </head>
 <body>
     <!-- App Container -->
@@ -1227,64 +1227,94 @@
                     </div>
 
                     <div id="excel-download-content-wrapper" class="hidden">
-                        <div class="filter-panel">
-                            <h3><i class="fa-solid fa-filter"></i> ตัวกรองข้อมูลเพื่อดาวน์โหลด</h3>
-                            <form id="excelFilterForm" class="filter-grid">
-                                <div class="form-group">
-                                    <label for="filter-province">จังหวัดที่เก็บตัวอย่าง</label>
-                                    <select id="filter-province" name="filter_province">
-                                        <option value="ALL">ทุกจังหวัด</option>
-                                        <option value="ศรีสะเกษ">ศรีสะเกษ</option>
-                                        <option value="อุบลราชธานี">อุบลราชธานี</option>
-                                        <option value="อำนาจเจริญ">อำนาจเจริญ</option>
-                                        <option value="มุกดาหาร">มุกดาหาร</option>
-                                        <option value="ยโสธร">ยโสธร</option>
-                                    </select>
+                        <div class="excel-filter-card">
+                            <div class="excel-filter-header">
+                                <div class="excel-filter-title">
+                                    <span class="excel-filter-badge"><i class="fa-solid fa-sliders"></i></span>
+                                    <div>
+                                        <h3>ตัวกรองข้อมูลเพื่อดาวน์โหลด Excel</h3>
+                                        <p>เลือกเงื่อนไขเพื่อกรองและค้นหารายการตัวอย่างที่ต้องการส่งออกรายงาน</p>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="filter-form-type">ประเภทฟอร์มบันทึก</label>
-                                    <select id="filter-form-type" name="filter_form_type">
-                                        <option value="ALL">ทุกฟอร์มบันทึก</option>
-                                        <option value="MU.10-001">MU.10-001 ผักและผลไม้</option>
-                                        <option value="MU.10-002">MU.10-002 สารปนเปื้อน 5 ชนิด</option>
-                                        <option value="MU.10-003">MU.10-003 น้ำมันทอดซ้ำ (Ebro/Testo)</option>
-                                        <option value="MU.10-004">MU.10-004 น้ำมันทอดซ้ำ (Test Kit)</option>
-                                        <option value="MU.10-005">MU.10-005 เกลือบริโภค</option>
-                                        <option value="MU.10-006">MU.10-006 ตู้น้ำดื่มหยอดเหรียญ</option>
-                                        <option value="MU.10-007">MU.10-007 เชื้อโคลิฟอร์มขั้นต้น (SI-2)</option>
-                                        <option value="MU.10-008">MU.10-008 ตรวจฉลากอาหาร</option>
-                                    </select>
+                                <div class="excel-filter-actions-top">
+                                    <button type="button" class="btn-filter-reset" id="btnFilterReset" title="รีเซ็ตตัวกรองทั้งหมด">
+                                        <i class="fa-solid fa-arrow-rotate-left"></i> ล้างตัวกรอง
+                                    </button>
                                 </div>
-                                <div class="form-group">
-                                    <label for="filter-status">สถานะตัวอย่าง</label>
-                                    <select id="filter-status" name="filter_status">
-                                        <option value="ALL">ทุกสถานะ</option>
-                                        <option value="registered">ส่งตัวอย่างแล้ว (รอตรวจรับ)</option>
-                                        <option value="accepted">รับตัวอย่างแล้ว (กำลังวิเคราะห์)</option>
-                                        <option value="summarized">วิเคราะห์เสร็จสิ้น (รอรับรองผล)</option>
-                                        <option value="approved">อนุมัติผลวิเคราะห์เรียบร้อย</option>
-                                        <option value="rejected">ปฏิเสธการรับตัวอย่าง</option>
-                                    </select>
+                            </div>
+                            <form id="excelFilterForm" class="excel-filter-grid">
+                                <div class="excel-filter-group">
+                                    <label for="filter-province"><i class="fa-solid fa-map-location-dot"></i> จังหวัดที่เก็บตัวอย่าง</label>
+                                    <div class="excel-input-wrapper">
+                                        <select id="filter-province" name="filter_province">
+                                            <option value="ALL">ทุกจังหวัด</option>
+                                            <option value="ศรีสะเกษ">ศรีสะเกษ</option>
+                                            <option value="อุบลราชธานี">อุบลราชธานี</option>
+                                            <option value="อำนาจเจริญ">อำนาจเจริญ</option>
+                                            <option value="มุกดาหาร">มุกดาหาร</option>
+                                            <option value="ยโสธร">ยโสธร</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="filter-start-date">ตั้งแต่วันที่</label>
-                                    <input type="date" id="filter-start-date" name="filter_start_date">
+                                <div class="excel-filter-group">
+                                    <label for="filter-form-type"><i class="fa-solid fa-file-waveform"></i> ประเภทฟอร์มบันทึก</label>
+                                    <div class="excel-input-wrapper">
+                                        <select id="filter-form-type" name="filter_form_type">
+                                            <option value="ALL">ทุกฟอร์มบันทึก</option>
+                                            <option value="MU.10-001">MU.10-001 ผักและผลไม้</option>
+                                            <option value="MU.10-002">MU.10-002 สารปนเปื้อน 5 ชนิด</option>
+                                            <option value="MU.10-003">MU.10-003 น้ำมันทอดซ้ำ (Ebro/Testo)</option>
+                                            <option value="MU.10-004">MU.10-004 น้ำมันทอดซ้ำ (Test Kit)</option>
+                                            <option value="MU.10-005">MU.10-005 เกลือบริโภค</option>
+                                            <option value="MU.10-006">MU.10-006 ตู้น้ำดื่มหยอดเหรียญ</option>
+                                            <option value="MU.10-007">MU.10-007 เชื้อโคลิฟอร์มขั้นต้น (SI-2)</option>
+                                            <option value="MU.10-008">MU.10-008 ตรวจฉลากอาหาร</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="filter-end-date">ถึงวันที่</label>
-                                    <input type="date" id="filter-end-date" name="filter_end_date">
+                                <div class="excel-filter-group">
+                                    <label for="filter-status"><i class="fa-solid fa-circle-check"></i> สถานะตัวอย่าง</label>
+                                    <div class="excel-input-wrapper">
+                                        <select id="filter-status" name="filter_status">
+                                            <option value="ALL">ทุกสถานะ</option>
+                                            <option value="registered">ส่งตัวอย่างแล้ว (รอตรวจรับ)</option>
+                                            <option value="accepted">รับตัวอย่างแล้ว (กำลังวิเคราะห์)</option>
+                                            <option value="summarized">วิเคราะห์เสร็จสิ้น (รอรับรองผล)</option>
+                                            <option value="approved">อนุมัติผลวิเคราะห์เรียบร้อย</option>
+                                            <option value="rejected">ปฏิเสธการรับตัวอย่าง</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group flex-end">
-                                    <button type="button" class="btn btn-secondary" id="btnFilterApply"><i class="fa-solid fa-magnifying-glass"></i> ค้นหาตัวอย่าง</button>
+                                <div class="excel-filter-group">
+                                    <label for="filter-start-date"><i class="fa-regular fa-calendar-days"></i> ตั้งแต่วันที่</label>
+                                    <div class="excel-input-wrapper">
+                                        <input type="date" id="filter-start-date" name="filter_start_date">
+                                    </div>
+                                </div>
+                                <div class="excel-filter-group">
+                                    <label for="filter-end-date"><i class="fa-regular fa-calendar-check"></i> ถึงวันที่</label>
+                                    <div class="excel-input-wrapper">
+                                        <input type="date" id="filter-end-date" name="filter_end_date">
+                                    </div>
+                                </div>
+                                <div class="excel-filter-group excel-filter-submit">
+                                    <button type="button" class="btn btn-primary btn-excel-search" id="btnFilterApply">
+                                        <i class="fa-solid fa-magnifying-glass"></i> ค้นหาตัวอย่าง
+                                    </button>
                                 </div>
                             </form>
                         </div>
 
                         <!-- Filtered Samples Table -->
                         <div class="table-container margin-top">
-                            <div class="table-header-bar">
-                                <h4>รายการตัวอย่างที่ค้นหาพบ (<span id="filtered-count">0</span> รายการ)</h4>
-                                <button class="btn btn-success" id="btnDownloadExcel"><i class="fa-solid fa-file-excel"></i> ดาวน์โหลดตาราง Excel</button>
+                            <div class="table-header-bar excel-table-header">
+                                <div class="excel-count-badge">
+                                    <i class="fa-solid fa-table-list"></i> รายการตัวอย่างที่ค้นพบ
+                                    <span class="count-pill" id="filtered-count">0</span> รายการ
+                                </div>
+                                <button class="btn btn-success btn-download-excel-glow" id="btnDownloadExcel">
+                                    <i class="fa-solid fa-file-excel"></i> ดาวน์โหลดตาราง Excel
+                                </button>
                             </div>
                             <div class="responsive-table">
                                 <table class="modern-table" id="exportTable">
@@ -1897,6 +1927,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v84.js?v=1792049755953"></script>
+    <script src="app_v84.js?v=1792055279531"></script>
 </body>
 </html>
