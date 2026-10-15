@@ -1964,7 +1964,7 @@ document.getElementById('formNameTitle').innerText = title;
             tr.style.borderBottom = '1px solid var(--border-color)';
             tr.innerHTML = `
                 <td style="padding: 12px 15px; font-weight: bold; color: var(--primary-color);">${s.ref_id}</td>
-                <td style="padding: 12px 15px;"><span class="badge" style="background-color: var(--primary-dark); color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;">${s.form_type}</span></td>
+                <td style="padding: 12px 15px;"><span class="badge form-type-badge" style="background-color: #1e3a8a; color: #ffffff; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-block; box-shadow: 0 2px 6px rgba(30,58,138,0.25);">${s.form_type}</span></td>
                 <td style="padding: 12px 15px; font-size: 13px; line-height: 1.4; word-break: break-word;">${sampleDesc}</td>
                 <td style="padding: 12px 15px; font-size: 12px; line-height: 1.4;">
                    <div><b>สถานที่:</b> ${s.location_name || '-'}</div>
