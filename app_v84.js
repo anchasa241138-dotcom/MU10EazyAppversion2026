@@ -614,17 +614,29 @@ const app = {
         const startDateEl = document.getElementById('dashStartDate');
         const endDateEl = document.getElementById('dashEndDate');
         if (startDateEl && startDateEl.value) {
-            visible = visible.filter(s => s.collection_date && s.collection_date >= startDateEl.value);
+            visible = visible.filter(s => {
+                const d = s.collection_date || s.sampling_date || (s.created_at ? s.created_at.split('T')[0] : '');
+                return d && d >= startDateEl.value;
+            });
         }
         if (endDateEl && endDateEl.value) {
-            visible = visible.filter(s => s.collection_date && s.collection_date <= endDateEl.value);
+            visible = visible.filter(s => {
+                const d = s.collection_date || s.sampling_date || (s.created_at ? s.created_at.split('T')[0] : '');
+                return d && d <= endDateEl.value;
+            });
         }
+                const subFilterEl = document.getElementById('dashSubstanceFilter');
+        const targetSubstance = subFilterEl ? subFilterEl.value : 'all';
+
         let cStats = { total: 0, pending: 0, analyzing: 0, completed: 0, passed: 0, failed: 0 };
         visible.forEach(s => {
             let idx = 1;
             let hasItems = false;
             
             const processItem = (index) => {
+                if (typeof window.itemMatchesSubstance === 'function') {
+                    if (!window.itemMatchesSubstance(s, index, targetSubstance)) return;
+                }
                 hasItems = true;
                 cStats.total++;
                 
@@ -632,15 +644,20 @@ const app = {
                 else if (s.status === 'accepted' || s.status === 'analyzed' || s.status === 'summarized' || s.status === 'analyst_signed') cStats.analyzing++;
                 else if (s.status === 'approved') {
                     cStats.completed++;
-                    let sum = (index ? (s['analysis_summary_outcome_' + index] || s['analysis_summary_' + index] || s['analysis_coliform_summary_' + index] || s['label_summary_' + index]) : '')
-                            || s.analysis_summary_outcome 
-                            || s.analysis_summary 
-                            || '';
-                    if (!sum && s.form_type === 'MU.10-002' && index) {
-                        const keys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
-                        const itemSums = keys.map(k => s['analysis_summary_' + index + '_' + k]).filter(Boolean);
-                        if (itemSums.some(x => x.includes('ไม่ผ่าน'))) sum = 'ไม่ผ่าน';
-                        else if (itemSums.length > 0) sum = 'ผ่าน';
+                    let sum = '';
+                    if (typeof window.getItemSubstanceSummary === 'function') {
+                        sum = window.getItemSubstanceSummary(s, index, targetSubstance) || '';
+                    } else {
+                        sum = (index ? (s['analysis_summary_outcome_' + index] || s['analysis_summary_' + index] || s['analysis_coliform_summary_' + index] || s['label_summary_' + index]) : '')
+                                || s.analysis_summary_outcome 
+                                || s.analysis_summary 
+                                || '';
+                        if (!sum && s.form_type === 'MU.10-002' && index) {
+                            const keys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
+                            const itemSums = keys.map(k => s['analysis_summary_' + index + '_' + k]).filter(Boolean);
+                            if (itemSums.some(x => x.includes('ไม่ผ่าน'))) sum = 'ไม่ผ่าน';
+                            else if (itemSums.length > 0) sum = 'ผ่าน';
+                        }
                     }
                     if (sum.includes('ไม่ผ่าน')) cStats.failed++;
                     else if (sum.includes('ผ่าน')) cStats.passed++;
