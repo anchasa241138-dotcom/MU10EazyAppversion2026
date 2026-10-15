@@ -219,6 +219,134 @@ function initDashboardCharts() {
 }
 
 // Update charts with actual data from database
+
+// Substance dictionary and helper matching functions
+window.substanceDictionary = {
+    'all': { label: 'สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
+    'pesticide': { label: 'ยาฆ่าแมลง', form: 'MU.10-001', icon: 'fa-leaf' },
+    'borax': { label: 'สารบอแรกซ์', form: 'MU.10-002', icon: 'fa-drumstick-bite' },
+    'formalin': { label: 'สารฟอร์มาลิน', form: 'MU.10-002', icon: 'fa-fish' },
+    'bleach': { label: 'สารฟอกขาว', form: 'MU.10-002', icon: 'fa-wand-magic-sparkles' },
+    'salicylic': { label: 'สารกันรา', form: 'MU.10-002', icon: 'fa-seedling' },
+    'agonist': { label: 'สารเร่งเนื้อแดง', form: 'MU.10-002', icon: 'fa-bacon' },
+    'polar': { label: 'สารโพลาร์ในน้ำมันทอดอาหาร', form: 'MU.10-003, 004', icon: 'fa-fire' },
+    'coliformFood': { label: 'โคลิฟอร์มในอาหาร', form: 'MU.10-007', icon: 'fa-bowl-food' },
+    'coliformWater': { label: 'โคลิฟอร์มในน้ำ', form: 'MU.10-006', icon: 'fa-droplet' },
+    'foodLabel': { label: 'ฉลากอาหาร', form: 'MU.10-008', icon: 'fa-tag' }
+};
+
+window.itemMatchesSubstance = function(s, idx, targetSubstance) {
+    if (!targetSubstance || targetSubstance === 'all') return true;
+    if (targetSubstance === 'pesticide') return s.form_type === 'MU.10-001';
+    if (targetSubstance === 'polar') return s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004';
+    if (targetSubstance === 'coliformWater') return s.form_type === 'MU.10-006';
+    if (targetSubstance === 'coliformFood') return s.form_type === 'MU.10-007';
+    if (targetSubstance === 'foodLabel') return s.form_type === 'MU.10-008';
+    
+    if (s.form_type === 'MU.10-002') {
+        const getVal = (key) => idx ? (s[key + '_' + idx] !== undefined ? s[key + '_' + idx] : s[key]) : s[key];
+        if (getVal('test_' + targetSubstance)) return true;
+        const hasSpecificResult = (idx ? s['analysis_summary_' + idx + '_' + targetSubstance] : '') 
+                               || s['analysis_summary_' + targetSubstance]
+                               || (idx ? s['analysis_details_' + idx + '_' + targetSubstance] : '')
+                               || s['analysis_details_' + targetSubstance];
+        if (hasSpecificResult) return true;
+        const textToCheck = [
+            idx ? s['sample_name_' + idx] : s.sample_name,
+            idx ? s['analysis_details_' + idx] : s.analysis_details,
+            s.analysis_details,
+            s.analysis_comment
+        ].filter(Boolean).join(' ');
+        const substanceKeywords = {
+            'borax': ['บอแรกซ์', 'borax'],
+            'formalin': ['ฟอร์มาลิน', 'formalin'],
+            'bleach': ['ฟอกขาว', 'ไฮโดรซัลไฟต์', 'bleach'],
+            'salicylic': ['กันรา', 'ซาลิซิลิค', 'salicylic'],
+            'agonist': ['เร่งเนื้อแดง', 'agonist']
+        };
+        if (substanceKeywords[targetSubstance] && substanceKeywords[targetSubstance].some(w => textToCheck.includes(w))) {
+            return true;
+        }
+        const anyTestSpecified = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].some(k => {
+            if (getVal('test_' + k)) return true;
+            if (substanceKeywords[k].some(w => textToCheck.includes(w))) return true;
+            return false;
+        });
+        if (!anyTestSpecified && targetSubstance === 'borax') return true;
+        return false;
+    }
+    return false;
+};
+
+window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
+    if (!targetSubstance || targetSubstance === 'all') {
+        let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_coliform_summary_' + idx] || s['label_summary_' + idx]) : '')
+                || s.analysis_summary_outcome 
+                || s.analysis_summary 
+                || '';
+        if (!sum && s.form_type === 'MU.10-002' && idx) {
+            const keys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
+            const itemSums = keys.map(k => s['analysis_summary_' + idx + '_' + k]).filter(Boolean);
+            if (itemSums.some(x => x.includes('ไม่ผ่าน'))) sum = 'ไม่ผ่าน';
+            else if (itemSums.length > 0) sum = 'ผ่าน';
+        }
+        return sum;
+    }
+
+    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-007') {
+        return (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
+    }
+
+    if (s.form_type === 'MU.10-008') {
+        return (idx ? (s['label_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.label_summary || s.analysis_summary_outcome || s.analysis_summary || '';
+    }
+
+    if (s.form_type === 'MU.10-006') {
+        const sum = (idx ? (s['analysis_coliform_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
+                 || s.analysis_coliform_summary_1
+                 || s.analysis_coliform_summary
+                 || s.analysis_summary_outcome
+                 || s.analysis_summary
+                 || '';
+        if (sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+        if (sum.includes('ผ่าน')) return 'ผ่าน';
+        const val = idx ? s['analysis_coliform_' + idx] : (s.analysis_coliform_1 !== undefined ? s.analysis_coliform_1 : s.analysis_coliform);
+        if (val !== undefined && val !== null && val !== '') {
+            const num = parseFloat(val);
+            if (!isNaN(num)) return num > 0 ? 'ไม่ผ่าน' : 'ผ่าน';
+        }
+        return sum;
+    }
+
+    if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
+        const rawVal = (idx ? s['polar_value_' + idx] : '') || s.polar_value || s.analysis_interpretation || s.analysis_interpretation_4;
+        const num = parseFloat(rawVal);
+        if (!isNaN(num)) return num <= 25 ? 'ผ่าน' : 'ไม่ผ่าน';
+        return s.analysis_summary || '';
+    }
+
+    if (s.form_type === 'MU.10-002') {
+        const val = (idx ? s['analysis_summary_' + idx + '_' + targetSubstance] : '') || s['analysis_summary_' + targetSubstance];
+        if (val && val.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+        if (val && val.includes('ผ่าน')) return 'ผ่าน';
+        const det = (idx ? s['analysis_detail_results_' + idx + '_' + targetSubstance] : '') || s['analysis_detail_results_' + targetSubstance] || (idx ? s['analysis_details_' + idx + '_' + targetSubstance] : '') || s['analysis_details_' + targetSubstance];
+        if (det && det.includes('ไม่พบ')) return 'ผ่าน';
+        if (det && det.includes('พบ')) return 'ไม่ผ่าน';
+        
+        const textToCheck = [
+            idx ? s['sample_name_' + idx] : s.sample_name,
+            idx ? s['analysis_details_' + idx] : s.analysis_details,
+            s.analysis_details,
+            s.analysis_comment
+        ].filter(Boolean).join(' ');
+        if (textToCheck.includes('ไม่พบ')) return 'ผ่าน';
+        if (textToCheck.includes('พบ')) return 'ไม่ผ่าน';
+        return s.analysis_summary || (s.status === 'approved' ? 'ผ่าน' : '');
+    }
+
+    return '';
+};
+
 function updateDashboardCharts(samples) {
     if (typeof Chart === 'undefined') return;
     if (!provinceChartInstance || !resultRatioChartInstance || !formTypeChartInstance) {
@@ -230,21 +358,65 @@ function updateDashboardCharts(samples) {
     if (filterEl && filterEl.value !== 'all') {
         samples = samples.filter(s => s.province === filterEl.value);
     }
+
+    const subFilterEl = document.getElementById('dashSubstanceFilter');
+    const targetSubstance = subFilterEl ? subFilterEl.value : 'all';
     
+    // Sync active style on Province Quick Filter chips
+    const curProv = filterEl ? filterEl.value : 'all';
+    document.querySelectorAll('.outcrowd-explore-card:not(#substance-explore-chips) .explore-chips:not(#substance-explore-chips) .explore-chip').forEach(chip => {
+        if ((curProv === 'all' && chip.innerText.includes('ทั้งหมด')) || (curProv !== 'all' && chip.innerText.includes(curProv))) {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
+
+    // Sync active style on Substance Quick Filter chips
+    const curSub = subFilterEl ? subFilterEl.value : 'all';
+    document.querySelectorAll('#substance-explore-chips .explore-chip').forEach(chip => {
+        if ((curSub === 'all' && chip.innerText.includes('ทั้งหมด')) || (curSub !== 'all' && chip.getAttribute('onclick') && chip.getAttribute('onclick').includes(curSub))) {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
+
     const startDateEl = document.getElementById('dashStartDate');
     const endDateEl = document.getElementById('dashEndDate');
     if (startDateEl && startDateEl.value) {
-        samples = samples.filter(s => s.collection_date && s.collection_date >= startDateEl.value);
+        samples = samples.filter(s => {
+            const d = s.collection_date || s.sampling_date || (s.created_at ? s.created_at.split('T')[0] : '');
+            return d && d >= startDateEl.value;
+        });
     }
     if (endDateEl && endDateEl.value) {
-        samples = samples.filter(s => s.collection_date && s.collection_date <= endDateEl.value);
+        samples = samples.filter(s => {
+            const d = s.collection_date || s.sampling_date || (s.created_at ? s.created_at.split('T')[0] : '');
+            return d && d <= endDateEl.value;
+        });
     }
 
-    // 1. Calculate Province distribution
+// Substance Filter (initialized above)
+
+    // 1. Calculate Province distribution (Count by items matching targetSubstance)
     const provinces = ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'];
-    const provinceCounts = provinces.map(prov => 
-        samples.filter(s => s.province === prov).length
-    );
+    const provinceCounts = provinces.map(prov => {
+        let count = 0;
+        samples.filter(s => s.province === prov).forEach(s => {
+            let idx = 1;
+            let hasItems = false;
+            while (s['sample_name_' + idx] !== undefined) {
+                hasItems = true;
+                if (window.itemMatchesSubstance(s, idx, targetSubstance)) count++;
+                idx++;
+            }
+            if (!hasItems && s.sample_name) {
+                if (window.itemMatchesSubstance(s, null, targetSubstance)) count++;
+            }
+        });
+        return count;
+    });
 
     provinceChartInstance.data.datasets[0].data = provinceCounts;
     provinceChartInstance.update();
@@ -256,44 +428,36 @@ function updateDashboardCharts(samples) {
         if (el) el.innerText = provinceCounts[i] || 0;
     });
 
-    // 2. Calculate Outcome ratios
-    // Outcomes: Pass, Fail, Under Analysis (Registered/Accepted/Analyzing)
+    // 2. Calculate Outcome ratios (Count by items matching targetSubstance)
     let passed = 0;
     let failed = 0;
     let pending = 0;
 
     samples.forEach(s => {
         if (s.status === 'rejected') return;
-        if (s.status !== 'approved') {
-            pending++;
-            return;
-        }
+        
+        let idx = 1;
+        let hasItems = false;
 
-        // Status is approved
-        const sum = (s.analysis_summary_outcome || s.analysis_summary || '').toString().trim();
-        if (sum.includes('ไม่ผ่าน')) {
-            failed++;
-        } else if (sum.includes('ผ่าน')) {
-            passed++;
-        } else {
-            // Check item-level summaries
-            let hasFail = false;
-            let hasPass = false;
-            let idx = 1;
-            while (s['sample_name_' + idx] !== undefined) {
-                const itemSum = (
-                    s['analysis_summary_outcome_' + idx] || 
-                    s['analysis_summary_' + idx] || 
-                    s['analysis_coliform_summary_' + idx] || 
-                    s['label_summary_' + idx] || ''
-                ).toString();
-                if (itemSum.includes('ไม่ผ่าน')) hasFail = true;
-                else if (itemSum.includes('ผ่าน')) hasPass = true;
-                idx++;
+        const processOutcomeItem = (index) => {
+            if (!window.itemMatchesSubstance(s, index, targetSubstance)) return;
+            hasItems = true;
+            if (s.status === 'registered' || s.status === 'accepted' || s.status === 'analyzed' || s.status === 'summarized' || s.status === 'analyst_signed') {
+                pending++;
+            } else if (s.status === 'approved') {
+                let sum = window.getItemSubstanceSummary(s, index, targetSubstance);
+                if (sum.includes('ไม่ผ่าน')) failed++;
+                else if (sum.includes('ผ่าน')) passed++;
+                else passed++;
             }
-            if (hasFail) failed++;
-            else if (hasPass) passed++;
-            else passed++;
+        };
+
+        while (s['sample_name_' + idx] !== undefined) {
+            processOutcomeItem(idx);
+            idx++;
+        }
+        if (!hasItems && s.sample_name) {
+            processOutcomeItem(null);
         }
     });
 
@@ -315,10 +479,14 @@ function updateDashboardCharts(samples) {
         const passPercent = (passed + failed) > 0 ? ((passed / (passed + failed)) * 100).toFixed(0) : 100;
         insightRateEl.innerText = `${passPercent}%`;
     }
-
-    // 3. Calculate Form type distribution
-    
-    
+    const insightSubEl = document.querySelector('.outcrowd-insights-card .insights-sub');
+    if (insightSubEl) {
+        if (targetSubstance !== 'all' && window.substanceDictionary[targetSubstance]) {
+            insightSubEl.innerText = 'อัตราผ่านเกณฑ์: ' + window.substanceDictionary[targetSubstance].label;
+        } else {
+            insightSubEl.innerText = 'ภาพรวมการตรวจวิเคราะห์ เขตสุขภาพที่ 10';
+        }
+    }
     // Call Substance Charts Update
     if (typeof updateSubstanceCharts === 'function') {
         updateSubstanceCharts(samples);
@@ -444,8 +612,45 @@ function updateSubstanceCharts(samples) {
             if (!matchedTest) {
                 ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
                     const sk = getSummary(k);
-                    if (sk) inc(k, sk);
+                    if (sk) {
+                        matchedTest = true;
+                        inc(k, sk);
+                    }
                 });
+            }
+            if (!matchedTest) {
+                const textToCheck = [
+                    idx ? s['sample_name_' + idx] : s.sample_name,
+                    idx ? s['analysis_details_' + idx] : s.analysis_details,
+                    s.analysis_details,
+                    s.analysis_comment,
+                    s.analysis_summary
+                ].filter(Boolean).join(' ');
+
+                const substanceKeywords = {
+                    'borax': ['บอแรกซ์', 'borax'],
+                    'formalin': ['ฟอร์มาลิน', 'formalin'],
+                    'bleach': ['ฟอกขาว', 'ไฮโดรซัลไฟต์', 'bleach'],
+                    'salicylic': ['กันรา', 'ซาลิซิลิค', 'salicylic'],
+                    'agonist': ['เร่งเนื้อแดง', 'agonist']
+                };
+
+                for (const [k, words] of Object.entries(substanceKeywords)) {
+                    if (words.some(w => textToCheck.includes(w))) {
+                        matchedTest = true;
+                        let outcome = getSingleSummary();
+                        if (!outcome) {
+                            if (textToCheck.includes('ไม่พบ')) outcome = 'ผ่าน';
+                            else if (textToCheck.includes('พบ')) outcome = 'ไม่ผ่าน';
+                            else outcome = s.status === 'approved' ? 'ผ่าน' : null;
+                        }
+                        inc(k, outcome);
+                        break;
+                    }
+                }
+                if (!matchedTest && s.status === 'approved') {
+                    inc('borax', getSingleSummary());
+                }
             }
         } else if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
             const rawVal = getVal('polar_value') || getVal('analysis_interpretation') || getVal('analysis_interpretation_4');
@@ -487,6 +692,9 @@ function updateSubstanceCharts(samples) {
 
     const grid = document.getElementById('substance-charts-grid');
     if (!grid) return;
+
+    const subFilterEl = document.getElementById('dashSubstanceFilter');
+    const targetSubstance = subFilterEl ? subFilterEl.value : 'all';
     
     if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
         const passedCounts = Object.values(stats).map(s => s.pass);
@@ -503,7 +711,7 @@ function updateSubstanceCharts(samples) {
 
     for (const key in stats) {
         const item = stats[key];
-            const col = document.createElement('div');
+            const col = document.createElement('div'); col.id = 'substance-col-' + key;
             col.style.cssText = 'background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
             col.innerHTML = `
                   <h6 style="margin: 0 0 12px 0; font-weight: 700; color: #0f172a; text-align: center; font-size: 15px;">${item.label}</h6>
@@ -519,6 +727,21 @@ function updateSubstanceCharts(samples) {
 
     // Now update charts
     for (const key in stats) {
+        const colEl = document.getElementById('substance-col-' + key);
+        if (colEl) {
+            if (targetSubstance !== 'all' && targetSubstance !== key) {
+                colEl.style.display = 'none';
+            } else {
+                colEl.style.display = 'flex';
+                if (targetSubstance === key) {
+                    colEl.style.border = '2px solid #2563eb';
+                    colEl.style.boxShadow = '0 8px 24px rgba(37, 99, 235, 0.18)';
+                } else {
+                    colEl.style.border = '1px solid #e2e8f0';
+                    colEl.style.boxShadow = '0 4px 16px rgba(0,0,0,0.04)';
+                }
+            }
+        }
         const item = stats[key];
         const ctx = document.getElementById('substance-chart-' + key);
         if(!ctx) continue;
@@ -633,6 +856,248 @@ function updateSubstanceCharts(samples) {
                 }
             });
         }
+    }
+    // Call update safety rankings
+    if (typeof updateSafetyRankings === 'function') {
+        updateSafetyRankings(stats);
+    }
+}
+
+// Update TOP 3 Safest & TOP 3 Least Safe Rankings
+function updateSafetyRankings(stats) {
+    const safeContainer = document.getElementById('top-safe-list');
+    const dangerContainer = document.getElementById('top-danger-list');
+    if (!safeContainer || !dangerContainer) return;
+
+    const subFilterEl = document.getElementById('dashSubstanceFilter');
+    const targetSubstance = subFilterEl ? subFilterEl.value : 'all';
+
+    // If a specific substance is selected, show Province-level safety ranking for that substance!
+    if (targetSubstance !== 'all') {
+        const subInfo = window.substanceDictionary[targetSubstance] || { label: targetSubstance };
+        const safeTitle = document.querySelector('.safe-panel .ranking-title');
+        const safeSubtitle = document.querySelector('.safe-panel .ranking-subtitle');
+        const dangerTitle = document.querySelector('.danger-panel .ranking-title');
+        const dangerSubtitle = document.querySelector('.danger-panel .ranking-subtitle');
+
+        if (safeTitle) safeTitle.innerText = 'TOP 3 จังหวัดปลอดภัยสูงสุด (' + subInfo.label + ')';
+        if (safeSubtitle) safeSubtitle.innerText = 'ร้อยละการตรวจผ่านเกณฑ์มาตรฐานของ ' + subInfo.label;
+        if (dangerTitle) dangerTitle.innerText = 'TOP 3 จังหวัดที่ต้องเฝ้าระวัง (' + subInfo.label + ')';
+        if (dangerSubtitle) dangerSubtitle.innerText = 'ร้อยละการตรวจไม่ผ่านเกณฑ์ของ ' + subInfo.label;
+
+        // Calculate province stats for this substance
+        const provinces = ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'];
+        const provStats = provinces.map(p => {
+            let total = 0, pass = 0, fail = 0;
+            (app.samples || []).filter(s => s.province === p).forEach(s => {
+                let idx = 1, hasItems = false;
+                const checkProvItem = (index) => {
+                    if (!window.itemMatchesSubstance(s, index, targetSubstance)) return;
+                    hasItems = true;
+                    total++;
+                    if (s.status === 'approved') {
+                        let sum = window.getItemSubstanceSummary(s, index, targetSubstance);
+                        if (sum.includes('ไม่ผ่าน')) fail++;
+                        else pass++;
+                    }
+                };
+                while (s['sample_name_' + idx] !== undefined) { checkProvItem(idx); idx++; }
+                if (!hasItems && s.sample_name) checkProvItem(null);
+            });
+            const passRate = total > 0 ? (pass / total) * 100 : 0;
+            const failRate = total > 0 ? (fail / total) * 100 : 0;
+            return { label: p, total, pass, fail, passRate, failRate };
+        }).filter(p => p.total > 0);
+
+        const topSafeProv = [...provStats].sort((a,b) => b.passRate - a.passRate || b.pass - a.pass).slice(0,3);
+        const topDangerProv = [...provStats].sort((a,b) => b.failRate - a.failRate || b.fail - a.fail).slice(0,3);
+
+        const medalColors = [
+            { bg: 'linear-gradient(135deg, #10b981, #059669)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #06b6d4, #0891b2)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', text: '#ffffff' }
+        ];
+
+        safeContainer.innerHTML = topSafeProv.length === 0 
+            ? '<div class="ranking-empty-state"><i class="fa-solid fa-circle-info"></i> ไม่พบตัวอย่างสารนี้ในพื้นที่</div>'
+            : topSafeProv.map((item, idx) => {
+                const m = medalColors[idx] || medalColors[2];
+                const pPct = item.passRate.toFixed(1);
+                return `
+                    <div class="ranking-item safe-item">
+                        <div class="ranking-badge" style="background: ${m.bg}; color: ${m.text};">${idx + 1}</div>
+                        <div class="ranking-info">
+                            <div class="ranking-item-top">
+                                <span class="ranking-item-name">${item.label}</span>
+                                <span class="ranking-item-pct safe-pct">${pPct}% ผ่าน</span>
+                            </div>
+                            <div class="ranking-bar-track">
+                                <div class="ranking-bar-fill safe-fill" style="width: ${pPct}%;"></div>
+                            </div>
+                            <div class="ranking-item-sub">
+                                <span><i class="fa-solid fa-check" style="color: #059669; margin-right: 4px;"></i>ผ่าน ${item.pass} จาก ${item.total} ตัวอย่าง</span>
+                                <span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+        const dangerColors = [
+            { bg: 'linear-gradient(135deg, #ef4444, #dc2626)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #f97316, #ea580c)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', text: '#ffffff' }
+        ];
+
+        dangerContainer.innerHTML = topDangerProv.length === 0
+            ? '<div class="ranking-empty-state"><i class="fa-solid fa-circle-info"></i> ไม่พบตัวอย่างสารนี้ในพื้นที่</div>'
+            : topDangerProv.map((item, idx) => {
+                const d = dangerColors[idx] || dangerColors[2];
+                const fPct = item.failRate.toFixed(1);
+                const hasFail = item.fail > 0;
+                return `
+                    <div class="ranking-item danger-item">
+                        <div class="ranking-badge" style="background: ${d.bg}; color: ${d.text};">${idx + 1}</div>
+                        <div class="ranking-info">
+                            <div class="ranking-item-top">
+                                <span class="ranking-item-name">${item.label}</span>
+                                <span class="ranking-item-pct ${hasFail ? 'danger-pct' : 'neutral-pct'}">
+                                    ${hasFail ? fPct + '% ไม่ผ่าน' : '0% ไม่ผ่าน (ปลอดภัย)'}
+                                </span>
+                            </div>
+                            <div class="ranking-bar-track">
+                                <div class="ranking-bar-fill ${hasFail ? 'danger-fill' : 'neutral-fill'}" style="width: ${hasFail ? fPct : 0}%;"></div>
+                            </div>
+                            <div class="ranking-item-sub">
+                                <span>
+                                    ${hasFail 
+                                        ? '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right: 4px;"></i>ไม่ผ่าน ' + item.fail + ' จาก ' + item.total + ' ตัวอย่าง' 
+                                        : '<i class="fa-solid fa-shield-check" style="color:#10b981; margin-right: 4px;"></i>ผ่านครบทุกตัวอย่าง (100%)'}
+                                </span>
+                                <span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        return;
+    }
+
+    // Reset default headers when viewing all substances
+    const safeTitle = document.querySelector('.safe-panel .ranking-title');
+    const safeSubtitle = document.querySelector('.safe-panel .ranking-subtitle');
+    const dangerTitle = document.querySelector('.danger-panel .ranking-title');
+    const dangerSubtitle = document.querySelector('.danger-panel .ranking-subtitle');
+    if (safeTitle) safeTitle.innerText = 'TOP 3 สารที่ปลอดภัยที่สุด';
+    if (safeSubtitle) safeSubtitle.innerText = 'ร้อยละการตรวจผ่านเกณฑ์มาตรฐานสูงสุด';
+    if (dangerTitle) dangerTitle.innerText = 'TOP 3 สารที่ปลอดภัยน้อยที่สุด';
+    if (dangerSubtitle) dangerSubtitle.innerText = 'ร้อยละการตรวจไม่ผ่านเกณฑ์ / พบความเสี่ยงสูงสุด';
+
+    
+
+    // Filter active substances that have tested samples
+    const active = Object.keys(stats).map(k => ({ key: k, ...stats[k] })).filter(item => item.total > 0);
+
+    active.forEach(item => {
+        item.passRate = item.total > 0 ? (item.pass / item.total) * 100 : 0;
+        item.failRate = item.total > 0 ? (item.fail / item.total) * 100 : 0;
+    });
+
+    // 1. TOP 3 Safest: Highest passRate desc, then higher pass count, then total
+    const topSafe = [...active].sort((a, b) => b.passRate - a.passRate || b.pass - a.pass || b.total - a.total).slice(0, 3);
+
+    // 2. TOP 3 Least Safe: Highest failRate desc, then higher fail count, then total
+    const topDanger = [...active].sort((a, b) => b.failRate - a.failRate || b.fail - a.fail || b.total - a.total).slice(0, 3);
+
+    // Render Safe List
+    if (topSafe.length === 0) {
+        safeContainer.innerHTML = `
+            <div class="ranking-empty-state">
+                <i class="fa-solid fa-circle-info"></i> ยังไม่มีข้อมูลตัวอย่างที่ตรวจวิเคราะห์
+            </div>
+        `;
+    } else {
+        const medalColors = [
+            { bg: 'linear-gradient(135deg, #10b981, #059669)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #06b6d4, #0891b2)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', text: '#ffffff' }
+        ];
+
+        safeContainer.innerHTML = topSafe.map((item, idx) => {
+            const m = medalColors[idx] || medalColors[2];
+            const pPct = item.passRate.toFixed(1);
+            return `
+                <div class="ranking-item safe-item">
+                    <div class="ranking-badge" style="background: ${m.bg}; color: ${m.text};">
+                        ${idx + 1}
+                    </div>
+                    <div class="ranking-info">
+                        <div class="ranking-item-top">
+                            <span class="ranking-item-name">${item.label}</span>
+                            <span class="ranking-item-pct safe-pct">${pPct}% ผ่าน</span>
+                        </div>
+                        <div class="ranking-bar-track">
+                            <div class="ranking-bar-fill safe-fill" style="width: ${pPct}%;"></div>
+                        </div>
+                        <div class="ranking-item-sub">
+                            <span><i class="fa-solid fa-check" style="color: #059669; margin-right: 4px;"></i>ผ่าน ${item.pass} จาก ${item.total} ตัวอย่าง</span>
+                            <span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Render Danger List
+    if (topDanger.length === 0) {
+        dangerContainer.innerHTML = `
+            <div class="ranking-empty-state">
+                <i class="fa-solid fa-circle-info"></i> ยังไม่มีข้อมูลตัวอย่างที่ตรวจวิเคราะห์
+            </div>
+        `;
+    } else {
+        const dangerColors = [
+            { bg: 'linear-gradient(135deg, #ef4444, #dc2626)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #f97316, #ea580c)', text: '#ffffff' },
+            { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', text: '#ffffff' }
+        ];
+
+        dangerContainer.innerHTML = topDanger.map((item, idx) => {
+            const d = dangerColors[idx] || dangerColors[2];
+            const fPct = item.failRate.toFixed(1);
+            const hasFail = item.fail > 0;
+            return `
+                <div class="ranking-item danger-item">
+                    <div class="ranking-badge" style="background: ${d.bg}; color: ${d.text};">
+                        ${idx + 1}
+                    </div>
+                    <div class="ranking-info">
+                        <div class="ranking-item-top">
+                            <span class="ranking-item-name">${item.label}</span>
+                            <span class="ranking-item-pct ${hasFail ? 'danger-pct' : 'neutral-pct'}">
+                                ${hasFail ? `${fPct}% ไม่ผ่าน` : '0% ไม่ผ่าน (ปลอดภัย)'}
+                            </span>
+                        </div>
+                        <div class="ranking-bar-track">
+                            <div class="ranking-bar-fill ${hasFail ? 'danger-fill' : 'neutral-fill'}" style="width: ${hasFail ? fPct : 0}%;"></div>
+                        </div>
+                        <div class="ranking-item-sub">
+                            <span>
+                                ${hasFail 
+                                    ? `<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right: 4px;"></i>ไม่ผ่าน ${item.fail} จาก ${item.total} ตัวอย่าง` 
+                                    : `<i class="fa-solid fa-shield-check" style="color:#10b981; margin-right: 4px;"></i>ผ่านครบทุกตัวอย่าง (100%)`}
+                            </span>
+                            ${hasFail ? `
+                                <button type="button" class="ranking-view-btn" onclick="openFailedSamplesModal('${item.key}', '${item.label}')">
+                                    <i class="fa-solid fa-magnifying-glass"></i> ดูตัวอย่าง
+                                </button>
+                            ` : `<span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>`}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 }
 
@@ -764,4 +1229,27 @@ window.filterProvinceQuick = function(province) {
         filterEl.value = province;
         filterEl.dispatchEvent(new Event('change'));
     }
+    document.querySelectorAll('.explore-chip').forEach(chip => {
+        if ((province === 'all' && chip.innerText.includes('ทั้งหมด')) || (province !== 'all' && chip.innerText.includes(province))) {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
+};
+
+// Outcrowd Substance Quick Filter Helper
+window.filterSubstanceQuick = function(substanceKey) {
+    const filterEl = document.getElementById('dashSubstanceFilter');
+    if (filterEl) {
+        filterEl.value = substanceKey;
+        filterEl.dispatchEvent(new Event('change'));
+    }
+    document.querySelectorAll('#substance-explore-chips .explore-chip').forEach(chip => {
+        if ((substanceKey === 'all' && chip.innerText.includes('ทั้งหมด')) || (substanceKey !== 'all' && chip.getAttribute('onclick') && chip.getAttribute('onclick').includes(substanceKey))) {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
 };
