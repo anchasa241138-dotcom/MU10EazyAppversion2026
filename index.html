@@ -337,8 +337,31 @@
         .required { color: #f87171 !important; }
         .reg-auth-block .required { color: #fca5a5 !important; }
 
+        /* Direct Badge Styling in Saved Records Table */
+        #view-sample-record .responsive-table table tbody td:nth-child(2) span,
+        #view-sample-record .responsive-table table tbody td:nth-child(2) .badge,
+        #savedRecordsTableBody td:nth-child(2) span,
+        #savedRecordsTableBody td:nth-child(2) .badge,
+        #view-sample-record .form-type-badge,
+        .form-type-badge {
+            background-color: #0f274e !important;
+            background: #0f274e !important;
+            color: #ffffff !important;
+            padding: 5px 12px !important;
+            border-radius: 6px !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            display: inline-block !important;
+            box-shadow: 0 2px 6px rgba(15, 39, 78, 0.3) !important;
+            letter-spacing: 0.3px !important;
+            line-height: 1.4 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792056428199">
+    <link rel="stylesheet" href="enhancements.css?v=1792057347225">
 </head>
 <body>
     <!-- App Container -->
@@ -1927,6 +1950,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v84.js?v=1792056428199"></script>
+    <script src="app_v85.js?v=1792057347225"></script>
 </body>
 </html>
