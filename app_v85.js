@@ -5585,56 +5585,114 @@ document.getElementById('formNameTitle').innerText = title;
 
             const renderMu10007SigSlot = (personKey, defaultRole, roleId) => {
                 const p = (personKey && PERSON_DATA[personKey]) ? PERSON_DATA[personKey] : null;
-                if (!p) {
-                    return `
-                        <div style="text-align: center; font-size: 12px; line-height: 1.35;">
-                            <div style="display: inline-flex; align-items: flex-end; justify-content: center; position: relative;">
-                                <span style="white-space: nowrap;">(ลงชื่อ)</span>
-                                <span style="position: relative; display: inline-block; width: 135px; border-bottom: 1px dotted #333; margin: 0 4px 3px 4px; height: 32px; text-align: center;">
-                                    <span style="font-size: 11px; color: #94a3b8; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); white-space: nowrap;">(รอลงนามรับรอง)</span>
-                                </span>
-                                <span style="white-space: nowrap;">${defaultRole}</span>
-                            </div>
-                            <div style="margin-top: 2px; font-size: 11.5px;">(.......................................)</div>
-                            <div style="font-size: 11px;">${defaultRole}</div>
-                        </div>
-                    `;
-                }
-
                 const isAnalyst = roleId.startsWith('analyst');
+                const isApprover1 = (roleId === 'approver_1');
+                const isApprover2 = (roleId === 'approver_2');
                 let showSig = viewOnly || sample.status === 'approved';
                 if (isAnalyst && sample.status === 'analyst_signed') showSig = true;
 
-                let extraStyle = 'max-height: 38px; max-width: 120px; object-fit: contain; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                if (personKey === 'phapphon' || personKey === 'naphaphon' || personKey === 'sakulkan') {
-                    extraStyle = 'max-height: 42px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                } else if (personKey === 'mallika') {
-                    extraStyle = 'max-height: 44px; max-width: 125px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                } else if (personKey === 'thitiporn') {
-                    extraStyle = 'max-height: 40px; max-width: 120px; object-fit: contain; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                let sigHtml = '<span style="font-size: 11px; color: #94a3b8; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); white-space: nowrap;">(รอลงนามรับรอง)</span>';
+                if (p) {
+                    let extraStyle = 'max-height: 42px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                    if (personKey === 'mallika') {
+                        extraStyle = 'max-height: 44px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                    } else if (personKey === 'thitiporn') {
+                        extraStyle = 'max-height: 40px; max-width: 125px; object-fit: contain; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                    }
+                    if (showSig) {
+                        sigHtml = `<img src="${p.sig}" style="${extraStyle}" onerror="this.style.display='none'">`;
+                    }
                 }
 
-                const sigHtml = showSig ? 
-                    `<img src="${p.sig}" style="${extraStyle}" onerror="this.style.display='none'">` :
-                    `<span style="font-size: 10.5px; color: #94a3b8; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); white-space: nowrap;">(รอลงนามรับรอง)</span>`;
+                let pName = p ? p.name : '.......................................';
+                let titlesHtml = '';
+                if (personKey === 'mallika') {
+                    titlesHtml = `
+                        <div style="font-size: 12px; color: #000; line-height: 1.25;">เภสัชกรชำนาญการพิเศษ</div>
+                        <div style="font-size: 11.5px; color: #000; line-height: 1.25;">หัวหน้ากลุ่มงานคุ้มครองผู้บริโภค<br>เภสัชสาธารณสุข</div>
+                    `;
+                } else if (p) {
+                    titlesHtml = `
+                        <div style="font-size: 12px; color: #000; line-height: 1.25;">${p.title1}</div>
+                        ${p.title2 ? `<div style="font-size: 11.5px; color: #000; line-height: 1.25;">${p.title2}</div>` : ''}
+                    `;
+                } else {
+                    titlesHtml = `<div style="font-size: 12px; color: #000;">${defaultRole}</div>`;
+                }
 
                 return `
-                    <div style="text-align: center; font-size: 12px; line-height: 1.3;">
-                        <div style="display: inline-flex; align-items: flex-end; justify-content: center; position: relative; margin-bottom: 2px;">
-                            <span style="white-space: nowrap;">(ลงชื่อ)</span>
-                            <span style="position: relative; display: inline-block; width: 135px; border-bottom: 1px dotted #333; margin: 0 4px 3px 4px; height: 32px;">
+                    <div style="text-align: center; font-size: 13px; line-height: 1.35; color: #000;">
+                        <div style="display: inline-flex; align-items: flex-end; justify-content: center; position: relative; margin-bottom: 3px;">
+                            <span style="white-space: nowrap; font-size: 13px;">(ลงชื่อ)</span>
+                            <span style="position: relative; display: inline-block; width: 145px; border-bottom: 1px dotted #000; margin: 0 4px 3px 4px; height: 32px;">
                                 ${sigHtml}
                             </span>
-                            <span style="white-space: nowrap;">${defaultRole}</span>
+                            <span style="white-space: nowrap; font-size: 13px;">${defaultRole}</span>
                         </div>
-                        <div style="font-size: 11.5px; font-weight: normal; margin-top: 1px;">(${p.name})</div>
-                        <div style="font-size: 11px; color: #222;">${p.title1}</div>
-                        ${p.title2 ? `<div style="font-size: 10.5px; color: #222; line-height: 1.15;">${p.title2.replace('และเภสัช', '<br>และเภสัช')}</div>` : ''}
+                        <div style="font-size: 13px; font-weight: 500; margin-top: 2px;">(${pName})</div>
+                        ${titlesHtml}
+                        ${isApprover1 ? `
+                            <div style="margin-top: 8px; border: 1px solid #000; padding: 4px 8px; font-size: 9.5px; line-height: 1.35; text-align: center; color: #000; display: inline-block; background: #fff;">
+                                รายงานนี้รับรองผลเฉพาะตัวอย่างที่ได้รับเท่านั้น<br>
+                                ห้ามนำรายงานไปคัดลอกหรือทำสำเนาเฉพาะบางส่วนโดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร<br>
+                                ห้ามนำรายงานนี้ไปประกาศโฆษณา
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             };
 
-            let fullHtmlResult = '';
+            let fullHtmlResult = `
+                <style>
+                    .mu007-report-container {
+                        font-family: 'Sarabun', 'TH Sarabun New', 'Leelawadee UI', sans-serif !important;
+                        color: #000 !important;
+                        box-sizing: border-box !important;
+                    }
+                    .mu007-report-container * {
+                        box-sizing: border-box !important;
+                    }
+                    .mu007-table {
+                        width: 100% !important;
+                        border-collapse: collapse !important;
+                        border: 1.5px solid #000 !important;
+                        background-color: #fff !important;
+                        table-layout: fixed !important;
+                        margin-bottom: 8px !important;
+                    }
+                    .mu007-table th {
+                        border: 1px solid #000 !important;
+                        background-color: #fff !important;
+                        color: #000 !important;
+                        font-size: 13.5px !important;
+                        font-weight: bold !important;
+                        text-align: center !important;
+                        vertical-align: middle !important;
+                        padding: 5px 2px !important;
+                        line-height: 1.3 !important;
+                        height: 34px !important;
+                    }
+                    .mu007-table td {
+                        border: 1px solid #000 !important;
+                        background-color: #fff !important;
+                        color: #000 !important;
+                        font-size: 13px !important;
+                        text-align: center !important;
+                        vertical-align: middle !important;
+                        padding: 4px 4px !important;
+                        line-height: 1.3 !important;
+                        height: 29px !important;
+                    }
+                    .mu007-table td.col-summary {
+                        font-size: 28px !important;
+                        font-weight: bold !important;
+                        vertical-align: middle !important;
+                        text-align: center !important;
+                        letter-spacing: 2px !important;
+                    }
+                </style>
+            `;
+
             for (let page = 0; page < totalPages; page++) {
                 const chunk = items.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
                 const isLastPage = (page === totalPages - 1);
@@ -5659,15 +5717,15 @@ document.getElementById('formNameTitle').innerText = title;
                     const sumVal = item.summary;
 
                     rowsHtml += `
-                        <tr style="height: 26px; text-align: center; vertical-align: middle; border-bottom: 1px solid #333;">
-                            <td style="border: 1px solid #333; padding: 3px 2px;">${item.idx}</td>
-                            <td style="border: 1px solid #333; padding: 3px 4px; text-align: center;">${catDisplay}</td>
-                            <td style="border: 1px solid #333; padding: 3px 4px; text-align: center;">${item.distributor || ''}</td>
-                            <td style="border: 1px solid #333; padding: 3px 4px; text-align: center;">${sName}</td>
-                            <td style="border: 1px solid #333; padding: 3px 2px; ${si2Val === 'พบ' ? 'color: #dc2626; font-weight: bold;' : ''}">${si2Val}</td>
-                            <td style="border: 1px solid #333; padding: 3px 2px; ${sumVal === 'ไม่ผ่าน' ? 'color: #dc2626; font-weight: bold;' : ''}">${sumVal}</td>
+                        <tr>
+                            <td>${item.idx}</td>
+                            <td>${catDisplay}</td>
+                            <td>${item.distributor || ''}</td>
+                            <td>${sName}</td>
+                            <td style="${si2Val === 'พบ' ? 'color: #dc2626 !important; font-weight: bold !important;' : ''}">${si2Val}</td>
+                            <td style="${sumVal === 'ไม่ผ่าน' ? 'color: #dc2626 !important; font-weight: bold !important;' : ''}">${sumVal}</td>
                             ${rIdx === 0 ? `
-                                <td rowspan="${chunk.length}" style="border: 1px solid #333; text-align: center; vertical-align: middle; font-size: 24px; font-weight: bold; color: ${overallPass ? '#000' : '#dc2626'};">
+                                <td rowspan="${chunk.length}" class="col-summary" style="color: ${overallPass ? '#000 !important;' : '#dc2626 !important;'}">
                                     ${overallPass ? 'ผ่าน' : 'ไม่ผ่าน'}
                                 </td>
                             ` : ''}
@@ -5676,51 +5734,51 @@ document.getElementById('formNameTitle').innerText = title;
                 });
 
                 fullHtmlResult += `
-                    <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
-                        <div style="position: absolute; top: 152px; left: 60px; font-size: 13.5px; font-weight: bold; color: #1e293b;">
-                            RD-007
-                        </div>
-                        ${totalPages > 1 ? `
-                            <div style="position: absolute; top: 152px; right: 60px; font-size: 12.5px; color: #1e293b;">
-                                หน้าที่ ${page + 1}/${totalPages}
+                    <div class="cert-pdf-border mu007-report-container" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; padding: 152px 45px 35px 45px; background-size: 100% 100%; background-position: top left;">
+                        <div style="position: relative; margin-top: 4px; margin-bottom: 12px; height: 42px;">
+                            <div style="position: absolute; left: 0; top: 0px; font-size: 14px; font-weight: bold; color: #000;">
+                                RD-007
                             </div>
-                        ` : ''}
-                        <div class="cert-pdf-header-mu10" style="margin-top: 15px; margin-bottom: 8px;">
-                            <h4 style="text-align: center; font-weight: bold; margin-bottom: 12px; font-size: 14.5px; color: #000; line-height: 1.4;">
+                            ${totalPages > 1 ? `
+                                <div style="position: absolute; right: 0; top: 0px; font-size: 13px; color: #000;">
+                                    หน้าที่ ${page + 1}/${totalPages}
+                                </div>
+                            ` : ''}
+                            <div style="text-align: center; font-weight: bold; font-size: 15.5px; color: #000; line-height: 1.4; padding: 0 65px;">
                                 รายงานผลตรวจเชื้อโคลิฟอร์มแบคทีเรียขั้นต้นในอาหาร ภาชนะอุปกรณ์ และมือผู้สัมผัสอาหาร โดยชุดทดสอบ SI-2
-                            </h4>
+                            </div>
                         </div>
 
-                        <div class="cert-info-grid" style="font-size: 12.5px; line-height: 1.5; color: #000; margin-bottom: 10px;">
+                        <div style="font-size: 13.5px; line-height: 1.55; color: #000; margin-bottom: 10px;">
                             <div style="display: flex; margin-bottom: 2px;">
-                                <div style="width: 145px; font-weight: bold;">สถานที่ตรวจวิเคราะห์ :</div>
-                                <div>${shopName}</div>
+                                <div style="width: 150px; font-weight: bold; white-space: nowrap;">สถานที่ตรวจวิเคราะห์ :</div>
+                                <div style="font-weight: 500;">${shopName}</div>
                             </div>
                             ${addressText ? `
-                                <div style="display: flex; margin-bottom: 4px; padding-left: 145px;">
+                                <div style="display: flex; margin-bottom: 2px; padding-left: 150px;">
                                     <div>${addressText}</div>
                                 </div>
                             ` : ''}
-                            <div style="display: flex; margin-bottom: 4px;">
-                                <div style="width: 145px; font-weight: bold;">วันที่ตรวจวิเคราะห์ :</div>
+                            <div style="display: flex; margin-bottom: 2px;">
+                                <div style="width: 150px; font-weight: bold; white-space: nowrap;">วันที่ตรวจวิเคราะห์ :</div>
                                 <div>${analysisDateThai}</div>
                             </div>
                             <div style="display: flex; margin-bottom: 6px;">
-                                <div style="width: 145px; font-weight: bold;">ผลตรวจวิเคราะห์ :</div>
-                                <div>ตรวจทั้งหมด ${items.length} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ไม่ผ่าน ${failCount} ตัวอย่าง ผ่านร้อยละ ${passPercent}</div>
+                                <div style="width: 150px; font-weight: bold; white-space: nowrap;">ผลตรวจวิเคราะห์ :</div>
+                                <div>ตรวจทั้งหมด ${items.length} ตัวอย่าง &nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp; ไม่ผ่าน ${failCount} ตัวอย่าง &nbsp; ผ่านร้อยละ ${passPercent}</div>
                             </div>
                         </div>
 
-                        <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #333; font-size: 12px; table-layout: fixed;">
+                        <table class="mu007-table">
                             <thead>
-                                <tr style="background: #fff; height: 30px; font-size: 12px; font-weight: bold;">
-                                    <th style="border: 1px solid #333; padding: 4px 2px; width: 6%; text-align: center;">ลำดับ</th>
-                                    <th style="border: 1px solid #333; padding: 4px; width: 20%; text-align: center;">ประเภท</th>
-                                    <th style="border: 1px solid #333; padding: 4px; width: 22%; text-align: center;">ชื่อผู้จำหน่าย</th>
-                                    <th style="border: 1px solid #333; padding: 4px; width: 18%; text-align: center;">ตัวอย่าง</th>
-                                    <th style="border: 1px solid #333; padding: 4px 2px; width: 10%; text-align: center;">SI2</th>
-                                    <th style="border: 1px solid #333; padding: 4px 2px; width: 10%; text-align: center;">สรุปผล</th>
-                                    <th style="border: 1px solid #333; padding: 4px 2px; width: 14%; text-align: center;">สรุปผลตรวจด้านแบคทีเรีย</th>
+                                <tr>
+                                    <th style="width: 6%;">ลำดับ</th>
+                                    <th style="width: 21%;">ประเภท</th>
+                                    <th style="width: 19%;">ชื่อผู้จำหน่าย</th>
+                                    <th style="width: 19%;">ตัวอย่าง</th>
+                                    <th style="width: 9%;">SI2</th>
+                                    <th style="width: 9%;">สรุปผล</th>
+                                    <th style="width: 17%;">สรุปผลตรวจด้านแบคทีเรีย</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -5728,12 +5786,12 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
 
-                        <div style="margin-top: 8px; margin-bottom: 12px; font-size: 11.5px; font-weight: bold; color: #000;">
+                        <div style="margin-top: 8px; margin-bottom: 12px; font-size: 13px; font-weight: bold; color: #000;">
                             หมายเหตุ การตรวจประเมินด้านการสุขาภิบาลอาหาร ต้องผ่านการตรวจประเมินทางด้านแบคทีเรีย ให้ผ่านร้อยละ 90
                         </div>
 
                         ${isLastPage ? `
-                            <div class="cert-signatures-grid" style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 35px; text-align: center;">
+                            <div class="cert-signatures-grid" style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 30px; row-gap: 12px; text-align: center;">
                                 ${renderMu10007SigSlot(sample.sel_analyst_1 || 'naphaphon', 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                                 ${renderMu10007SigSlot(sample.sel_analyst_2 || 'sakulkan', 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                                 ${renderMu10007SigSlot(sample.sel_approver_1 || 'thitiporn', 'ผู้รับรอง', 'approver_1')}
