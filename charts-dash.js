@@ -406,7 +406,7 @@ function updateDashboardCharts(samples) {
         samples.filter(s => s.province === prov).forEach(s => {
             let idx = 1;
             let hasItems = false;
-            while (s['sample_name_' + idx] !== undefined) {
+            while (s['sample_name_' + idx] !== undefined && idx <= 50) {
                 hasItems = true;
                 if (window.itemMatchesSubstance(s, idx, targetSubstance)) count++;
                 idx++;
@@ -452,7 +452,7 @@ function updateDashboardCharts(samples) {
             }
         };
 
-        while (s['sample_name_' + idx] !== undefined) {
+        while (s['sample_name_' + idx] !== undefined && idx <= 50) {
             processOutcomeItem(idx);
             idx++;
         }
@@ -521,7 +521,7 @@ function updateSubstanceCharts(samples) {
     samples.forEach(s => {
         let idx = 1;
         let hasItems = false;
-        while (s['sample_name_' + idx] !== undefined) {
+        while (s['sample_name_' + idx] !== undefined && idx <= 50) {
             hasItems = true;
             if (s['item_status_' + idx] !== 'rejected') {
                 checkItem(s, idx, stats);
@@ -901,7 +901,7 @@ function updateSafetyRankings(stats) {
                         else pass++;
                     }
                 };
-                while (s['sample_name_' + idx] !== undefined) { checkProvItem(idx); idx++; }
+                while (s['sample_name_' + idx] !== undefined && idx <= 50) { checkProvItem(idx); idx++; }
                 if (!hasItems && s.sample_name) checkProvItem(null);
             });
             const passRate = total > 0 ? (pass / total) * 100 : 0;

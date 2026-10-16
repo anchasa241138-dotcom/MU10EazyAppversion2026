@@ -228,8 +228,12 @@ const app = {
                     this.resetDefaultSamples();
                     db.ref('samples').set(this.samples);
                 }
-                if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
-                this.renderSamplesList();
+                if (window.updateDashboardCharts) {
+                    try { updateDashboardCharts(this.getVisibleSamples()); } catch (e) { console.warn(e); }
+                }
+                if (typeof this.renderSavedRecords === 'function') {
+                    try { this.renderSavedRecords(); } catch (e) { console.warn(e); }
+                }
                 this.updateBadges();
             });
 
@@ -484,6 +488,13 @@ const app = {
 
     // View Routing
     switchView(viewId) {
+        // Auto-close any lingering modals that could block screen clicks
+        document.querySelectorAll('.modal-overlay.active').forEach(m => {
+            if (m.id !== 'authModal' || this.currentUser) {
+                m.classList.remove('active');
+            }
+        });
+
         // Hide all views
         document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
         // Update active menu
@@ -495,7 +506,9 @@ const app = {
         if (targetView) targetView.classList.add('active');
         if (targetMenu) {
             targetMenu.classList.add('active');
-            document.getElementById('currentViewTitle').innerText = targetMenu.querySelector('span').innerText;
+            const spanEl = targetMenu.querySelector('span');
+            const titleEl = document.getElementById('currentViewTitle');
+            if (spanEl && titleEl) titleEl.innerText = spanEl.innerText;
         }
 
         if (viewId === 'sample-record') {
@@ -505,74 +518,102 @@ const app = {
         }
 
         // View-specific initialization / Access control
-        switch(viewId) {
-            case 'manage-users':
-                if (this.currentUser && this.currentUser.role === 'admin') {
-                    this.renderManageUsers();
-                } else {
-                    Swal.fire('ไม่มีสิทธิ์', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้', 'error');
-                }
-                break;
-            case 'dashboard':
-                this.updateDashboardStats();
-                if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
-                break;
-            case 'sample-record':
-                if (!this.currentUser) {
-                    document.getElementById('record-auth-block').classList.remove('hidden');
-                    document.getElementById('record-content-wrapper').classList.add('hidden');
-                } else {
-                    document.getElementById('record-auth-block').classList.add('hidden');
-                    document.getElementById('record-content-wrapper').classList.remove('hidden');
-                    // Pre-fill collector name and position
-                    document.getElementById('field-collector-name').value = this.currentUser.fullname;
-                    document.getElementById('field-collector-position').value = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : (this.currentUser.role === 'certifier') ? 'ผู้รับรองผลตรวจวิเคราะห์' : 'ผู้เก็บตัวอย่าง';
-                    this.renderSavedRecords();
-                }
-                break;
-            case 'lab-verify':
-                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
-                    document.getElementById('verify-auth-block').classList.remove('hidden');
-                    document.getElementById('verify-content-wrapper').classList.add('hidden');
-                } else {
-                    document.getElementById('verify-auth-block').classList.add('hidden');
-                    document.getElementById('verify-content-wrapper').classList.remove('hidden');
-                    this.renderVerifyTable();
-                }
-                break;
-            case 'lab-analysis':
-                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
-                    document.getElementById('analysis-auth-block').classList.remove('hidden');
-                    document.getElementById('analysis-content-wrapper').classList.add('hidden');
-                } else {
-                    document.getElementById('analysis-auth-block').classList.add('hidden');
-                    document.getElementById('analysis-content-wrapper').classList.remove('hidden');
-                    this.renderAnalysisTable();
-                }
-                break;
-            case 'lab-certify':
-                if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin' && this.currentUser.role !== 'certifier')) {
-                    document.getElementById('certify-auth-block').classList.remove('hidden');
-                    document.getElementById('certify-content-wrapper').classList.add('hidden');
-                } else {
-                    document.getElementById('certify-auth-block').classList.add('hidden');
-                    document.getElementById('certify-content-wrapper').classList.remove('hidden');
-                    this.renderCertifyTable();
-                }
-                break;
-            case 'download-results':
-                this.renderDownloadTable();
-                break;
-            case 'data-download':
-                if (!this.currentUser) {
-                    document.getElementById(viewId === 'data-download' ? 'excel-download-auth-block' : 'download-auth-block').classList.remove('hidden');
-                    document.getElementById(viewId === 'data-download' ? 'excel-download-content-wrapper' : 'download-content-wrapper').classList.add('hidden');
-                } else {
-                    document.getElementById(viewId === 'data-download' ? 'excel-download-auth-block' : 'download-auth-block').classList.add('hidden');
-                    document.getElementById(viewId === 'data-download' ? 'excel-download-content-wrapper' : 'download-content-wrapper').classList.remove('hidden');
-                    this.renderExportTable();
-                }
-                break;
+        try {
+            switch(viewId) {
+                case 'manage-users':
+                    if (this.currentUser && this.currentUser.role === 'admin') {
+                        this.renderManageUsers();
+                    } else {
+                        Swal.fire('ไม่มีสิทธิ์', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้', 'error');
+                    }
+                    break;
+                case 'dashboard':
+                    this.updateDashboardStats();
+                    if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
+                    break;
+                case 'sample-record':
+                    if (!this.currentUser) {
+                        const recAuth = document.getElementById('record-auth-block');
+                        const recContent = document.getElementById('record-content-wrapper');
+                        if (recAuth) recAuth.classList.remove('hidden');
+                        if (recContent) recContent.classList.add('hidden');
+                    } else {
+                        const recAuth = document.getElementById('record-auth-block');
+                        const recContent = document.getElementById('record-content-wrapper');
+                        if (recAuth) recAuth.classList.add('hidden');
+                        if (recContent) recContent.classList.remove('hidden');
+                        // Pre-fill collector name and position
+                        const collNameEl = document.getElementById('field-collector-name');
+                        if (collNameEl) collNameEl.value = this.currentUser.fullname || '';
+                        const collPosEl = document.getElementById('field-collector-position');
+                        if (collPosEl) {
+                            collPosEl.value = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : (this.currentUser.role === 'certifier') ? 'ผู้รับรองผลตรวจวิเคราะห์' : 'ผู้เก็บตัวอย่าง';
+                        }
+                        this.renderSavedRecords();
+                    }
+                    break;
+                case 'lab-verify':
+                    if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
+                        const vAuth = document.getElementById('verify-auth-block');
+                        const vContent = document.getElementById('verify-content-wrapper');
+                        if (vAuth) vAuth.classList.remove('hidden');
+                        if (vContent) vContent.classList.add('hidden');
+                    } else {
+                        const vAuth = document.getElementById('verify-auth-block');
+                        const vContent = document.getElementById('verify-content-wrapper');
+                        if (vAuth) vAuth.classList.add('hidden');
+                        if (vContent) vContent.classList.remove('hidden');
+                        this.renderVerifyTable();
+                    }
+                    break;
+                case 'lab-analysis':
+                    if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
+                        const aAuth = document.getElementById('analysis-auth-block');
+                        const aContent = document.getElementById('analysis-content-wrapper');
+                        if (aAuth) aAuth.classList.remove('hidden');
+                        if (aContent) aContent.classList.add('hidden');
+                    } else {
+                        const aAuth = document.getElementById('analysis-auth-block');
+                        const aContent = document.getElementById('analysis-content-wrapper');
+                        if (aAuth) aAuth.classList.add('hidden');
+                        if (aContent) aContent.classList.remove('hidden');
+                        this.renderAnalysisTable();
+                    }
+                    break;
+                case 'lab-certify':
+                    if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin' && this.currentUser.role !== 'certifier')) {
+                        const cAuth = document.getElementById('certify-auth-block');
+                        const cContent = document.getElementById('certify-content-wrapper');
+                        if (cAuth) cAuth.classList.remove('hidden');
+                        if (cContent) cContent.classList.add('hidden');
+                    } else {
+                        const cAuth = document.getElementById('certify-auth-block');
+                        const cContent = document.getElementById('certify-content-wrapper');
+                        if (cAuth) cAuth.classList.add('hidden');
+                        if (cContent) cContent.classList.remove('hidden');
+                        this.renderCertifyTable();
+                    }
+                    break;
+                case 'download-results':
+                    this.renderDownloadTable();
+                    break;
+                case 'data-download':
+                    if (!this.currentUser) {
+                        const dAuth = document.getElementById(viewId === 'data-download' ? 'excel-download-auth-block' : 'download-auth-block');
+                        const dContent = document.getElementById(viewId === 'data-download' ? 'excel-download-content-wrapper' : 'download-content-wrapper');
+                        if (dAuth) dAuth.classList.remove('hidden');
+                        if (dContent) dContent.classList.add('hidden');
+                    } else {
+                        const dAuth = document.getElementById(viewId === 'data-download' ? 'excel-download-auth-block' : 'download-auth-block');
+                        const dContent = document.getElementById(viewId === 'data-download' ? 'excel-download-content-wrapper' : 'download-content-wrapper');
+                        if (dAuth) dAuth.classList.add('hidden');
+                        if (dContent) dContent.classList.remove('hidden');
+                        this.renderExportTable();
+                    }
+                    break;
+            }
+        } catch (switchErr) {
+            console.error('Error during view switch to ' + viewId + ':', switchErr);
         }
     },
 
@@ -597,7 +638,7 @@ const app = {
             
             const sampleNames = [];
             let idx = 1;
-            while (s['sample_name_' + idx] !== undefined) {
+            while (s['sample_name_' + idx] !== undefined && idx <= 50) {
                 if (s['sample_name_' + idx]) sampleNames.push(s['sample_name_' + idx]);
                 idx++;
             }
@@ -691,7 +732,7 @@ const app = {
                 }
             };
 
-            while (s['sample_name_' + idx] !== undefined) {
+            while (s['sample_name_' + idx] !== undefined && idx <= 50) {
                 processItem(idx);
                 idx++;
             }
@@ -1922,7 +1963,7 @@ document.getElementById('formNameTitle').innerText = title;
                     if (!isNaN(baseNo) && baseNo > 0) {
                         let itemCount = 0;
                         let idx = 1;
-                        while(s['sample_name_'+idx] !== undefined) {
+                        while(s['sample_name_'+idx] !== undefined && idx <= 50) {
                             if (s['item_status_'+idx] !== 'rejected') itemCount++;
                             idx++;
                         }
@@ -1983,7 +2024,7 @@ document.getElementById('formNameTitle').innerText = title;
             mySavedSamples = mySavedSamples.filter(s => {
                 const sampleNames = [];
                 let idx = 1;
-                while (s['sample_name_' + idx] !== undefined) {
+                while (s['sample_name_' + idx] !== undefined && idx <= 50) {
                     if (s['sample_name_' + idx]) sampleNames.push(s['sample_name_' + idx]);
                     idx++;
                 }
@@ -2021,7 +2062,7 @@ document.getElementById('formNameTitle').innerText = title;
             // Collect all sample names in this record
             const sampleNames = [];
             let idx = 1;
-            while (s['sample_name_' + idx] !== undefined) {
+            while (s['sample_name_' + idx] !== undefined && idx <= 50) {
                 if (s['sample_name_' + idx]) sampleNames.push(s['sample_name_' + idx]);
                 idx++;
             }
@@ -2185,7 +2226,7 @@ document.getElementById('formNameTitle').innerText = title;
         this.globalSampleIndex = 0;
 
         let idx = 1;
-        while (sample['sample_name_' + idx] !== undefined) {
+        while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
             this.addGlobalSampleEntry();
             const lastSection = container.lastElementChild;
             if (lastSection) {
@@ -2273,7 +2314,7 @@ document.getElementById('formNameTitle').innerText = title;
     if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
         const arr = [];
         let i = 1;
-        while(s['sample_name_'+i] !== undefined) {
+        while(s['sample_name_'+i] !== undefined && i <= 50) {
             if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
             i++;
         }
@@ -2308,7 +2349,7 @@ document.getElementById('formNameTitle').innerText = title;
         // Collect sample items
         let sampleItems = [];
         let idx = 1;
-        while (sample[`sample_name_${idx}`] !== undefined) {
+        while (sample[`sample_name_${idx}`] !== undefined && idx <= 50) {
             sampleItems.push({
                 name: sample[`sample_name_${idx}`] || '',
                 distributor: sample[`distributor_${idx}`] || '',
@@ -2465,7 +2506,7 @@ document.getElementById('formNameTitle').innerText = title;
         if (sampleIndex > -1) {
             // Force all items to rejected
             let i = 1;
-            while(this.samples[sampleIndex]['sample_name_'+i] !== undefined) {
+            while(this.samples[sampleIndex]['sample_name_'+i] !== undefined && i <= 50) {
                 this.samples[sampleIndex]['item_status_'+i] = 'rejected';
                 this.samples[sampleIndex]['item_reject_reason_'+i] = 'ปฏิเสธทั้งชุด';
                 i++;
@@ -2487,7 +2528,7 @@ document.getElementById('formNameTitle').innerText = title;
         if (!sName || sName === 'undefined') {
             let names = [];
             let i = 1;
-            while(sample['sample_name_'+i]) { 
+            while(sample['sample_name_'+i] && i <= 50) { 
                 if (sample['sample_name_'+i] !== 'undefined') {
                     names.push(sample['sample_name_'+i]); 
                 }
@@ -2511,7 +2552,7 @@ document.getElementById('formNameTitle').innerText = title;
             if (!isNaN(baseNo) && baseNo > 0) {
                 let itemCount = 0;
                 let i = 1;
-                while (s[`sample_name_${i}`] !== undefined) {
+                while (s[`sample_name_${i}`] !== undefined && i <= 50) {
                     if (s[`sample_name_${i}`]) itemCount++;
                     i++;
                 }
@@ -2617,7 +2658,7 @@ document.getElementById('formNameTitle').innerText = title;
     if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
         const arr = [];
         let i = 1;
-        while(s['sample_name_'+i] !== undefined) {
+        while(s['sample_name_'+i] !== undefined && i <= 50) {
             if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
             i++;
         }
@@ -2655,7 +2696,7 @@ document.getElementById('formNameTitle').innerText = title;
         // Auto-populate ชื่อตัวอย่าง จากข้อมูลแบบฟอร์ม
         const sampleNames = [];
         let idx = 1;
-        while (sample[`sample_name_${idx}`] !== undefined) {
+        while (sample[`sample_name_${idx}`] !== undefined && idx <= 50) {
             if (sample[`sample_name_${idx}`]) sampleNames.push(sample[`sample_name_${idx}`]);
             idx++;
         }
@@ -2667,7 +2708,7 @@ document.getElementById('formNameTitle').innerText = title;
         // Auto-populate แหล่งที่มา จากข้อมูลแบบฟอร์ม
         const sources = [];
         idx = 1;
-        while (sample[`sample_name_${idx}`] !== undefined) {
+        while (sample[`sample_name_${idx}`] !== undefined && idx <= 50) {
             const src = sample[`source_${idx}`] || '';
             const dist = sample[`distributor_${idx}`] || '';
             if (src || dist) {
@@ -2698,7 +2739,7 @@ document.getElementById('formNameTitle').innerText = title;
             let polarText = [];
             let isFailed = false;
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
                 if (sample['sample_name_' + idx]) {
                     const polarStr = sample['polar_value_' + idx] || '-';
                     const polarVal = parseFloat(polarStr);
@@ -2790,21 +2831,39 @@ document.getElementById('formNameTitle').innerText = title;
         const cleanEl = document.getElementById('analysis-cleanliness-' + idx);
         const sumEl = document.getElementById('analysis-summary-' + idx);
         if (cleanEl && sumEl) {
-            if (cleanEl.value === 'ไม่สะอาด') {
+            if (cleanEl.value === '+') {
                 sumEl.value = 'ไม่ผ่าน';
+                cleanEl.style.color = '#dc2626';
             } else {
                 sumEl.value = 'ผ่าน';
+                cleanEl.style.color = '#16a34a';
             }
             sumEl.style.color = sumEl.value === 'ผ่าน' ? '#16a34a' : '#dc2626';
             this.updateMu10007Summary();
         }
     },
 
+    handleMu10007SummaryChange(idx) {
+        const cleanEl = document.getElementById('analysis-cleanliness-' + idx);
+        const sumEl = document.getElementById('analysis-summary-' + idx);
+        if (cleanEl && sumEl) {
+            if (sumEl.value === 'ไม่ผ่าน') {
+                cleanEl.value = '+';
+                cleanEl.style.color = '#dc2626';
+            } else {
+                cleanEl.value = '-';
+                cleanEl.style.color = '#16a34a';
+            }
+            sumEl.style.color = sumEl.value === 'ผ่าน' ? '#16a34a' : '#dc2626';
+        }
+        this.updateMu10007Summary();
+    },
+
     updateMu10007Summary() {
         let total = 0;
         let pass = 0;
         let idx = 1;
-        while (document.getElementById('analysis-summary-' + idx)) {
+        while (document.getElementById('analysis-summary-' + idx) && idx <= 50) {
             total++;
             const val = document.getElementById('analysis-summary-' + idx).value;
             const sel = document.getElementById('analysis-summary-' + idx);
@@ -3032,7 +3091,7 @@ document.getElementById('formNameTitle').innerText = title;
         if (sample.form_type === 'MU.10-001') {
             const sampleNames = [];
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
                 if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') sampleNames.push({ name: sample['sample_name_' + idx], idx: idx });
                 idx++;
             }
@@ -3139,7 +3198,7 @@ document.getElementById('formNameTitle').innerText = title;
         } else if (sample.form_type === 'MU.10-002') {
             const sampleNames = [];
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
                 if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
 
                     const tests = [];
@@ -3307,18 +3366,32 @@ document.getElementById('formNameTitle').innerText = title;
         } else if (sample.form_type === 'MU.10-007') {
             const items = [];
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined) {
+            while ((sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined) && idx <= 50) {
                 const sName = (sample['sample_name_' + idx] || '').trim();
                 const sDetail = (sample['sample_detail_' + idx] || '').trim();
                 if (sName !== '' || sDetail !== '' || sample['analysis_summary_' + idx]) {
+                    const rawClean = sample['analysis_cleanliness_' + idx];
+                    let cleanliness = '-';
+                    if (rawClean === '+' || rawClean === 'ไม่สะอาด') {
+                        cleanliness = '+';
+                    } else if (rawClean === '-' || rawClean === 'สะอาดมาก' || rawClean === 'สะอาด' || rawClean === 'ปานกลาง') {
+                        cleanliness = '-';
+                    }
+                    const rawSum = sample['analysis_summary_' + idx];
+                    let summary = 'ผ่าน';
+                    if (rawSum) {
+                        summary = rawSum;
+                    } else if (cleanliness === '+') {
+                        summary = 'ไม่ผ่าน';
+                    }
                     items.push({
                         idx: items.length + 1,
                         originalIdx: idx,
                         category: sample['sample_category_' + idx] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร')),
                         name: sName || ('ตัวอย่างที่ ' + idx),
                         detail: sDetail,
-                        cleanliness: sample['analysis_cleanliness_' + idx] || 'สะอาดมาก',
-                        summary: sample['analysis_summary_' + idx] || 'ผ่าน'
+                        cleanliness: cleanliness,
+                        summary: summary
                     });
                 }
                 idx++;
@@ -3326,13 +3399,27 @@ document.getElementById('formNameTitle').innerText = title;
             if (items.length === 0) {
                 const defaultCats = ['มือ1', 'มือ2', 'ภาชนะ', 'ภาชนะ', 'ภาชนะ', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร'];
                 for (let i = 1; i <= 10; i++) {
+                    const rawClean = sample['analysis_cleanliness_' + i];
+                    let cleanliness = '-';
+                    if (rawClean === '+' || rawClean === 'ไม่สะอาด') {
+                        cleanliness = '+';
+                    } else if (rawClean === '-' || rawClean === 'สะอาดมาก' || rawClean === 'สะอาด' || rawClean === 'ปานกลาง') {
+                        cleanliness = '-';
+                    }
+                    const rawSum = sample['analysis_summary_' + i];
+                    let summary = 'ผ่าน';
+                    if (rawSum) {
+                        summary = rawSum;
+                    } else if (cleanliness === '+') {
+                        summary = 'ไม่ผ่าน';
+                    }
                     items.push({
                         idx: i,
                         category: defaultCats[i-1],
                         name: sample['sample_name_' + i] || (defaultCats[i-1] + ' ' + i),
                         detail: sample['sample_detail_' + i] || '',
-                        cleanliness: sample['analysis_cleanliness_' + i] || 'สะอาดมาก',
-                        summary: sample['analysis_summary_' + i] || 'ผ่าน'
+                        cleanliness: cleanliness,
+                        summary: summary
                     });
                 }
             }
@@ -3350,15 +3437,13 @@ document.getElementById('formNameTitle').innerText = title;
                             ${it.detail ? `<div style="font-size: 11.5px; color: #64748b;">${it.detail}</div>` : ''}
                         </td>
                         <td style="padding: 6px;">
-                            <select id="analysis-cleanliness-${it.idx}" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 13px;" onchange="app.handleMu10007RowChange(${it.idx})">
-                                <option value="สะอาดมาก" ${it.cleanliness === 'สะอาดมาก' ? 'selected' : ''}>สะอาดมาก</option>
-                                <option value="สะอาด" ${it.cleanliness === 'สะอาด' ? 'selected' : ''}>สะอาด</option>
-                                <option value="ปานกลาง" ${it.cleanliness === 'ปานกลาง' ? 'selected' : ''}>ปานกลาง</option>
-                                <option value="ไม่สะอาด" ${it.cleanliness === 'ไม่สะอาด' ? 'selected' : ''}>ไม่สะอาด</option>
+                            <select id="analysis-cleanliness-${it.idx}" style="padding: 5px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; font-weight: bold; text-align: center; color: ${it.cleanliness === '+' ? '#dc2626' : '#16a34a'};" onchange="app.handleMu10007RowChange(${it.idx})">
+                                <option value="-" ${it.cleanliness === '-' ? 'selected' : ''}>-</option>
+                                <option value="+" ${it.cleanliness === '+' ? 'selected' : ''}>+</option>
                             </select>
                         </td>
                         <td style="padding: 6px;">
-                            <select id="analysis-summary-${it.idx}" style="padding: 5px 10px; border-radius: 6px; font-weight: 700; font-family: inherit; font-size: 13px; border: 1px solid #cbd5e1; color: ${isPass ? '#16a34a' : '#dc2626'};" onchange="app.updateMu10007Summary()">
+                            <select id="analysis-summary-${it.idx}" style="padding: 5px 10px; border-radius: 6px; font-weight: 700; font-family: inherit; font-size: 13px; border: 1px solid #cbd5e1; color: ${isPass ? '#16a34a' : '#dc2626'};" onchange="app.handleMu10007SummaryChange(${it.idx})">
                                 <option value="ผ่าน" ${isPass ? 'selected' : ''}>ผ่าน</option>
                                 <option value="ไม่ผ่าน" ${!isPass ? 'selected' : ''}>ไม่ผ่าน</option>
                             </select>
@@ -3415,7 +3500,7 @@ document.getElementById('formNameTitle').innerText = title;
         } else if (sample.form_type === 'MU.10-006') {
             const machines = [];
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined || sample['location_' + idx] !== undefined) {
+            while ((sample['sample_name_' + idx] !== undefined || sample['location_' + idx] !== undefined) && idx <= 50) {
                 if (sample['sample_name_' + idx] || sample['location_' + idx]) {
                     machines.push({
                         idx: idx,
@@ -3643,7 +3728,7 @@ document.getElementById('formNameTitle').innerText = title;
             let totalCount = 0;
             const sampleItems = [];
             let itemIdx = 1;
-            while (sample['sample_name_'+itemIdx] !== undefined) {
+            while (sample['sample_name_'+itemIdx] !== undefined && itemIdx <= 50) {
                 sampleItems.push({
                     food_type: sample['sample_name_'+itemIdx] || '',
                     distributor: sample['distributor_'+itemIdx] || sample.distributor || '',
@@ -3835,7 +3920,7 @@ document.getElementById('formNameTitle').innerText = title;
                 let passCount = 0;
                 let totalCount = 0;
                 let idx = 1;
-                while (sample['sample_name_' + idx] !== undefined) {
+                while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
                     if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                         totalCount++;
                         sample['analysis_substance_' + idx] = document.getElementById('analysis-substance-' + idx)?.value || '';
@@ -3879,7 +3964,7 @@ document.getElementById('formNameTitle').innerText = title;
                 let passCount = 0;
                 let totalCount = 0;
                 let idx = 1;
-                while (sample['sample_name_' + idx] !== undefined) {
+                while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
                     if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                         ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(key => {
                             const interpEl = document.getElementById('analysis-interpretation-' + idx + '-' + key);
@@ -4028,7 +4113,7 @@ document.getElementById('formNameTitle').innerText = title;
             let passCount = 0;
             let totalCount = 0;
                 let idx = 1;
-                while (sample['sample_name_' + idx] !== undefined) {
+                while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
                     if (sample['sample_name_' + idx]) {
                         const iodateEl = document.getElementById('analysis-iodate-' + idx);
                         if (iodateEl) {
@@ -4142,6 +4227,31 @@ document.getElementById('formNameTitle').innerText = title;
                     sample.analysis_summary = (passCount === totalCount) ? 'ผ่าน' : 'ไม่ผ่าน';
                 }
                 sample.analysis_details = `ตรวจวิเคราะห์ ${totalCount} จุด (ผ่าน ${passCount}, ไม่ผ่าน ${totalCount - passCount})`;
+            } else if (sample.form_type === 'MU.10-007') {
+                let passCount = 0;
+                let totalCount = 0;
+                for (let idx = 1; idx <= 10; idx++) {
+                    const cleanEl = document.getElementById('analysis-cleanliness-' + idx);
+                    const sumEl = document.getElementById('analysis-summary-' + idx);
+                    if (cleanEl || sumEl) {
+                        totalCount++;
+                        const cleanVal = cleanEl ? cleanEl.value : '-';
+                        const sumVal = sumEl ? sumEl.value : (cleanVal === '+' ? 'ไม่ผ่าน' : 'ผ่าน');
+                        sample['analysis_cleanliness_' + idx] = cleanVal;
+                        sample['analysis_summary_' + idx] = sumVal;
+                        sample['analysis_summary_outcome_' + idx] = sumVal;
+                        if (sumVal === 'ผ่าน') passCount++;
+                    }
+                }
+                const overallSum = document.getElementById('analysis-summary-outcome')?.value;
+                const hiddenPct = document.getElementById('mu07-hidden-percent')?.value || '';
+                sample.analysis_pass_percent = hiddenPct;
+                if (overallSum) {
+                    sample.analysis_summary = overallSum;
+                } else if (totalCount > 0) {
+                    sample.analysis_summary = (passCount / totalCount >= 0.9) ? 'ผ่าน' : 'ไม่ผ่าน';
+                }
+                sample.analysis_details = `ตรวจเชื้อโคลิฟอร์ม ${totalCount} รายการ (ผ่าน ${passCount}, ไม่ผ่าน ${totalCount - passCount})`;
             }
             
             this.saveSamples();
@@ -4189,7 +4299,7 @@ document.getElementById('formNameTitle').innerText = title;
     if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
         const arr = [];
         let i = 1;
-        while(s['sample_name_'+i] !== undefined) {
+        while(s['sample_name_'+i] !== undefined && i <= 50) {
             if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
             i++;
         }
@@ -4415,7 +4525,7 @@ document.getElementById('formNameTitle').innerText = title;
             };
 
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
                 if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                     totalCount++;
                     let isPass = false;
@@ -4671,7 +4781,7 @@ document.getElementById('formNameTitle').innerText = title;
             
             const validItems = [];
             let idx = 1;
-            while (sample['polar_value_' + idx] !== undefined) {
+            while (sample['polar_value_' + idx] !== undefined && idx <= 50) {
                 if (sample['polar_value_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                     validItems.push({
                         idx: idx,
@@ -4983,7 +5093,7 @@ document.getElementById('formNameTitle').innerText = title;
             let totalCount = 0;
             const sampleItems = [];
             let itemIdx = 1;
-            while (sample['sample_name_'+itemIdx] !== undefined) {
+            while (sample['sample_name_'+itemIdx] !== undefined && itemIdx <= 50) {
                 sampleItems.push({
                     food_type: sample['sample_name_'+itemIdx] || '',
                     distributor: sample['distributor_'+itemIdx] || sample.distributor || '',
@@ -5640,19 +5750,34 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
 
     async waitForPdfAssets(doc) {
-        const fontSet = doc.fonts;
-        if (fontSet) {
-            await fontSet.load('16px SarabunPDF');
-            await fontSet.ready;
-        }
-        const images = Array.from(doc.images || []);
-        await Promise.all(images.map(image => {
-            if (image.complete) return Promise.resolve();
-            return new Promise(resolve => {
-                image.addEventListener('load', resolve, { once: true });
-                image.addEventListener('error', resolve, { once: true });
+        try {
+            const fontPromise = (async () => {
+                const fontSet = doc.fonts;
+                if (fontSet) {
+                    try { await fontSet.load('16px SarabunPDF'); } catch (e) {}
+                    try { await fontSet.ready; } catch (e) {}
+                }
+            })();
+
+            const images = Array.from(doc.images || []);
+            const imagePromises = images.map(image => {
+                if (image.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    const timer = setTimeout(resolve, 800);
+                    image.addEventListener('load', () => { clearTimeout(timer); resolve(); }, { once: true });
+                    image.addEventListener('error', () => { clearTimeout(timer); resolve(); }, { once: true });
+                });
             });
-        }));
+
+            // Guaranteed to resolve within 1200ms at most
+            const timeoutPromise = new Promise(resolve => setTimeout(resolve, 1200));
+            await Promise.race([
+                Promise.all([fontPromise, Promise.all(imagePromises)]),
+                timeoutPromise
+            ]);
+        } catch (err) {
+            console.warn('waitForPdfAssets warning:', err);
+        }
     },
 
     async generateCertificatePDF() {
@@ -5765,6 +5890,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
 
     async generateSubmissionPDF(e) {
+        let sidebarEl = null;
+        let mainContentEl = null;
         try {
             const refId = e.currentTarget.dataset.refId;
             const sample = this.samples.find(s =>s.ref_id === refId);
@@ -5793,7 +5920,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         // Collect all dynamic sample entries from sample object keys
         let sampleItems = [];
         let idx = 1;
-        while (sample[`sample_name_${idx}`] !== undefined || sample[`item_sampling_date_${idx}`] !== undefined) {
+        while ((sample[`sample_name_${idx}`] !== undefined || sample[`item_sampling_date_${idx}`] !== undefined) && idx <= 50) {
             if (sample.form_type === 'MU.10-003') {
                 sampleItems.push({
                     distributor: sample[`distributor_${idx}`] || '',
@@ -5904,7 +6031,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         }
 
         // Ensure at least 5 rows for the table
-        while (sampleItems.length < 5) {
+        let padLoops = 0;
+        while (sampleItems.length < 5 && padLoops++ < 10) {
             if (sample.form_type === 'MU.10-003') {
                 sampleItems.push({ distributor:'', food_type:'', oil_type:'', fry_duration:'', replacement_type:'', last_replacement_date:'', replacement_frequency:'', replacement_reason:'', oil_disposal:'', polar_value:'' });
             } else if (sample.form_type === 'MU.10-004') {
@@ -6741,8 +6869,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         });
 
         // Add printing class to body to hide sidebar and reset margins
-        const sidebarEl = (typeof document !== 'undefined' && typeof document.getElementById === 'function') ? document.getElementById('sidebar') : null;
-        const mainContentEl = (typeof document !== 'undefined' && typeof document.querySelector === 'function') ? document.querySelector('.main-content') : null;
+        sidebarEl = (typeof document !== 'undefined' && typeof document.getElementById === 'function') ? document.getElementById('sidebar') : null;
+        mainContentEl = (typeof document !== 'undefined' && typeof document.querySelector === 'function') ? document.querySelector('.main-content') : null;
         
         if (typeof document !== 'undefined' && document.body && document.body.classList) {
             document.body.classList.add('is-printing-pdf');
@@ -6753,13 +6881,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             mainContentEl.style.setProperty('padding', '0', 'important');
         }
 
-        
-        
         // Generate through the browser print engine: it embeds the loaded Thai font
         // instead of rasterizing text with a fallback font.
-        try {
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
+        const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            iframe.style.opacity = '0';
+            iframe.style.pointerEvents = 'none';
             document.body.appendChild(iframe);
             const doc = iframe.contentWindow.document;
             doc.open();
@@ -6770,16 +6902,29 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             doc.close();
 
             await this.waitForPdfAssets(doc);
-            Swal.close();
-            iframe.contentWindow.onafterprint = () => {
-                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            
+            const cleanupIframe = () => {
+                if (iframe && iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
+                }
             };
+            iframe.contentWindow.onafterprint = cleanupIframe;
+            setTimeout(cleanupIframe, 15000);
+
             const originalTitle = document.title;
             document.title = opt.filename;
             iframe.contentWindow.focus();
             iframe.contentWindow.print();
             setTimeout(() => { document.title = originalTitle; }, 1000);
-            
+        } catch (pdfErr) {
+            console.error('PDF generation error:', pdfErr);
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาดในการสร้าง PDF',
+                text: pdfErr.message || pdfErr.toString()
+            });
+        } finally {
+            Swal.close();
             if (typeof document !== 'undefined' && document.body && document.body.classList) {
                 document.body.classList.remove('is-printing-pdf');
             }
@@ -6788,16 +6933,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 mainContentEl.style.removeProperty('margin-left');
                 mainContentEl.style.removeProperty('padding');
             }
-        } catch (asyncErr) {
-            throw asyncErr;
-        }
-        } catch (syncErr) {
-            console.error('PDF sync error:', syncErr);
-            Swal.fire({
-                icon: 'error',
-                title: 'PDF Sync Error',
-                text: syncErr.message || syncErr.toString()
-            });
         }
     },
     // E-Tracking
@@ -7118,7 +7253,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
         const arr = [];
         let i = 1;
-        while(s['sample_name_'+i] !== undefined) {
+        while(s['sample_name_'+i] !== undefined && i <= 50) {
             if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
             i++;
         }
@@ -7203,6 +7338,14 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         details.push(s['analysis_details_'+idx] || (!isFallback ? '' : s.analysis_details) || '');
                         summaries.push(sum);
                     }
+                } else if (s.form_type === 'MU.10-007') {
+                    substances.push('เชื้อโคลิฟอร์ม');
+                    const clean = s['analysis_cleanliness_'+idx] || (!isFallback ? '' : s['analysis_cleanliness_1']);
+                    if (clean) interpretations.push('ระดับความสะอาด ' + clean);
+                    const det = s['sample_detail_'+idx] || (!isFallback ? '' : s['sample_detail_1']);
+                    if (det) details.push(det);
+                    const sum = s['analysis_summary_'+idx] || (!isFallback ? '' : s.analysis_summary);
+                    if (sum) summaries.push(sum);
                 } else {
                     const sub = s['analysis_substance_'+idx] || s.analysis_substance;
                     if (sub) substances.push(sub);
@@ -7313,8 +7456,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             let hasDynamicSamples = false;
             let i = 1;
             let validItemCount = 0;
-            while(s['sample_name_'+i] !== undefined) {
-                if (s['sample_name_'+i] && s['item_status_'+i] !== 'rejected') {
+            while((s['sample_name_'+i] !== undefined || s['sample_category_'+i] !== undefined) && i <= 50) {
+                if ((s['sample_name_'+i] || s['sample_category_'+i]) && s['item_status_'+i] !== 'rejected') {
                     hasDynamicSamples = true;
                     rows.push(createRowForSample(s, i, false, validItemCount));
                     validItemCount++;
