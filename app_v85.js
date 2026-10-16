@@ -1112,6 +1112,10 @@ const app = {
                 title = 'แบบบันทึกเก็บตัวอย่างน้ำบริโภคจากตู้น้ำดื่มหยอดเหรียญ';
                 dynamicHTML = '<p class="input-helper">ไม่มีฟิลด์ข้อมูลเฉพาะสำหรับฟอร์มประเภทนี้</p>';
                 break;
+            case 'MU.10-007':
+                title = 'แบบบันทึกเก็บตัวอย่างเชื้อโคลิฟอร์มแบคทีเรียขั้นต้น (MU.10-007)';
+                dynamicHTML = '<p class="input-helper">แบบบันทึกตามมาตรฐาน Clean Food Good Taste (เกณฑ์การผ่าน > ร้อยละ 90)</p>';
+                break;
             case 'MU.10-005':
                 title = 'แบบบันทึกการเก็บตัวอย่างเกลือบริโภค';
                 dynamicHTML = `<p class="input-helper">ไม่มีฟิลด์ข้อมูลเฉพาะสำหรับฟอร์มประเภทนี้</p>`;
@@ -1132,10 +1136,34 @@ const app = {
             }
         };
         const isMu10006 = formType === 'MU.10-006';
+        const isMu10007 = formType === 'MU.10-007';
         toggleField('field-agency', !isMu10006);
         toggleField('field-location-type', !isMu10006);
         toggleField('field-collector-name', !isMu10006);
         toggleField('field-collector-position', !isMu10006);
+
+        const grpShop = document.getElementById('group-shop-name');
+        if (grpShop) {
+            grpShop.style.display = isMu10007 ? '' : 'none';
+            const inp = document.getElementById('field-shop-name');
+            if (inp) {
+                if (isMu10007) inp.setAttribute('required', 'required');
+                else { inp.removeAttribute('required'); inp.value = ''; }
+            }
+        }
+        const grpTestKit = document.getElementById('group-test-kit');
+        if (grpTestKit) {
+            grpTestKit.style.display = isMu10007 ? '' : 'none';
+            const sel = document.getElementById('field-test-kit');
+            if (sel) {
+                if (isMu10007) sel.setAttribute('required', 'required');
+                else sel.removeAttribute('required');
+            }
+        }
+        const lblLoc = document.getElementById('lbl-location-name') || document.querySelector('label[for="field-location-name"]');
+        if (lblLoc) {
+            lblLoc.innerHTML = isMu10007 ? 'สถานที่เก็บตัวอย่าง (เช่น ตลาด, โรงเรียน, แหล่งตรวจ) <span class="required">*</span>' : 'สถานที่เก็บตัวอย่าง/ร้านค้า <span class="required">*</span>';
+        }
         
 document.getElementById('formNameTitle').innerText = title;
         const dynContainer = document.getElementById('dynamicFormFields'); if(dynContainer) dynContainer.innerHTML = dynamicHTML;
@@ -1145,7 +1173,25 @@ document.getElementById('formNameTitle').innerText = title;
         if (globalContainer) {
             globalContainer.innerHTML = '';
             this.globalSampleIndex = 0;
-            this.addGlobalSampleEntry(); // add at least one entry by default
+            if (isMu10007) {
+                const defaultMu07Items = [
+                    { category: 'มือ1', name: 'มือผู้สัมผัสอาหาร 1 (คนปรุง)', hint: 'เช่น มือแม่ค้า / คนปรุง' },
+                    { category: 'มือ2', name: 'มือผู้สัมผัสอาหาร 2 (คนเสิร์ฟ/ล้าง)', hint: 'เช่น มือผู้ช่วย / คนเสิร์ฟ' },
+                    { category: 'ภาชนะ', name: 'จาน/ชาม', hint: 'เช่น จานใส่อาหาร' },
+                    { category: 'ภาชนะ', name: 'ช้อน-ส้อม/แก้วน้ำ', hint: 'เช่น ช้อนส้อมพร้อมใช้' },
+                    { category: 'ภาชนะ', name: 'เขียง/มีด', hint: 'เช่น เขียงหั่นอาหารสุก' },
+                    { category: 'อาหาร', name: 'อาหารปรุงสุก 1', hint: 'เช่น ส้มตำไทย, ข้าวมันไก่' },
+                    { category: 'อาหาร', name: 'อาหารปรุงสุก 2', hint: 'เช่น ลาบหมู, ต้มยำ' },
+                    { category: 'อาหาร', name: 'อาหารพร้อมบริโภค 3', hint: 'เช่น ยำรวมมิตร, แกงเขียวหวาน' },
+                    { category: 'อาหาร', name: 'น้ำแข็ง/เครื่องดื่ม', hint: 'เช่น น้ำแข็งบริโภค' },
+                    { category: 'อาหาร', name: 'น้ำจิ้ม/เครื่องปรุง', hint: 'เช่น น้ำจิ้มไก่, พริกน้ำปลา' }
+                ];
+                defaultMu07Items.forEach(item => {
+                    this.addGlobalSampleEntry(item);
+                });
+            } else {
+                this.addGlobalSampleEntry(); // add at least one entry by default
+            }
         }
         
         // Reset PDF button
@@ -1573,6 +1619,43 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
                     </div>
                 </div>`;
+        } else if (formType === 'MU.10-007') {
+            const defCat = (defaultItem && defaultItem.category) ? defaultItem.category : (this.globalSampleIndex <= 2 ? (this.globalSampleIndex === 1 ? 'มือ1' : 'มือ2') : (this.globalSampleIndex <= 5 ? 'ภาชนะ' : 'อาหาร'));
+            const defName = (defaultItem && defaultItem.name) ? defaultItem.name : '';
+            const defHint = (defaultItem && defaultItem.hint) ? defaultItem.hint : 'ระบุชื่อตัวอย่าง เช่น มือคนปรุง, จาน, ข้าวมันไก่';
+            
+            let catColor = '#2563eb';
+            if (defCat.startsWith('มือ')) catColor = '#7c3aed';
+            else if (defCat === 'ภาชนะ') catColor = '#0891b2';
+            else if (defCat === 'อาหาร') catColor = '#059669';
+
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <h4 style="color: ${catColor}; margin: 0; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <span style="background: ${catColor}15; color: ${catColor}; padding: 2px 10px; border-radius: 9999px; font-size: 13px; border: 1px solid ${catColor}30;">ลำดับที่ ${this.globalSampleIndex}</span>
+                        <span>รายการตัวอย่าง (${defCat})</span>
+                    </h4>
+                    <button type="button" class="btn btn-text remove-sample-btn" style="color: #ef4444; padding: 4px 8px; font-weight: 500;" onclick="app.removeGlobalSample(this)"><i class="fa-solid fa-trash"></i> ลบ</button>
+                </div>
+                <div class="form-grid" style="grid-template-columns: 180px 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label>ประเภทตัวอย่าง <span class="required">*</span></label>
+                        <select name="sample_category_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 13.5px; font-weight: 600;">
+                            <option value="มือ1" ${defCat === 'มือ1' ? 'selected' : ''}>🖐️ มือ1 (ผู้สัมผัส 1)</option>
+                            <option value="มือ2" ${defCat === 'มือ2' ? 'selected' : ''}>🖐️ มือ2 (ผู้สัมผัส 2)</option>
+                            <option value="ภาชนะ" ${defCat === 'ภาชนะ' ? 'selected' : ''}>🍽️ ภาชนะอุปกรณ์</option>
+                            <option value="อาหาร" ${defCat === 'อาหาร' ? 'selected' : ''}>🍲 อาหาร</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อ/รายละเอียดตัวอย่าง <span class="required">*</span></label>
+                        <input type="text" name="sample_name_${this.globalSampleIndex}" required value="${defName}" placeholder="${defHint}" style="font-size: 13.5px;">
+                    </div>
+                    <div class="form-group">
+                        <label>รายละเอียดเพิ่มเติม / หมายเหตุ</label>
+                        <input type="text" name="sample_detail_${this.globalSampleIndex}" placeholder="เช่น คนปรุงอาหาร, ล้างสะอาด, พร้อมบริโภค" style="font-size: 13.5px;">
+                    </div>
+                </div>`;
         } else if (formType === 'MU.10-006') {
             div.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
@@ -1774,7 +1857,7 @@ document.getElementById('formNameTitle').innerText = title;
                         key.startsWith('oil_disposal_') || key.startsWith('polar_value_') || key.startsWith('food_category_') ||
                         key.startsWith('food_serial_no_') || key.startsWith('manufacturer_info_') || key.startsWith('has_mfg_exp_') ||
                         key.startsWith('net_weight_') || key.startsWith('has_storage_warning_') || key.startsWith('label_summary_') ||
-                        key.startsWith('iodate_value_') || key.startsWith('test_outcome_')) {
+                        key.startsWith('iodate_value_') || key.startsWith('test_outcome_') || key.startsWith('sample_category_') || key.startsWith('sample_detail_')) {
                         delete oldSample[key];
                     }
                 });
@@ -2076,6 +2159,14 @@ document.getElementById('formNameTitle').innerText = title;
         document.getElementById('field-collector-name').value = sample.collector_name || '';
         document.getElementById('field-collector-position').value = sample.collector_position || '';
         document.getElementById('field-sampling-date').value = sample.sampling_date || '';
+        if (sample.shop_name) {
+            const inpShop = document.getElementById('field-shop-name');
+            if (inpShop) inpShop.value = sample.shop_name;
+        }
+        if (sample.test_kit) {
+            const selKit = document.getElementById('field-test-kit');
+            if (selKit) selKit.value = sample.test_kit;
+        }
 
         // 4. Fill dynamic sample rows
         const container = document.getElementById('globalSampleEntries');
@@ -2684,6 +2775,62 @@ document.getElementById('formNameTitle').innerText = title;
         this.updateMu10006OverallSummary();
     },
 
+    handleMu10007RowChange(idx) {
+        const cleanEl = document.getElementById('analysis-cleanliness-' + idx);
+        const sumEl = document.getElementById('analysis-summary-' + idx);
+        if (cleanEl && sumEl) {
+            if (cleanEl.value === 'ไม่สะอาด') {
+                sumEl.value = 'ไม่ผ่าน';
+            } else {
+                sumEl.value = 'ผ่าน';
+            }
+            sumEl.style.color = sumEl.value === 'ผ่าน' ? '#16a34a' : '#dc2626';
+            this.updateMu10007Summary();
+        }
+    },
+
+    updateMu10007Summary() {
+        let total = 0;
+        let pass = 0;
+        let idx = 1;
+        while (document.getElementById('analysis-summary-' + idx)) {
+            total++;
+            const val = document.getElementById('analysis-summary-' + idx).value;
+            const sel = document.getElementById('analysis-summary-' + idx);
+            if (sel) sel.style.color = val === 'ผ่าน' ? '#16a34a' : '#dc2626';
+            if (val === 'ผ่าน') pass++;
+            idx++;
+        }
+        if (total > 0) {
+            const pct = ((pass / total) * 100).toFixed(1).replace('.0', '');
+            const passPctEl = document.getElementById('mu07-pass-percent');
+            const passCntEl = document.getElementById('mu07-pass-count');
+            const badgeEl = document.getElementById('mu07-cfgt-badge');
+            const outcomeEl = document.getElementById('analysis-summary-outcome');
+            const hiddenPct = document.getElementById('mu07-hidden-percent');
+            
+            if (passPctEl) passPctEl.innerText = pct + '%';
+            if (passCntEl) passCntEl.innerText = pass;
+            if (hiddenPct) hiddenPct.value = pct + '%';
+
+            const isPassingCfgt = (pass / total) >= 0.90;
+            if (badgeEl) {
+                if (isPassingCfgt) {
+                    badgeEl.style.background = '#dcfce7';
+                    badgeEl.style.color = '#166534';
+                    badgeEl.innerText = 'ผ่านเกณฑ์ Clean Food Good Taste (≥90%)';
+                } else {
+                    badgeEl.style.background = '#fee2e2';
+                    badgeEl.style.color = '#991b1b';
+                    badgeEl.innerText = 'ไม่ผ่านเกณฑ์ Clean Food Good Taste (<90%)';
+                }
+            }
+            if (outcomeEl) {
+                outcomeEl.value = isPassingCfgt ? 'ผ่าน' : 'ไม่ผ่าน';
+            }
+        }
+    },
+
     updateMu10006OverallSummary() {
         const overallSelect = document.getElementById('analysis-summary-outcome');
         if (!overallSelect) return;
@@ -3146,6 +3293,109 @@ document.getElementById('formNameTitle').innerText = title;
                 const commentEl = document.getElementById('analysis-comment');
                 if (commentEl) commentEl.value = sample.analysis_comment;
             }
+        } else if (sample.form_type === 'MU.10-007') {
+            const items = [];
+            let idx = 1;
+            while (sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined) {
+                items.push({
+                    idx: idx,
+                    category: sample['sample_category_' + idx] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร')),
+                    name: sample['sample_name_' + idx] || ('ตัวอย่างที่ ' + idx),
+                    detail: sample['sample_detail_' + idx] || '',
+                    cleanliness: sample['analysis_cleanliness_' + idx] || 'สะอาดมาก',
+                    summary: sample['analysis_summary_' + idx] || 'ผ่าน'
+                });
+                idx++;
+            }
+            if (items.length === 0) {
+                const defaultCats = ['มือ1', 'มือ2', 'ภาชนะ', 'ภาชนะ', 'ภาชนะ', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร'];
+                for (let i = 1; i <= 10; i++) {
+                    items.push({
+                        idx: i,
+                        category: defaultCats[i-1],
+                        name: sample['sample_name_' + i] || (defaultCats[i-1] + ' ' + i),
+                        detail: sample['sample_detail_' + i] || '',
+                        cleanliness: sample['analysis_cleanliness_' + i] || 'สะอาดมาก',
+                        summary: sample['analysis_summary_' + i] || 'ผ่าน'
+                    });
+                }
+            }
+
+            let rowsHtml = items.map(it => {
+                const isPass = it.summary === 'ผ่าน';
+                return `
+                    <tr style="text-align: center; vertical-align: middle; border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 8px; font-weight: 700; color: #475569;">${it.idx}</td>
+                        <td style="padding: 8px; font-weight: 600; text-align: left;">
+                            <span class="badge" style="background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:4px; font-size:12px;">${it.category}</span>
+                        </td>
+                        <td style="padding: 8px; text-align: left; font-weight: 500;">
+                            <div>${it.name}</div>
+                            ${it.detail ? `<div style="font-size: 11.5px; color: #64748b;">${it.detail}</div>` : ''}
+                        </td>
+                        <td style="padding: 6px;">
+                            <select id="analysis-cleanliness-${it.idx}" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 13px;" onchange="app.handleMu10007RowChange(${it.idx})">
+                                <option value="สะอาดมาก" ${it.cleanliness === 'สะอาดมาก' ? 'selected' : ''}>สะอาดมาก</option>
+                                <option value="สะอาด" ${it.cleanliness === 'สะอาด' ? 'selected' : ''}>สะอาด</option>
+                                <option value="ปานกลาง" ${it.cleanliness === 'ปานกลาง' ? 'selected' : ''}>ปานกลาง</option>
+                                <option value="ไม่สะอาด" ${it.cleanliness === 'ไม่สะอาด' ? 'selected' : ''}>ไม่สะอาด</option>
+                            </select>
+                        </td>
+                        <td style="padding: 6px;">
+                            <select id="analysis-summary-${it.idx}" style="padding: 5px 10px; border-radius: 6px; font-weight: 700; font-family: inherit; font-size: 13px; border: 1px solid #cbd5e1; color: ${isPass ? '#16a34a' : '#dc2626'};" onchange="app.updateMu10007Summary()">
+                                <option value="ผ่าน" ${isPass ? 'selected' : ''}>ผ่าน</option>
+                                <option value="ไม่ผ่าน" ${!isPass ? 'selected' : ''}>ไม่ผ่าน</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            let html = `
+                <div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์เชื้อโคลิฟอร์มขั้นต้น (MU.10-007)</div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; font-size: 13.5px; color: #334155;">
+                        <div><b>ชื่อร้าน:</b> ${sample.shop_name || sample.location_name || '-'}</div>
+                        <div><b>สถานที่:</b> ${sample.location_name || '-'} (จ.${sample.province || '-'})</div>
+                        <div><b>ชุดทดสอบ:</b> <span class="badge" style="background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:4px;">${sample.test_kit || 'ข. SI-2 กรมอนามัย'}</span></div>
+                    </div>
+                    <div class="table-responsive" style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+                            <thead>
+                                <tr style="background: #0f274e; color: white;">
+                                    <th style="padding: 10px; width: 6%; color: white;">ลำดับ</th>
+                                    <th style="padding: 10px; width: 15%; text-align: left; color: white;">ประเภท</th>
+                                    <th style="padding: 10px; width: 35%; text-align: left; color: white;">ชื่อ/รายละเอียด</th>
+                                    <th style="padding: 10px; width: 22%; color: white;">ระดับความสะอาด</th>
+                                    <th style="padding: 10px; width: 22%; color: white;">สรุปผล</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 18px; padding: 14px 18px; background: white; border: 1.5px solid #e2e8f0; border-radius: 10px; display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div style="font-size: 14px; font-weight: 600; color: #1e293b;">
+                                คิดผ่านเป็นร้อยละ: <span id="mu07-pass-percent" style="font-size: 18px; font-weight: 800; color: #2563eb;">100%</span>
+                                <span style="font-size: 12px; color: #64748b; margin-left: 8px;">(ผ่าน <span id="mu07-pass-count">${items.length}</span> จาก ${items.length} ตัวอย่าง)</span>
+                            </div>
+                            <div style="font-size: 14px; font-weight: 600; color: #1e293b;">
+                                สรุปผลการตรวจ: <span id="mu07-cfgt-badge" class="badge" style="background: #dcfce7; color: #166534; font-size: 14px; padding: 6px 14px; border-radius: 20px;">ผ่านเกณฑ์ Clean Food Good Taste</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="analysis-summary-outcome" value="ผ่าน">
+                        <input type="hidden" id="mu07-hidden-percent" value="100%">
+                        <div style="font-size: 12px; color: #64748b; border-top: 1px dashed #e2e8f0; padding-top: 8px;">
+                            <i class="fa-solid fa-circle-info"></i> <b>หมายเหตุ:</b> เกณฑ์มาตรฐาน Clean Food Taste เกณฑ์การผ่าน คือ > ร้อยละ 90 (ผ่านอย่างน้อย 9 ใน 10 รายการ)
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+            setTimeout(() => { if (app.updateMu10007Summary) app.updateMu10007Summary(); }, 50);
         } else if (sample.form_type === 'MU.10-006') {
             const machines = [];
             let idx = 1;
@@ -5579,6 +5829,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     net_weight: sample[`net_weight_${idx}`] || '',
                     label_summary: sample[`label_summary_${idx}`] || ''
                 });
+            } else if (sample.form_type === 'MU.10-007') {
+                sampleItems.push({
+                    idx: idx,
+                    category: sample[`sample_category_${idx}`] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร')),
+                    name: sample[`sample_name_${idx}`] || '',
+                    detail: sample[`sample_detail_${idx}`] || '',
+                    cleanliness: sample[`analysis_cleanliness_${idx}`] || '',
+                    summary: sample[`analysis_summary_${idx}`] || ''
+                });
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({
                     distributor: sample[`distributor_${idx}`] || '',
@@ -5865,7 +6124,122 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         
         let htmlContent = '';
-        if (sample.form_type === 'MU.10-004') {
+        if (sample.form_type === 'MU.10-007') {
+            const defaultCats = ['มือ1', 'มือ2', 'ภาชนะ', 'ภาชนะ', 'ภาชนะ', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร'];
+            let rowsHtml = '';
+            for (let i = 1; i <= 10; i++) {
+                const item = sampleItems.find(it => it.idx === i) || {};
+                const cat = item.category || defaultCats[i-1];
+                const name = item.name || sample['sample_name_' + i] || '';
+                const detail = item.detail || sample['sample_detail_' + i] || '';
+                const clean = item.cleanliness || sample['analysis_cleanliness_' + i] || '';
+                const sum = item.summary || sample['analysis_summary_' + i] || '';
+
+                rowsHtml += `
+                    <tr style="height: 32px; text-align: center; font-size: 13.5px; page-break-inside: avoid;">
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold;">${i}</td>
+                        <td style="border: 1px solid #000; padding: 4px 6px; text-align: left;">${name}</td>
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: 600;">${cat}</td>
+                        <td style="border: 1px solid #000; padding: 4px 6px; text-align: left;">${detail}</td>
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: 500;">${clean}</td>
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold; color: ${sum === 'ไม่ผ่าน' ? '#dc2626' : (sum === 'ผ่าน' ? '#16a34a' : '#000')};">${sum}</td>
+                    </tr>
+                `;
+            }
+
+            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '';
+            const analystName = sample.analysis_analyst || sample.sel_analyst_1 || '';
+            const testKitLabel = sample.test_kit || 'ข. SI-2 กรมอนามัย';
+            const isSciDept = testKitLabel.includes('กรมวิทยาศาสตร์การแพทย์');
+            const isSi2 = testKitLabel.includes('SI-2');
+
+            htmlContent = `
+                <div class="pdf-page-container" style="padding: 16px 20px; font-family: 'TH SarabunPSK', 'SarabunPDF', 'Kanit', sans-serif; font-size: 14px; color: #000; line-height: 1.35; background: #fff;">
+                    <!-- Header with border matching Image 1 -->
+                    <div style="border: 1.5px solid #000; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <img src="${logoBase64}" style="height: 60px; object-fit: contain;">
+                            <div style="font-size: 13px; line-height: 1.3;">
+                                <div><b>ประเภทเอกสาร :</b> แบบบันทึก</div>
+                                <div><b>ชื่อเอกสาร :</b> แบบบันทึกเก็บตัวอย่างเชื้อโคลิฟอร์มแบคทีเรียขั้นต้น</div>
+                                <div><b>วันที่เริ่มใช้ :</b> 1 มกราคม พ.ศ. 2566</div>
+                                <div><b>แผนก :</b> ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right; font-size: 13px; line-height: 1.4;">
+                            <div><b>หมายเลขเอกสาร :</b> MU.10-007</div>
+                            <div><b>แก้ไขครั้งที่ :</b> 001</div>
+                        </div>
+                    </div>
+
+                    <!-- General Info Fields -->
+                    <div style="font-size: 13.5px; line-height: 1.7; margin-bottom: 10px;">
+                        <div><b>หน่วยงานที่เก็บตัวอย่าง:</b> ${sample.agency || '....................................................................................................................................................................'}</div>
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+                            <span><b>สถานที่เก็บตัวอย่าง:</b> ${sample.location_name || '...................................................'}</span>
+                            <span><b>ตำบล:</b> ${sample.tambon || '........................'}</span>
+                            <span><b>อำเภอ:</b> ${sample.amphoe || '........................'}</span>
+                            <span><b>จังหวัด:</b> ${sample.province || '........................'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+                            <span><b>วันที่เก็บตัวอย่าง:</b> ${samplingDate || '..................................'}</span>
+                            <span><b>ชื่อผู้เก็บตัวอย่าง:</b> ${sample.collector_name || '...................................................'}</span>
+                            <span><b>วันที่ตรวจวิเคราะห์:</b> ${analysisDate || '..................................'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+                            <span><b>ผู้ตรวจวิเคราะห์:</b> ${analystName || '...................................................'}</span>
+                            <span><b>จำนวนตัวอย่าง:</b> 10 ตัวอย่าง</span>
+                        </div>
+                        <div style="margin-top: 2px;">
+                            <b>ใช้ชุดทดสอบของ:</b> &nbsp;&nbsp;&nbsp;&nbsp;
+                            ${isSciDept ? '☑' : '☐'} ก. กรมวิทยาศาสตร์การแพทย์ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            ${isSi2 ? '☑' : '☐'} ข. SI-2 กรมอนามัย
+                        </div>
+                        <div style="margin-top: 2px;">
+                            <b>ชื่อร้าน:</b> ${sample.shop_name || sample.location_name || '...............................................................................................................................'}
+                        </div>
+                    </div>
+
+                    <!-- Table matching Image 1 -->
+                    <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; font-size: 13px; margin-bottom: 8px;" border="1">
+                        <thead>
+                            <tr style="background: #fff; text-align: center;">
+                                <th rowspan="2" style="padding: 4px; border: 1px solid #000; width: 7%;">ลำดับ</th>
+                                <th rowspan="2" style="padding: 4px 6px; border: 1px solid #000; width: 30%;">ชื่อ/รายละเอียด</th>
+                                <th rowspan="2" style="padding: 4px; border: 1px solid #000; width: 14%;">ตัวอย่าง</th>
+                                <th rowspan="2" style="padding: 4px 6px; border: 1px solid #000; width: 21%;">ตัวอย่าง</th>
+                                <th colspan="2" style="padding: 4px; border: 1px solid #000; width: 28%;">ผลการทดสอบ</th>
+                            </tr>
+                            <tr style="background: #fff; text-align: center;">
+                                <th style="padding: 4px; border: 1px solid #000; width: 14%;">ระดับความสะอาด</th>
+                                <th style="padding: 4px; border: 1px solid #000; width: 14%;">สรุปผล</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+
+                    <!-- Bottom Summary -->
+                    <div style="border: 1px solid #000; padding: 6px 10px; margin-bottom: 8px; font-size: 13.5px; line-height: 1.6;">
+                        <div><b>คิดผ่านเป็นร้อยละ:</b> ${sample.analysis_pass_percent || '........................................................................................................................................'}</div>
+                        <div><b>สรุปผลการตรวจ:</b> ${sample.analysis_cfgt_outcome || (sample.analysis_summary ? (sample.analysis_summary === 'ผ่าน' ? 'ผ่านเกณฑ์ Clean Food Good Taste (≥90%)' : 'ไม่ผ่านเกณฑ์ Clean Food Good Taste (<90%)') : '........................................................................................................................................')}</div>
+                    </div>
+                    
+                    <div style="font-size: 12.5px; font-weight: bold; margin-bottom: 16px;">
+                        หมายเหตุ เกณฑ์มาตรฐาน Clean Food Taste เกณฑ์การผ่าน คือ > ร้อยละ 90
+                    </div>
+
+                    <!-- Footer Signatures -->
+                    <div style="display: flex; justify-content: flex-end; font-size: 13px; margin-top: 10px;">
+                        <div style="text-align: center; width: 320px; line-height: 1.8;">
+                            <div>ผู้ทบทวนเอกสาร : ...................................................(สำหรับผู้ตรวจวิเคราะห์)</div>
+                            <div>วันที่ ...................................................</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (sample.form_type === 'MU.10-004') {
             const firstItem = sampleItems[0] || {};
             
             // Map food categories
@@ -6373,7 +6747,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             document.body.appendChild(iframe);
             const doc = iframe.contentWindow.document;
             doc.open();
-            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 'portrait' : 'landscape';
+            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape';
             doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="style_v2.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
             doc.write(htmlContent);
             doc.write('</body></html>');

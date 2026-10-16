@@ -361,7 +361,7 @@
 
 
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792118200000">
+    <link rel="stylesheet" href="enhancements.css?v=1792119900000">
 </head>
 <body>
     <!-- App Container -->
@@ -838,6 +838,17 @@
                                     <div class="form-group">
                                         <label for="field-location-name">สถานที่เก็บตัวอย่าง/ร้านค้า <span class="required">*</span></label>
                                         <input type="text" id="field-location-name" name="location_name" required placeholder="เช่น ร้านยายใจ ผักสด ตลาดเทศบาล">
+                                    </div>
+                                    <div class="form-group" id="group-shop-name" style="display: none;">
+                                        <label for="field-shop-name">ชื่อร้าน / สถานประกอบการ <span class="required">*</span></label>
+                                        <input type="text" id="field-shop-name" name="shop_name" placeholder="เช่น ร้านป้าแจ่ม ข้าวมันไก่, ครัวริมมูล">
+                                    </div>
+                                    <div class="form-group" id="group-test-kit" style="display: none;">
+                                        <label for="field-test-kit">ใช้ชุดทดสอบของ <span class="required">*</span></label>
+                                        <select id="field-test-kit" name="test_kit">
+                                            <option value="ข. SI-2 กรมอนามัย">ข. SI-2 กรมอนามัย</option>
+                                            <option value="ก. กรมวิทยาศาสตร์การแพทย์">ก. กรมวิทยาศาสตร์การแพทย์</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="field-province">จังหวัดที่เก็บตัวอย่าง <span class="required">*</span></label>
@@ -1950,6 +1961,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792057347225"></script>
+    <script src="app_v85.js?v=1792119900000"></script>
 </body>
 </html>
