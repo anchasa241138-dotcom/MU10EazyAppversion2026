@@ -5677,11 +5677,11 @@ document.getElementById('formNameTitle').innerText = title;
                         height: 29px !important;
                     }
                     .mu007-table td.col-summary {
-                        font-size: 28px !important;
+                        font-size: 13px !important;
                         font-weight: bold !important;
                         vertical-align: middle !important;
                         text-align: center !important;
-                        letter-spacing: 2px !important;
+                        letter-spacing: normal !important;
                     }
                 </style>
             `;
@@ -5718,7 +5718,7 @@ document.getElementById('formNameTitle').innerText = title;
                             <td style="${si2Val === 'พบ' ? 'color: #dc2626 !important; font-weight: bold !important;' : ''}">${si2Val}</td>
                             <td style="${sumVal === 'ไม่ผ่าน' ? 'color: #dc2626 !important; font-weight: bold !important;' : ''}">${sumVal}</td>
                             ${rIdx === 0 ? `
-                                <td rowspan="${chunk.length}" class="col-summary" style="color: ${overallPass ? '#000 !important;' : '#dc2626 !important;'}">
+                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: bold !important; color: ${overallPass ? '#000 !important;' : '#dc2626 !important;'}">
                                     ${overallPass ? 'ผ่าน' : 'ไม่ผ่าน'}
                                 </td>
                             ` : ''}
@@ -5728,18 +5728,18 @@ document.getElementById('formNameTitle').innerText = title;
 
                 fullHtmlResult += `
                     <div class="cert-pdf-border mu007-report-container" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; padding: 152px 45px 35px 45px; background-size: 100% 100%; background-position: top left;">
-                        <div style="position: relative; margin-top: 4px; margin-bottom: 12px; height: 42px;">
-                            <div style="position: absolute; left: 0; top: 0px; font-size: 14px; font-weight: bold; color: #000;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px; margin-bottom: 6px;">
+                            <div style="font-size: 14px; font-weight: bold; color: #000;">
                                 RD-007
                             </div>
                             ${totalPages > 1 ? `
-                                <div style="position: absolute; right: 0; top: 0px; font-size: 13px; color: #000;">
+                                <div style="font-size: 13px; color: #000;">
                                     หน้าที่ ${page + 1}/${totalPages}
                                 </div>
-                            ` : ''}
-                            <div style="text-align: center; font-weight: bold; font-size: 15.5px; color: #000; line-height: 1.4; padding: 0 65px;">
-                                รายงานผลตรวจเชื้อโคลิฟอร์มแบคทีเรียขั้นต้นในอาหาร ภาชนะอุปกรณ์ และมือผู้สัมผัสอาหาร โดยชุดทดสอบ SI-2
-                            </div>
+                            ` : '<div></div>'}
+                        </div>
+                        <div style="text-align: center; font-weight: bold; font-size: 15.5px; color: #000; line-height: 1.4; margin-bottom: 12px;">
+                            รายงานผลตรวจเชื้อโคลิฟอร์มแบคทีเรียขั้นต้นในอาหาร ภาชนะอุปกรณ์ และมือผู้สัมผัสอาหาร โดยชุดทดสอบ SI-2
                         </div>
 
                         <div style="font-size: 13.5px; line-height: 1.55; color: #000; margin-bottom: 10px;">
