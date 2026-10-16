@@ -2732,8 +2732,15 @@ document.getElementById('formNameTitle').innerText = title;
         document.getElementById('analysis-source-display').value = sources.join('; ') || '-';
         
         // Pre-fill analyst & date
-        document.getElementById('analysis-analyst').value = sample.analysis_analyst || this.currentUser.fullname;
-        document.getElementById('analysis-analyst-position').value = sample.analysis_analyst_position || 'นักวิทยาศาสตร์การแพทย์';
+        const analystSelect = document.getElementById('analysis-analyst');
+        const curAnalyst = sample.analysis_analyst || (this.currentUser && this.currentUser.role === 'lab' ? this.currentUser.fullname : '');
+        if (analystSelect) {
+            if (curAnalyst && ![...analystSelect.options].some(o => o.value === curAnalyst)) {
+                analystSelect.add(new Option(curAnalyst, curAnalyst));
+            }
+            analystSelect.value = curAnalyst;
+        }
+        document.getElementById('analysis-analyst-position').value = sample.analysis_analyst_position || 'นักวิชาการสาธารณสุข';
         document.getElementById('analysis-date').value = sample.analysis_date || new Date().toISOString().split('T')[0];
         
         // Render dynamic section based on form type
@@ -2775,6 +2782,13 @@ document.getElementById('formNameTitle').innerText = title;
         }
         
         document.getElementById('analysisInputModal').classList.add('active');
+    },
+
+    handleAnalysisAnalystChange(val) {
+        const posElem = document.getElementById('analysis-analyst-position');
+        if (posElem && val) {
+            posElem.value = 'นักวิชาการสาธารณสุข';
+        }
     },
 
     
@@ -5744,7 +5758,7 @@ document.getElementById('formNameTitle').innerText = title;
                                 </div>
                             ` : '<div></div>'}
                         </div>
-                        <div style="text-align: center; font-weight: bold; font-size: 15.5px; color: #000; line-height: 1.4; margin-bottom: 12px;">
+                        <div style="text-align: center; font-weight: bold; font-size: 13.5px; color: #000; line-height: 1.4; margin-bottom: 12px; white-space: nowrap;">
                             รายงานผลตรวจเชื้อโคลิฟอร์มแบคทีเรียขั้นต้นในอาหาร ภาชนะอุปกรณ์ และมือผู้สัมผัสอาหาร โดยชุดทดสอบ SI-2
                         </div>
 
@@ -5785,7 +5799,7 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
 
-                        <div style="margin-top: 8px; margin-bottom: 12px; font-size: 13px; font-weight: bold; color: #000;">
+                        <div style="margin-top: 8px; margin-bottom: 12px; font-size: 13px; font-weight: normal; color: #000;">
                             หมายเหตุ การตรวจประเมินด้านการสุขาภิบาลอาหาร ต้องผ่านการตรวจประเมินทางด้านแบคทีเรีย ให้ผ่านร้อยละ 90
                         </div>
 

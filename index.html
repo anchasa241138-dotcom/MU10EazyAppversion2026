@@ -1694,7 +1694,13 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="analysis-analyst">ผู้ตรวจวิเคราะห์</label>
-                            <input type="text" id="analysis-analyst" placeholder="ชื่อ-นามสกุล (เว้นว่างได้หากต้องการเซ็นสด)">
+                            <select id="analysis-analyst" class="form-control" onchange="app.handleAnalysisAnalystChange(this.value)">
+                                <option value="">-- ไม่ระบุ (เว้นว่างไว้เขียนเอง) --</option>
+                                <option value="นายสุรชัย รินทอง">นายสุรชัย รินทอง</option>
+                                <option value="นางสาวอัญชสา ทองสีงามตา">นางสาวอัญชสา ทองสีงามตา</option>
+                                <option value="นางสาวนภาพร เกษทอง">นางสาวนภาพร เกษทอง</option>
+                                <option value="นางสาวสกุลกาญจน์ ฐิติธนันรัตน์">นางสาวสกุลกาญจน์ ฐิติธนันรัตน์</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="analysis-analyst-position">ตำแหน่ง</label>
@@ -1781,11 +1787,10 @@
                                     <label>ผู้ตรวจวิเคราะห์คนที่ 1</label>
                                     <select id="sel-analyst-1" class="form-control">
                                         <option value="">-- ไม่ระบุ --</option>
+                                        <option value="surachai">นายสุรชัย รินทอง</option>
+                                        <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
                                         <option value="naphaphon">นางสาวนภาพร เกษทอง</option>
                                         <option value="sakulkan">นางสาวสกุลกาญจน์ ฐิติธนันรัตน์</option>
-                                        <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
-                                        <option value="surachai">นายสุรชัย รินทอง</option>
-                                        
                                     </select>
                                     <select id="mode-analyst-1" class="form-control" style="margin-top: 8px; font-size: 0.85em; background-color: #f0fdf4; border-color: #bbf7d0; color: #166534;" onchange="app.toggleSignMode('analyst-1')">
                                         <option value="system">ลายเซ็นอัตโนมัติ (E-Sig)</option>
@@ -1805,11 +1810,10 @@
                                     <label>ผู้ตรวจวิเคราะห์คนที่ 2</label>
                                     <select id="sel-analyst-2" class="form-control">
                                         <option value="">-- ไม่ระบุ --</option>
+                                        <option value="surachai">นายสุรชัย รินทอง</option>
+                                        <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
                                         <option value="naphaphon">นางสาวนภาพร เกษทอง</option>
                                         <option value="sakulkan">นางสาวสกุลกาญจน์ ฐิติธนันรัตน์</option>
-                                        <option value="anchasa">นางสาวอัญชสา ทองสีงามตา</option>
-                                        <option value="surachai">นายสุรชัย รินทอง</option>
-                                        
                                     </select>
                                     <select id="mode-analyst-2" class="form-control" style="margin-top: 8px; font-size: 0.85em; background-color: #f0fdf4; border-color: #bbf7d0; color: #166534;" onchange="app.toggleSignMode('analyst-2')">
                                         <option value="system">ลายเซ็นอัตโนมัติ (E-Sig)</option>
@@ -1961,6 +1965,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792139613561"></script>
+    <script src="app_v85.js?v=1792140707110"></script>
 </body>
 </html>
