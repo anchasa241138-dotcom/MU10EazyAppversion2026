@@ -1308,7 +1308,7 @@ document.getElementById('formNameTitle').innerText = title;
         }
     },
 
-    addGlobalSampleEntry() {
+    addGlobalSampleEntry(defaultItem = null) {
         const formType = document.getElementById('field-form-type').value;
         this.globalSampleIndex = (this.globalSampleIndex || 0) + 1;
         const container = document.getElementById('globalSampleEntries');
