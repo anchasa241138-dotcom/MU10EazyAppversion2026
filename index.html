@@ -360,6 +360,50 @@
         }
 
 
+    
+        /* Certify modal export controls action buttons */
+        #btnEditApproval {
+            background-color: #fffbeb !important;
+            color: #92400e !important;
+            border: 1.5px solid #f59e0b !important;
+            font-weight: 600 !important;
+            padding: 9px 18px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        }
+        #btnEditApproval:hover {
+            background-color: #fef3c7 !important;
+            color: #78350f !important;
+            border-color: #d97706 !important;
+            box-shadow: 0 3px 8px rgba(217, 119, 6, 0.2) !important;
+            transform: translateY(-1px);
+        }
+        #btnCloseCertModal {
+            background-color: #f8fafc !important;
+            color: #334155 !important;
+            border: 1.5px solid #cbd5e1 !important;
+            font-weight: 600 !important;
+            padding: 9px 18px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        }
+        #btnCloseCertModal:hover {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+            border-color: #94a3b8 !important;
+            box-shadow: 0 3px 8px rgba(100, 116, 139, 0.15) !important;
+            transform: translateY(-1px);
+        }
     </style>
     <link rel="stylesheet" href="enhancements.css?v=1792123750976">
 </head>
@@ -1879,10 +1923,10 @@
                     <div class="alert alert-success">
                         <i class="fa-solid fa-circle-check"></i> รายงานฉบับนี้ได้รับอนุมัติผลวิเคราะห์อิเล็กทรอนิกส์เรียบร้อยแล้ว
                     </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-warning" onclick="app.enableEditApproval()"><i class="fa-solid fa-pen-to-square"></i> แก้ไขการอนุมัติ</button>
-                        <button type="button" class="btn btn-primary" id="btnDownloadCertPDF"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลดรายงานผลวิเคราะห์ (PDF)</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()">ปิดหน้าต่าง</button>
+                    <div class="form-actions" style="display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="btn" id="btnEditApproval" onclick="app.enableEditApproval()"><i class="fa-solid fa-pen-to-square" style="color: #d97706;"></i> แก้ไขการอนุมัติ</button>
+                        <button type="button" class="btn btn-primary" id="btnDownloadCertPDF" style="font-weight: 600; padding: 9px 20px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px;"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลดรายงานผลวิเคราะห์ (PDF)</button>
+                        <button type="button" class="btn" id="btnCloseCertModal" onclick="app.closeCertifyModal()"><i class="fa-solid fa-xmark" style="color: #64748b;"></i> ปิดหน้าต่าง</button>
                     </div>
                 </div>
             </div>
@@ -1965,6 +2009,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792140707110"></script>
+    <script src="app_v85.js?v=1792141728155"></script>
 </body>
 </html>
