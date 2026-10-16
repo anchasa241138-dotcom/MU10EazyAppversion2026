@@ -5631,13 +5631,6 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
                         <div style="font-size: 13px; font-weight: 500; margin-top: 2px;">(${pName})</div>
                         ${titlesHtml}
-                        ${isApprover1 ? `
-                            <div style="margin-top: 8px; border: 1px solid #000; padding: 4px 8px; font-size: 9.5px; line-height: 1.35; text-align: center; color: #000; display: inline-block; background: #fff;">
-                                รายงานนี้รับรองผลเฉพาะตัวอย่างที่ได้รับเท่านั้น<br>
-                                ห้ามนำรายงานไปคัดลอกหรือทำสำเนาเฉพาะบางส่วนโดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร<br>
-                                ห้ามนำรายงานนี้ไปประกาศโฆษณา
-                            </div>
-                        ` : ''}
                     </div>
                 `;
             };
