@@ -1639,8 +1639,8 @@ document.getElementById('formNameTitle').innerText = title;
                 </div>
                 <div class="form-grid" style="grid-template-columns: 180px 1fr 1fr; gap: 12px;">
                     <div class="form-group">
-                        <label>ประเภทตัวอย่าง <span class="required">*</span></label>
-                        <select name="sample_category_${this.globalSampleIndex}" required style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 13.5px; font-weight: 600;">
+                        <label>ประเภทตัวอย่าง</label>
+                        <select name="sample_category_${this.globalSampleIndex}" style="width: 100%; height: 42px; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 13.5px; font-weight: 600;">
                             <option value="มือ1" ${defCat === 'มือ1' ? 'selected' : ''}>🖐️ มือ1 (ผู้สัมผัส 1)</option>
                             <option value="มือ2" ${defCat === 'มือ2' ? 'selected' : ''}>🖐️ มือ2 (ผู้สัมผัส 2)</option>
                             <option value="ภาชนะ" ${defCat === 'ภาชนะ' ? 'selected' : ''}>🍽️ ภาชนะอุปกรณ์</option>
@@ -1648,8 +1648,8 @@ document.getElementById('formNameTitle').innerText = title;
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>ชื่อ/รายละเอียดตัวอย่าง <span class="required">*</span></label>
-                        <input type="text" name="sample_name_${this.globalSampleIndex}" required value="${defName}" placeholder="${defHint}" style="font-size: 13.5px;">
+                        <label>ชื่อ/รายละเอียดตัวอย่าง <span style="font-size: 11px; color: #64748b; font-weight: normal;">(ไม่บังคับ)</span></label>
+                        <input type="text" name="sample_name_${this.globalSampleIndex}" value="${defName}" placeholder="${defHint}" style="font-size: 13.5px;" oninput="app.updateTotalGlobalSamples()">
                     </div>
                     <div class="form-group">
                         <label>รายละเอียดเพิ่มเติม / หมายเหตุ</label>
@@ -1757,9 +1757,20 @@ document.getElementById('formNameTitle').innerText = title;
     updateTotalGlobalSamples() {
         const container = document.getElementById('globalSampleEntries');
         const qtyField = document.getElementById('field-sample-qty');
+        const formTypeEl = document.getElementById('field-form-type');
+        const formType = formTypeEl ? formTypeEl.value : '';
         if (container && qtyField) {
-            const count = container.querySelectorAll('.sample-section').length;
-            qtyField.value = count;
+            if (formType === 'MU.10-007') {
+                const nameInputs = container.querySelectorAll('input[name^="sample_name_"]');
+                let filled = 0;
+                nameInputs.forEach(inp => {
+                    if (inp.value && inp.value.trim() !== '') filled++;
+                });
+                qtyField.value = filled > 0 ? filled : container.querySelectorAll('.sample-section').length;
+            } else {
+                const count = container.querySelectorAll('.sample-section').length;
+                qtyField.value = count;
+            }
         }
     },
 
@@ -3297,14 +3308,19 @@ document.getElementById('formNameTitle').innerText = title;
             const items = [];
             let idx = 1;
             while (sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined) {
-                items.push({
-                    idx: idx,
-                    category: sample['sample_category_' + idx] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร')),
-                    name: sample['sample_name_' + idx] || ('ตัวอย่างที่ ' + idx),
-                    detail: sample['sample_detail_' + idx] || '',
-                    cleanliness: sample['analysis_cleanliness_' + idx] || 'สะอาดมาก',
-                    summary: sample['analysis_summary_' + idx] || 'ผ่าน'
-                });
+                const sName = (sample['sample_name_' + idx] || '').trim();
+                const sDetail = (sample['sample_detail_' + idx] || '').trim();
+                if (sName !== '' || sDetail !== '' || sample['analysis_summary_' + idx]) {
+                    items.push({
+                        idx: items.length + 1,
+                        originalIdx: idx,
+                        category: sample['sample_category_' + idx] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร')),
+                        name: sName || ('ตัวอย่างที่ ' + idx),
+                        detail: sDetail,
+                        cleanliness: sample['analysis_cleanliness_' + idx] || 'สะอาดมาก',
+                        summary: sample['analysis_summary_' + idx] || 'ผ่าน'
+                    });
+                }
                 idx++;
             }
             if (items.length === 0) {
@@ -6188,7 +6204,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </div>
                         <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
                             <span><b>ผู้ตรวจวิเคราะห์:</b> ${analystName || '...................................................'}</span>
-                            <span><b>จำนวนตัวอย่าง:</b> 10 ตัวอย่าง</span>
+                            <span><b>จำนวนตัวอย่าง:</b> ${sample.sample_qty || sampleItems.filter(it => (it.name || '').trim() !== '').length || 10} ตัวอย่าง</span>
                         </div>
                         <div style="margin-top: 2px;">
                             <b>ใช้ชุดทดสอบของ:</b> &nbsp;&nbsp;&nbsp;&nbsp;
