@@ -1,0 +1,103 @@
+﻿handleRegister(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('reg-title') ? document.getElementById('reg-title').value : '';
+        const firstname = document.getElementById('reg-firstname') ? document.getElementById('reg-firstname').value : '';
+        const lastname = document.getElementById('reg-lastname') ? document.getElementById('reg-lastname').value : '';
+        const cid = document.getElementById('reg-cid') ? document.getElementById('reg-cid').value : '';
+        const birthdate = document.getElementById('reg-birthdate') ? document.getElementById('reg-birthdate').value : '';
+        const position = document.getElementById('reg-position') ? document.getElementById('reg-position').value : '';
+        const workplace = document.getElementById('reg-workplace') ? document.getElementById('reg-workplace').value : '';
+        const province = document.getElementById('reg-province') ? document.getElementById('reg-province').value : '';
+        const district = document.getElementById('reg-district') ? document.getElementById('reg-district').value : '';
+        const subdistrict = document.getElementById('reg-subdistrict') ? document.getElementById('reg-subdistrict').value : '';
+        
+        const username = document.getElementById('reg-username') ? document.getElementById('reg-username').value : '';
+        const role = document.getElementById('reg-role') ? document.getElementById('reg-role').value : 'collector';
+        const pass = document.getElementById('reg-password') ? document.getElementById('reg-password').value : '';
+        const confirmPass = document.getElementById('reg-confirm-password') ? document.getElementById('reg-confirm-password').value : '';
+        
+        const fullname = `${title}${firstname} ${lastname}`.trim();
+
+        if (pass !== confirmPass) {
+            Swal.fire('ข้อผิดพลาด', 'รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน', 'error');
+            return;
+        }
+
+        if (typeof auth !== 'undefined') {
+            Swal.fire({ title: 'กำลังลงทะเบียน...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            const email = username.toLowerCase() + '@mu10.local';
+            
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    const uid = userCredential.user.uid;
+                    const newUser = {
+                        uid: uid,
+                        username: username,
+                        fullname: fullname,
+                        role: role,
+                        status: 'pending',
+                        createdAt: new Date().toISOString(),
+                        cid: cid,
+                        birthdate: birthdate,
+                        position: position,
+                        workplace: workplace,
+                        province: province,
+                        district: district,
+                        subdistrict: subdistrict
+                    };
+                    
+                    return db.ref('users/' + uid).set(newUser);
+                })
+                .then(() => {
+                    // Sign out immediately so they remain pending
+                    return auth.signOut();
+                })
+                .then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ลงทะเบียนสำเร็จ!',
+                        text: 'กรุณารอผู้ดูแลระบบอนุมัติการใช้งาน',
+                        confirmButtonText: 'ตกลง'
+                    }).then(() => {
+                        document.getElementById('registerForm').reset();
+                        this.showLoginModal();
+                    });
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/email-already-in-use') {
+                        Swal.fire('ข้อผิดพลาด', 'ชื่อผู้ใช้งานนี้มีในระบบแล้ว กรุณาใช้ชื่ออื่น', 'error');
+                    } else {
+                        Swal.fire('ข้อผิดพลาด', error.message, 'error');
+                    }
+                });
+        } else {
+            // Local Storage fallback
+            if (this.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+                Swal.fire('ข้อผิดพลาด', 'ชื่อผู้ใช้งานนี้มีในระบบแล้ว', 'error');
+                return;
+            }
+            
+            this.users.push({
+                username: username,
+                password: pass,
+                fullname: fullname,
+                role: role,
+                status: 'pending'
+            });
+            
+            if (typeof db === 'undefined') {
+                localStorage.setItem('sskmoph_users', JSON.stringify(this.users));
+            }
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'ลงทะเบียนสำเร็จ!',
+                text: 'กรุณารอผู้ดูแลระบบอนุมัติการใช้งาน (โหมด Local)',
+                confirmButtonText: 'ตกลง'
+            }).then(() => {
+                document.getElementById('registerForm').reset();
+                this.showLoginModal();
+            });
+        }
+    }

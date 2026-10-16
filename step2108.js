@@ -1,0 +1,26 @@
+﻿const fs = require('fs');
+let js = fs.readFileSync('app_v83.js', 'utf8');
+
+const newVisible = getVisibleSamples() {
+        if (!this.currentUser) return [];
+        if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier') {
+            return this.samples;
+        }
+        
+        const workplace = (this.currentUser.workplace || '').trim();
+        const isSSJ = workplace.includes('สสจ') || workplace.includes('สำนักงานสาธารณสุขจังหวัด');
+        
+        if (isSSJ) {
+            if (workplace.includes('ศรีสะเกษ')) return this.samples.filter(s => s.province === 'ศรีสะเกษ');
+            if (workplace.includes('อุบลราชธานี')) return this.samples.filter(s => s.province === 'อุบลราชธานี');
+            if (workplace.includes('ยโสธร')) return this.samples.filter(s => s.province === 'ยโสธร');
+            if (workplace.includes('อำนาจเจริญ')) return this.samples.filter(s => s.province === 'อำนาจเจริญ');
+            if (workplace.includes('มุกดาหาร')) return this.samples.filter(s => s.province === 'มุกดาหาร');
+        }
+        
+        return this.samples.filter(s => s.created_by === this.currentUser.username);
+    };
+
+js = js.replace(/getVisibleSamples\(\) \{[\s\S]*?return this\.samples\.filter\(s => s\.created_by === this\.currentUser\.username\);\r?\n    \}/, newVisible);
+
+fs.writeFileSync('app_v83.js', js);

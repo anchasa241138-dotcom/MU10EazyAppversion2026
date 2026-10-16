@@ -1,0 +1,226 @@
+renderAnalysisDynamicSection(sample) {
+        const container = document.getElementById('analysis-dynamic-section');
+        
+        if (sample.form_type === 'MU.10-001') {
+            const sampleNames = [];
+            let idx = 1;
+            while (sample['sample_name_' + idx] !== undefined) {
+                if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') sampleNames.push({ name: sample['sample_name_' + idx], idx: idx });
+                idx++;
+            }
+            if (sampleNames.length === 0) {
+                sampleNames.push({ name: sample.sample_name || 'ตัวอย่างที่ 1', idx: 1 });
+            }
+
+            let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
+
+            sampleNames.forEach(item => {
+                html += `
+                    <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
+                        <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ตัวอย่าง: ${item.name}</h5>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>สารที่ตรวจวิเคราะห์ <span class="required">*</span></label>
+                                <select id="analysis-substance-${item.idx}" required onchange="app.handleSubstanceChange(${item.idx})">
+                                    <option value="">-- เลือกสารที่ตรวจ --</option>
+                                    <option value="GT">GT</option>
+                                    <option value="TM/2">TM/2</option>
+                                    <option value="GT และ TM/2">GT และ TM/2</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group" id="interp-container-1-${item.idx}">
+                                <label id="label-interp-1-${item.idx}">การแปลผล <span class="required">*</span></label>
+                                <select id="analysis-interpretation-${item.idx}" required onchange="app.handleInterpretationChange(${item.idx})">
+                                    <option value="">-- เลือกการแปลผล --</option>
+                                    <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
+                                    <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
+                                    <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
+                                    <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                    <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="result-container-1-${item.idx}">
+                                <label id="label-result-1-${item.idx}">ผลการตรวจวิเคราะห์</label>
+                                <input type="text" id="analysis-detail-results-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
+                                <span class="input-helper">ออโต้</span>
+                            </div>
+                            <div class="form-group" id="interp-container-2-${item.idx}" style="display:none;">
+                                <label>การแปลผล (TM/2 kit) <span class="required">*</span></label>
+                                <select id="analysis-interpretation-2-${item.idx}" onchange="app.handleInterpretationChange(${item.idx})">
+                                    <option value="">-- เลือกการแปลผล --</option>
+                                    <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
+                                    <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
+                                    <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
+                                    <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                    <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="result-container-2-${item.idx}" style="display:none;">
+                                <label>ผลการตรวจวิเคราะห์ (TM/2 kit)</label>
+                                <input type="text" id="analysis-detail-results-2-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
+                                <span class="input-helper">ออโต้</span>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>สรุปผล (รวม)</label>
+                                <input type="text" id="analysis-summary-outcome-${item.idx}" readonly class="readonly-input" style="font-weight:700; font-size:14px; width: 50%;">
+                                <span class="input-helper">ออโต้</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="form-group">
+                    <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
+                    <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
+                </div>
+            `;
+            container.innerHTML = html;
+
+            // Pre-fill saved values
+            sampleNames.forEach(item => {
+                const sub = sample['analysis_substance_' + item.idx] || sample.analysis_substance;
+                if (sub) document.getElementById('analysis-substance-' + item.idx).value = sub;
+                
+                
+                app.handleSubstanceChange(item.idx);
+                
+                const interp = sample['analysis_interpretation_' + item.idx] || sample.analysis_interpretation;
+                if (interp) {
+                    const el = document.getElementById('analysis-interpretation-' + item.idx);
+                    if (el) {
+                        el.value = interp;
+                    }
+                }
+                const interp2 = sample['analysis_interpretation_2_' + item.idx];
+                if (interp2) {
+                    const el2 = document.getElementById('analysis-interpretation-2-' + item.idx);
+                    if (el2) el2.value = interp2;
+                }
+                app.handleInterpretationChange(item.idx);
+
+            });
+
+            if (sample.analysis_comment) document.getElementById('analysis-comment').value = sample.analysis_comment;
+            
+        } else if (sample.form_type === 'MU.10-002') {
+            const sampleNames = [];
+            let idx = 1;
+            while (sample['sample_name_' + idx] !== undefined) {
+                if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+
+                    const tests = [];
+                    if (sample['test_borax_' + idx] || sample.test_borax) tests.push({ key: 'borax', label: 'บอแรกซ์' });
+                    if (sample['test_formalin_' + idx] || sample.test_formalin) tests.push({ key: 'formalin', label: 'ฟอร์มาลิน' });
+                    if (sample['test_bleach_' + idx] || sample.test_bleach) tests.push({ key: 'bleach', label: 'ฟอกขาว' });
+                    if (sample['test_salicylic_' + idx] || sample.test_salicylic) tests.push({ key: 'salicylic', label: 'กันรา (กรดซาลิซิลิค)' });
+                    if (sample['test_agonist_' + idx] || sample.test_agonist) tests.push({ key: 'agonist', label: 'สารเร่งเนื้อแดง (ซาลบูทามอล)' });
+                    
+                    if (tests.length > 0) {
+                        sampleNames.push({ name: sample['sample_name_' + idx], idx: idx, tests: tests, labId: sample.lab_no ? String(parseInt(sample.lab_no, 10) + idx - 1).padStart(4, '0') : (sample.lab_id ? sample.lab_id + '-' + idx : '-') });
+                    }
+                }
+                idx++;
+            }
+            if (sampleNames.length === 0 && sample.sample_name) {
+                const tests = [];
+                if (sample.test_borax) tests.push({ key: 'borax', label: 'บอแรกซ์' });
+                if (sample.test_formalin) tests.push({ key: 'formalin', label: 'ฟอร์มาลิน' });
+                if (sample.test_bleach) tests.push({ key: 'bleach', label: 'ฟอกขาว' });
+                if (sample.test_salicylic) tests.push({ key: 'salicylic', label: 'กันรา (กรดซาลิซิลิค)' });
+                if (sample.test_agonist) tests.push({ key: 'agonist', label: 'สารเร่งเนื้อแดง (ซาลบูทามอล)' });
+                if (tests.length === 0) tests.push({ key: 'borax', label: 'บอแรกซ์' });
+                sampleNames.push({ name: sample.sample_name, idx: 1, tests: tests, labId: sample.lab_no || sample.lab_id || '-' });
+            }
+
+            let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
+
+            sampleNames.forEach(item => {
+                html += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
+                            <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ตัวอย่าง: ${item.name}</h5>`;
+                
+                item.tests.forEach(t => {
+                    let interpOptions = '';
+                    if (t.key === 'borax') interpOptions = '<option value="สีแดง">สีแดง</option><option value="สีส้มแดง">สีส้มแดง</option><option value="สีเหลือง">สีเหลือง</option>';
+                    else if (t.key === 'formalin') interpOptions = '<option value="สีชมพู">สีชมพู</option><option value="สีแดง">สีแดง</option><option value="สีเหลือง">สีเหลือง</option><option value="ไม่มีสี">ไม่มีสี</option>';
+                    else if (t.key === 'bleach') interpOptions = '<option value="ตะกอนสีเทาดำ">ตะกอนสีเทาดำ</option><option value="สีฟ้า">สีฟ้า</option><option value="ไม่มีสี">ไม่มีสี</option>';
+                    else if (t.key === 'salicylic') interpOptions = '<option value="สีม่วงดำ">สีม่วงดำ</option><option value="สีเหลือง">สีเหลือง</option><option value="สีเขียว">สีเขียว</option>';
+                    else if (t.key === 'agonist') interpOptions = '<option value="1 ขีด (Control)">1 ขีด (Control)</option><option value="2 ขีด (Control) และ (Test)">2 ขีด (Control) และ (Test)</option>';
+
+                    html += `
+                        <div style="background:#ffffff; padding:10px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:10px;">
+                            <h6 style="margin-top:0; color:#1e40af; font-weight:600; margin-bottom:8px;">สารที่ตรวจวิเคราะห์: ${t.label}</h6>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>การแปลผล <span class="required">*</span></label>
+                                    <select id="analysis-interpretation-${item.idx}-${t.key}" required onchange="app.handleMu10002InterpretationChange('${item.idx}', '${t.key}')">
+                                        <option value="">-- เลือกการแปลผล --</option>
+                                        ${interpOptions}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>ผลการตรวจวิเคราะห์</label>
+                                    <input type="text" id="analysis-detail-results-${item.idx}-${t.key}" readonly class="readonly-input" style="font-weight:600;">
+                                    <span class="input-helper">เติมอัตโนมัติจากการแปลผล</span>
+                                </div>
+                                <div class="form-group">
+                                    <label>สรุปผล</label>
+                                    <input type="text" id="analysis-summary-outcome-${item.idx}-${t.key}" readonly class="readonly-input" style="font-weight:700; font-size:14px;">
+                                    <span class="input-helper">คำนวณอัตโนมัติจากการแปลผล</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            });
+
+            html += `
+                <div class="form-group">
+                    <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
+                    <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            sampleNames.forEach(item => {
+                item.tests.forEach(t => {
+                    const interp = sample[`analysis_interpretation_${item.idx}_${t.key}`];
+                    if (interp) {
+                        const sel = document.getElementById(`analysis-interpretation-${item.idx}-${t.key}`);
+                        if (sel) {
+                            sel.value = interp;
+                            app.handleMu10002InterpretationChange(item.idx, t.key);
+                        }
+                    }
+                });
+            });
+            if (sample.analysis_comment) {
+                const commentEl = document.getElementById('analysis-comment');
+                if (commentEl) commentEl.value = sample.analysis_comment;
+            }
+        } else if (sample.form_type === 'MU.10-004') {
+            const sampleNames = [];
+            const defaultName = sample['sample_name_1'] || sample.sample_name || '';
+            for (let i = 1; i <= 7; i++) {
+                if (sample['item_sampling_date_' + i] !== undefined || sample['sample_name_' + i] !== undefined || (i === 1 && defaultName)) {
+                    sampleNames.push({ 
+                        name: sample['sample_name_' + i] || defaultName || 'ตัวอย่างที่ ' + i, 
+                        idx: i,
+                        date: sample['item_sampling_date_' + i] || sample.sampling_date || ''
+                    });
+                }
+            }
+
+            let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
+
+            sam
