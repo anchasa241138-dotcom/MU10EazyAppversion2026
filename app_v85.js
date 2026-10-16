@@ -200,6 +200,11 @@ const app = {
                 if (data) {
                     this.samples = Array.isArray(data) ? data : Object.values(data);
                     
+                    this.samples.forEach(s => {
+                        if (!s.form_type || s.form_type === 'MU.10.007' || s.form_type === 'MU007' || s.form_type === 'coliformFood' || (s.ref_id && s.ref_id.startsWith('MU007'))) {
+                            s.form_type = 'MU.10-007';
+                        }
+                    });
                     let hasMigration = false;
                     this.samples.forEach(s => {
                         if (s.form_type === 'MU.10-008' && (s.status === 'pending' || s.status === 'registered' || s.status === 'accepted' || s.status === 'analyzed')) {
@@ -4327,6 +4332,9 @@ document.getElementById('formNameTitle').innerText = title;
     openCertifyModal(refId, viewOnly = false, forceEdit = false) {
         const sample = this.samples.find(s => s.ref_id === refId);
         if(!sample) return;
+        if (!sample.form_type || sample.form_type === 'MU.10.007' || sample.form_type === 'MU007' || sample.form_type === 'coliformFood' || (sample.ref_id && sample.ref_id.startsWith('MU007'))) {
+            sample.form_type = 'MU.10-007';
+        }
         
         const container = document.getElementById('cert-dynamic-content');
         
@@ -5901,6 +5909,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 return;
             }
             const sample = this.samples[sampleIndex];
+            if (!sample.form_type || sample.form_type === 'MU.10.007' || sample.form_type === 'MU007' || sample.form_type === 'coliformFood' || (sample.ref_id && sample.ref_id.startsWith('MU007'))) {
+                sample.form_type = 'MU.10-007';
+            }
 
             
             // Save individual signature formats and custom drawings
