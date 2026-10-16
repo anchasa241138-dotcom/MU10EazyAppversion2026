@@ -6158,7 +6158,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <!-- Header with border matching Image 1 -->
                     <div style="border: 1.5px solid #000; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 14px;">
-                            <img src="${logoBase64}" style="height: 60px; object-fit: contain;">
+                            <img src="${logoBase64 ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : 'logo_mobi_new.jpg'}" style="height: 60px; width: 60px; object-fit: contain;">
                             <div style="font-size: 13px; line-height: 1.3;">
                                 <div><b>ประเภทเอกสาร :</b> แบบบันทึก</div>
                                 <div><b>ชื่อเอกสาร :</b> แบบบันทึกเก็บตัวอย่างเชื้อโคลิฟอร์มแบคทีเรียขั้นต้น</div>
@@ -6232,9 +6232,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                     <!-- Footer Signatures -->
                     <div style="display: flex; justify-content: flex-end; font-size: 13px; margin-top: 10px;">
-                        <div style="text-align: center; width: 320px; line-height: 1.8;">
-                            <div>ผู้ทบทวนเอกสาร : ...................................................(สำหรับผู้ตรวจวิเคราะห์)</div>
-                            <div>วันที่ ...................................................</div>
+                        <div style="text-align: right; line-height: 2; white-space: nowrap;">
+                            <div>ผู้ทบทวนเอกสาร : ................................................. (สำหรับผู้ตรวจวิเคราะห์)</div>
+                            <div style="padding-right: 120px;">วันที่ ...................................................</div>
                         </div>
                     </div>
                 </div>
