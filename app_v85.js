@@ -5586,20 +5586,26 @@ document.getElementById('formNameTitle').innerText = title;
             const renderMu10007SigSlot = (personKey, defaultRole, roleId) => {
                 const p = (personKey && PERSON_DATA[personKey]) ? PERSON_DATA[personKey] : null;
                 const isAnalyst = roleId.startsWith('analyst');
-                const isApprover1 = (roleId === 'approver_1');
-                const isApprover2 = (roleId === 'approver_2');
+                const isMallika = (personKey === 'mallika');
+                const mode = sample['mode_' + roleId] || 'system';
+                const drawnSig = sample['sig_' + roleId];
+
                 let showSig = viewOnly || sample.status === 'approved';
                 if (isAnalyst && sample.status === 'analyst_signed') showSig = true;
 
                 let sigHtml = '<span style="font-size: 11px; color: #94a3b8; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); white-space: nowrap;">(รอลงนามรับรอง)</span>';
-                if (p) {
-                    let extraStyle = 'max-height: 42px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                    if (personKey === 'mallika') {
-                        extraStyle = 'max-height: 44px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                    } else if (personKey === 'thitiporn') {
-                        extraStyle = 'max-height: 40px; max-width: 125px; object-fit: contain; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                    }
-                    if (showSig) {
+                if (mode === 'wet' && !isMallika) {
+                    sigHtml = '';
+                } else if (showSig) {
+                    if (mode === 'draw' && drawnSig && !isMallika) {
+                        sigHtml = `<img src="${drawnSig}" style="max-height: 40px; max-width: 135px; object-fit: contain; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); z-index: 5;" onerror="this.style.display='none'">`;
+                    } else if (p) {
+                        let extraStyle = 'max-height: 42px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                        if (personKey === 'mallika') {
+                            extraStyle = 'max-height: 44px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                        } else if (personKey === 'thitiporn') {
+                            extraStyle = 'max-height: 40px; max-width: 125px; object-fit: contain; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); z-index: 5;';
+                        }
                         sigHtml = `<img src="${p.sig}" style="${extraStyle}" onerror="this.style.display='none'">`;
                     }
                 }
