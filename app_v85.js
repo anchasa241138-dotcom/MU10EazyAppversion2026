@@ -5344,7 +5344,7 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
                         <div style="font-size: 11.5px; font-weight: normal; margin-top: 1px;">(${p.name})</div>
                         <div style="font-size: 11px; color: #222;">${p.title1}</div>
-                        ${p.title2 ? `<div style="font-size: 10.5px; color: #222; line-height: 1.15;">${p.title2.replace('และเภสัช', '<br>และเภสัช')}</div>` : ''}
+                        ${p.title2 ? `<div style="font-size: 10.5px; color: #222; line-height: 1.15; white-space: nowrap;">${p.title2}</div>` : ''}
                     </div>
                 `;
             };
@@ -5636,7 +5636,7 @@ document.getElementById('formNameTitle').innerText = title;
                 if (personKey === 'mallika') {
                     titlesHtml = `
                         <div style="font-size: 12px; color: #000; line-height: 1.25;">เภสัชกรชำนาญการพิเศษ</div>
-                        <div style="font-size: 11.5px; color: #000; line-height: 1.25;">หัวหน้ากลุ่มงานคุ้มครองผู้บริโภค<br>เภสัชสาธารณสุข</div>
+                        <div style="font-size: 10.5px; color: #000; line-height: 1.25; white-space: nowrap;">หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</div>
                     `;
                 } else if (p) {
                     titlesHtml = `
