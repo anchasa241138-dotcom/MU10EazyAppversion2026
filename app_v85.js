@@ -146,6 +146,13 @@ const app = {
             this.updateAuthUI();
             this.updateSidebarBadges();
             this.switchView('dashboard');
+            try {
+                const bannerH3First = document.querySelector('.banner-text h3 span:first-child');
+                if (bannerH3First) {
+                    bannerH3First.style.setProperty('color', '#000000', 'important');
+                    bannerH3First.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+                }
+            } catch (e) {}
 
             // Enforce global login requirement
             if (!this.currentUser) {
