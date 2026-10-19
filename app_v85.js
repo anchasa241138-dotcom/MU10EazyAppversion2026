@@ -277,7 +277,8 @@ const app = {
                     db.ref('users').set(this.users);
                 }
                 this.updateAuthUI();
-                if (document.getElementById('manage-users-view').style.display === 'block') {
+                const muView = document.getElementById('view-manage-users');
+                if (muView && muView.classList.contains('active')) {
                     this.renderManageUsers();
                 }
                 this.updateBadges();
@@ -637,45 +638,24 @@ const app = {
                     break;
                 case 'lab-verify':
                     if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
-                        const vAuth = document.getElementById('verify-auth-block');
-                        const vContent = document.getElementById('verify-content-wrapper');
-                        if (vAuth) vAuth.classList.remove('hidden');
-                        if (vContent) vContent.classList.add('hidden');
-                    } else {
-                        const vAuth = document.getElementById('verify-auth-block');
-                        const vContent = document.getElementById('verify-content-wrapper');
-                        if (vAuth) vAuth.classList.add('hidden');
-                        if (vContent) vContent.classList.remove('hidden');
-                        this.renderVerifyTable();
+                        this.switchView('dashboard');
+                        return;
                     }
+                    this.renderVerifyTable();
                     break;
                 case 'lab-analysis':
                     if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
-                        const aAuth = document.getElementById('analysis-auth-block');
-                        const aContent = document.getElementById('analysis-content-wrapper');
-                        if (aAuth) aAuth.classList.remove('hidden');
-                        if (aContent) aContent.classList.add('hidden');
-                    } else {
-                        const aAuth = document.getElementById('analysis-auth-block');
-                        const aContent = document.getElementById('analysis-content-wrapper');
-                        if (aAuth) aAuth.classList.add('hidden');
-                        if (aContent) aContent.classList.remove('hidden');
-                        this.renderAnalysisTable();
+                        this.switchView('dashboard');
+                        return;
                     }
+                    this.renderAnalysisTable();
                     break;
                 case 'lab-certify':
                     if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin' && this.currentUser.role !== 'certifier')) {
-                        const cAuth = document.getElementById('certify-auth-block');
-                        const cContent = document.getElementById('certify-content-wrapper');
-                        if (cAuth) cAuth.classList.remove('hidden');
-                        if (cContent) cContent.classList.add('hidden');
-                    } else {
-                        const cAuth = document.getElementById('certify-auth-block');
-                        const cContent = document.getElementById('certify-content-wrapper');
-                        if (cAuth) cAuth.classList.add('hidden');
-                        if (cContent) cContent.classList.remove('hidden');
-                        this.renderCertifyTable();
+                        this.switchView('dashboard');
+                        return;
                     }
+                    this.renderCertifyTable();
                     break;
                 case 'download-results':
                     this.renderDownloadTable();
@@ -881,43 +861,55 @@ const app = {
         const authButtons = document.getElementById('navAuthButtons');
         const userStatusCard = document.getElementById('userStatusCard');
         
+        const role = this.currentUser ? this.currentUser.role : '';
+        const canAccessLab = Boolean(this.currentUser && (role === 'lab' || role === 'admin'));
+        const canAccessCertify = Boolean(this.currentUser && (role === 'lab' || role === 'admin' || role === 'certifier'));
+        const isAdmin = Boolean(this.currentUser && role === 'admin');
+
         if (this.currentUser) {
             authButtons.innerHTML = `<button class="btn btn-secondary" onclick="app.logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>`;
             userStatusCard.innerHTML = `
                 <div class="user-status-name"><i class="fa-solid fa-circle-user"></i> ${this.currentUser.fullname}</div>
-                <div class="user-status-role">${this.currentUser.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : this.currentUser.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : this.currentUser.role === 'certifier' ? 'ผู้รับรองผลตรวจวิเคราะห์' : 'ผู้เก็บตัวอย่าง'}</div>
+                <div class="user-status-role">${role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : role === 'certifier' ? 'ผู้รับรองผลตรวจวิเคราะห์' : 'ผู้เก็บตัวอย่าง'}</div>
             `;
-            
-            // Show lab menus based on role
-            document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis').forEach(el => {
-                el.style.display = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') ? 'flex' : 'none';
-            });
-            document.querySelectorAll('#menu-lab-certify').forEach(el => {
-                el.style.display = (this.currentUser.role === 'lab' || this.currentUser.role === 'admin' || this.currentUser.role === 'certifier') ? 'flex' : 'none';
-            });
-            
-            const adminMenu = document.getElementById('menu-manage-users');
-            if (adminMenu) {
-                adminMenu.style.display = this.currentUser.role === 'admin' ? 'flex' : 'none';
-            }
         } else {
             authButtons.innerHTML = `<button class="btn btn-primary" onclick="app.showLoginModal()"><i class="fa-solid fa-user-lock"></i> เข้าสู่ระบบ</button>`;
             userStatusCard.innerHTML = `<div class="user-status-name">ผู้เยี่ยมชมระบบ</div><div class="user-status-role">ยังไม่ได้เข้าสู่ระบบ</div>`;
-            
-            // Hide lab menus
-            document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
-                el.style.display = 'none';
-            });
+        }
+
+        // Show/hide lab menus based on role (strictly hidden for collectors, hospitals, ssj, and general visitors)
+        document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis').forEach(el => {
+            el.style.setProperty('display', canAccessLab ? 'flex' : 'none', 'important');
+            el.classList.toggle('role-hidden', !canAccessLab);
+        });
+        document.querySelectorAll('#menu-lab-certify').forEach(el => {
+            el.style.setProperty('display', canAccessCertify ? 'flex' : 'none', 'important');
+            el.classList.toggle('role-hidden', !canAccessCertify);
+        });
+        
+        const adminMenu = document.getElementById('menu-manage-users');
+        if (adminMenu) {
+            adminMenu.style.setProperty('display', isAdmin ? 'flex' : 'none', 'important');
+            adminMenu.classList.toggle('role-hidden', !isAdmin);
         }
 
         // Enforce role-based visibility for Provincial Email Dispatch and Edit Approval buttons
         this.updateProvEmailButtonVisibility();
         this.updateEditApprovalButtonVisibility();
         
-        // Re-evaluate current view
+        // Re-evaluate current view: ensure unauthorized users are redirected to dashboard
         const activeView = document.querySelector('.content-view.active');
-        if(activeView) {
-            this.switchView(activeView.id.replace('view-', ''));
+        if (activeView) {
+            const currentViewName = activeView.id.replace('view-', '');
+            if ((currentViewName === 'lab-verify' || currentViewName === 'lab-analysis') && !canAccessLab) {
+                this.switchView('dashboard');
+            } else if (currentViewName === 'lab-certify' && !canAccessCertify) {
+                this.switchView('dashboard');
+            } else if (currentViewName === 'manage-users' && !isAdmin) {
+                this.switchView('dashboard');
+            } else {
+                this.switchView(currentViewName);
+            }
         }
     },
 
