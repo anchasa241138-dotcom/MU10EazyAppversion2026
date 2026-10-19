@@ -2014,12 +2014,12 @@
                         <i class="fa-solid fa-circle-info" style="font-size: 15px;"></i>
                         <span><strong>วิธีเลือกการส่ง:</strong> สามารถเลือกส่งแยกทีละประเภทรายงาน (เช่น ส่งเฉพาะ RD-001 หรือ RD-006 ให้ผู้รับผิดชอบงานนั้นๆ) หรือเลือก <strong>"ทุกประเภทรายงานในรอบนี้"</strong> เพื่อส่งสรุปภาพรวมครบทุกงานของจังหวัดในฉบับเดียว</span>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 12px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 12px;">
                         <div>
                             <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
                                 <i class="fa-solid fa-location-dot" style="color: #2563eb;"></i> จังหวัดเป้าหมาย:
                             </label>
-                            <select id="provEmailSelectProv" class="form-control" onchange="app.updateProvincialEmailPreview()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px; font-weight: 600;">
+                            <select id="provEmailSelectProv" class="form-control" onchange="app.onProvEmailFilterChanged()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px; font-weight: 600;">
                                 <option value="อุบลราชธานี" selected>🌐 จังหวัดอุบลราชธานี</option>
                                 <option value="ศรีสะเกษ">📍 จังหวัดศรีสะเกษ</option>
                                 <option value="อำนาจเจริญ">📍 จังหวัดอำนาจเจริญ</option>
@@ -2031,8 +2031,7 @@
                             <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
                                 <i class="fa-solid fa-file-lines" style="color: #2563eb;"></i> ประเภทรายงาน:
                             </label>
-                            <select id="provEmailSelectForm" class="form-control" onchange="app.updateProvincialEmailPreview()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px;">
-                                <option value="all">🌐 ทุกประเภทรายงานในรอบนี้ (สรุปภาพรวมครบทุกงาน)</option>
+                            <select id="provEmailSelectForm" class="form-control" onchange="app.onProvEmailFilterChanged()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px;">
                                 <option value="MU.10-001" selected>🥬 RD-001 (ยาฆ่าแมลงในผักสด)</option>
                                 <option value="MU.10-002">🥩 RD-002 (สารปนเปื้อน 4 ชนิด)</option>
                                 <option value="MU.10-003">🍳 RD-003 (สารโพลาร์ในน้ำมันทอด)</option>
@@ -2040,6 +2039,16 @@
                                 <option value="MU.10-006">💧 RD-006 (น้ำบริโภค/ตู้น้ำดื่ม)</option>
                                 <option value="MU.10-007">🍲 RD-007 (สุขาภิบาลอาหาร)</option>
                                 <option value="MU.10-008">🏷️ RD-008 (ตรวจสอบฉลากอาหาร)</option>
+                                <option value="all">🌐 ทุกประเภทรายงานในรอบนี้ (สรุปภาพรวมครบทุกงาน)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
+                                <i class="fa-solid fa-calendar-days" style="color: #2563eb;"></i> รอบการตรวจ / ประจำเดือน:
+                            </label>
+                            <select id="provEmailSelectRound" class="form-control" onchange="app.onProvEmailRoundChanged()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1.5px solid #0284c7; background: #f0f9ff; font-size: 13.5px; font-weight: 600; color: #0369a1;">
+                                <option value="latest">📅 รอบล่าสุด (อัตโนมัติ)</option>
+                                <option value="all">📂 รวมทุกรอบที่อนุมัติแล้ว</option>
                             </select>
                         </div>
                         <div>
@@ -2047,6 +2056,20 @@
                                 <i class="fa-solid fa-at" style="color: #2563eb;"></i> อีเมลผู้รับผิดชอบ (To):
                             </label>
                             <input type="email" id="provEmailRecipient" class="form-control" value="anchasa.241138@gmail.com" placeholder="เช่น example@gmail.com" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px; font-weight: 600; color: #0f172a;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 12px;">
+                        <div>
+                            <label style="font-size: 12.5px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">
+                                <i class="fa-regular fa-calendar-check" style="color: #059669;"></i> วันที่รับตัวอย่าง:
+                            </label>
+                            <input type="text" id="provEmailSamplingDate" class="form-control" oninput="this.dataset.manualEdited='true'; app.updateProvincialEmailPreview();" placeholder="เช่น 4 ตุลาคม 2569" style="width: 100%; padding: 7px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; color: #0f172a;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12.5px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">
+                                <i class="fa-solid fa-flask" style="color: #4f46e5;"></i> วันที่ตรวจวิเคราะห์:
+                            </label>
+                            <input type="text" id="provEmailAnalysisDate" class="form-control" oninput="this.dataset.manualEdited='true'; app.updateProvincialEmailPreview();" placeholder="เช่น 4 ตุลาคม 2569" style="width: 100%; padding: 7px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; color: #0f172a;">
                         </div>
                     </div>
                     <div>
@@ -2116,6 +2139,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792383540000"></script>
+    <script src="app_v85.js?v=1792384950000"></script>
 </body>
 </html>

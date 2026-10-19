@@ -7820,6 +7820,29 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     // ==========================================
     // PROVINCIAL DIGEST EMAIL NOTIFICATION
     // ==========================================
+    formatThaiDate(dateStr, format = 'long') {
+        if (!dateStr) return '-';
+        try {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const day = d.getDate();
+            const yearThai = d.getFullYear() > 2400 ? d.getFullYear() : (d.getFullYear() + 543);
+            if (format === 'short') {
+                const dd = String(day).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                return `${dd}/${mm}/${yearThai}`;
+            }
+            const thaiMonths = [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ];
+            const monthName = thaiMonths[d.getMonth()] || '';
+            return `${day} ${monthName} ${yearThai}`;
+        } catch(e) {
+            return dateStr;
+        }
+    },
+
     openProvincialEmailModal(targetProv = 'อุบลราชธานี') {
         const modal = document.getElementById('provincialEmailModal');
         if (!modal) return;
@@ -7827,6 +7850,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (provSelect) {
             provSelect.value = targetProv;
         }
+        this.provEmailExcludedRefs = new Set();
+        const sDateInput = document.getElementById('provEmailSamplingDate');
+        const aDateInput = document.getElementById('provEmailAnalysisDate');
+        if (sDateInput) sDateInput.dataset.manualEdited = 'false';
+        if (aDateInput) aDateInput.dataset.manualEdited = 'false';
+
+        this.populateProvEmailRounds();
         this.updateProvincialEmailPreview();
         modal.classList.add('active');
         modal.style.display = 'flex';
@@ -7839,17 +7869,132 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         modal.style.display = 'none';
     },
 
+    onProvEmailFilterChanged() {
+        this.provEmailExcludedRefs = new Set();
+        const sDateInput = document.getElementById('provEmailSamplingDate');
+        const aDateInput = document.getElementById('provEmailAnalysisDate');
+        if (sDateInput) sDateInput.dataset.manualEdited = 'false';
+        if (aDateInput) aDateInput.dataset.manualEdited = 'false';
+
+        this.populateProvEmailRounds();
+        this.updateProvincialEmailPreview();
+    },
+
+    onProvEmailRoundChanged() {
+        this.provEmailExcludedRefs = new Set();
+        const sDateInput = document.getElementById('provEmailSamplingDate');
+        const aDateInput = document.getElementById('provEmailAnalysisDate');
+        if (sDateInput) sDateInput.dataset.manualEdited = 'false';
+        if (aDateInput) aDateInput.dataset.manualEdited = 'false';
+
+        this.updateProvincialEmailPreview();
+    },
+
+    populateProvEmailRounds() {
+        const provSelect = document.getElementById('provEmailSelectProv');
+        const formSelect = document.getElementById('provEmailSelectForm');
+        const roundSelect = document.getElementById('provEmailSelectRound');
+        if (!provSelect || !roundSelect) return;
+
+        const selectedProv = provSelect.value;
+        const selectedForm = formSelect ? formSelect.value : 'all';
+
+        const approved = (this.samples || []).filter(s => {
+            if (s.status !== 'approved') return false;
+            const matchProv = !s.province || s.province === selectedProv || (s.location_main && s.location_main.includes(selectedProv)) || (!s.province && selectedProv === 'อุบลราชธานี');
+            if (!matchProv) return false;
+            if (selectedForm !== 'all') return s.form_type === selectedForm;
+            return true;
+        });
+
+        roundSelect.innerHTML = '';
+
+        if (approved.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = 'latest';
+            opt.innerText = '📅 รอบล่าสุด (ตุลาคม 2569)';
+            opt.selected = true;
+            roundSelect.appendChild(opt);
+            return;
+        }
+
+        const roundMap = new Map();
+        approved.forEach(s => {
+            const rawDate = s.sampling_date || s.collection_date || (s.created_at ? s.created_at.split('T')[0] : '');
+            let key = 'latest';
+            let label = 'รอบไม่ระบุวันที่';
+            if (rawDate) {
+                const parts = rawDate.split('-');
+                if (parts.length >= 2) {
+                    key = `${parts[0]}-${parts[1]}`; // e.g. 2026-10
+                    const thaiDate = this.formatThaiDate(rawDate, 'long');
+                    const monthYear = thaiDate.replace(/^\d+\s+/, '');
+                    label = `รอบเดือน ${monthYear}`;
+                }
+            }
+            if (!roundMap.has(key)) {
+                roundMap.set(key, { label, count: 0 });
+            }
+            roundMap.get(key).count++;
+        });
+
+        const sortedKeys = Array.from(roundMap.keys()).sort().reverse();
+        sortedKeys.forEach((key, idx) => {
+            const info = roundMap.get(key);
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.innerText = `📅 ${info.label} (${info.count} ใบงาน)`;
+            if (idx === 0) opt.selected = true;
+            roundSelect.appendChild(opt);
+        });
+
+        if (sortedKeys.length > 1) {
+            const optAll = document.createElement('option');
+            optAll.value = 'all';
+            optAll.innerText = `📂 รวมทุกรอบที่อนุมัติแล้ว (${approved.length} ใบงาน)`;
+            roundSelect.appendChild(optAll);
+        }
+    },
+
+    toggleProvEmailItem(refId) {
+        if (!this.provEmailExcludedRefs) this.provEmailExcludedRefs = new Set();
+        if (this.provEmailExcludedRefs.has(refId)) {
+            this.provEmailExcludedRefs.delete(refId);
+        } else {
+            this.provEmailExcludedRefs.add(refId);
+        }
+        this.updateProvincialEmailPreview();
+    },
+
+    toggleSelectAllEmailItems(isChecked) {
+        if (!this.provEmailExcludedRefs) this.provEmailExcludedRefs = new Set();
+        const checkboxes = document.querySelectorAll('.prov-email-item-chk');
+        checkboxes.forEach(chk => {
+            const ref = chk.getAttribute('data-ref-id');
+            if (isChecked) {
+                this.provEmailExcludedRefs.delete(ref);
+            } else {
+                this.provEmailExcludedRefs.add(ref);
+            }
+        });
+        this.updateProvincialEmailPreview();
+    },
+
     updateProvincialEmailPreview() {
         const provSelect = document.getElementById('provEmailSelectProv');
         const formSelect = document.getElementById('provEmailSelectForm');
+        const roundSelect = document.getElementById('provEmailSelectRound');
         const subjectInput = document.getElementById('provEmailSubject');
         const previewContainer = document.getElementById('provEmailPreviewBody');
         const countBadge = document.getElementById('provEmailSampleCountBadge');
+        const samplingDateInput = document.getElementById('provEmailSamplingDate');
+        const analysisDateInput = document.getElementById('provEmailAnalysisDate');
 
         if (!provSelect || !previewContainer) return;
 
         const selectedProv = provSelect.value;
         const selectedForm = formSelect ? formSelect.value : 'all';
+        const selectedRound = roundSelect ? roundSelect.value : 'latest';
 
         // Metadata map for each report form type
         const formMeta = {
@@ -7908,31 +8053,31 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         // 25 default districts of Ubon Ratchathani (reference list)
         const ubonDistricts = [
-            { name: 'รพ.วารินชำราบ', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.เดชอุดม', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.ตระการพืชผล', tested: 10, failed: 1, status: 'ไม่ผ่าน' },
-            { name: 'รพ.เขมราฐ', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.พิบูลมังสาหาร', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.บุณฑริก', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.น้ำยืน', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.เขื่องใน', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.ม่วงสามสิบ', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.โขงเจียม', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.ศรีเมืองใหม่', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.กุดข้าวปุ้น', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.สิรินธร', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.นาจะหลวย', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.โพธิ์ไทร', tested: 10, failed: 1, status: 'ไม่ผ่าน' },
-            { name: 'รพ.สำโรง', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.ดอนมดแดง', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.ตาลสุม', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.ทุ่งศรีอุดม', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.นาตาล', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.สว่างวีระวงศ์', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.เหล่าเสือโก้ก', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.น้ำขุ่น', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.นาเยีย', tested: 10, failed: 0, status: 'ผ่าน' },
-            { name: 'รพ.๕๐ พรรษา มหาวชิราลงกรณ', tested: 10, failed: 0, status: 'ผ่าน' }
+            { name: 'รพ.วารินชำราบ', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.เดชอุดม', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.ตระการพืชผล', tested: 10, failed: 1, status: 'ไม่ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.เขมราฐ', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.พิบูลมังสาหาร', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.บุณฑริก', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.น้ำยืน', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.เขื่องใน', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.ม่วงสามสิบ', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.โขงเจียม', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.ศรีเมืองใหม่', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.กุดข้าวปุ้น', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.สิรินธร', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.นาจะหลวย', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.โพธิ์ไทร', tested: 10, failed: 1, status: 'ไม่ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.สำโรง', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.ดอนมดแดง', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.ตาลสุม', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.ทุ่งศรีอุดม', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.นาตาล', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.สว่างวีระวงศ์', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.เหล่าเสือโก้ก', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.น้ำขุ่น', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.นาเยีย', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' },
+            { name: 'รพ.๕๐ พรรษา มหาวชิราลงกรณ', tested: 10, failed: 0, status: 'ผ่าน', samplingDate: '17 ตุลาคม 2569', analysisDate: '18 ตุลาคม 2569' }
         ];
 
         // Filter approved samples from actual system data
@@ -7946,6 +8091,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             }
             return true;
         });
+
+        // Filter by selected round
+        if (selectedRound && selectedRound !== 'all' && selectedRound !== 'latest') {
+            approved = approved.filter(s => {
+                const rawDate = s.sampling_date || s.collection_date || (s.created_at ? s.created_at.split('T')[0] : '');
+                if (!rawDate) return true;
+                return rawDate.startsWith(selectedRound);
+            });
+        }
 
         let reportItems = [];
         if (approved.length > 0) {
@@ -7965,6 +8119,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                 const formTag = (s.form_type || 'MU.10-001').replace('MU.10-', 'RD-');
                 const displayName = s.location_main || s.hospital || s.location_name || s.agency || s.sample_name || ('หน่วยงาน ' + (idx + 1));
+                const sDateRaw = s.sampling_date || s.collection_date || (s.created_at ? s.created_at.split('T')[0] : '');
+                const aDateRaw = s.analysis_date || sDateRaw;
+
+                const isChecked = !(this.provEmailExcludedRefs && this.provEmailExcludedRefs.has(s.ref_id));
 
                 return {
                     name: displayName,
@@ -7974,57 +8132,129 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     failed: failed,
                     status: isFail ? 'ไม่ผ่าน' : 'ผ่าน',
                     ref_id: s.ref_id,
-                    lab_id: s.lab_id
+                    lab_id: s.lab_id,
+                    samplingDateRaw: sDateRaw,
+                    analysisDateRaw: aDateRaw,
+                    samplingDateDisplay: this.formatThaiDate(sDateRaw, 'long'),
+                    analysisDateDisplay: this.formatThaiDate(aDateRaw, 'long'),
+                    checked: isChecked
                 };
             });
         } else if (selectedProv === 'อุบลราชธานี' && (selectedForm === 'MU.10-001' || isAllMode)) {
             // Use standard 25 districts for Ubon
-            reportItems = ubonDistricts.map(item => ({ ...item, formCode: 'RD-001' }));
+            reportItems = ubonDistricts.map((item, idx) => {
+                const ref = 'TEMP-UBN-' + (idx + 1);
+                const isChecked = !(this.provEmailExcludedRefs && this.provEmailExcludedRefs.has(ref));
+                return {
+                    ...item,
+                    formCode: 'RD-001',
+                    ref_id: ref,
+                    samplingDateDisplay: item.samplingDate,
+                    analysisDateDisplay: item.analysisDate,
+                    checked: isChecked
+                };
+            });
         } else {
-            // Generate district samples for other province or empty form
+            // Representative samples for other province or empty form
             reportItems = [
-                { name: 'รพ.ศูนย์ / รพ.ทั่วไป', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' },
-                { name: 'รพ.ชุมชนแห่งที่ 1', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' },
-                { name: 'รพ.ชุมชนแห่งที่ 2', formCode: currentMeta.code, tested: 10, failed: 1, status: 'ไม่ผ่าน' },
-                { name: 'รพ.ชุมชนแห่งที่ 3', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' },
-                { name: 'รพ.สต. ในพื้นที่เป้าหมาย', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' }
+                { ref_id: 'TEMP-OTHER-1', name: 'รพ.ศูนย์ / รพ.ทั่วไป', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
+                { ref_id: 'TEMP-OTHER-2', name: 'รพ.ชุมชนแห่งที่ 1', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
+                { ref_id: 'TEMP-OTHER-3', name: 'รพ.ชุมชนแห่งที่ 2', formCode: currentMeta.code, tested: 10, failed: 1, status: 'ไม่ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
+                { ref_id: 'TEMP-OTHER-4', name: 'รพ.ชุมชนแห่งที่ 3', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
+                { ref_id: 'TEMP-OTHER-5', name: 'รพ.สต. ในพื้นที่เป้าหมาย', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true }
             ];
         }
 
-        const totalCount = reportItems.length;
-        const failCount = reportItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').length;
+        // Active items (only those checked)
+        const activeItems = reportItems.filter(item => item.checked);
+        const totalCount = activeItems.length;
+        const failCount = activeItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').length;
         const passCount = totalCount - failCount;
         const passPercent = totalCount > 0 ? Math.round((passCount / totalCount) * 100) : 100;
         const failPercent = totalCount > 0 ? (100 - passPercent) : 0;
 
-        const failedHospitals = reportItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').map(item => item.name);
+        const failedHospitals = activeItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').map(item => item.name);
+
+        // Calculate dynamic sampling and analysis dates from active items
+        let calcSamplingDateStr = '';
+        let calcAnalysisDateStr = '';
+        let shortSubjectDateStr = '';
+
+        if (activeItems.length > 0) {
+            const uniqueSDates = Array.from(new Set(activeItems.map(item => item.samplingDateRaw || item.samplingDateDisplay).filter(Boolean)));
+            const uniqueADates = Array.from(new Set(activeItems.map(item => item.analysisDateRaw || item.analysisDateDisplay).filter(Boolean)));
+
+            if (uniqueSDates.length === 1) {
+                calcSamplingDateStr = this.formatThaiDate(uniqueSDates[0], 'long');
+                shortSubjectDateStr = this.formatThaiDate(uniqueSDates[0], 'short');
+            } else if (uniqueSDates.length > 1) {
+                calcSamplingDateStr = `${this.formatThaiDate(uniqueSDates[0], 'long')} ถึง ${this.formatThaiDate(uniqueSDates[uniqueSDates.length - 1], 'long')}`;
+                shortSubjectDateStr = this.formatThaiDate(uniqueSDates[uniqueSDates.length - 1], 'short');
+            }
+
+            if (uniqueADates.length === 1) {
+                calcAnalysisDateStr = this.formatThaiDate(uniqueADates[0], 'long');
+            } else if (uniqueADates.length > 1) {
+                calcAnalysisDateStr = `${this.formatThaiDate(uniqueADates[0], 'long')} ถึง ${this.formatThaiDate(uniqueADates[uniqueADates.length - 1], 'long')}`;
+            }
+        }
+
+        if (!calcSamplingDateStr) {
+            calcSamplingDateStr = '4 ตุลาคม 2569';
+            shortSubjectDateStr = '04/10/2569';
+        }
+        if (!calcAnalysisDateStr) {
+            calcAnalysisDateStr = calcSamplingDateStr;
+        }
+
+        // Auto populate date inputs if not manually typed
+        if (samplingDateInput) {
+            if (!samplingDateInput.dataset.manualEdited || samplingDateInput.dataset.manualEdited === 'false') {
+                samplingDateInput.value = calcSamplingDateStr;
+            }
+        }
+        if (analysisDateInput) {
+            if (!analysisDateInput.dataset.manualEdited || analysisDateInput.dataset.manualEdited === 'false') {
+                analysisDateInput.value = calcAnalysisDateStr;
+            }
+        }
+
+        const displaySamplingDate = (samplingDateInput && samplingDateInput.value.trim()) ? samplingDateInput.value.trim() : calcSamplingDateStr;
+        const displayAnalysisDate = (analysisDateInput && analysisDateInput.value.trim()) ? analysisDateInput.value.trim() : calcAnalysisDateStr;
 
         // Dynamic Subject line
         let subject = '';
         if (isAllMode) {
-            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ภาพรวม : ทุกประเภทรายงาน - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง 17/10/2569`;
+            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ภาพรวม : ทุกประเภทรายงาน - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
         } else {
-            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${currentMeta.code} - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง 17/10/2569`;
+            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${currentMeta.code} - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
         }
         if (subjectInput) subjectInput.value = subject;
 
         if (countBadge) {
-            countBadge.innerText = `ดึงข้อมูล ${totalCount} หน่วยงาน/อำเภอ`;
+            countBadge.innerText = `เลือกส่ง ${totalCount} / ${reportItems.length} ใบงาน`;
         }
 
         // Build HTML Table rows
         let rowsHtml = '';
         reportItems.forEach((item, index) => {
             const isFail = item.failed > 0 || item.status === 'ไม่ผ่าน';
+            const isChecked = item.checked;
+            const opacityStyle = isChecked ? '' : 'opacity: 0.45; background-color: #f1f5f9; text-decoration: line-through;';
             const rowBg = isFail ? 'background-color: #fef2f2;' : (index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;');
             const failTextColor = isFail ? 'color: #b91c1c; font-weight: bold; background-color: #fee2e2;' : 'color: #166534; font-weight: 600;';
             const pdfLink = `https://anchasa241138-dotcom.github.io/MU10EazyAppversion2026/#report-${item.ref_id || (index + 1)}`;
 
             rowsHtml += `
-                <tr style="${rowBg}">
+                <tr style="${rowBg} ${opacityStyle}">
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 6px; text-align: center;">
+                        <input type="checkbox" class="prov-email-item-chk" data-ref-id="${item.ref_id}" ${isChecked ? 'checked' : ''} onchange="app.toggleProvEmailItem('${item.ref_id}')" style="width: 15px; height: 15px; cursor: pointer;" title="เลือก/ยกเลิกใบงานนี้">
+                    </td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">${index + 1}</td>
                     ${isAllMode ? `<td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;"><span style="display:inline-block; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; background: #e0f2fe; color: #0369a1;">${item.formCode}</span></td>` : ''}
                     <td style="border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; font-weight: 500; ${isFail ? 'color: #991b1b; font-weight: 700;' : ''}">${item.name}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-size: 12px; color: #475569;">${item.samplingDateDisplay}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-size: 12px; color: #475569;">${item.analysisDateDisplay}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-weight: 600;">${item.tested}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; ${failTextColor}">${item.failed}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">
@@ -8044,10 +8274,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <strong>⚠️ ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failCount} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
                 </div>
             `;
-        } else {
+        } else if (totalCount > 0) {
             obsHtml = `
                 <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #166534; line-height: 1.6;">
                     <strong>✅ ผลการตรวจวิเคราะห์:</strong> ตัวอย่างทั้งหมดจำนวน <strong>${totalCount} ตัวอย่าง</strong> ผ่านเกณฑ์มาตรฐานความปลอดภัย ไม่พบสารเคมีตกค้าง
+                </div>
+            `;
+        } else {
+            obsHtml = `
+                <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #64748b; text-align: center;">
+                    โปรดติ๊กเลือกอย่างน้อย 1 ใบงานเพื่อส่งรายงาน
                 </div>
             `;
         }
@@ -8055,7 +8291,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const appUrl = 'https://anchasa241138-dotcom.github.io/MU10EazyAppversion2026/#';
 
         const emailTemplate = `
-            <div style="font-family: 'Sarabun', Tahoma, Arial, sans-serif; max-width: 740px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
+            <div style="font-family: 'Sarabun', Tahoma, Arial, sans-serif; max-width: 760px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
                 <!-- Salutation & Subject -->
                 <div style="margin-bottom: 18px; font-size: 14.5px;">
                     <p style="margin: 4px 0;"><strong>เรียน:</strong> หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข สำนักงานสาธารณสุขจังหวัด${selectedProv} และผู้รับผิดชอบงานอาหารปลอดภัย</p>
@@ -8067,7 +8303,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <h4 style="margin: 0 0 10px 0; color: #0284c7; font-size: 15px;">📊 สรุปภาพรวมผลการตรวจวิเคราะห์</h4>
                     <table style="width: 100%; border: none; font-size: 13.5px; line-height: 1.85;">
                         <tr>
-                            <td style="width: 150px; font-weight: bold; color: #475569;">กิจกรรม :</td>
+                            <td style="width: 160px; font-weight: bold; color: #475569;">กิจกรรม :</td>
                             <td>${currentMeta.title}</td>
                         </tr>
                         <tr>
@@ -8076,11 +8312,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">วันที่รับตัวอย่าง:</td>
-                            <td>17 ตุลาคม 2569</td>
+                            <td><strong>${displaySamplingDate}</strong></td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">วันที่ตรวจวิเคราะห์:</td>
-                            <td>18 ตุลาคม 2569</td>
+                            <td><strong>${displayAnalysisDate}</strong></td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">ผู้ตรวจวิเคราะห์:</td>
@@ -8116,19 +8352,27 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                 <!-- Detailed Breakdown Table -->
                 <div style="margin-bottom: 20px;">
-                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 13.5px; color: #334155;">📋 ตารางแจกแจงผลการตรวจ${isAllMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'}</div>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-weight: bold; font-size: 13.5px; color: #334155;">📋 ตารางแจกแจงผลการตรวจ${isAllMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'} (เลือกส่งได้):</span>
+                        <label style="font-size: 12px; color: #0284c7; cursor: pointer;">
+                            <input type="checkbox" onchange="app.toggleSelectAllEmailItems(this.checked)" checked style="margin-right: 4px;"> เลือกทั้งหมด
+                        </label>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: center;">
                         <thead>
                             <tr style="background-color: #e2e8f0; color: #0f172a;">
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 6%;">ลำดับ</th>
-                                ${isAllMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 14%;">ประเภทรายงาน</th>' : ''}
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; text-align: left; width: ${isAllMode ? '36%' : '44%'};">อำเภอ / หน่วยงาน / ชื่อตัวอย่าง</th>
-                                <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 26%;">ผลการตรวจ</th>
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 20%;">เอกสารรายงาน</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 5%;">เลือก</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 6%;">ลำดับ</th>
+                                ${isAllMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 12%;">ประเภท</th>' : ''}
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; text-align: left; width: ${isAllMode ? '27%' : '33%'};">อำเภอ / หน่วยงาน / สถานที่</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">วันที่รับตัวอย่าง</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">วันที่ตรวจ</th>
+                                <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 16%;">ผลการตรวจ</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">เอกสาร</th>
                             </tr>
                             <tr style="background-color: #f1f5f9; color: #334155;">
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 13%;">ตรวจ (ตย.)</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 13%; color: #b91c1c;">ไม่ผ่าน (ตย.)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 5px; width: 8%;">ตรวจ</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 5px; width: 8%; color: #b91c1c;">ไม่ผ่าน</th>
                             </tr>
                         </thead>
                         <tbody>
