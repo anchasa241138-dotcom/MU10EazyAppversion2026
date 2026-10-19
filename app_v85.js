@@ -637,21 +637,21 @@ const app = {
                     }
                     break;
                 case 'lab-verify':
-                    if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
+                    if (!this.currentUser || !['lab', 'admin', 'certifier'].includes(this.currentUser.role)) {
                         this.switchView('dashboard');
                         return;
                     }
                     this.renderVerifyTable();
                     break;
                 case 'lab-analysis':
-                    if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin')) {
+                    if (!this.currentUser || !['lab', 'admin', 'certifier'].includes(this.currentUser.role)) {
                         this.switchView('dashboard');
                         return;
                     }
                     this.renderAnalysisTable();
                     break;
                 case 'lab-certify':
-                    if (!this.currentUser || (this.currentUser.role !== 'lab' && this.currentUser.role !== 'admin' && this.currentUser.role !== 'certifier')) {
+                    if (!this.currentUser || !['lab', 'admin', 'certifier'].includes(this.currentUser.role)) {
                         this.switchView('dashboard');
                         return;
                     }
@@ -862,8 +862,8 @@ const app = {
         const userStatusCard = document.getElementById('userStatusCard');
         
         const role = this.currentUser ? this.currentUser.role : '';
-        const canAccessLab = Boolean(this.currentUser && (role === 'lab' || role === 'admin'));
-        const canAccessCertify = Boolean(this.currentUser && (role === 'lab' || role === 'admin' || role === 'certifier'));
+        const canAccessLab = Boolean(this.currentUser && ['lab', 'admin', 'certifier'].includes(role));
+        const canAccessCertify = Boolean(this.currentUser && ['lab', 'admin', 'certifier'].includes(role));
         const isAdmin = Boolean(this.currentUser && role === 'admin');
 
         if (this.currentUser) {
@@ -878,13 +878,10 @@ const app = {
         }
 
         // Show/hide lab menus based on role (strictly hidden for collectors, hospitals, ssj, and general visitors)
-        document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis').forEach(el => {
+        // Certifier has the exact same visibility as lab
+        document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
             el.style.setProperty('display', canAccessLab ? 'flex' : 'none', 'important');
             el.classList.toggle('role-hidden', !canAccessLab);
-        });
-        document.querySelectorAll('#menu-lab-certify').forEach(el => {
-            el.style.setProperty('display', canAccessCertify ? 'flex' : 'none', 'important');
-            el.classList.toggle('role-hidden', !canAccessCertify);
         });
         
         const adminMenu = document.getElementById('menu-manage-users');
@@ -2699,7 +2696,7 @@ document.getElementById('formNameTitle').innerText = title;
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; color:#334155;">${item.weight || '-'}</td>
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0; color:#334155;">${item.source || '-'}</td>
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0;">
-                                        ${(app.currentUser && (app.currentUser.role === 'lab' || app.currentUser.role === 'admin') && sample.status === 'registered') ? `
+                                        ${(app.currentUser && ['lab', 'admin', 'certifier'].includes(app.currentUser.role) && sample.status === 'registered') ? `
                                             <select class="item-status-select" data-idx="${i+1}" onchange="document.getElementById('item-reject-reason-${i+1}').style.display = this.value === 'rejected' ? 'block' : 'none';" style="width:100%; padding:5px 8px; font-size:12px; border:1.5px solid #cbd5e1; border-radius:6px; background:#ffffff; color:#0f172a;">
                                                 <option value="accepted" ${sample['item_status_'+(i+1)] === 'accepted' ? 'selected' : ''}>✅ รับเข้าระบบ</option>
                                                 <option value="rejected" ${sample['item_status_'+(i+1)] === 'rejected' ? 'selected' : ''}>❌ ปฏิเสธ</option>
@@ -2757,7 +2754,7 @@ document.getElementById('formNameTitle').innerText = title;
         const acceptBtn = document.getElementById('previewAcceptBtn');
         const rejectBtn = document.getElementById('previewRejectBtn');
         if (acceptBtn && rejectBtn) {
-            if (this.currentUser && (this.currentUser.role === 'lab' || this.currentUser.role === 'admin') && sample.status === 'registered') {
+            if (this.currentUser && ['lab', 'admin', 'certifier'].includes(this.currentUser.role) && sample.status === 'registered') {
                 acceptBtn.style.display = 'inline-block';
                 rejectBtn.style.display = 'inline-block';
             } else {
@@ -3040,7 +3037,7 @@ document.getElementById('formNameTitle').innerText = title;
         
         // Pre-fill analyst & date
         const analystSelect = document.getElementById('analysis-analyst');
-        const curAnalyst = sample.analysis_analyst || (this.currentUser && this.currentUser.role === 'lab' ? this.currentUser.fullname : '');
+        const curAnalyst = sample.analysis_analyst || (this.currentUser && ['lab', 'certifier'].includes(this.currentUser.role) ? this.currentUser.fullname : '');
         if (analystSelect) {
             if (curAnalyst && ![...analystSelect.options].some(o => o.value === curAnalyst)) {
                 analystSelect.add(new Option(curAnalyst, curAnalyst));
