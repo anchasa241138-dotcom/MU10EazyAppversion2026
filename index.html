@@ -371,7 +371,7 @@
             font-weight: 700 !important;
             font-size: 14px !important;
             box-shadow: 0 4px 18px rgba(245, 158, 11, 0.4) !important;
-            display: inline-flex !important;
+            display: none !important;
             align-items: center !important;
             justify-content: center !important;
             gap: 8px !important;
@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792393923727">
+    <link rel="stylesheet" href="enhancements.css?v=1792395012159">
 </head>
 <body>
     <!-- App Container -->
@@ -1939,7 +1939,7 @@
                         <i class="fa-solid fa-circle-check"></i> รายงานฉบับนี้ได้รับอนุมัติผลวิเคราะห์อิเล็กทรอนิกส์เรียบร้อยแล้ว
                     </div>
                     <div class="form-actions" style="display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap;">
-                        <button type="button" class="btn" id="btnEditApproval" onclick="app.enableEditApproval()"><i class="fa-solid fa-pen-to-square"></i> แก้ไขการอนุมัติ</button>
+                        <button type="button" class="btn" id="btnEditApproval" style="display: none !important;" onclick="app.enableEditApproval()"><i class="fa-solid fa-pen-to-square"></i> แก้ไขการอนุมัติ</button>
                         <button type="button" class="btn btn-primary" id="btnDownloadCertPDF"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลดรายงานผลวิเคราะห์ (PDF)</button>
                         <button type="button" class="btn" id="btnCloseCertModal" onclick="app.closeCertifyModal()"><i class="fa-solid fa-xmark"></i> ปิดหน้าต่าง</button>
                     </div>
@@ -2144,6 +2144,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792393923727"></script>
+    <script src="app_v85.js?v=1792395012159"></script>
 </body>
 </html>
