@@ -8880,8 +8880,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">${index + 1}</td>
                     ${isAllMode ? `<td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;"><span style="display:inline-block; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; background: #e0f2fe; color: #0369a1;">${item.formCode}</span></td>` : ''}
                     <td style="border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; font-weight: 500; ${isFail ? 'color: #991b1b; font-weight: 700;' : ''}">${item.name}</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-size: 12px; color: #475569;">${item.samplingDateDisplay}</td>
-                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-size: 12px; color: #475569;">${item.analysisDateDisplay}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-weight: 600;">${item.tested}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; ${failTextColor}">${item.failed}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">
@@ -8963,8 +8961,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <thead>
                             <tr style="background-color: #f1f5f9; color: #0f172a;">
                                 <th style="border: 1px solid #cbd5e1; padding: 10px;">📦 จำนวนตัวอย่างทั้งหมด</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #166534;">🟢 ผ่านเกณฑ์มาตรฐาน</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #991b1b;">🔴 ตรวจพบสารตกค้าง (ไม่ผ่าน)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #15803d;">🟢 ผ่านเกณฑ์มาตรฐาน</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #b91c1c;">🔴 ตรวจพบสารตกค้าง (ไม่ผ่าน)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -8988,18 +8986,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: center;">
                         <thead>
                             <tr style="background-color: #e2e8f0; color: #0f172a;">
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 5%;">เลือก</th>
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 6%;">ลำดับ</th>
-                                ${isAllMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 12%;">ประเภท</th>' : ''}
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; text-align: left; width: ${isAllMode ? '27%' : '33%'};">อำเภอ / หน่วยงาน / สถานที่</th>
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">วันที่รับตัวอย่าง</th>
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">วันที่ตรวจ</th>
-                                <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 16%;">ผลการตรวจ</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 6%;">เลือก</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 7%;">ลำดับ</th>
+                                ${isAllMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 15%;">ประเภท</th>' : ''}
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; text-align: left; width: ${isAllMode ? '43%' : '58%'};">อำเภอ / หน่วยงาน / สถานที่</th>
+                                <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 18%;">ผลการตรวจ</th>
                                 <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">เอกสาร</th>
                             </tr>
                             <tr style="background-color: #f1f5f9; color: #334155;">
-                                <th style="border: 1px solid #cbd5e1; padding: 5px; width: 8%;">ตรวจ</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 5px; width: 8%; color: #b91c1c;">ไม่ผ่าน</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 5px; width: 9%;">ตรวจ</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 5px; width: 9%; color: #b91c1c;">ไม่ผ่าน</th>
                             </tr>
                         </thead>
                         <tbody>
