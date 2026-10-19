@@ -3065,3 +3065,8 @@ body.require-login-mode::before {
   display: none !important;
 }
 
+/* Edit approval button is hidden by default for collectors and unauthorized roles */
+#btnEditApproval {
+  display: none !important;
+}
+
