@@ -145,7 +145,21 @@ const app = {
             this.setupEventListeners();
             this.updateAuthUI();
             this.updateSidebarBadges();
-            this.switchView('dashboard');
+            
+            const initialHash = window.location.hash || '';
+            if (this.currentUser) {
+                if (initialHash && (initialHash.startsWith('#report-') || initialHash.startsWith('#download'))) {
+                    this.handleUrlHashRouting();
+                } else {
+                    this.switchView('dashboard');
+                }
+            } else {
+                if (initialHash) {
+                    sessionStorage.setItem('pending_route_hash', initialHash);
+                }
+                this.switchView('dashboard');
+            }
+
             try {
                 const bannerH3First = document.querySelector('.banner-text h3 span:first-child');
                 if (bannerH3First) {
@@ -496,6 +510,49 @@ const app = {
         document.getElementById('searchVerifyTable').addEventListener('input', this.renderVerifyTable.bind(this));
         document.getElementById('searchAnalysisTable').addEventListener('input', this.renderAnalysisTable.bind(this));
         document.getElementById('searchCertifyTable').addEventListener('input', this.renderCertifyTable.bind(this));
+
+        // URL Deep Linking / Hash Routing Listener
+        window.addEventListener('hashchange', () => this.handleUrlHashRouting());
+    },
+
+    // URL Deep Linking / Hash Routing Handler
+    handleUrlHashRouting() {
+        const hash = window.location.hash || sessionStorage.getItem('pending_route_hash') || '';
+        if (!hash) return;
+
+        if (!this.currentUser) {
+            sessionStorage.setItem('pending_route_hash', hash);
+            return;
+        }
+
+        sessionStorage.removeItem('pending_route_hash');
+
+        if (hash.startsWith('#report-')) {
+            const targetId = decodeURIComponent(hash.replace('#report-', '').trim());
+            // 1. Switch to download results view immediately
+            this.switchView('download-results');
+            
+            // 2. Open certified PDF report modal directly with retries for asynchronous data loading
+            const tryOpenReport = (retries = 6) => {
+                const sample = (this.samples || []).find(s => s.ref_id === targetId || s.lab_id === targetId || s.lab_no === targetId);
+                if (sample) {
+                    this.openCertifyModal(sample.ref_id, true);
+                } else if (retries > 0) {
+                    setTimeout(() => tryOpenReport(retries - 1), 350);
+                } else {
+                    const searchInput = document.getElementById('searchDownloadTable');
+                    if (searchInput) {
+                        searchInput.value = targetId;
+                        this.renderDownloadTable();
+                    }
+                }
+            };
+            setTimeout(() => tryOpenReport(), 250);
+        } else if (hash === '#download' || hash === '#download-results') {
+            this.switchView('download-results');
+        } else if (hash === '#certify' || hash === '#lab-certify') {
+            this.switchView('lab-certify');
+        }
     },
 
     // View Routing
@@ -914,6 +971,13 @@ const app = {
                         this.closeAuthModal();
                         this.updateAuthUI();
                         document.getElementById('loginForm').reset();
+
+                        const pendingHash = sessionStorage.getItem('pending_route_hash') || window.location.hash;
+                        if (pendingHash && (pendingHash.startsWith('#report-') || pendingHash.startsWith('#download'))) {
+                            this.handleUrlHashRouting();
+                        } else {
+                            this.switchView('dashboard');
+                        }
                     } else {
                         Swal.fire({ icon: 'error', title: 'ไม่พบข้อมูลผู้ใช้ในระบบ', text: 'โปรดติดต่อผู้ดูแลระบบ' });
                         auth.signOut();
@@ -934,6 +998,13 @@ const app = {
                 this.closeAuthModal();
                 this.updateAuthUI();
                 e.target.reset();
+
+                const pendingHash = sessionStorage.getItem('pending_route_hash') || window.location.hash;
+                if (pendingHash && (pendingHash.startsWith('#report-') || pendingHash.startsWith('#download'))) {
+                    this.handleUrlHashRouting();
+                } else {
+                    this.switchView('dashboard');
+                }
             } else {
                 Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบล้มเหลว', text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' });
             }
@@ -8235,6 +8306,18 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             countBadge.innerText = `เลือกส่ง ${totalCount} / ${reportItems.length} ใบงาน`;
         }
 
+        const getBaseUrl = () => {
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                return 'https://anchasa241138-dotcom.github.io/MU10EazyAppversion2026/';
+            }
+            let path = window.location.pathname;
+            if (!path.endsWith('/') && !path.endsWith('.html')) {
+                path += '/';
+            }
+            return window.location.origin + path;
+        };
+        const baseUrl = getBaseUrl();
+
         // Build HTML Table rows
         let rowsHtml = '';
         reportItems.forEach((item, index) => {
@@ -8243,7 +8326,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const opacityStyle = isChecked ? '' : 'opacity: 0.45; background-color: #f1f5f9; text-decoration: line-through;';
             const rowBg = isFail ? 'background-color: #fef2f2;' : (index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;');
             const failTextColor = isFail ? 'color: #b91c1c; font-weight: bold; background-color: #fee2e2;' : 'color: #166534; font-weight: 600;';
-            const pdfLink = `https://anchasa241138-dotcom.github.io/MU10EazyAppversion2026/#report-${item.ref_id || (index + 1)}`;
+            const pdfLink = `${baseUrl}#report-${encodeURIComponent(item.ref_id || (index + 1))}`;
 
             rowsHtml += `
                 <tr style="${rowBg} ${opacityStyle}">
@@ -8288,7 +8371,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             `;
         }
 
-        const appUrl = 'https://anchasa241138-dotcom.github.io/MU10EazyAppversion2026/#';
+        const appUrl = `${baseUrl}#download-results`;
 
         const emailTemplate = `
             <div style="font-family: 'Sarabun', Tahoma, Arial, sans-serif; max-width: 760px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
@@ -8429,7 +8512,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 subject: subject,
                 "หัวข้อรายงาน": subject,
                 "เนื้อหารายงาน": "ขอส่งรายงานผลตรวจวิเคราะห์ความปลอดภัยด้านอาหาร ประจำรอบการตรวจ โปรดตรวจสอบรายละเอียดในเอกสารแนบ",
-                "ลิงก์เข้าสู่ระบบ": window.location.origin + window.location.pathname,
+                "ลิงก์เข้าสู่ระบบ": `${window.location.origin}${window.location.pathname}#download-results`,
                 html: htmlBody
             };
 
