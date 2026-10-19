@@ -1258,8 +1258,11 @@
 
                 <!-- VIEW: MANAGE USERS -->
                 <section class="content-view" id="view-manage-users">
-                    <div class="content-header">
+                    <div class="content-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <h2><i class="fa-solid fa-users-gear"></i> จัดการผู้ใช้งาน (รออนุมัติ)</h2>
+                        <button type="button" class="btn btn-secondary" onclick="app.fetchUsers(); Swal.fire({icon:'info', title:'กำลังรีเฟรชข้อมูล...', timer:700, showConfirmButton:false});" style="border-radius: 9999px; padding: 6px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                            <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชข้อมูลผู้ใช้
+                        </button>
                     </div>
                     <div class="card">
                         <div class="card-body">
@@ -2144,6 +2147,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792400080000"></script>
+    <script src="app_v85.js?v=1792401636783"></script>
 </body>
 </html>

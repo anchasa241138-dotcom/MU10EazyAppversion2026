@@ -263,26 +263,15 @@ const app = {
                 this.updateBadges();
             });
 
-            db.ref('users').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    this.users = Object.values(data);
-                } else {
-                    // Default users
-                    this.users = [
-                        { username: 'admin', password: 'password', role: 'admin', fullname: 'Admin Mobile Unit 10', status: 'approved' },
-                        { username: 'lab', password: 'password', role: 'lab', fullname: 'นสพ.วิทยา รักดี', status: 'approved' },
-                        { username: 'user', password: 'password', role: 'collector', fullname: 'นายสมคิด สุขใจ', status: 'approved' }
-                    ];
-                    db.ref('users').set(this.users);
-                }
-                this.updateAuthUI();
-                const muView = document.getElementById('view-manage-users');
-                if (muView && muView.classList.contains('active')) {
-                    this.renderManageUsers();
-                }
-                this.updateBadges();
-            });
+            this.listenToUsers();
+            if (typeof auth !== 'undefined') {
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        this.listenToUsers();
+                        this.fetchUsers();
+                    }
+                });
+            }
 
             db.ref('settings/gas_email_webhook').on('value', (snapshot) => {
                 const url = snapshot.val();
@@ -304,6 +293,52 @@ const app = {
             }
         } catch (e) {
             this.currentUser = null;
+        }
+    },
+
+    fetchUsers() {
+        if (typeof db === 'undefined') return Promise.resolve(this.users);
+        return db.ref('users').once('value').then(snapshot => {
+            const data = snapshot.val();
+            if (data) {
+                this.users = Array.isArray(data) ? data.filter(Boolean) : Object.values(data);
+                this.updateAuthUI();
+                this.updateBadges();
+                const muView = document.getElementById('view-manage-users');
+                if (muView && muView.classList.contains('active')) {
+                    this.renderManageUsers();
+                }
+            }
+            return this.users;
+        }).catch(err => {
+            console.warn('fetchUsers notice:', err.message);
+            return this.users;
+        });
+    },
+
+    listenToUsers() {
+        if (typeof db === 'undefined') return;
+        try {
+            if (this._usersListenerRef) {
+                this._usersListenerRef.off('value');
+            }
+            this._usersListenerRef = db.ref('users');
+            this._usersListenerRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    this.users = Array.isArray(data) ? data.filter(Boolean) : Object.values(data);
+                }
+                this.updateAuthUI();
+                const muView = document.getElementById('view-manage-users');
+                if (muView && muView.classList.contains('active')) {
+                    this.renderManageUsers();
+                }
+                this.updateBadges();
+            }, (err) => {
+                console.warn('Firebase users listener notice:', err.message);
+            });
+        } catch (e) {
+            console.warn('listenToUsers setup error:', e);
         }
     },
 
@@ -607,6 +642,7 @@ const app = {
                 case 'manage-users':
                     if (this.currentUser && this.currentUser.role === 'admin') {
                         this.renderManageUsers();
+                        this.fetchUsers();
                     } else {
                         Swal.fire('ไม่มีสิทธิ์', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้', 'error');
                     }
@@ -997,6 +1033,8 @@ const app = {
                         if (closeBtn) closeBtn.style.display = 'block';
                         this.closeAuthModal();
                         this.updateAuthUI();
+                        this.listenToUsers();
+                        this.fetchUsers();
                         document.getElementById('loginForm').reset();
 
                         const pendingHash = sessionStorage.getItem('pending_route_hash') || window.location.hash;
@@ -7706,53 +7744,72 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         }
     },
 
-    // Excel Export Logic
     renderManageUsers() {
         const pendingTbody = document.querySelector('#pending-users-table tbody');
         const approvedTbody = document.querySelector('#approved-users-table tbody');
         
         if (!pendingTbody || !approvedTbody) return;
         
-        const pendingUsers = this.users.filter(u => u.status === 'pending');
-        const approvedUsers = this.users.filter(u => u.status === 'approved' && u.username !== 'admin');
+        const getRoleBadge = (role) => {
+            switch (role) {
+                case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องแลป (Lab)</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองผล (Certifier)</span>';
+                case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
+                default: return role || '-';
+            }
+        };
+
+        const pendingUsers = (this.users || []).filter(u => u && u.status === 'pending');
+        const approvedUsers = (this.users || []).filter(u => u && u.status === 'approved' && u.username !== 'admin');
         
         pendingTbody.innerHTML = pendingUsers.length === 0 
-            ? '<tr><td colspan="6" class="text-center">ไม่มีผู้ใช้งานรออนุมัติ</td></tr>'
+            ? '<tr><td colspan="6" class="text-center" style="padding: 20px; color: #94a3b8;">ไม่มีผู้ใช้งานรออนุมัติ</td></tr>'
             : pendingUsers.map(u => `
                 <tr>
-                    <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH') : '-'}</td>
-                    <td>${u.fullname} (${u.username})</td>
-                    <td>${u.workplace || '-'} / ${u.province || '-'}</td>
-                    <td>${u.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</td>
+                    <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                    <td><strong>${u.fullname || '-'}</strong> <br><small style="color:#64748b;">(${u.username})</small></td>
+                    <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
+                    <td>${getRoleBadge(u.role)}</td>
                     <td><span class="badge" style="background-color: #f59e0b; color: white;">รออนุมัติ</span></td>
                     <td>
-                        <button class="btn btn-success" style="padding: 4px 8px; font-size: 12px; margin-right: 5px;" onclick="app.approveUser('${u.username}')">อนุมัติ</button>
-                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="app.rejectUser('${u.username}')">ปฏิเสธ</button>
+                        <button class="btn btn-success" style="padding: 5px 12px; font-size: 12px; margin-right: 5px; border-radius: 6px;" onclick="app.approveUser('${u.username}')"><i class="fa-solid fa-check"></i> อนุมัติ</button>
+                        <button class="btn btn-danger" style="padding: 5px 12px; font-size: 12px; border-radius: 6px;" onclick="app.rejectUser('${u.username}')"><i class="fa-solid fa-xmark"></i> ปฏิเสธ</button>
                     </td>
                 </tr>
             `).join('');
             
         approvedTbody.innerHTML = approvedUsers.length === 0
-            ? '<tr><td colspan="6" class="text-center">ไม่มีผู้ใช้งานในระบบ</td></tr>'
+            ? '<tr><td colspan="6" class="text-center" style="padding: 20px; color: #94a3b8;">ไม่มีผู้ใช้งานในระบบ</td></tr>'
             : approvedUsers.map(u => `
                 <tr>
-                    <td>${u.fullname}</td>
-                    <td>${u.username}</td>
+                    <td><strong>${u.fullname || '-'}</strong></td>
+                    <td><code>${u.username}</code></td>
                     <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
-                    <td>${u.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : 'ผู้เก็บตัวอย่าง'}</td>
+                    <td>${getRoleBadge(u.role)}</td>
                     <td><span class="badge" style="background-color: #10b981; color: white;">ใช้งานได้</span></td>
                     <td>
-                        <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px; margin-right: 5px;" onclick="app.viewUserDetails('${u.username}')"><i class="fa-solid fa-circle-info"></i> ดูข้อมูล</button>
-                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="app.deleteUser('${u.username}')"><i class="fa-solid fa-trash"></i> ลบ</button>
+                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 5px; border-radius: 6px;" onclick="app.viewUserDetails('${u.username}')"><i class="fa-solid fa-circle-info"></i> ดูข้อมูล</button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; border-radius: 6px;" onclick="app.deleteUser('${u.username}')"><i class="fa-solid fa-trash"></i> ลบ</button>
                     </td>
                 </tr>
             `).join('');
     },
 
     viewUserDetails(username) {
-        const user = this.users.find(u => u.username === username);
+        const user = (this.users || []).find(u => u && u.username === username);
         if (!user) return;
         
+        const getRoleName = (role) => {
+            switch (role) {
+                case 'admin': return 'ผู้ดูแลระบบ (Admin)';
+                case 'lab': return 'เจ้าหน้าที่ห้องปฏิบัติการ (Lab)';
+                case 'certifier': return 'ผู้รับรองผลตรวจวิเคราะห์ (Certifier)';
+                case 'collector': return 'ผู้เก็บตัวอย่าง / ผู้ส่งตรวจ';
+                default: return role || '-';
+            }
+        };
+
         const content = document.getElementById('user-details-content');
         if (content) {
             content.innerHTML = `
@@ -7762,7 +7819,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">Username:</td>
-                    <td style="padding: 10px;">${user.username || '-'}</td>
+                    <td style="padding: 10px;"><code>${user.username || '-'}</code></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">เลขบัตรประชาชน (CID):</td>
@@ -7786,7 +7843,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">ประเภทบัญชี/บทบาท:</td>
-                    <td style="padding: 10px;">${user.role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้เก็บตัวอย่าง'}</td>
+                    <td style="padding: 10px;">${getRoleName(user.role)}</td>
                 </tr>
                 <tr>
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">วันที่สมัคร:</td>
@@ -7804,7 +7861,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (modal) modal.classList.remove('active');
     },
 
-    
     deleteUser(username) {
         Swal.fire({
             title: 'ยืนยันการลบบัญชี?',
@@ -7817,14 +7873,33 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
-                const user = this.users.find(u => u.username === username);
+                const user = (this.users || []).find(u => u && u.username === username);
                 if (user) {
                     if (typeof db !== 'undefined' && user.uid) {
-                        db.ref('users/' + user.uid).remove();
+                        db.ref('users/' + user.uid).remove().then(() => {
+                            this.users = this.users.filter(u => u.username !== username);
+                            this.renderManageUsers();
+                            this.updateBadges();
+                            Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
+                        }).catch(err => {
+                            Swal.fire('ข้อผิดพลาด', err.message, 'error');
+                        });
+                    } else if (typeof db !== 'undefined') {
+                        db.ref('users').once('value', (snap) => {
+                            const all = snap.val() || {};
+                            for (const key in all) {
+                                if (all[key].username === username) {
+                                    db.ref('users/' + key).remove();
+                                    break;
+                                }
+                            }
+                        });
+                        this.users = this.users.filter(u => u.username !== username);
+                        this.renderManageUsers();
+                        this.updateBadges();
                         Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
                     } else {
                         this.users = this.users.filter(u => u.username !== username);
-                        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
                         this.renderManageUsers();
                         this.updateBadges();
                         Swal.fire('ลบสำเร็จ', 'บัญชีผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
@@ -7834,8 +7909,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         });
     },
 
-
-    
     approveUser(username) {
         Swal.fire({
             title: 'ยืนยันการอนุมัติ?',
@@ -7846,23 +7919,39 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
-                const user = this.users.find(u => u.username === username);
+                const user = (this.users || []).find(u => u && u.username === username);
                 if (user) {
+                    user.status = 'approved';
                     if (typeof db !== 'undefined' && user.uid) {
-                        db.ref('users/' + user.uid).update({ status: 'approved' });
-                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
-                    } else {
-                        user.status = 'approved';
-                        if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
-                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                        db.ref('users/' + user.uid).update({ status: 'approved' }).then(() => {
+                            this.renderManageUsers();
+                            this.updateBadges();
+                            Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                        }).catch(err => {
+                            Swal.fire('ข้อผิดพลาด', err.message, 'error');
+                        });
+                    } else if (typeof db !== 'undefined') {
+                        db.ref('users').once('value', (snap) => {
+                            const all = snap.val() || {};
+                            for (const key in all) {
+                                if (all[key].username === username) {
+                                    db.ref('users/' + key).update({ status: 'approved' });
+                                    break;
+                                }
+                            }
+                        });
                         this.renderManageUsers();
                         this.updateBadges();
+                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                    } else {
+                        this.renderManageUsers();
+                        this.updateBadges();
+                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
                     }
                 }
             }
         });
     },
-
 
     rejectUser(username) {
         Swal.fire({
@@ -7875,11 +7964,36 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.users = this.users.filter(u => u.username !== username);
-                if(typeof db !== 'undefined') { db.ref('users').set(this.users); }
-                Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
-                this.renderManageUsers();
-                this.updateBadges();
+                const user = (this.users || []).find(u => u && u.username === username);
+                if (user && typeof db !== 'undefined' && user.uid) {
+                    db.ref('users/' + user.uid).remove().then(() => {
+                        this.users = this.users.filter(u => u.username !== username);
+                        this.renderManageUsers();
+                        this.updateBadges();
+                        Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
+                    }).catch(err => {
+                        Swal.fire('ข้อผิดพลาด', err.message, 'error');
+                    });
+                } else if (user && typeof db !== 'undefined') {
+                    db.ref('users').once('value', (snap) => {
+                        const all = snap.val() || {};
+                        for (const key in all) {
+                            if (all[key].username === username) {
+                                db.ref('users/' + key).remove();
+                                break;
+                            }
+                        }
+                    });
+                    this.users = this.users.filter(u => u.username !== username);
+                    this.renderManageUsers();
+                    this.updateBadges();
+                    Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
+                } else {
+                    this.users = (this.users || []).filter(u => u.username !== username);
+                    this.renderManageUsers();
+                    this.updateBadges();
+                    Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
+                }
             }
         });
     },
