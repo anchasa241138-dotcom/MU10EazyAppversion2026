@@ -7725,17 +7725,27 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <td>${s.form_type}</td>
                 <td>${(()=>{
     let n = s.sample_name || '';
-    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
+    if (s.form_type === 'MU.10-006') {
         const arr = [];
         let i = 1;
-        while(s['sample_name_'+i] !== undefined && i <= 50) {
-            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
+        while ((s['location_'+i] !== undefined || s['sample_name_'+i] !== undefined) && i <= 50) {
+            const loc = s['location_'+i] || (i === 1 ? s.location_name : '') || s['sample_name_'+i];
+            if (loc) arr.push(loc);
+            i++;
+        }
+        if (arr.length > 0) n = arr.join(', ');
+        else n = s.location_name || s.sample_name || '-';
+    } else if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002' || s.form_type === 'MU.10-005' || s.form_type === 'MU.10-007') {
+        const arr = [];
+        let i = 1;
+        while((s['sample_name_'+i] !== undefined || s['sample_category_'+i] !== undefined) && i <= 50) {
+            if(s['sample_name_'+i] || s['sample_category_'+i]) arr.push(s['sample_name_'+i] || s['sample_category_'+i]);
             i++;
         }
         if(arr.length > 0) n = arr.join(', ');
     }
     if(!n) n = '-';
-    return n.length > 30 ? n.substring(0,30) + '...' : n;
+    return n.length > 40 ? n.substring(0,40) + '...' : n;
 })()}</td>
                   <td>${s.agency || '-'}</td>
                   <td>${s.province}</td>
@@ -7768,7 +7778,23 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         const exportData = this.currentExportData.flatMap(s => {
             const createRowForSample = (s, idx, isFallback, validItemCount) => {
-                let sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || '-');
+                let sampleName = '-';
+                if (s.form_type === 'MU.10-006') {
+                    const loc = s['location_' + idx] || (idx === 1 ? s.location_name : '');
+                    const sName = s['sample_name_' + idx] || (idx === 1 ? s.sample_name : '');
+                    if (loc && sName && sName !== 'A' && loc !== sName) {
+                        sampleName = `${loc} (${sName})`;
+                    } else {
+                        sampleName = loc || sName || s.location_name || ('จุดตรวจที่ ' + idx);
+                    }
+                } else if (s.form_type === 'MU.10-007') {
+                    sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || s['sample_category_'+idx] || '-');
+                } else if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
+                    sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || s['sample_name_1'] || s.sample_name || '-');
+                } else {
+                    sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || '-');
+                }
+
                 let weight = isFallback ? (s.weight || s['weight_1'] || '-') : (s['weight_'+idx] || '-');
                 let source = isFallback ? (s.source || s['source_1'] || '-') : (s['source_'+idx] || '-');
                 
@@ -7787,7 +7813,126 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 let details = [];
                 let summaries = [];
 
-                if (s.form_type === 'MU.10-002') {
+                // Form-specific extra detail columns
+                let mu10006Details = null;
+                let mu10003Details = null;
+                let mu10005Details = null;
+                let mu10004Details = null;
+
+                if (s.form_type === 'MU.10-006') {
+                    const cVal = (s['analysis_coliform_' + idx] !== undefined && s['analysis_coliform_' + idx] !== '') 
+                        ? s['analysis_coliform_' + idx] 
+                        : (s.analysis_coliform_1 !== undefined ? s.analysis_coliform_1 : '0');
+                    const cSum = s['analysis_coliform_summary_' + idx] || s.analysis_coliform_summary_1 || (parseFloat(cVal) > 0 ? 'ไม่ผ่าน' : 'ผ่าน');
+                    
+                    const tVal = (s['analysis_tds_' + idx] !== undefined && s['analysis_tds_' + idx] !== '') 
+                        ? s['analysis_tds_' + idx] 
+                        : (s.analysis_tds_1 || '-');
+                    const tSum = s['analysis_tds_summary_' + idx] || s.analysis_tds_summary_1 || (tVal !== '-' && parseFloat(tVal) > 50 ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ');
+                    
+                    const hVal = (s['analysis_hardness_' + idx] !== undefined && s['analysis_hardness_' + idx] !== '') 
+                        ? s['analysis_hardness_' + idx] 
+                        : (s.analysis_hardness_1 || '<50');
+                    const hSum = s['analysis_hardness_summary_' + idx] || s.analysis_hardness_summary_1 || 'ผ่าน';
+                    
+                    const pVal = (s['analysis_ph_' + idx] !== undefined && s['analysis_ph_' + idx] !== '') 
+                        ? s['analysis_ph_' + idx] 
+                        : (s.analysis_ph_1 || '-');
+                    const pSum = s['analysis_ph_summary_' + idx] || s.analysis_ph_summary_1 || (pVal !== '-' && (parseFloat(pVal) < 6.5 || parseFloat(pVal) > 8.5) ? 'ไม่ผ่าน' : 'ผ่าน');
+
+                    substances.push('โคลิฟอร์ม', 'TDS', 'ความกระด้าง', 'pH');
+                    interpretations.push(`โคลิฟอร์ม: ${cSum} (${cVal})`);
+                    interpretations.push(`TDS: ${tSum} (${tVal})`);
+                    interpretations.push(`ความกระด้าง: ${hSum} (${hVal})`);
+                    interpretations.push(`pH: ${pSum} (${pVal})`);
+
+                    details.push(`Coliform=${cVal}, TDS=${tVal} mg/L, Hardness=${hVal} mg/L, pH=${pVal}`);
+
+                    const rowPass = (cSum === 'ผ่าน') && (tSum === 'เกณฑ์ปกติ') && (hSum === 'ผ่าน') && (pSum === 'ผ่าน');
+                    const outcome = s['analysis_summary_' + idx] || s['analysis_summary_outcome_' + idx] || (rowPass ? 'ผ่าน' : 'ไม่ผ่าน');
+                    summaries.push(outcome);
+
+                    mu10006Details = {
+                        'โคลิฟอร์ม (Coliform)': cVal,
+                        'สรุปผลโคลิฟอร์ม': cSum,
+                        'TDS (มก./ล.)': tVal,
+                        'สรุปผล TDS': tSum,
+                        'ความกระด้าง (มก./ล.)': hVal,
+                        'สรุปผลความกระด้าง': hSum,
+                        'pH': pVal,
+                        'สรุปผล pH': pSum
+                    };
+                } else if (s.form_type === 'MU.10-005') {
+                    substances.push('สารไอโอดีน (Iodate)');
+                    const iodateVal = s['iodate_value_' + idx] || s['analysis_iodate_' + idx] || (isFallback ? (s.iodate_value_1 || s.analysis_iodate_1) : '') || '-';
+                    const outcome = s['test_outcome_' + idx] || s['analysis_summary_' + idx] || (isFallback ? (s.test_outcome_1 || s.analysis_summary_1 || s.analysis_summary) : '') || '-';
+                    if (iodateVal !== '-') {
+                        interpretations.push(`ปริมาณไอโอดีน: ${iodateVal} (${outcome})`);
+                        details.push(`ปริมาณสารไอโอดีน ${iodateVal}`);
+                    }
+                    if (outcome !== '-') summaries.push(outcome);
+
+                    mu10005Details = {
+                        'ชื่อผู้จำหน่าย': s['distributor_' + idx] || s.distributor || '-',
+                        'เลขสารบบอาหาร': s['food_serial_no_' + idx] || '-',
+                        'ผู้ผลิต/สถานที่ผลิต': s['manufacturer_info_' + idx] || '-',
+                        'วันเดือนปีที่ผลิต/หมดอายุ': s['has_mfg_exp_' + idx] || '-',
+                        'ปริมาณไอโอดีน (ppm)': iodateVal,
+                        'ผลการทดสอบไอโอดีน': outcome
+                    };
+                } else if (s.form_type === 'MU.10-004') {
+                    substances.push('สารโพลาร์ในน้ำมันทอดซ้ำ');
+                    const interp = s['analysis_interpretation_4_' + idx] || (!isFallback ? '' : s.analysis_interpretation_4_1) || '-';
+                    const det = s['analysis_details_4_' + idx] || (!isFallback ? '' : s.analysis_details_4_1) || '';
+                    const sum = s['analysis_summary_4_' + idx] || (!isFallback ? '' : s.analysis_summary_4_1) || (interp === '>25%' ? 'ไม่ผ่าน' : (interp !== '-' ? 'ผ่าน' : '-'));
+                    if (interp !== '-') interpretations.push(`ค่าโพลาร์: ${interp}`);
+                    if (det) details.push(det); else if (interp !== '-') details.push(`สารโพลาร์ ${interp}`);
+                    if (sum !== '-') summaries.push(sum);
+
+                    mu10004Details = {
+                        'ชื่อผู้จำหน่าย': s.owner_name || s.location_name || '-',
+                        'ประเภทอาหาร': s['sample_name_1'] || s['sample_name_' + idx] || '-',
+                        'ชนิดน้ำมัน': s['oil_type_1'] || s['oil_type_' + idx] || '-',
+                        'ระยะเวลาที่ใช้ทอด': s['fry_duration_1'] || s['fry_duration_' + idx] || '-',
+                        'ลักษณะการเปลี่ยน': s['replacement_type_1'] || s['replacement_type_' + idx] || '-',
+                        'ความถี่ในการเปลี่ยน': s['replacement_frequency_1'] || s['replacement_frequency_' + idx] || '-',
+                        'ค่าโพลาร์': interp
+                    };
+                } else if (s.form_type === 'MU.10-003') {
+                    substances.push('สารโพลาร์ในน้ำมันทอดซ้ำ');
+                    const distributor = isFallback ? (s.distributor || s['distributor_1'] || '-') : (s['distributor_'+idx] || '-');
+                    const polar_val = isFallback ? (s.polar_value || s['polar_value_1'] || '-') : (s['polar_value_'+idx] || '-');
+                    const oil_type = isFallback ? (s.oil_type || s['oil_type_1'] || '-') : (s['oil_type_'+idx] || '-');
+                    const fry_dur = isFallback ? (s.fry_duration || s['fry_duration_1'] || '-') : (s['fry_duration_'+idx] || '-');
+                    const rep_type = isFallback ? (s.replacement_type || s['replacement_type_1'] || '-') : (s['replacement_type_'+idx] || '-');
+                    const last_rep_date = isFallback ? (s.last_replacement_date || s['last_replacement_date_1'] || '-') : (s['last_replacement_date_'+idx] || '-');
+                    const rep_freq = isFallback ? (s.replacement_frequency || s['replacement_frequency_1'] || '-') : (s['replacement_frequency_'+idx] || '-');
+                    const rep_reason = isFallback ? (s.replacement_reason || s['replacement_reason_1'] || '-') : (s['replacement_reason_'+idx] || '-');
+                    const oil_disp = isFallback ? (s.oil_disposal || s['oil_disposal_1'] || '-') : (s['oil_disposal_'+idx] || '-');
+                    
+                    let mu10003Summary = '-';
+                    const num = parseFloat(polar_val);
+                    if (!isNaN(num)) {
+                        mu10003Summary = num <= 25 ? 'ผ่าน' : 'ไม่ผ่าน';
+                    }
+                    if (polar_val !== '-') {
+                        interpretations.push(`ค่าโพลาร์: ${polar_val}% (${mu10003Summary})`);
+                        details.push(`ค่าโพลาร์ ${polar_val}%`);
+                    }
+                    if (mu10003Summary !== '-') summaries.push(mu10003Summary);
+
+                    mu10003Details = {
+                        'ชื่อผู้จำหน่าย': distributor,
+                        'ชนิดน้ำมัน': oil_type,
+                        'ระยะเวลาที่ใช้ทอด': fry_dur,
+                        'ลักษณะการเปลี่ยน': rep_type,
+                        'วันที่เปลี่ยนล่าสุด': last_rep_date,
+                        'ความถี่ในการเปลี่ยน': rep_freq,
+                        'เหตุผลที่เปลี่ยน': rep_reason,
+                        'การกำจัดน้ำมัน': oil_disp,
+                        'ค่าโพลาร์': polar_val
+                    };
+                } else if (s.form_type === 'MU.10-002') {
                     const dict = {
                         'borax': 'บอแรกซ์',
                         'formalin': 'ฟอร์มาลิน',
@@ -7799,8 +7944,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         const sum = s['analysis_summary_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_summary_'+k]);
                         if (sum) {
                             substances.push(dict[k]);
-                            interpretations.push(s['analysis_interpretation_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_interpretation_'+k]) || '');
-                            details.push(s['analysis_details_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_details_'+k]) || '');
+                            const interp = s['analysis_interpretation_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_interpretation_'+k]) || '';
+                            if (interp) interpretations.push(`${dict[k]}: ${interp}`);
+                            const det = s['analysis_details_'+idx+'_'+k] || (!isFallback ? '' : s['analysis_details_'+k]) || '';
+                            if (det) details.push(det);
                             summaries.push(sum);
                         }
                     });
@@ -7846,59 +7993,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     itemSummary = s.analysis_summary;
                 }
 
-                if (s.form_type === 'MU.10-003') {
-                    const distributor = isFallback ? (s.distributor || s['distributor_1'] || '-') : (s['distributor_'+idx] || '-');
-                    const polar_val = isFallback ? (s.polar_value || s['polar_value_1'] || '-') : (s['polar_value_'+idx] || '-');
-                    const oil_type = isFallback ? (s.oil_type || s['oil_type_1'] || '-') : (s['oil_type_'+idx] || '-');
-                    const fry_dur = isFallback ? (s.fry_duration || s['fry_duration_1'] || '-') : (s['fry_duration_'+idx] || '-');
-                    const rep_type = isFallback ? (s.replacement_type || s['replacement_type_1'] || '-') : (s['replacement_type_'+idx] || '-');
-                    const last_rep_date = isFallback ? (s.last_replacement_date || s['last_replacement_date_1'] || '-') : (s['last_replacement_date_'+idx] || '-');
-                    const rep_freq = isFallback ? (s.replacement_frequency || s['replacement_frequency_1'] || '-') : (s['replacement_frequency_'+idx] || '-');
-                    const rep_reason = isFallback ? (s.replacement_reason || s['replacement_reason_1'] || '-') : (s['replacement_reason_'+idx] || '-');
-                    const oil_disp = isFallback ? (s.oil_disposal || s['oil_disposal_1'] || '-') : (s['oil_disposal_'+idx] || '-');
-                    
-                    let mu10003Summary = '-';
-                    const num = parseFloat(polar_val);
-                    if (!isNaN(num)) {
-                        mu10003Summary = num <= 25 ? 'ผ่าน' : 'ไม่ผ่าน';
-                    }
-
-                    return {
-                        'รหัสอ้างอิง': s.ref_id || '-',
-                        'ประเภทฟอร์ม': s.form_type || '-',
-                        'รหัสแลป': currentLabNo,
-                        'หน่วยงานที่เก็บ': s.agency || '-',
-                        'ประเภทสถานที่เก็บ': s.location_type || '-',
-                        'สถานที่เก็บ': s.location_name || '-',
-                        'ตำบล': s.sub_district || '-',
-                        'อำเภอ': s.district || '-',
-                        'จังหวัด': s.province || '-',
-                        'ชื่อผู้เก็บตัวอย่าง': s.collector_name || '-',
-                        'ตำแหน่งผู้เก็บตัวอย่าง': s.collector_position || '-',
-                        'วันที่เก็บ': s.sampling_date || '-',
-                        'เวลาที่บันทึกเก็บตัวอย่าง': formatTime(s.created_at),
-                        'ชื่อตัวอย่าง': sampleName,
-                        'น้ำหนัก': weight,
-                        'แหล่งที่มาของตัวอย่าง': source,
-                        'วันที่รับตัวอย่าง': s.lab_receive_date || '-',
-                        'เวลาที่รับตัวอย่าง': formatTime(s.lab_receive_timestamp),
-                        'ชื่อผู้ตรวจวิเคราะห์': s.analysis_analyst || '-',
-                        'วันที่ตรวจวิเคราะห์': s.analysis_date || '-',
-                        'เวลาที่ตรวจวิเคราะห์': formatTime(s.analysis_timestamp),
-                        'ชื่อผู้จำหน่าย': distributor,
-                        'ชนิดน้ำมัน': oil_type,
-                        'ระยะเวลาที่ใช้ทอด': fry_dur,
-                        'ลักษณะการเปลี่ยน': rep_type,
-                        'วันที่เปลี่ยนล่าสุด': last_rep_date,
-                        'ความถี่ในการเปลี่ยน': rep_freq,
-                        'เหตุผลที่เปลี่ยน': rep_reason,
-                        'การกำจัดน้ำมัน': oil_disp,
-                        'ค่าโพลาร์': polar_val,
-                        'สรุปผล': mu10003Summary
-                    };
-                }
-
-                return {
+                const row = {
                     'รหัสอ้างอิง': s.ref_id || '-',
                     'ประเภทฟอร์ม': s.form_type || '-',
                     'รหัสแลป': currentLabNo,
@@ -7925,14 +8020,38 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     'ผลการตรวจวิเคราะห์': detailStr,
                     'สรุปผล': itemSummary
                 };
+
+                if (mu10006Details) Object.assign(row, mu10006Details);
+                if (mu10003Details) Object.assign(row, mu10003Details);
+                if (mu10005Details) Object.assign(row, mu10005Details);
+                if (mu10004Details) Object.assign(row, mu10004Details);
+
+                return row;
             };
 
             let rows = [];
             let hasDynamicSamples = false;
             let i = 1;
             let validItemCount = 0;
-            while((s['sample_name_'+i] !== undefined || s['sample_category_'+i] !== undefined) && i <= 50) {
-                if ((s['sample_name_'+i] || s['sample_category_'+i]) && s['item_status_'+i] !== 'rejected') {
+            while((s['sample_name_'+i] !== undefined || 
+                   s['sample_category_'+i] !== undefined || 
+                   s['location_'+i] !== undefined || 
+                   s['distributor_'+i] !== undefined ||
+                   s['analysis_coliform_'+i] !== undefined ||
+                   s['analysis_tds_'+i] !== undefined ||
+                   s['analysis_iodate_'+i] !== undefined ||
+                   s['analysis_interpretation_4_'+i] !== undefined) && i <= 50) {
+                const hasItem = (
+                    s['sample_name_'+i] || 
+                    s['sample_category_'+i] || 
+                    s['location_'+i] || 
+                    s['distributor_'+i] ||
+                    s['analysis_coliform_'+i] !== undefined ||
+                    s['analysis_tds_'+i] !== undefined ||
+                    s['analysis_iodate_'+i] !== undefined ||
+                    s['analysis_interpretation_4_'+i] !== undefined
+                );
+                if (hasItem && s['item_status_'+i] !== 'rejected') {
                     hasDynamicSamples = true;
                     rows.push(createRowForSample(s, i, false, validItemCount));
                     validItemCount++;
