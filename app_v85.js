@@ -7851,6 +7851,61 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const selectedProv = provSelect.value;
         const selectedForm = formSelect ? formSelect.value : 'all';
 
+        // Metadata map for each report form type
+        const formMeta = {
+            'MU.10-001': {
+                code: 'RD-001',
+                badge: '🥬 RD-001',
+                title: 'ตรวจเฝ้าระวังสารตกค้างยาฆ่าแมลงในผักสด (MU.10-001)',
+                subjectTopic: 'แจ้งผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)'
+            },
+            'MU.10-002': {
+                code: 'RD-002',
+                badge: '🥩 RD-002',
+                title: 'ตรวจเฝ้าระวังสารปนเปื้อนในอาหาร 4 ชนิด (MU.10-002)',
+                subjectTopic: 'แจ้งผลการตรวจวิเคราะห์สารปนเปื้อนในอาหาร (บอแรกซ์, ฟอร์มาลิน, สารฟอกขาว, สารกันรา)'
+            },
+            'MU.10-003': {
+                code: 'RD-003',
+                badge: '🍳 RD-003',
+                title: 'ตรวจวัดปริมาณสารโพลาร์ในน้ำมันทอดซ้ำ ณ สถานที่จำหน่าย (MU.10-003)',
+                subjectTopic: 'แจ้งผลการตรวจวัดปริมาณสารโพลาร์ในน้ำมันทอดซ้ำ โดยใช้เครื่องมือวัด ณ สถานที่จำหน่าย'
+            },
+            'MU.10-005': {
+                code: 'RD-005',
+                badge: '🌾 RD-005',
+                title: 'ตรวจเฝ้าระวังสารเคมีทางการเกษตรและเกลือบริโภคเสริมไอโอดีน (MU.10-005)',
+                subjectTopic: 'แจ้งผลการตรวจวิเคราะห์เกลือบริโภคเสริมไอโอดีนและสารเคมีทางการเกษตร'
+            },
+            'MU.10-006': {
+                code: 'RD-006',
+                badge: '💧 RD-006',
+                title: 'ตรวจเฝ้าระวังคุณภาพน้ำบริโภคจากตู้น้ำดื่มหยอดเหรียญ (MU.10-006)',
+                subjectTopic: 'แจ้งผลการตรวจวิเคราะห์คุณภาพน้ำบริโภคจากตู้น้ำดื่มหยอดเหรียญ โดยใช้ชุดทดสอบเบื้องต้น'
+            },
+            'MU.10-007': {
+                code: 'RD-007',
+                badge: '🍲 RD-007',
+                title: 'ตรวจเฝ้าระวังสุขาภิบาลอาหารและเชื้อโคลิฟอร์มแบคทีเรีย (MU.10-007)',
+                subjectTopic: 'แจ้งผลการตรวจวิเคราะห์เชื้อโคลิฟอร์มแบคทีเรียด้านสุขาภิบาลอาหาร (ภาชนะ/มือผู้สัมผัสอาหาร)'
+            },
+            'MU.10-008': {
+                code: 'RD-008',
+                badge: '🏷️ RD-008',
+                title: 'ตรวจสอบความถูกต้องของการแสดงฉลากอาหาร (MU.10-008)',
+                subjectTopic: 'แจ้งผลการตรวจสอบความถูกต้องของการแสดงฉลากอาหารตามมาตรฐาน'
+            },
+            'all': {
+                code: 'ภาพรวมทุกประเภท',
+                badge: '🌐 ทุกประเภท',
+                title: 'ตรวจเฝ้าระวังความปลอดภัยด้านอาหารทุกประเภท ประจำรอบ (MU.10-001 ถึง MU.10-008)',
+                subjectTopic: 'แจ้งสรุปภาพรวมผลการตรวจวิเคราะห์ความปลอดภัยด้านอาหารทุกประเภท โดยหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10'
+            }
+        };
+
+        const currentMeta = formMeta[selectedForm] || formMeta['all'];
+        const isAllMode = (selectedForm === 'all');
+
         // 25 default districts of Ubon Ratchathani (reference list)
         const ubonDistricts = [
             { name: 'รพ.วารินชำราบ', tested: 10, failed: 0, status: 'ผ่าน' },
@@ -7881,13 +7936,19 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         ];
 
         // Filter approved samples from actual system data
-        let approved = (this.samples || []).filter(s => s.status === 'approved' && (s.province === selectedProv || (s.location_main && s.location_main.includes(selectedProv))));
-        if (selectedForm !== 'all') {
-            approved = approved.filter(s => s.form_type === selectedForm);
-        }
+        let approved = (this.samples || []).filter(s => {
+            const isApproved = s.status === 'approved';
+            if (!isApproved) return false;
+            const matchProv = !s.province || s.province === selectedProv || (s.location_main && s.location_main.includes(selectedProv)) || (!s.province && selectedProv === 'อุบลราชธานี');
+            if (!matchProv) return false;
+            if (!isAllMode) {
+                return s.form_type === selectedForm;
+            }
+            return true;
+        });
 
         let reportItems = [];
-        if (approved.length >= 5) {
+        if (approved.length > 0) {
             // Use real approved samples
             reportItems = approved.map((s, idx) => {
                 let tested = 0;
@@ -7898,28 +7959,35 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         if (s['analysis_summary_' + i] === 'ไม่ผ่าน') failed++;
                     }
                 }
-                if (tested === 0) tested = 10;
+                if (tested === 0) tested = s.sample_qty || 10;
                 const isFail = s.analysis_summary === 'ไม่ผ่าน' || failed > 0;
                 if (isFail && failed === 0) failed = 1;
+
+                const formTag = (s.form_type || 'MU.10-001').replace('MU.10-', 'RD-');
+                const displayName = s.location_main || s.hospital || s.location_name || s.agency || s.sample_name || ('หน่วยงาน ' + (idx + 1));
+
                 return {
-                    name: s.location_main || s.hospital || s.district || ('รพ.ตัวอย่าง ' + (idx + 1)),
+                    name: displayName,
+                    formCode: formTag,
+                    formType: s.form_type,
                     tested: tested,
                     failed: failed,
                     status: isFail ? 'ไม่ผ่าน' : 'ผ่าน',
-                    ref_id: s.ref_id
+                    ref_id: s.ref_id,
+                    lab_id: s.lab_id
                 };
             });
-        } else if (selectedProv === 'อุบลราชธานี') {
+        } else if (selectedProv === 'อุบลราชธานี' && (selectedForm === 'MU.10-001' || isAllMode)) {
             // Use standard 25 districts for Ubon
-            reportItems = ubonDistricts;
+            reportItems = ubonDistricts.map(item => ({ ...item, formCode: 'RD-001' }));
         } else {
-            // Generate district samples for other province
+            // Generate district samples for other province or empty form
             reportItems = [
-                { name: 'รพ.ศูนย์/รพ.ทั่วไป', tested: 10, failed: 0, status: 'ผ่าน' },
-                { name: 'รพ.ชุมชนแห่งที่ 1', tested: 10, failed: 0, status: 'ผ่าน' },
-                { name: 'รพ.ชุมชนแห่งที่ 2', tested: 10, failed: 1, status: 'ไม่ผ่าน' },
-                { name: 'รพ.ชุมชนแห่งที่ 3', tested: 10, failed: 0, status: 'ผ่าน' },
-                { name: 'รพ.ชุมชนแห่งที่ 4', tested: 10, failed: 0, status: 'ผ่าน' }
+                { name: 'รพ.ศูนย์ / รพ.ทั่วไป', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' },
+                { name: 'รพ.ชุมชนแห่งที่ 1', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' },
+                { name: 'รพ.ชุมชนแห่งที่ 2', formCode: currentMeta.code, tested: 10, failed: 1, status: 'ไม่ผ่าน' },
+                { name: 'รพ.ชุมชนแห่งที่ 3', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' },
+                { name: 'รพ.สต. ในพื้นที่เป้าหมาย', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน' }
             ];
         }
 
@@ -7931,13 +7999,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         const failedHospitals = reportItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').map(item => item.name);
 
-        // Subject line
-        const formCode = selectedForm === 'all' ? 'RD-001' : (selectedForm.replace('MU.10-', 'RD-'));
-        const subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${formCode} - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง 17/10/2569`;
+        // Dynamic Subject line
+        let subject = '';
+        if (isAllMode) {
+            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ภาพรวม : ทุกประเภทรายงาน - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง 17/10/2569`;
+        } else {
+            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${currentMeta.code} - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง 17/10/2569`;
+        }
         if (subjectInput) subjectInput.value = subject;
 
         if (countBadge) {
-            countBadge.innerText = `ดึงข้อมูล ${totalCount} อำเภอ/หน่วยงาน`;
+            countBadge.innerText = `ดึงข้อมูล ${totalCount} หน่วยงาน/อำเภอ`;
         }
 
         // Build HTML Table rows
@@ -7951,6 +8023,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             rowsHtml += `
                 <tr style="${rowBg}">
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">${index + 1}</td>
+                    ${isAllMode ? `<td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;"><span style="display:inline-block; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; background: #e0f2fe; color: #0369a1;">${item.formCode}</span></td>` : ''}
                     <td style="border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; font-weight: 500; ${isFail ? 'color: #991b1b; font-weight: 700;' : ''}">${item.name}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-weight: 600;">${item.tested}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; ${failTextColor}">${item.failed}</td>
@@ -7968,7 +8041,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (failCount > 0) {
             obsHtml = `
                 <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; line-height: 1.6;">
-                    <strong>⚠️ ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failCount} ตัวอย่าง</strong> (${failedHospitals.join(', ')}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาลในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
+                    <strong>⚠️ ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failCount} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
                 </div>
             `;
         } else {
@@ -7986,7 +8059,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <!-- Salutation & Subject -->
                 <div style="margin-bottom: 18px; font-size: 14.5px;">
                     <p style="margin: 4px 0;"><strong>เรียน:</strong> หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข สำนักงานสาธารณสุขจังหวัด${selectedProv} และผู้รับผิดชอบงานอาหารปลอดภัย</p>
-                    <p style="margin: 4px 0;"><strong>เรื่อง:</strong> แจ้งผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)</p>
+                    <p style="margin: 4px 0;"><strong>เรื่อง:</strong> ${currentMeta.subjectTopic}</p>
                 </div>
 
                 <!-- Meta Summary Box -->
@@ -7995,11 +8068,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <table style="width: 100%; border: none; font-size: 13.5px; line-height: 1.85;">
                         <tr>
                             <td style="width: 150px; font-weight: bold; color: #475569;">กิจกรรม :</td>
-                            <td>ตรวจเฝ้าระวังสารตกค้างยาฆ่าแมลงในผักสด (MU.10-001)</td>
+                            <td>${currentMeta.title}</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">พื้นที่ตรวจ:</td>
-                            <td>จังหวัด${selectedProv} (ครอบคลุม ${totalCount} อำเภอ)</td>
+                            <td>จังหวัด${selectedProv} (ครอบคลุม ${totalCount} หน่วยงาน/อำเภอ)</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">วันที่รับตัวอย่าง:</td>
@@ -8043,18 +8116,19 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                 <!-- Detailed Breakdown Table -->
                 <div style="margin-bottom: 20px;">
-                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 13.5px; color: #334155;">📋 ตารางแจกแจงผลการตรวจรายอำเภอ/โรงพยาบาล</div>
+                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 13.5px; color: #334155;">📋 ตารางแจกแจงผลการตรวจ${isAllMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'}</div>
                     <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;">
                         <thead>
                             <tr style="background-color: #e2e8f0; color: #0f172a;">
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 8%;">ลำดับ</th>
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; text-align: left; width: 44%;">อำเภอ / หน่วยงาน</th>
-                                <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 28%;">ผลการตรวจ</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 6%;">ลำดับ</th>
+                                ${isAllMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 14%;">ประเภทรายงาน</th>' : ''}
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; text-align: left; width: ${isAllMode ? '36%' : '44%'};">อำเภอ / หน่วยงาน / ชื่อตัวอย่าง</th>
+                                <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 26%;">ผลการตรวจ</th>
                                 <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 20%;">เอกสารรายงาน</th>
                             </tr>
                             <tr style="background-color: #f1f5f9; color: #334155;">
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">ตรวจ (ตย.)</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 14%; color: #b91c1c;">ไม่ผ่าน (ตย.)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 13%;">ตรวจ (ตย.)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 13%; color: #b91c1c;">ไม่ผ่าน (ตย.)</th>
                             </tr>
                         </thead>
                         <tbody>
