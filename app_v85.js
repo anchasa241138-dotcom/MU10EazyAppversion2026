@@ -591,6 +591,8 @@ const app = {
             if (spanEl && titleEl) titleEl.innerText = spanEl.innerText;
         }
 
+        this.updateProvEmailButtonVisibility();
+
         if (viewId === 'sample-record') {
             this.unreadRecordsCount = 0;
             localStorage.setItem('unread_records_count', '0');
@@ -699,6 +701,7 @@ const app = {
 
     
     renderDownloadTable() {
+        this.updateProvEmailButtonVisibility();
         const tbody = document.getElementById('downloadTableBody');
         if (!tbody) return;
         const searchInput = document.getElementById('searchDownloadTable');
@@ -895,13 +898,6 @@ const app = {
             if (adminMenu) {
                 adminMenu.style.display = this.currentUser.role === 'admin' ? 'flex' : 'none';
             }
-
-            // Role-based visibility for Provincial Email Dispatch button (Option A: admin, lab, certifier only)
-            const canSendProvEmail = ['admin', 'lab', 'certifier'].includes(this.currentUser.role);
-            document.querySelectorAll('.btn-prov-email-dispatch').forEach(btn => {
-                btn.style.display = canSendProvEmail ? 'inline-flex' : 'none';
-            });
-            
         } else {
             authButtons.innerHTML = `<button class="btn btn-primary" onclick="app.showLoginModal()"><i class="fa-solid fa-user-lock"></i> เข้าสู่ระบบ</button>`;
             userStatusCard.innerHTML = `<div class="user-status-name">ผู้เยี่ยมชมระบบ</div><div class="user-status-role">ยังไม่ได้เข้าสู่ระบบ</div>`;
@@ -910,18 +906,25 @@ const app = {
             document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
                 el.style.display = 'none';
             });
-
-            // Hide Provincial Email Dispatch button for non-logged-in users
-            document.querySelectorAll('.btn-prov-email-dispatch').forEach(btn => {
-                btn.style.display = 'none';
-            });
         }
+
+        // Enforce role-based visibility for Provincial Email Dispatch button
+        this.updateProvEmailButtonVisibility();
         
         // Re-evaluate current view
         const activeView = document.querySelector('.content-view.active');
         if(activeView) {
             this.switchView(activeView.id.replace('view-', ''));
         }
+    },
+
+    updateProvEmailButtonVisibility() {
+        const canSendProvEmail = Boolean(
+            this.currentUser && ['admin', 'lab', 'certifier'].includes(this.currentUser.role)
+        );
+        document.querySelectorAll('.btn-prov-email-dispatch').forEach(btn => {
+            btn.style.setProperty('display', canSendProvEmail ? 'inline-flex' : 'none', 'important');
+        });
     },
 
     showLoginModal(intendedRole = '') {
@@ -4382,6 +4385,7 @@ document.getElementById('formNameTitle').innerText = title;
 
     // Certification Logic
     renderCertifyTable() {
+        this.updateProvEmailButtonVisibility();
         const tbody = document.getElementById('certifyTableBody');
         const searchTerm = document.getElementById('searchCertifyTable').value.toLowerCase();
         
