@@ -895,6 +895,12 @@ const app = {
             if (adminMenu) {
                 adminMenu.style.display = this.currentUser.role === 'admin' ? 'flex' : 'none';
             }
+
+            // Role-based visibility for Provincial Email Dispatch button (Option A: admin, lab, certifier only)
+            const canSendProvEmail = ['admin', 'lab', 'certifier'].includes(this.currentUser.role);
+            document.querySelectorAll('.btn-prov-email-dispatch').forEach(btn => {
+                btn.style.display = canSendProvEmail ? 'inline-flex' : 'none';
+            });
             
         } else {
             authButtons.innerHTML = `<button class="btn btn-primary" onclick="app.showLoginModal()"><i class="fa-solid fa-user-lock"></i> เข้าสู่ระบบ</button>`;
@@ -903,6 +909,11 @@ const app = {
             // Hide lab menus
             document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
                 el.style.display = 'none';
+            });
+
+            // Hide Provincial Email Dispatch button for non-logged-in users
+            document.querySelectorAll('.btn-prov-email-dispatch').forEach(btn => {
+                btn.style.display = 'none';
             });
         }
         
@@ -7926,6 +7937,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
 
     openProvincialEmailModal(targetProv = 'อุบลราชธานี') {
+        if (!this.currentUser || !['admin', 'lab', 'certifier'].includes(this.currentUser.role)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'ไม่มีสิทธิ์เข้าถึง',
+                text: 'เฉพาะผู้ดูแลระบบ (Admin), เจ้าหน้าที่ห้องปฏิบัติการ (Lab) หรือผู้ลงนามรับรอง (Certifier) เท่านั้น ที่มีสิทธิ์ส่งอีเมลสรุปประจำรอบให้จังหวัด'
+            });
+            return;
+        }
+
         const modal = document.getElementById('provincialEmailModal');
         if (!modal) return;
         const provSelect = document.getElementById('provEmailSelectProv');
@@ -8492,6 +8512,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
 
     async sendProvincialEmail() {
+        if (!this.currentUser || !['admin', 'lab', 'certifier'].includes(this.currentUser.role)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'ไม่มีสิทธิ์ส่งอีเมล',
+                text: 'เฉพาะผู้ดูแลระบบ (Admin), เจ้าหน้าที่ห้องปฏิบัติการ (Lab) หรือผู้ลงนามรับรอง (Certifier) เท่านั้น ที่มีสิทธิ์ส่งอีเมลรายงาน'
+            });
+            return;
+        }
+
         const recipientInput = document.getElementById('provEmailRecipient');
         const recipient = recipientInput ? recipientInput.value.trim() : '';
         if (!recipient) {

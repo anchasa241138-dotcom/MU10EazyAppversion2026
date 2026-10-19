@@ -1097,7 +1097,7 @@
                             <div class="table-header-bar">
                                 <h3>รายการรายงานผลที่รออนุมัติและรับรองผลอิเล็กทรอนิกส์</h3>
                                 <div class="table-actions">
-                                    <button type="button" class="btn btn-primary" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
+                                    <button type="button" class="btn btn-primary btn-prov-email-dispatch" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
                                         <i class="fa-solid fa-paper-plane"></i> ✉️ ส่งอีเมลสรุปประจำรอบให้จังหวัด
                                     </button>
                                     <input type="text" class="search-input" id="searchCertifyTable" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง...">
@@ -1142,7 +1142,7 @@
                             <div class="table-header-bar">
                                 <h3>รายการผลตรวจวิเคราะห์ที่ผ่านการรับรองแล้ว (พร้อมดาวน์โหลด)</h3>
                                 <div class="table-actions">
-                                    <button type="button" class="btn btn-primary" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
+                                    <button type="button" class="btn btn-primary btn-prov-email-dispatch" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
                                         <i class="fa-solid fa-paper-plane"></i> ✉️ ส่งอีเมลสรุปประจำรอบให้จังหวัด
                                     </button>
                                     <input type="text" id="searchDownloadTable" class="search-input" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง..." onkeyup="app.renderDownloadTable()">
@@ -2144,6 +2144,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792386500000"></script>
+    <script src="app_v85.js?v=1792387200000"></script>
 </body>
 </html>
