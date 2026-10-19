@@ -1299,10 +1299,10 @@ const app = {
         };
         const isMu10006 = formType === 'MU.10-006';
         const isMu10007 = formType === 'MU.10-007';
-        toggleField('field-agency', !isMu10006);
-        toggleField('field-location-type', !isMu10006);
-        toggleField('field-collector-name', !isMu10006);
-        toggleField('field-collector-position', !isMu10006);
+        toggleField('field-agency', true);
+        toggleField('field-location-type', true);
+        toggleField('field-collector-name', true);
+        toggleField('field-collector-position', true);
 
         const grpShop = document.getElementById('group-shop-name');
         if (grpShop) {
@@ -7993,15 +7993,38 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     itemSummary = s.analysis_summary;
                 }
 
+                let locType = s.location_type || s.location_category || s.place_type || '';
+                if (!locType || locType === '-') {
+                    const locName = s.location_name || '';
+                    if (locName.includes('โรงเรียน') || locName.includes('รร.')) locType = 'โรงเรียน/สถานศึกษา';
+                    else if (locName.includes('ตลาดสด')) locType = 'ตลาดสด';
+                    else if (locName.includes('ตลาด')) locType = 'ตลาดนัด';
+                    else if (locName.includes('โรงพยาบาล') || locName.includes('รพ.')) locType = 'โรงพยาบาล/สถานพยาบาล';
+                    else if (locName.includes('ร้านอาหาร') || locName.includes('ครัว') || locName.includes('ร้าน')) locType = 'ร้านอาหาร';
+                    else if (locName.includes('โรงงาน')) locType = 'โรงงาน/สถานที่ผลิตอาหาร';
+                    else if (locName.includes('ห้าง') || locName.includes('ซุปเปอร์')) locType = 'ห้างสรรพสินค้า/ซุปเปอร์มาเก็ต';
+                    else if (locName.includes('ห้องเย็น')) locType = 'ห้องเย็น';
+                    else locType = '-';
+                }
+
+                let agencyVal = s.agency || s.sender_agency || s.hospital || s.organization || '';
+                if (!agencyVal || agencyVal === '-') {
+                    if (s.province) agencyVal = `สสจ.${s.province}`;
+                    else agencyVal = '-';
+                }
+
+                const tambonVal = s.tambon || s.sub_district || s.subdistrict || '-';
+                const amphoeVal = s.amphoe || s.district || '-';
+
                 const row = {
                     'รหัสอ้างอิง': s.ref_id || '-',
                     'ประเภทฟอร์ม': s.form_type || '-',
                     'รหัสแลป': currentLabNo,
-                    'หน่วยงานที่เก็บ': s.agency || '-',
-                    'ประเภทสถานที่เก็บ': s.location_type || '-',
+                    'หน่วยงานที่เก็บ': agencyVal,
+                    'ประเภทสถานที่เก็บ': locType,
                     'สถานที่เก็บ': s.location_name || '-',
-                    'ตำบล': s.sub_district || '-',
-                    'อำเภอ': s.district || '-',
+                    'ตำบล': tambonVal,
+                    'อำเภอ': amphoeVal,
                     'จังหวัด': s.province || '-',
                     'ชื่อผู้เก็บตัวอย่าง': s.collector_name || '-',
                     'ตำแหน่งผู้เก็บตัวอย่าง': s.collector_position || '-',
