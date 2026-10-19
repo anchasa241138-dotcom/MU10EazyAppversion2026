@@ -592,6 +592,7 @@ const app = {
         }
 
         this.updateProvEmailButtonVisibility();
+        this.updateEditApprovalButtonVisibility();
 
         if (viewId === 'sample-record') {
             this.unreadRecordsCount = 0;
@@ -702,6 +703,7 @@ const app = {
     
     renderDownloadTable() {
         this.updateProvEmailButtonVisibility();
+        this.updateEditApprovalButtonVisibility();
         const tbody = document.getElementById('downloadTableBody');
         if (!tbody) return;
         const searchInput = document.getElementById('searchDownloadTable');
@@ -908,8 +910,9 @@ const app = {
             });
         }
 
-        // Enforce role-based visibility for Provincial Email Dispatch button
+        // Enforce role-based visibility for Provincial Email Dispatch and Edit Approval buttons
         this.updateProvEmailButtonVisibility();
+        this.updateEditApprovalButtonVisibility();
         
         // Re-evaluate current view
         const activeView = document.querySelector('.content-view.active');
@@ -925,6 +928,16 @@ const app = {
         document.querySelectorAll('.btn-prov-email-dispatch').forEach(btn => {
             btn.style.setProperty('display', canSendProvEmail ? 'inline-flex' : 'none', 'important');
         });
+    },
+
+    updateEditApprovalButtonVisibility() {
+        const canEditApproval = Boolean(
+            this.currentUser && ['admin', 'lab', 'certifier'].includes(this.currentUser.role)
+        );
+        const btn = document.getElementById('btnEditApproval');
+        if (btn) {
+            btn.style.setProperty('display', canEditApproval ? 'inline-flex' : 'none', 'important');
+        }
     },
 
     showLoginModal(intendedRole = '') {
@@ -4450,6 +4463,16 @@ document.getElementById('formNameTitle').innerText = title;
     openCertifyModal(refId, viewOnly = false, forceEdit = false) {
         const sample = this.samples.find(s => s.ref_id === refId);
         if(!sample) return;
+
+        // Security check: only admin, lab, and certifier roles can edit or certify
+        const canEditApproval = Boolean(
+            this.currentUser && ['admin', 'lab', 'certifier'].includes(this.currentUser.role)
+        );
+        if (!canEditApproval) {
+            viewOnly = true;
+            forceEdit = false;
+        }
+
         if (!sample.form_type || sample.form_type === 'MU.10.007' || sample.form_type === 'MU007' || sample.form_type === 'coliformFood' || (sample.ref_id && sample.ref_id.startsWith('MU007'))) {
             sample.form_type = 'MU.10-007';
         }
@@ -5924,6 +5947,7 @@ document.getElementById('formNameTitle').innerText = title;
         if(viewOnly || (sample.status === 'approved' && !forceEdit)) {
             document.getElementById('certApprovalControls').classList.add('hidden');
             document.getElementById('certExportControls').classList.remove('hidden');
+            this.updateEditApprovalButtonVisibility();
         } else {
             document.getElementById('certApprovalControls').classList.remove('hidden');
             document.getElementById('certExportControls').classList.add('hidden');
@@ -6064,6 +6088,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
 
     enableEditApproval() {
+        const canEditApproval = Boolean(
+            this.currentUser && ['admin', 'lab', 'certifier'].includes(this.currentUser.role)
+        );
+        if (!canEditApproval) {
+            alert('คุณไม่มีสิทธิ์ในการแก้ไขการอนุมัติผลวิเคราะห์ (เฉพาะแอดมิน, เจ้าหน้าที่แลป, และผู้รับรองผลเท่านั้น)');
+            return;
+        }
         const refId = document.getElementById('btnApproveAndSign').dataset.refId;
         if(refId) {
             this.openCertifyModal(refId, false, true);
@@ -6072,11 +6103,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
     closeCertifyModal() {
         document.getElementById('certifyModal').classList.remove('active');
+        this.updateEditApprovalButtonVisibility();
     },
 
 
     handleApproveReport(e) {
         try {
+            const canApprove = Boolean(
+                this.currentUser && ['admin', 'lab', 'certifier'].includes(this.currentUser.role)
+            );
+            if (!canApprove) {
+                alert('คุณไม่มีสิทธิ์ในการอนุมัติหรือบันทึกรายงานผลวิเคราะห์ (เฉพาะแอดมิน, เจ้าหน้าที่แลป, และผู้รับรองผลเท่านั้น)');
+                return;
+            }
+
             const refId = e.currentTarget.dataset.refId || document.getElementById('btnApproveAndSign').dataset.refId;
             const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
             if (sampleIndex === -1) {
