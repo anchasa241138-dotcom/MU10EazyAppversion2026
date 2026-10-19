@@ -1097,6 +1097,9 @@
                             <div class="table-header-bar">
                                 <h3>รายการรายงานผลที่รออนุมัติและรับรองผลอิเล็กทรอนิกส์</h3>
                                 <div class="table-actions">
+                                    <button type="button" class="btn btn-primary" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
+                                        <i class="fa-solid fa-paper-plane"></i> ✉️ ส่งอีเมลสรุปประจำรอบให้จังหวัด
+                                    </button>
                                     <input type="text" class="search-input" id="searchCertifyTable" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง...">
                                 </div>
                             </div>
@@ -1139,6 +1142,9 @@
                             <div class="table-header-bar">
                                 <h3>รายการผลตรวจวิเคราะห์ที่ผ่านการรับรองแล้ว (พร้อมดาวน์โหลด)</h3>
                                 <div class="table-actions">
+                                    <button type="button" class="btn btn-primary" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
+                                        <i class="fa-solid fa-paper-plane"></i> ✉️ ส่งอีเมลสรุปประจำรอบให้จังหวัด
+                                    </button>
                                     <input type="text" id="searchDownloadTable" class="search-input" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง..." onkeyup="app.renderDownloadTable()">
                                 </div>
                             </div>
@@ -1989,6 +1995,91 @@
         </div>
     </div>
 
+    
+    <!-- Provincial Email Digest Modal -->
+    <div class="modal-overlay" id="provincialEmailModal" style="display: none; align-items: center; justify-content: center; z-index: 1050; backdrop-filter: blur(4px); background: rgba(15, 23, 42, 0.65);">
+        <div class="modal-card" style="width: 880px !important; max-width: 95vw !important; background: #ffffff !important; border: 1px solid #cbd5e1 !important; border-radius: 24px !important; color: #0f172a !important; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3) !important; overflow: hidden !important;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #0f172a, #1e293b) !important; color: #ffffff !important; border-bottom: 1px solid #334155 !important; padding: 18px 24px !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
+                <h4 style="color: #ffffff !important; font-weight: 700 !important; font-size: 17px !important; margin: 0 !important; display: flex !important; align-items: center !important; gap: 10px !important;">
+                    <i class="fa-solid fa-envelope-open-text" style="color: #38bdf8 !important;"></i> ส่งอีเมลสรุปรายงานผลตรวจวิเคราะห์ประจำรอบให้จังหวัด
+                </h4>
+                <button class="close-modal-btn" onclick="app.closeProvincialEmailModal()" style="color: #94a3b8 !important; background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 50% !important; width: 32px !important; height: 32px !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 22px 26px; max-height: 82vh; overflow-y: auto; background: #f8fafc !important;">
+                <!-- Filter & Settings Toolbar -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px 20px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 12px;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
+                                <i class="fa-solid fa-location-dot" style="color: #2563eb;"></i> จังหวัดเป้าหมาย:
+                            </label>
+                            <select id="provEmailSelectProv" class="form-control" onchange="app.updateProvincialEmailPreview()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px; font-weight: 600;">
+                                <option value="อุบลราชธานี" selected>🌐 จังหวัดอุบลราชธานี</option>
+                                <option value="ศรีสะเกษ">📍 จังหวัดศรีสะเกษ</option>
+                                <option value="อำนาจเจริญ">📍 จังหวัดอำนาจเจริญ</option>
+                                <option value="ยโสธร">📍 จังหวัดยโสธร</option>
+                                <option value="มุกดาหาร">📍 จังหวัดมุกดาหาร</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
+                                <i class="fa-solid fa-file-lines" style="color: #2563eb;"></i> ประเภทรายงาน:
+                            </label>
+                            <select id="provEmailSelectForm" class="form-control" onchange="app.updateProvincialEmailPreview()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px;">
+                                <option value="all">ทุกประเภทรายงานในรอบนี้</option>
+                                <option value="MU.10-001" selected>🥬 RD-001 (ยาฆ่าแมลงในผักสด)</option>
+                                <option value="MU.10-002">🥩 RD-002 (สารปนเปื้อน 4 ชนิด)</option>
+                                <option value="MU.10-003">🍳 RD-003 (สารโพลาร์ในน้ำมันทอด)</option>
+                                <option value="MU.10-005">🌾 RD-005 (สารเคมีทางการเกษตร)</option>
+                                <option value="MU.10-006">💧 RD-006 (น้ำบริโภค/ตู้น้ำดื่ม)</option>
+                                <option value="MU.10-007">🍲 RD-007 (สุขาภิบาลอาหาร)</option>
+                                <option value="MU.10-008">🏷️ RD-008 (ตรวจสอบฉลากอาหาร)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
+                                <i class="fa-solid fa-at" style="color: #2563eb;"></i> อีเมลผู้รับผิดชอบ (To):
+                            </label>
+                            <input type="email" id="provEmailRecipient" class="form-control" value="anchasa.241138@gmail.com" placeholder="เช่น example@gmail.com" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px; font-weight: 600; color: #0f172a;">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 600; color: #64748b; display: block; margin-bottom: 4px;">
+                            หัวข้ออีเมล (Subject):
+                        </label>
+                        <input type="text" id="provEmailSubject" class="form-control" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 13px; font-weight: bold; color: #0f172a;" readonly>
+                    </div>
+                </div>
+
+                <!-- Live Email HTML Preview -->
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 13.5px; font-weight: 700; color: #334155;"><i class="fa-regular fa-eye"></i> ตัวอย่างเนื้อหาอีเมลที่จะส่งออกจริง:</span>
+                        <span id="provEmailSampleCountBadge" class="badge" style="background: #e0f2fe; color: #0284c7; font-weight: 600; padding: 4px 12px; border-radius: 9999px; font-size: 12px;">ดึงข้อมูล 25 อำเภอ</span>
+                    </div>
+                    <div id="provEmailPreviewBody" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
+                        <!-- Injected via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeProvincialEmailModal()" style="border-radius: 9999px; padding: 9px 18px; font-weight: 600;">
+                        ปิด
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="app.copyProvincialEmailContent()" style="border-radius: 9999px; padding: 9px 18px; font-weight: 600; background: #0ea5e9; color: #fff; border: none; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-regular fa-copy"></i> คัดลอกเนื้อหาอีเมล (Rich Text)
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnSubmitProvEmail" onclick="app.sendProvincialEmail()" style="border-radius: 9999px; padding: 9px 24px; font-weight: 600; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; color: #fff; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
+                        <i class="fa-solid fa-paper-plane"></i> ยืนยันส่งอีเมลแจ้งเตือน
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Third party JS libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -2018,6 +2109,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792219078034"></script>
+    <script src="app_v85.js?v=1792381780152"></script>
 </body>
 </html>

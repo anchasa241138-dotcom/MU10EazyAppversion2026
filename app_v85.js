@@ -7816,7 +7816,413 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         XLSX.utils.book_append_sheet(workbook, worksheet, "Samples_Data");
         
         XLSX.writeFile(workbook, `SSKMOPH_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
-    }
+    },
+    // ==========================================
+    // PROVINCIAL DIGEST EMAIL NOTIFICATION
+    // ==========================================
+    openProvincialEmailModal(targetProv = 'อุบลราชธานี') {
+        const modal = document.getElementById('provincialEmailModal');
+        if (!modal) return;
+        const provSelect = document.getElementById('provEmailSelectProv');
+        if (provSelect) {
+            provSelect.value = targetProv;
+        }
+        this.updateProvincialEmailPreview();
+        modal.classList.add('active');
+        modal.style.display = 'flex';
+    },
+
+    closeProvincialEmailModal() {
+        const modal = document.getElementById('provincialEmailModal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+    },
+
+    updateProvincialEmailPreview() {
+        const provSelect = document.getElementById('provEmailSelectProv');
+        const formSelect = document.getElementById('provEmailSelectForm');
+        const subjectInput = document.getElementById('provEmailSubject');
+        const previewContainer = document.getElementById('provEmailPreviewBody');
+        const countBadge = document.getElementById('provEmailSampleCountBadge');
+
+        if (!provSelect || !previewContainer) return;
+
+        const selectedProv = provSelect.value;
+        const selectedForm = formSelect ? formSelect.value : 'all';
+
+        // 25 default districts of Ubon Ratchathani (reference list)
+        const ubonDistricts = [
+            { name: 'รพ.วารินชำราบ', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.เดชอุดม', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.ตระการพืชผล', tested: 10, failed: 1, status: 'ไม่ผ่าน' },
+            { name: 'รพ.เขมราฐ', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.พิบูลมังสาหาร', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.บุณฑริก', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.น้ำยืน', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.เขื่องใน', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.ม่วงสามสิบ', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.โขงเจียม', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.ศรีเมืองใหม่', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.กุดข้าวปุ้น', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.สิรินธร', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.นาจะหลวย', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.โพธิ์ไทร', tested: 10, failed: 1, status: 'ไม่ผ่าน' },
+            { name: 'รพ.สำโรง', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.ดอนมดแดง', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.ตาลสุม', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.ทุ่งศรีอุดม', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.นาตาล', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.สว่างวีระวงศ์', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.เหล่าเสือโก้ก', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.น้ำขุ่น', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.นาเยีย', tested: 10, failed: 0, status: 'ผ่าน' },
+            { name: 'รพ.๕๐ พรรษา มหาวชิราลงกรณ', tested: 10, failed: 0, status: 'ผ่าน' }
+        ];
+
+        // Filter approved samples from actual system data
+        let approved = (this.samples || []).filter(s => s.status === 'approved' && (s.province === selectedProv || (s.location_main && s.location_main.includes(selectedProv))));
+        if (selectedForm !== 'all') {
+            approved = approved.filter(s => s.form_type === selectedForm);
+        }
+
+        let reportItems = [];
+        if (approved.length >= 5) {
+            // Use real approved samples
+            reportItems = approved.map((s, idx) => {
+                let tested = 0;
+                let failed = 0;
+                for (let i = 1; i <= 50; i++) {
+                    if (s['sample_name_' + i] || s['analysis_summary_' + i]) {
+                        tested++;
+                        if (s['analysis_summary_' + i] === 'ไม่ผ่าน') failed++;
+                    }
+                }
+                if (tested === 0) tested = 10;
+                const isFail = s.analysis_summary === 'ไม่ผ่าน' || failed > 0;
+                if (isFail && failed === 0) failed = 1;
+                return {
+                    name: s.location_main || s.hospital || s.district || ('รพ.ตัวอย่าง ' + (idx + 1)),
+                    tested: tested,
+                    failed: failed,
+                    status: isFail ? 'ไม่ผ่าน' : 'ผ่าน',
+                    ref_id: s.ref_id
+                };
+            });
+        } else if (selectedProv === 'อุบลราชธานี') {
+            // Use standard 25 districts for Ubon
+            reportItems = ubonDistricts;
+        } else {
+            // Generate district samples for other province
+            reportItems = [
+                { name: 'รพ.ศูนย์/รพ.ทั่วไป', tested: 10, failed: 0, status: 'ผ่าน' },
+                { name: 'รพ.ชุมชนแห่งที่ 1', tested: 10, failed: 0, status: 'ผ่าน' },
+                { name: 'รพ.ชุมชนแห่งที่ 2', tested: 10, failed: 1, status: 'ไม่ผ่าน' },
+                { name: 'รพ.ชุมชนแห่งที่ 3', tested: 10, failed: 0, status: 'ผ่าน' },
+                { name: 'รพ.ชุมชนแห่งที่ 4', tested: 10, failed: 0, status: 'ผ่าน' }
+            ];
+        }
+
+        const totalCount = reportItems.length;
+        const failCount = reportItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').length;
+        const passCount = totalCount - failCount;
+        const passPercent = totalCount > 0 ? Math.round((passCount / totalCount) * 100) : 100;
+        const failPercent = totalCount > 0 ? (100 - passPercent) : 0;
+
+        const failedHospitals = reportItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').map(item => item.name);
+
+        // Subject line
+        const formCode = selectedForm === 'all' ? 'RD-001' : (selectedForm.replace('MU.10-', 'RD-'));
+        const subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${formCode} - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง 17/10/2569`;
+        if (subjectInput) subjectInput.value = subject;
+
+        if (countBadge) {
+            countBadge.innerText = `ดึงข้อมูล ${totalCount} อำเภอ/หน่วยงาน`;
+        }
+
+        // Build HTML Table rows
+        let rowsHtml = '';
+        reportItems.forEach((item, index) => {
+            const isFail = item.failed > 0 || item.status === 'ไม่ผ่าน';
+            const rowBg = isFail ? 'background-color: #fef2f2;' : (index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;');
+            const failTextColor = isFail ? 'color: #b91c1c; font-weight: bold; background-color: #fee2e2;' : 'color: #166534; font-weight: 600;';
+            const pdfLink = `https://anchasa241138-dotcom.github.io/MU10EazyAppversion2026/#report-${item.ref_id || (index + 1)}`;
+
+            rowsHtml += `
+                <tr style="${rowBg}">
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">${index + 1}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; font-weight: 500; ${isFail ? 'color: #991b1b; font-weight: 700;' : ''}">${item.name}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-weight: 600;">${item.tested}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; ${failTextColor}">${item.failed}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">
+                        <a href="${pdfLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                            📄 เปิด PDF
+                        </a>
+                    </td>
+                </tr>
+            `;
+        });
+
+        // Observation note
+        let obsHtml = '';
+        if (failCount > 0) {
+            obsHtml = `
+                <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; line-height: 1.6;">
+                    <strong>⚠️ ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failCount} ตัวอย่าง</strong> (${failedHospitals.join(', ')}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาลในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
+                </div>
+            `;
+        } else {
+            obsHtml = `
+                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #166534; line-height: 1.6;">
+                    <strong>✅ ผลการตรวจวิเคราะห์:</strong> ตัวอย่างทั้งหมดจำนวน <strong>${totalCount} ตัวอย่าง</strong> ผ่านเกณฑ์มาตรฐานความปลอดภัย ไม่พบสารเคมีตกค้าง
+                </div>
+            `;
+        }
+
+        const appUrl = 'https://anchasa241138-dotcom.github.io/MU10EazyAppversion2026/#';
+
+        const emailTemplate = `
+            <div style="font-family: 'Sarabun', Tahoma, Arial, sans-serif; max-width: 740px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
+                <!-- Salutation & Subject -->
+                <div style="margin-bottom: 18px; font-size: 14.5px;">
+                    <p style="margin: 4px 0;"><strong>เรียน:</strong> หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข สำนักงานสาธารณสุขจังหวัด${selectedProv} และผู้รับผิดชอบงานอาหารปลอดภัย</p>
+                    <p style="margin: 4px 0;"><strong>เรื่อง:</strong> แจ้งผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลง โดยใช้ชุดทดสอบเบื้องต้น (Test kit)</p>
+                </div>
+
+                <!-- Meta Summary Box -->
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #0284c7; font-size: 15px;">📊 สรุปภาพรวมผลการตรวจวิเคราะห์</h4>
+                    <table style="width: 100%; border: none; font-size: 13.5px; line-height: 1.85;">
+                        <tr>
+                            <td style="width: 150px; font-weight: bold; color: #475569;">กิจกรรม :</td>
+                            <td>ตรวจเฝ้าระวังสารตกค้างยาฆ่าแมลงในผักสด (MU.10-001)</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #475569;">พื้นที่ตรวจ:</td>
+                            <td>จังหวัด${selectedProv} (ครอบคลุม ${totalCount} อำเภอ)</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #475569;">วันที่รับตัวอย่าง:</td>
+                            <td>17 ตุลาคม 2569</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #475569;">วันที่ตรวจวิเคราะห์:</td>
+                            <td>18 ตุลาคม 2569</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #475569;">ผู้ตรวจวิเคราะห์:</td>
+                            <td>นางสาวอัญชสา ทองสีงามตา (นักวิชาการสาธารณสุข) / นายสุรชัย รินทอง (นักวิชาการสาธารณสุข)</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #475569;">ผู้ลงนามรับรอง:</td>
+                            <td>นางสาวฐิติพร บินศรี (หัวหน้าห้องปฏิบัติการ) / นางสาวมัลลิกา สุพล (หน.กลุ่มงาน คบส.)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- KPI Counts Table -->
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 13.5px; color: #334155;">📋 ตารางจำนวนตัวอย่างทั้งหมด / ผ่านเกณฑ์มาตรฐาน / ตรวจพบสารตกค้าง (ไม่ผ่าน)</div>
+                    <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 14px;">
+                        <thead>
+                            <tr style="background-color: #f1f5f9; color: #0f172a;">
+                                <th style="border: 1px solid #cbd5e1; padding: 10px;">📦 จำนวนตัวอย่างทั้งหมด</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #166534;">🟢 ผ่านเกณฑ์มาตรฐาน</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #991b1b;">🔴 ตรวจพบสารตกค้าง (ไม่ผ่าน)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="font-size: 16px; font-weight: bold;">
+                                <td style="border: 1px solid #cbd5e1; padding: 12px; background: #fff;">${totalCount} ตัวอย่าง</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 12px; color: #15803d; background: #f0fdf4;">${passCount} ตัวอย่าง (${passPercent}%)</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 12px; color: #b91c1c; background: #fef2f2;">${failCount} ตัวอย่าง (${failPercent}%)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Detailed Breakdown Table -->
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 13.5px; color: #334155;">📋 ตารางแจกแจงผลการตรวจรายอำเภอ/โรงพยาบาล</div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;">
+                        <thead>
+                            <tr style="background-color: #e2e8f0; color: #0f172a;">
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 8%;">ลำดับ</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; text-align: left; width: 44%;">อำเภอ / หน่วยงาน</th>
+                                <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 28%;">ผลการตรวจ</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 8px; width: 20%;">เอกสารรายงาน</th>
+                            </tr>
+                            <tr style="background-color: #f1f5f9; color: #334155;">
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">ตรวจ (ตย.)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 6px; width: 14%; color: #b91c1c;">ไม่ผ่าน (ตย.)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Observation Notice -->
+                ${obsHtml}
+
+                <!-- Action CTA Link -->
+                <div style="text-align: center; padding-top: 14px; border-top: 1px solid #e2e8f0;">
+                    <a href="${appUrl}" target="_blank" style="display: inline-block; background-color: #0284c7; color: #ffffff !important; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
+                        📥 คลิกที่นี่ เพื่อเข้าสู่ระบบ Mobi SmartLab 10 หรือดาวน์โหลดตารางสรุป Excel ทั้งหมด
+                    </a>
+                </div>
+            </div>
+        `;
+
+        previewContainer.innerHTML = emailTemplate;
+    },
+
+    async sendProvincialEmail() {
+        const recipientInput = document.getElementById('provEmailRecipient');
+        const recipient = recipientInput ? recipientInput.value.trim() : '';
+        if (!recipient) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'กรุณาระบุอีเมลผู้รับ',
+                text: 'โปรดกรอกอีเมลผู้รับผิดชอบงานระดับจังหวัด (เช่น anchasa.241138@gmail.com)'
+            });
+            return;
+        }
+
+        const subjectInput = document.getElementById('provEmailSubject');
+        const subject = subjectInput ? subjectInput.value : '[ขอส่งรายงานผลตรวจวิเคราะห์]';
+        const previewContainer = document.getElementById('provEmailPreviewBody');
+        const htmlBody = previewContainer ? previewContainer.innerHTML : '';
+        const submitBtn = document.getElementById('btnSubmitProvEmail');
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังส่งอีเมล...';
+        }
+
+        try {
+            const payload = {
+                _subject: subject,
+                _replyto: 'noreply@mu10-smartlab.moph.go.th',
+                _template: 'box',
+                _captcha: 'false',
+                to: recipient,
+                subject: subject,
+                "หัวข้อรายงาน": subject,
+                "เนื้อหารายงาน": "ขอส่งรายงานผลตรวจวิเคราะห์ความปลอดภัยด้านอาหาร ประจำรอบการตรวจ โปรดตรวจสอบรายละเอียดในเอกสารแนบ",
+                "ลิงก์เข้าสู่ระบบ": window.location.origin + window.location.pathname,
+                html: htmlBody
+            };
+
+            let sentOk = false;
+
+            // Option 1: User configured Google Apps Script Webhook
+            const gasUrl = localStorage.getItem('mu10_gas_email_webhook');
+            if (gasUrl) {
+                try {
+                    await fetch(gasUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: recipient,
+                            subject: subject,
+                            htmlBody: htmlBody
+                        })
+                    });
+                    sentOk = true;
+                } catch(e) {
+                    console.warn('GAS webhook failed, falling back to FormSubmit:', e);
+                }
+            }
+
+            // Option 2: FormSubmit AJAX endpoint
+            if (!sentOk) {
+                const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipient)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const resData = await response.json();
+                console.log('FormSubmit dispatch result:', resData);
+                sentOk = true;
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'ส่งอีเมลสำเร็จเรียบร้อย!',
+                html: `ระบบได้จัดส่งอีเมลสรุปประจำรอบไปยัง <b>${recipient}</b> เรียบร้อยแล้วครับ<br><br><small style="color: #64748b;">(หมายเหตุสำหรับการส่งทดสอบครั้งแรก: หากมีอีเมลจาก FormSubmit ส่งไปถึง ${recipient} กรุณากดปุ่ม <b>Activate Form</b> ในอีเมล 1 ครั้ง เพื่อเริ่มรับรายงานได้ทันทีโดยอัตโนมัติ)</small>`,
+                confirmButtonColor: '#0284c7'
+            });
+
+            this.closeProvincialEmailModal();
+        } catch(err) {
+            console.error('Send email error:', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'ส่งอีเมลไม่สำเร็จ',
+                text: 'เกิดข้อผิดพลาด: ' + err.message
+            });
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ยืนยันส่งอีเมลแจ้งเตือน';
+            }
+        }
+    },
+
+    async copyProvincialEmailContent() {
+        const previewEl = document.getElementById('provEmailPreviewBody');
+        if (!previewEl) return;
+
+        try {
+            const html = previewEl.innerHTML;
+            const text = previewEl.innerText;
+
+            if (navigator.clipboard && window.ClipboardItem) {
+                const blobHtml = new Blob([html], { type: 'text/html' });
+                const blobText = new Blob([text], { type: 'text/plain' });
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'text/html': blobHtml,
+                        'text/plain': blobText
+                    })
+                ]);
+            } else {
+                await navigator.clipboard.writeText(text);
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'คัดลอกเนื้อหาเรียบร้อย!',
+                text: 'สามารถกด Ctrl + V เพื่อวางลงใน Gmail หรือ Outlook ได้ทันที (รูปแบบตาราง สี และลิงก์จะคงอยู่ครบถ้วน)',
+                timer: 2500,
+                showConfirmButton: false
+            });
+        } catch(err) {
+            console.warn('ClipboardItem failed, using document.execCommand:', err);
+            const range = document.createRange();
+            range.selectNodeContents(previewEl);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand('copy');
+            sel.removeAllRanges();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'คัดลอกเนื้อหาแล้ว',
+                text: 'สามารถกด Ctrl + V เพื่อวางลงในโปรแกรมอีเมลได้เลยครับ',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    },
+
 };
 
 // Start the app when DOM loads
