@@ -8223,13 +8223,23 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 });
                 const resData = await response.json();
                 console.log('FormSubmit dispatch result:', resData);
+
+                if (resData.message && resData.message.includes('Activation')) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'กรุณากด Activate ในอีเมลก่อน',
+                        html: `ระบบได้ส่งคำขอยืนยันไปยัง <b>${recipient}</b> แล้ว<br><br>โปรดคลิกปุ่ม <b>Activate Form</b> ในอีเมลฉบับนั้น 1 ครั้ง จากนั้นจะสามารถกดส่งผลตรวจผ่านระบบได้ทันทีครับ<br><br><span style="color:#64748b; font-size:13px;">(หรือคลิกปุ่มสีแดง <b>"เปิดส่งใน Gmail"</b> เพื่อส่งผ่าน Gmail ของท่านได้ทันทีโดยไม่ต้องรอ Activate)</span>`,
+                        confirmButtonColor: '#0284c7'
+                    });
+                    return;
+                }
                 sentOk = true;
             }
 
             Swal.fire({
                 icon: 'success',
                 title: 'ส่งอีเมลสำเร็จเรียบร้อย!',
-                html: `ระบบได้จัดส่งอีเมลสรุปประจำรอบไปยัง <b>${recipient}</b> เรียบร้อยแล้วครับ<br><br><small style="color: #64748b;">(หมายเหตุสำหรับการส่งทดสอบครั้งแรก: หากมีอีเมลจาก FormSubmit ส่งไปถึง ${recipient} กรุณากดปุ่ม <b>Activate Form</b> ในอีเมล 1 ครั้ง เพื่อเริ่มรับรายงานได้ทันทีโดยอัตโนมัติ)</small>`,
+                html: `ระบบได้จัดส่งอีเมลสรุปประจำรอบไปยัง <b>${recipient}</b> เรียบร้อยแล้วครับ`,
                 confirmButtonColor: '#0284c7'
             });
 
@@ -8239,7 +8249,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             Swal.fire({
                 icon: 'error',
                 title: 'ส่งอีเมลไม่สำเร็จ',
-                text: 'เกิดข้อผิดพลาด: ' + err.message
+                html: `เกิดข้อผิดพลาด: ${err.message}<br><br><button class="btn btn-sm btn-outline-danger" onclick="app.openInGmail()" style="margin-top:8px;">คลิกที่นี่เพื่อเปิดส่งใน Gmail แทน</button>`
             });
         } finally {
             if (submitBtn) {
@@ -8247,6 +8257,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ยืนยันส่งอีเมลแจ้งเตือน';
             }
         }
+    },
+
+    openInGmail() {
+        const recipientInput = document.getElementById('provEmailRecipient');
+        const to = recipientInput ? encodeURIComponent(recipientInput.value.trim()) : '';
+        const subjectInput = document.getElementById('provEmailSubject');
+        const su = subjectInput ? encodeURIComponent(subjectInput.value.trim()) : '';
+
+        // Copy content first
+        this.copyProvincialEmailContent();
+
+        // Open Gmail compose in new tab
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${su}`;
+        window.open(gmailUrl, '_blank');
     },
 
     async copyProvincialEmailContent() {
