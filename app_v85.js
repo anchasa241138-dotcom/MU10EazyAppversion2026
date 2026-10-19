@@ -8951,7 +8951,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">ผู้ลงนามรับรอง:</td>
-                            <td>นางสาวฐิติพร บินศรี (หัวหน้าห้องปฏิบัติการ) / นางสาวมัลลิกา สุพล (หน.กลุ่มงาน คบส.)</td>
+                            <td>นางสาวฐิติพร อินศร (หัวหน้าห้องปฏิบัติการ) / นางสาวมัลลิกา สุพล (หน.กลุ่มงาน คบส.)</td>
                         </tr>
                     </table>
                 </div>
