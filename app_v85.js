@@ -1365,6 +1365,187 @@ document.getElementById('formNameTitle').innerText = title;
         this.renderSavedRecords();
         this.updateAmphoeDatalist();
         this.updateTambonDatalist();
+
+        // Auto-fill collector and address profile if creating a new sample
+        if (!this.currentEditingRefId && this.currentUser) {
+            const u = this.currentUser;
+            const agencyEl = document.getElementById('field-agency');
+            if (agencyEl && !agencyEl.value && u.workplace) agencyEl.value = u.workplace;
+            
+            const collectorEl = document.getElementById('field-collector-name');
+            if (collectorEl && !collectorEl.value && u.fullname) collectorEl.value = u.fullname;
+            
+            const posEl = document.getElementById('field-collector-position');
+            if (posEl && !posEl.value && u.position) posEl.value = u.position;
+            
+            const provEl = document.getElementById('field-province');
+            if (provEl && !provEl.value && u.province) provEl.value = u.province;
+            
+            this.updateAmphoeDatalist();
+            const amphoeEl = document.getElementById('field-amphoe');
+            if (amphoeEl && !amphoeEl.value && u.district) amphoeEl.value = u.district;
+            
+            this.updateTambonDatalist();
+            const tambonEl = document.getElementById('field-tambon');
+            if (tambonEl && !tambonEl.value && u.subdistrict) tambonEl.value = u.subdistrict;
+        }
+    },
+
+    resolveSampleAddress(s) {
+        if (!s) return { province: '-', amphoe: '-', tambon: '-' };
+
+        let province = (s.province || '').trim().replace(/^(จ\.|จังหวัด)/, '').trim();
+        let amphoe = (s.amphoe || s.district || '').trim().replace(/^(อ\.|อำเภอ)/, '').trim();
+        let tambon = (s.tambon || s.sub_district || s.subdistrict || '').trim().replace(/^(ต\.|ตำบล)/, '').trim();
+
+        if (province === '-') province = '';
+        if (amphoe === '-') amphoe = '';
+        if (tambon === '-') tambon = '';
+
+        // 1. Try finding creator profile if fields are missing
+        if ((!province || !amphoe || !tambon) && (s.created_by || s.collector_name)) {
+            const creator = (this.users || []).find(u => 
+                (s.created_by && (u.username === s.created_by || u.uid === s.created_by)) ||
+                (s.collector_name && u.fullname && u.fullname.trim() === s.collector_name.trim())
+            );
+            if (creator) {
+                if (!province && creator.province) province = creator.province.trim().replace(/^(จ\.|จังหวัด)/, '').trim();
+                if (!amphoe && creator.district) amphoe = creator.district.trim().replace(/^(อ\.|อำเภอ)/, '').trim();
+                if (!tambon && creator.subdistrict) tambon = creator.subdistrict.trim().replace(/^(ต\.|ตำบล)/, '').trim();
+            }
+        }
+
+        // 2. Build searchable context from sample fields
+        const searchCtx = [
+            s.agency, 
+            s.sender_agency, 
+            s.hospital, 
+            s.organization, 
+            s.location_name, 
+            s.collector_name, 
+            s.shop_name, 
+            s.sample_name
+        ].filter(Boolean).join(' ');
+
+        // 3. Known hospital / facility mapping shortcuts
+        if (!amphoe || !province) {
+            if (searchCtx.includes('สรรพสิทธิประสงค์') || searchCtx.includes('50 พรรษา') || searchCtx.includes('๕๐ พรรษา')) {
+                if (!province) province = 'อุบลราชธานี';
+                if (!amphoe) amphoe = 'เมืองอุบลราชธานี';
+            } else if (searchCtx.includes('วารินชำราบ') || searchCtx.includes('ค่ายสรรพสิทธิประสงค์')) {
+                if (!province) province = 'อุบลราชธานี';
+                if (!amphoe) amphoe = 'วารินชำราบ';
+            } else if (searchCtx.includes('รพ.ศรีสะเกษ')) {
+                if (!province) province = 'ศรีสะเกษ';
+                if (!amphoe) amphoe = 'เมืองศรีสะเกษ';
+            } else if (searchCtx.includes('รพ.ยโสธร')) {
+                if (!province) province = 'ยโสธร';
+                if (!amphoe) amphoe = 'เมืองยโสธร';
+            } else if (searchCtx.includes('รพ.อำนาจเจริญ')) {
+                if (!province) province = 'อำนาจเจริญ';
+                if (!amphoe) amphoe = 'เมืองอำนาจเจริญ';
+            } else if (searchCtx.includes('รพ.มุกดาหาร')) {
+                if (!province) province = 'มุกดาหาร';
+                if (!amphoe) amphoe = 'เมืองมุกดาหาร';
+            }
+        }
+
+        // 4. Infer amphoe & province by scanning MU10_ADDRESS_DATA against searchCtx
+        if (!amphoe || !province) {
+            const provEntries = (province && MU10_ADDRESS_DATA[province]) 
+                ? [[province, MU10_ADDRESS_DATA[province]]] 
+                : Object.entries(MU10_ADDRESS_DATA);
+
+            for (const [pName, amphoeMap] of provEntries) {
+                const sortedAmphoes = Object.keys(amphoeMap).sort((a, b) => b.length - a.length);
+                for (const aName of sortedAmphoes) {
+                    const cleanAName = aName.replace(/^(เมือง)/, '');
+                    if (searchCtx.includes(aName) || (cleanAName.length >= 4 && searchCtx.includes(cleanAName))) {
+                        if (!amphoe) amphoe = aName;
+                        if (!province) province = pName;
+                        break;
+                    }
+                }
+                if (amphoe && province) break;
+            }
+        }
+
+        // 5. If tambon is known but amphoe is missing, find amphoe that contains this tambon
+        if (tambon && !amphoe) {
+            const provEntries = (province && MU10_ADDRESS_DATA[province]) 
+                ? [[province, MU10_ADDRESS_DATA[province]]] 
+                : Object.entries(MU10_ADDRESS_DATA);
+            for (const [pName, amphoeMap] of provEntries) {
+                for (const [aName, tList] of Object.entries(amphoeMap)) {
+                    if (tList.includes(tambon) || tList.some(t => t.includes(tambon) || tambon.includes(t))) {
+                        amphoe = aName;
+                        if (!province) province = pName;
+                        break;
+                    }
+                }
+                if (amphoe) break;
+            }
+        }
+
+        // 6. If province still not determined, try matching province names directly in searchCtx
+        if (!province) {
+            for (const pName of Object.keys(MU10_ADDRESS_DATA)) {
+                if (searchCtx.includes(pName)) {
+                    province = pName;
+                    break;
+                }
+            }
+        }
+
+        // 7. Infer tambon if missing
+        if (!tambon && amphoe) {
+            let matchedAmphoeKey = amphoe;
+            let provData = province ? MU10_ADDRESS_DATA[province] : null;
+
+            if (!provData) {
+                for (const [pName, pMap] of Object.entries(MU10_ADDRESS_DATA)) {
+                    if (pMap[amphoe] || Object.keys(pMap).some(k => k.includes(amphoe) || amphoe.includes(k))) {
+                        province = pName;
+                        provData = pMap;
+                        break;
+                    }
+                }
+            }
+
+            if (provData) {
+                if (!provData[matchedAmphoeKey]) {
+                    matchedAmphoeKey = Object.keys(provData).find(k => k === amphoe || k.includes(amphoe) || amphoe.includes(k)) || amphoe;
+                }
+                const tambonList = provData[matchedAmphoeKey] || [];
+                
+                if (tambonList.length > 0) {
+                    const foundInCtx = tambonList.find(t => searchCtx.includes(t));
+                    if (foundInCtx) {
+                        tambon = foundInCtx;
+                    } else if (tambonList.includes(amphoe)) {
+                        tambon = amphoe;
+                    } else if (matchedAmphoeKey.startsWith('เมือง') && tambonList.includes('ในเมือง')) {
+                        tambon = 'ในเมือง';
+                    } else if (matchedAmphoeKey.startsWith('เมือง') && tambonList.includes('เมืองเหนือ')) {
+                        tambon = 'เมืองเหนือ';
+                    } else if (tambonList.includes('เมือง')) {
+                        tambon = 'เมือง';
+                    } else {
+                        tambon = tambonList[0] || amphoe;
+                    }
+                }
+            }
+        }
+
+        if (!tambon && amphoe) {
+            tambon = amphoe;
+        }
+
+        return {
+            province: province || '-',
+            amphoe: amphoe || '-',
+            tambon: tambon || '-'
+        };
     },
 
     updateAmphoeDatalist() {
@@ -2005,6 +2186,21 @@ document.getElementById('formNameTitle').innerText = title;
                 return;
             }
         }
+        // Auto-resolve / fill missing address and agency fields if blank
+        const resolved = this.resolveSampleAddress(sampleData);
+        if (!sampleData.province || sampleData.province === '-') sampleData.province = resolved.province !== '-' ? resolved.province : '';
+        if (!sampleData.amphoe || sampleData.amphoe === '-') sampleData.amphoe = resolved.amphoe !== '-' ? resolved.amphoe : '';
+        if (!sampleData.tambon || sampleData.tambon === '-') sampleData.tambon = resolved.tambon !== '-' ? resolved.tambon : '';
+        if (!sampleData.agency || sampleData.agency === '-') {
+            if (this.currentUser && this.currentUser.workplace) sampleData.agency = this.currentUser.workplace;
+            else if (sampleData.province) sampleData.agency = `สสจ.${sampleData.province}`;
+        }
+        if (!sampleData.collector_name && this.currentUser && this.currentUser.fullname) {
+            sampleData.collector_name = this.currentUser.fullname;
+        }
+        if (!sampleData.collector_position && this.currentUser && this.currentUser.position) {
+            sampleData.collector_position = this.currentUser.position;
+        }
         
         let tempId = '';
         if (this.currentEditingRefId) {
@@ -2532,6 +2728,9 @@ document.getElementById('formNameTitle').innerText = title;
                 </div>`;
         }
         
+        const addr = this.resolveSampleAddress(sample);
+        const agencyVal = sample.agency || (addr.province !== '-' ? `สสจ.${addr.province}` : '-');
+
         const detailHTML = `
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; font-size:13.5px; color:#1e293b;">
                 <div style="grid-column: span 2; background: linear-gradient(135deg, #f0f7ff, #e0f2fe); padding:14px 18px; border-radius:12px; border:1px solid #bae6fd; border-left:5px solid #2563eb; box-shadow:0 2px 8px rgba(37,99,235,0.06);">
@@ -2542,7 +2741,7 @@ document.getElementById('formNameTitle').innerText = title;
                 <div><span style="color:#64748b; font-size:12px; font-weight:500;">ประเภทแบบฟอร์ม</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.form_type || '-'}</strong></div>
                 <div><span style="color:#64748b; font-size:12px; font-weight:500;">วันที่ส่งตัวอย่าง</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${createdDate}</strong></div>
                 
-                <div><span style="color:#64748b; font-size:12px; font-weight:500;">หน่วยงานที่เก็บ</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.agency || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">หน่วยงานที่เก็บ</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${agencyVal}</strong></div>
                 <div><span style="color:#64748b; font-size:12px; font-weight:500;">ผู้เก็บตัวอย่าง</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.collector_name || '-'}</strong></div>
                 
                 <div><span style="color:#64748b; font-size:12px; font-weight:500;">ตำแหน่ง</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.collector_position || '-'}</strong></div>
@@ -2553,8 +2752,8 @@ document.getElementById('formNameTitle').innerText = title;
                 <div><span style="color:#64748b; font-size:12px; font-weight:500;">ประเภทสถานที่</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.location_type || '-'}</strong></div>
                 <div><span style="color:#64748b; font-size:12px; font-weight:500;">ชื่อสถานที่เก็บ</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.location_name || '-'}</strong></div>
                 
-                <div><span style="color:#64748b; font-size:12px; font-weight:500;">จังหวัด</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.province || '-'}</strong></div>
-                <div><span style="color:#64748b; font-size:12px; font-weight:500;">อำเภอ / ตำบล</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.amphoe || '-'} / ${sample.tambon || '-'}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">จังหวัด</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${addr.province}</strong></div>
+                <div><span style="color:#64748b; font-size:12px; font-weight:500;">อำเภอ / ตำบล</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${addr.amphoe} / ${addr.tambon}</strong></div>
             </div>
             ${sampleItemsHTML}
         `;
@@ -7720,6 +7919,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         filtered.forEach(s => {
             const tr = document.createElement('tr');
             const statusMap = { 'registered': 'ส่งตัวอย่างแล้ว', 'accepted': 'รับเข้าระบบ', 'summarized': 'วิเคราะห์แล้ว', 'approved': 'อนุมัติ', 'rejected': 'ปฏิเสธ' };
+            const addr = this.resolveSampleAddress(s);
+            let agencyDisplay = s.agency || (addr.province !== '-' ? `สสจ.${addr.province}` : '-');
+            let provDisplay = addr.province !== '-' ? addr.province : (s.province || '-');
             tr.innerHTML = `
                 <td>${s.lab_id || s.ref_id}</td>
                 <td>${s.form_type}</td>
@@ -7747,8 +7949,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     if(!n) n = '-';
     return n.length > 40 ? n.substring(0,40) + '...' : n;
 })()}</td>
-                  <td>${s.agency || '-'}</td>
-                  <td>${s.province}</td>
+                  <td>${agencyDisplay}</td>
+                  <td>${provDisplay}</td>
                 <td>${new Date(s.sampling_date).toLocaleDateString('th-TH')}</td>
                 <td>${s.analysis_summary || '-'}</td>
                 <td><span class="status-badge ${statusMap[s.status] === 'อนุมัติ' ? 'status-approved' : 'status-registered'}">${statusMap[s.status]}</span></td>
@@ -7995,26 +8197,47 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                 let locType = s.location_type || s.location_category || s.place_type || '';
                 if (!locType || locType === '-') {
-                    const locName = s.location_name || '';
+                    const locName = ((s.location_name || '') + ' ' + (s.agency || '')).trim();
                     if (locName.includes('โรงเรียน') || locName.includes('รร.')) locType = 'โรงเรียน/สถานศึกษา';
+                    else if (locName.includes('โรงพยาบาล') || locName.includes('รพ.')) locType = 'โรงพยาบาล/สถานพยาบาล';
                     else if (locName.includes('ตลาดสด')) locType = 'ตลาดสด';
                     else if (locName.includes('ตลาด')) locType = 'ตลาดนัด';
-                    else if (locName.includes('โรงพยาบาล') || locName.includes('รพ.')) locType = 'โรงพยาบาล/สถานพยาบาล';
                     else if (locName.includes('ร้านอาหาร') || locName.includes('ครัว') || locName.includes('ร้าน')) locType = 'ร้านอาหาร';
                     else if (locName.includes('โรงงาน')) locType = 'โรงงาน/สถานที่ผลิตอาหาร';
                     else if (locName.includes('ห้าง') || locName.includes('ซุปเปอร์')) locType = 'ห้างสรรพสินค้า/ซุปเปอร์มาเก็ต';
                     else if (locName.includes('ห้องเย็น')) locType = 'ห้องเย็น';
-                    else locType = '-';
+                    else locType = 'อื่นๆ';
                 }
+
+                const addr = this.resolveSampleAddress(s);
 
                 let agencyVal = s.agency || s.sender_agency || s.hospital || s.organization || '';
                 if (!agencyVal || agencyVal === '-') {
-                    if (s.province) agencyVal = `สสจ.${s.province}`;
-                    else agencyVal = '-';
+                    const creator = (this.users || []).find(u => 
+                        (s.created_by && (u.username === s.created_by || u.uid === s.created_by)) ||
+                        (s.collector_name && u.fullname && u.fullname.trim() === s.collector_name.trim())
+                    );
+                    if (creator && creator.workplace) {
+                        agencyVal = creator.workplace;
+                    } else if (addr.province && addr.province !== '-') {
+                        agencyVal = `สสจ.${addr.province}`;
+                    } else {
+                        agencyVal = '-';
+                    }
                 }
 
-                const tambonVal = s.tambon || s.sub_district || s.subdistrict || '-';
-                const amphoeVal = s.amphoe || s.district || '-';
+                let collectorName = s.collector_name || '';
+                let collectorPos = s.collector_position || '';
+                if (!collectorName || collectorName === '-') {
+                    const creator = (this.users || []).find(u => s.created_by && (u.username === s.created_by || u.uid === s.created_by));
+                    if (creator && creator.fullname) {
+                        collectorName = creator.fullname;
+                        if (!collectorPos || collectorPos === '-') collectorPos = creator.position || '-';
+                    } else {
+                        collectorName = '-';
+                        if (!collectorPos) collectorPos = '-';
+                    }
+                }
 
                 const row = {
                     'รหัสอ้างอิง': s.ref_id || '-',
@@ -8023,11 +8246,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     'หน่วยงานที่เก็บ': agencyVal,
                     'ประเภทสถานที่เก็บ': locType,
                     'สถานที่เก็บ': s.location_name || '-',
-                    'ตำบล': tambonVal,
-                    'อำเภอ': amphoeVal,
-                    'จังหวัด': s.province || '-',
-                    'ชื่อผู้เก็บตัวอย่าง': s.collector_name || '-',
-                    'ตำแหน่งผู้เก็บตัวอย่าง': s.collector_position || '-',
+                    'ตำบล': addr.tambon,
+                    'อำเภอ': addr.amphoe,
+                    'จังหวัด': addr.province,
+                    'ชื่อผู้เก็บตัวอย่าง': collectorName,
+                    'ตำแหน่งผู้เก็บตัวอย่าง': collectorPos,
                     'วันที่เก็บ': s.sampling_date || '-',
                     'เวลาที่บันทึกเก็บตัวอย่าง': formatTime(s.created_at),
                     'ชื่อตัวอย่าง': sampleName,
