@@ -3059,3 +3059,9 @@ body.require-login-mode::before {
   visibility: visible !important;
   opacity: 1 !important;
 }
+
+/* Provincial email dispatch button is hidden by default for non-lab roles */
+.btn-prov-email-dispatch {
+  display: none !important;
+}
+
