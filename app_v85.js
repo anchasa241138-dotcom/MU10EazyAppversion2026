@@ -282,6 +282,17 @@ const app = {
                 }
                 this.updateBadges();
             });
+
+            db.ref('settings/gas_email_webhook').on('value', (snapshot) => {
+                const url = snapshot.val();
+                if (url) {
+                    this.gasEmailWebhookUrl = url;
+                    localStorage.setItem('mu10_gas_email_webhook', url);
+                    if (typeof this.updateGasStatusUI === 'function') {
+                        this.updateGasStatusUI();
+                    }
+                }
+            });
         }
         
         // Restore session
@@ -7929,6 +7940,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         this.populateProvEmailRounds();
         this.updateProvincialEmailPreview();
+        this.updateGasStatusUI();
         modal.classList.add('active');
         modal.style.display = 'flex';
     },
@@ -8519,20 +8531,29 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             let sentOk = false;
 
             // Option 1: User configured Google Apps Script Webhook
-            const gasUrl = localStorage.getItem('mu10_gas_email_webhook');
+            const gasUrl = this.gasEmailWebhookUrl || localStorage.getItem('mu10_gas_email_webhook');
             if (gasUrl) {
                 try {
                     await fetch(gasUrl, {
                         method: 'POST',
                         mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({
                             to: recipient,
                             subject: subject,
                             htmlBody: htmlBody
                         })
                     });
-                    sentOk = true;
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ส่งอีเมลตรงสำเร็จเรียบร้อย! 🎉',
+                        html: `ระบบได้จัดส่งอีเมลสรุปผลพร้อมตารางสวยงามไปยัง <b>${recipient}</b> ผ่าน Google Apps Script เรียบร้อยแล้วครับ`,
+                        confirmButtonColor: '#0284c7'
+                    });
+
+                    this.closeProvincialEmailModal();
+                    return;
                 } catch(e) {
                     console.warn('GAS webhook failed, falling back to FormSubmit:', e);
                 }
@@ -8643,6 +8664,99 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 title: 'คัดลอกเนื้อหาแล้ว',
                 text: 'สามารถกด Ctrl + V เพื่อวางลงในโปรแกรมอีเมลได้เลยครับ',
                 timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    },
+
+    updateGasStatusUI() {
+        const gasUrl = this.gasEmailWebhookUrl || localStorage.getItem('mu10_gas_email_webhook');
+        const statusText = document.getElementById('provGasStatusText');
+        const submitBtn = document.getElementById('btnSubmitProvEmail');
+        if (statusText) {
+            if (gasUrl) {
+                statusText.innerHTML = '<span style="color:#16a34a; font-weight:700;"><i class="fa-solid fa-circle-check"></i> ส่งตรงผ่าน GAS (เชื่อมต่อแล้ว)</span>';
+            } else {
+                statusText.innerHTML = '<i class="fa-solid fa-gear" style="color: #0284c7;"></i> ตั้งค่าส่งตรง (Google Apps Script)';
+            }
+        }
+        if (submitBtn) {
+            if (gasUrl) {
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ยืนยันส่งอีเมล (GAS ส่งตรง)';
+                submitBtn.title = 'ส่งตรงแบบ HTML สวยงาม 100% ผ่าน Google Apps Script';
+            } else {
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ยืนยันส่งอีเมลแจ้งเตือน';
+                submitBtn.title = 'ส่งผ่านระบบ FormSubmit หรือตัวกลาง';
+            }
+        }
+    },
+
+    async configureGasEmailWebhook() {
+        const currentUrl = this.gasEmailWebhookUrl || localStorage.getItem('mu10_gas_email_webhook') || '';
+
+        const result = await Swal.fire({
+            title: '⚙️ ตั้งค่าระบบส่งตรง (Google Apps Script)',
+            html: `
+                <div style="text-align: left; font-size: 13.5px; line-height: 1.6; color: #334155; margin-bottom: 12px;">
+                    <p style="margin: 0 0 8px 0;">การเชื่อมต่อ Google Apps Script Web App จะทำให้ระบบส่งอีเมลที่มี <strong>ตารางและสีสันสวยงาม 100%</strong> ตรงไปยังผู้รับผ่าน Gmail ของหน่วยงานในคลิกเดียว</p>
+                    <div style="background: #f1f5f9; padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border-left: 3px solid #0284c7;">
+                        <strong>ขั้นตอนย่อ:</strong><br>
+                        1. ไปที่ <a href="https://script.google.com" target="_blank" style="color:#0284c7; font-weight:600;">script.google.com</a> สร้าง New project<br>
+                        2. คัดลอกโค้ดจากไฟล์ <code>google_apps_script_email.js</code> ไปวาง<br>
+                        3. กด <strong>Deploy > New deployment > Web app</strong> (ตั้ง Who has access = <strong>Anyone</strong>)<br>
+                        4. นำ Web App URL (ลงท้ายด้วย <code>/exec</code>) มาวางในช่องด้านล่างนี้
+                    </div>
+                </div>
+            `,
+            input: 'url',
+            inputLabel: 'Google Apps Script Web App URL:',
+            inputValue: currentUrl,
+            inputPlaceholder: 'https://script.google.com/macros/s/.../exec',
+            showCancelButton: true,
+            showDenyButton: !!currentUrl,
+            confirmButtonText: '<i class="fa-solid fa-save"></i> บันทึกการเชื่อมต่อ',
+            denyButtonText: '<i class="fa-solid fa-trash"></i> ลบการเชื่อมต่อ',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#0284c7',
+            denyButtonColor: '#ef4444',
+            inputValidator: (val) => {
+                if (val && !val.startsWith('https://script.google.com/macros/s/')) {
+                    return 'โปรดระบุ URL ของ Web App จาก Google Apps Script ให้ถูกต้อง (ขึ้นต้นด้วย https://script.google.com/macros/s/)';
+                }
+            }
+        });
+
+        if (result.isConfirmed && result.value) {
+            const cleanUrl = result.value.trim();
+            localStorage.setItem('mu10_gas_email_webhook', cleanUrl);
+            this.gasEmailWebhookUrl = cleanUrl;
+            if (typeof db !== 'undefined') {
+                try {
+                    db.ref('settings/gas_email_webhook').set(cleanUrl);
+                } catch(e) {}
+            }
+            this.updateGasStatusUI();
+            Swal.fire({
+                icon: 'success',
+                title: 'บันทึกเรียบร้อย!',
+                text: 'ระบบจะส่งอีเมลตรงผ่าน Google Apps Script อัตโนมัติ (ได้ตารางสวยงาม 100% ทันที)',
+                timer: 2200,
+                showConfirmButton: false
+            });
+        } else if (result.isDenied) {
+            localStorage.removeItem('mu10_gas_email_webhook');
+            this.gasEmailWebhookUrl = '';
+            if (typeof db !== 'undefined') {
+                try {
+                    db.ref('settings/gas_email_webhook').remove();
+                } catch(e) {}
+            }
+            this.updateGasStatusUI();
+            Swal.fire({
+                icon: 'info',
+                title: 'ลบการเชื่อมต่อแล้ว',
+                text: 'ระบบจะกลับไปใช้วิธีส่งแบบปกติ',
+                timer: 1800,
                 showConfirmButton: false
             });
         }

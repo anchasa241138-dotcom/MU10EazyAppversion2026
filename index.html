@@ -2092,7 +2092,12 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                    <div style="margin-right: auto;">
+                        <button type="button" class="btn btn-outline-secondary" onclick="app.configureGasEmailWebhook()" style="border-radius: 9999px; padding: 7px 14px; font-size: 12px; font-weight: 600; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;" title="ตั้งค่าระบบส่งตรงอัตโนมัติผ่าน Google Apps Script (ส่งตรงในคลิกเดียว ตารางสวย 100%)">
+                            <span id="provGasStatusText"><i class="fa-solid fa-gear" style="color: #0284c7;"></i> ตั้งค่าส่งตรง (Google Apps Script)</span>
+                        </button>
+                    </div>
                     <button type="button" class="btn btn-secondary" onclick="app.closeProvincialEmailModal()" style="border-radius: 9999px; padding: 9px 18px; font-weight: 600;">
                         ปิด
                     </button>
@@ -2139,6 +2144,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792385900000"></script>
+    <script src="app_v85.js?v=1792386500000"></script>
 </body>
 </html>
