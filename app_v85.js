@@ -5817,32 +5817,32 @@ document.getElementById('formNameTitle').innerText = title;
                           </div>
                       ` : `
                           <!-- Criteria Standard Reference Table -->
-                          <div style="margin-top: 10px; font-size: 12px; font-weight: bold; text-align: left;">
+                          <div style="margin-top: 8px; font-size: 10px; font-weight: bold; text-align: left; color: #1e293b;">
                               ค่าการตรวจจากชุดทดสอบเบื้องต้น
                           </div>
-                          <table style="width: 70%; border-collapse: collapse; border: 1px solid #333; font-size: 11px; margin-top: 4px; text-align: center;">
+                          <table style="width: 58%; border-collapse: collapse; border: 1px solid #475569; font-size: 9px; margin-top: 3px; text-align: center; color: #1e293b;">
                               <thead>
-                                  <tr style="font-weight: bold; background: #fff;">
-                                      <th style="border: 1px solid #333; width: 44%; padding: 2px 4px;">รายการ</th>
-                                      <th style="border: 1px solid #333; width: 56%; padding: 2px 4px;">เกณฑ์การตรวจผ่านด้วยชุดทดสอบเบื้องต้น</th>
+                                  <tr style="font-weight: bold; background: #f1f5f9; height: 18px;">
+                                      <th style="border: 1px solid #475569; width: 44%; padding: 2px 4px; font-size: 9px;">รายการ</th>
+                                      <th style="border: 1px solid #475569; width: 56%; padding: 2px 4px; font-size: 9px;">เกณฑ์การตรวจผ่านด้วยชุดทดสอบเบื้องต้น</th>
                                   </tr>
                               </thead>
                               <tbody>
                                   <tr>
-                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">กรด - ด่าง (pH)</td>
-                                      <td style="border: 1px solid #333; padding: 2px 4px;">6.5 - 8.5</td>
+                                      <td style="border: 1px solid #475569; text-align: left; padding: 1.5px 5px;">กรด - ด่าง (pH)</td>
+                                      <td style="border: 1px solid #475569; padding: 1.5px 4px;">6.5 - 8.5</td>
                                   </tr>
                                   <tr>
-                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">ความกระด้าง (Hardness)</td>
-                                      <td style="border: 1px solid #333; padding: 2px 4px;">Hardness( ≤100 มก./ล.)</td>
+                                      <td style="border: 1px solid #475569; text-align: left; padding: 1.5px 5px;">ความกระด้าง (Hardness)</td>
+                                      <td style="border: 1px solid #475569; padding: 1.5px 4px;">Hardness( ≤100 มก./ล.)</td>
                                   </tr>
                                   <tr>
-                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">ปริมาณของแข็งละลายน้ำทั้งหมด (TDS)</td>
-                                      <td style="border: 1px solid #333; padding: 2px 4px;">TDS (≤50 มก./ล.)</td>
+                                      <td style="border: 1px solid #475569; text-align: left; padding: 1.5px 5px;">ปริมาณของแข็งละลายน้ำทั้งหมด (TDS)</td>
+                                      <td style="border: 1px solid #475569; padding: 1.5px 4px;">TDS (≤50 มก./ล.)</td>
                                   </tr>
                                   <tr>
-                                      <td style="border: 1px solid #333; text-align: left; padding: 2px 6px;">โคลิฟอร์ม (Coliform)</td>
-                                      <td style="border: 1px solid #333; padding: 2px 4px;">ไม่พบ</td>
+                                      <td style="border: 1px solid #475569; text-align: left; padding: 1.5px 5px;">โคลิฟอร์ม (Coliform)</td>
+                                      <td style="border: 1px solid #475569; padding: 1.5px 4px;">ไม่พบ</td>
                                   </tr>
                               </tbody>
                           </table>
