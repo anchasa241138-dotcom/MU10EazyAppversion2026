@@ -769,13 +769,16 @@ body {
 }
 
 .btn-secondary {
-    background-color: #f1f5f9;
-    color: var(--text-main);
-    border-color: var(--border-color);
+    background-color: #f8fafc;
+    color: #334155 !important;
+    border: 1.5px solid #94a3b8 !important;
+    font-weight: 600;
 }
 
 .btn-secondary:hover:not(:disabled) {
     background-color: #e2e8f0;
+    color: #0f172a !important;
+    border-color: #64748b !important;
 }
 
 .btn-text {

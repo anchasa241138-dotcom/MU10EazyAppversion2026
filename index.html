@@ -16,7 +16,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v3.css?v=1792217067349">
+    <link rel="stylesheet" href="style_v3.css?v=1792473600000">
     <link rel="stylesheet" href="fonts.css?v=1791732670733">
 
     <style>
@@ -1715,7 +1715,7 @@
                     </div>
                     <div class="form-actions margin-top">
                         <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> ยืนยันรับตัวอย่างเข้าระบบ</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyAcceptModal()">ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyAcceptModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
                     </div>
                 </form>
             </div>
@@ -1753,7 +1753,7 @@
                     </div>
                     <div class="form-actions margin-top">
                         <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> ยืนยันการปฏิเสธการรับ</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyRejectModal()">ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyRejectModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
                     </div>
                 </form>
             </div>
@@ -1832,7 +1832,7 @@
 
                     <div class="form-actions margin-top">
                         <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> บันทึกผลวิเคราะห์</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeAnalysisInputModal()">ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeAnalysisInputModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
                     </div>
                 </form>
             </div>
@@ -1952,7 +1952,7 @@
                     <div id="modal-status-text" style="margin-top: 15px; margin-bottom: 15px; text-align: center; font-size: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;"></div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-success" id="btnApproveAndSign" ><i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()">ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
                     </div>
                 </div>
 
@@ -2167,6 +2167,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792472400000"></script>
+    <script src="app_v85.js?v=1792473600000"></script>
 </body>
 </html>
