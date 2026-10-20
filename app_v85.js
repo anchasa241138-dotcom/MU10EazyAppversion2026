@@ -6098,11 +6098,11 @@ document.getElementById('formNameTitle').innerText = title;
                 fullHtmlResult += `
                     <div class="cert-pdf-border mu007-report-container" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; padding: 152px 45px 35px 45px; background-size: 100% 100%; background-position: top left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px; margin-bottom: 6px;">
-                            <div style="font-size: 12.5px; color: #1e293b;">
+                            <div style="font-size: 12.5px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
                                 RD-007
                             </div>
                             ${totalPages > 1 ? `
-                                <div style="font-size: 12.5px; color: #1e293b;">
+                                <div style="font-size: 12.5px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
                                     หน้าที่ ${page + 1}/${totalPages}
                                 </div>
                             ` : '<div></div>'}
