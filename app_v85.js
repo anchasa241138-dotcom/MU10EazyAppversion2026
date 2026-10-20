@@ -9192,12 +9192,42 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 let tested = 0;
                 let failed = 0;
                 for (let i = 1; i <= 50; i++) {
-                    if (s['sample_name_' + i] || s['analysis_summary_' + i]) {
+                    const hasSample = !!(s['sample_name_' + i] || s['sample_category_' + i] || s['analysis_summary_' + i] || s['analysis_summary_outcome_' + i]);
+                    if (hasSample) {
                         tested++;
-                        if (s['analysis_summary_' + i] === 'ไม่ผ่าน') failed++;
+                        let rowFail = false;
+                        if (s['analysis_summary_' + i] === 'ไม่ผ่าน' || s['analysis_summary_outcome_' + i] === 'ไม่ผ่าน' || s['test_outcome_' + i] === 'ไม่ผ่าน') {
+                            rowFail = true;
+                        }
+                        const subKeys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
+                        for (const k of subKeys) {
+                            if (s['analysis_summary_' + i + '_' + k] === 'ไม่ผ่าน') {
+                                rowFail = true;
+                            }
+                        }
+                        if (s['analysis_summary_4_' + i] === 'ไม่ผ่าน') {
+                            rowFail = true;
+                        }
+                        if (rowFail) failed++;
                     }
                 }
-                if (tested === 0) tested = s.sample_qty || 10;
+                if (tested === 0) {
+                    if (s.sample_qty && !isNaN(parseInt(s.sample_qty, 10))) {
+                        tested = parseInt(s.sample_qty, 10);
+                    } else if (s.analysis_details) {
+                        const m = s.analysis_details.match(/(\d+)\s*(ตัวอย่าง|รายการ|จุด)/);
+                        if (m) tested = parseInt(m[1], 10);
+                    }
+                    if (tested === 0) tested = 10;
+                }
+                if (failed === 0 && s.analysis_summary) {
+                    const mFail = s.analysis_summary.match(/ไม่ผ่าน\s*(\d+)/);
+                    if (mFail) {
+                        failed = parseInt(mFail[1], 10);
+                    } else if (s.analysis_summary === 'ไม่ผ่าน') {
+                        failed = 1;
+                    }
+                }
                 const isFail = s.analysis_summary === 'ไม่ผ่าน' || failed > 0;
                 if (isFail && failed === 0) failed = 1;
 
@@ -9251,11 +9281,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         // Active items (only those checked)
         const activeItems = reportItems.filter(item => item.checked);
-        const totalCount = activeItems.length;
-        const failCount = activeItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').length;
-        const passCount = totalCount - failCount;
-        const passPercent = totalCount > 0 ? Math.round((passCount / totalCount) * 100) : 100;
-        const failPercent = totalCount > 0 ? (100 - passPercent) : 0;
+        const totalReports = activeItems.length;
+        const failedReports = activeItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').length;
+        const passedReports = totalReports - failedReports;
+
+        // Aggregate actual sample counts across all active inspection reports
+        const totalSamples = activeItems.reduce((sum, item) => sum + (Number(item.tested) || 0), 0);
+        const failSamples = activeItems.reduce((sum, item) => sum + (Number(item.failed) || 0), 0);
+        const passSamples = Math.max(0, totalSamples - failSamples);
+        const passPercent = totalSamples > 0 ? Math.round((passSamples / totalSamples) * 100) : 100;
+        const failPercent = totalSamples > 0 ? (100 - passPercent) : 0;
 
         const failedHospitals = activeItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').map(item => item.name);
 
@@ -9309,14 +9344,14 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         // Dynamic Subject line
         let subject = '';
         if (isAllMode) {
-            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ภาพรวม : ทุกประเภทรายงาน - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
+            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ภาพรวม : ทุกประเภทรายงาน - จังหวัด${selectedProv}] (ผ่าน ${passSamples} / ไม่ผ่าน ${failSamples}) วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
         } else {
-            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${currentMeta.code} - จังหวัด${selectedProv}] (ผ่าน ${passCount} / ไม่ผ่าน ${failCount})] วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
+            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${currentMeta.code} - จังหวัด${selectedProv}] (ผ่าน ${passSamples} / ไม่ผ่าน ${failSamples}) วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
         }
         if (subjectInput) subjectInput.value = subject;
 
         if (countBadge) {
-            countBadge.innerText = `เลือกส่ง ${totalCount} / ${reportItems.length} ใบงาน`;
+            countBadge.innerText = `เลือกส่ง ${totalReports} / ${reportItems.length} ใบงาน`;
         }
 
         const getBaseUrl = () => {
@@ -9362,16 +9397,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         // Observation note
         let obsHtml = '';
-        if (failCount > 0) {
+        if (failSamples > 0) {
             obsHtml = `
                 <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; line-height: 1.6;">
-                    <strong>ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failCount} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
+                    <strong>ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failSamples} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
                 </div>
             `;
-        } else if (totalCount > 0) {
+        } else if (totalSamples > 0) {
             obsHtml = `
                 <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #166534; line-height: 1.6;">
-                    <strong>ผลการตรวจวิเคราะห์:</strong> ตัวอย่างทั้งหมดจำนวน <strong>${totalCount} ตัวอย่าง</strong> ผ่านเกณฑ์มาตรฐานความปลอดภัย ไม่พบสารเคมีตกค้าง
+                    <strong>ผลการตรวจวิเคราะห์:</strong> ตัวอย่างทั้งหมดจำนวน <strong>${totalSamples} ตัวอย่าง</strong> ผ่านเกณฑ์มาตรฐานความปลอดภัย ไม่พบสารเคมีตกค้าง
                 </div>
             `;
         } else {
@@ -9402,7 +9437,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">พื้นที่ตรวจ:</td>
-                            <td>จังหวัด${selectedProv} (ครอบคลุม ${totalCount} หน่วยงาน/อำเภอ)</td>
+                            <td>จังหวัด${selectedProv} (ครอบคลุม ${totalReports} หน่วยงาน/อำเภอ)</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">วันที่รับตัวอย่าง:</td>
@@ -9436,9 +9471,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </thead>
                         <tbody>
                             <tr style="font-size: 16px; font-weight: bold;">
-                                <td style="border: 1px solid #cbd5e1; padding: 12px; background: #fff;">${totalCount} ตัวอย่าง</td>
-                                <td style="border: 1px solid #cbd5e1; padding: 12px; color: #15803d; background: #f0fdf4;">${passCount} ตัวอย่าง (${passPercent}%)</td>
-                                <td style="border: 1px solid #cbd5e1; padding: 12px; color: #b91c1c; background: #fef2f2;">${failCount} ตัวอย่าง (${failPercent}%)</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 12px; background: #fff;">${totalSamples} ตัวอย่าง</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 12px; color: #15803d; background: #f0fdf4;">${passSamples} ตัวอย่าง (${passPercent}%)</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 12px; color: #b91c1c; background: #fef2f2;">${failSamples} ตัวอย่าง (${failPercent}%)</td>
                             </tr>
                         </tbody>
                     </table>
