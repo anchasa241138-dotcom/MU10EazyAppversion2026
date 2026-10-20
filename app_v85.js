@@ -5962,64 +5962,6 @@ document.getElementById('formNameTitle').innerText = title;
             const ITEMS_PER_PAGE = 12;
             const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE) || 1;
 
-            const renderMu10007SigSlot = (personKey, defaultRole, roleId) => {
-                const p = (personKey && PERSON_DATA[personKey]) ? PERSON_DATA[personKey] : null;
-                const isAnalyst = roleId.startsWith('analyst');
-                const isMallika = (personKey === 'mallika');
-                const mode = sample['mode_' + roleId] || 'system';
-                const drawnSig = sample['sig_' + roleId];
-
-                let showSig = viewOnly || sample.status === 'approved';
-                if (isAnalyst && sample.status === 'analyst_signed') showSig = true;
-
-                let sigHtml = '<span style="font-size: 11px; color: #94a3b8; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); white-space: nowrap;">(รอลงนามรับรอง)</span>';
-                if (mode === 'wet' && !isMallika) {
-                    sigHtml = '';
-                } else if (showSig) {
-                    if (mode === 'draw' && drawnSig && !isMallika) {
-                        sigHtml = `<img src="${drawnSig}" style="max-height: 40px; max-width: 135px; object-fit: contain; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); z-index: 5;" onerror="this.style.display='none'">`;
-                    } else if (p) {
-                        let extraStyle = 'max-height: 42px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                        if (personKey === 'mallika') {
-                            extraStyle = 'max-height: 44px; max-width: 130px; object-fit: contain; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                        } else if (personKey === 'thitiporn') {
-                            extraStyle = 'max-height: 40px; max-width: 125px; object-fit: contain; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); z-index: 5;';
-                        }
-                        sigHtml = `<img src="${p.sig}" style="${extraStyle}" onerror="this.style.display='none'">`;
-                    }
-                }
-
-                let pName = p ? p.name : '.......................................';
-                let titlesHtml = '';
-                if (personKey === 'mallika') {
-                    titlesHtml = `
-                        <div style="font-size: 12px; color: #000; line-height: 1.25;">เภสัชกรชำนาญการพิเศษ</div>
-                        <div style="font-size: 10.5px; color: #000; line-height: 1.25; white-space: nowrap;">หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</div>
-                    `;
-                } else if (p) {
-                    titlesHtml = `
-                        <div style="font-size: 12px; color: #000; line-height: 1.25;">${p.title1}</div>
-                        ${p.title2 ? `<div style="font-size: 11.5px; color: #000; line-height: 1.25;">${p.title2}</div>` : ''}
-                    `;
-                } else {
-                    titlesHtml = `<div style="font-size: 12px; color: #000;">${defaultRole}</div>`;
-                }
-
-                return `
-                    <div style="text-align: center; font-size: 13px; line-height: 1.35; color: #000;">
-                        <div style="display: inline-flex; align-items: flex-end; justify-content: center; position: relative; margin-bottom: 3px;">
-                            <span style="white-space: nowrap; font-size: 13px;">(ลงชื่อ)</span>
-                            <span style="position: relative; display: inline-block; width: 145px; border-bottom: 1px dotted #000; margin: 0 4px 3px 4px; height: 32px;">
-                                ${sigHtml}
-                            </span>
-                            <span style="white-space: nowrap; font-size: 13px;">${defaultRole}</span>
-                        </div>
-                        <div style="font-size: 13px; font-weight: 500; margin-top: 2px;">(${pName})</div>
-                        ${titlesHtml}
-                    </div>
-                `;
-            };
-
             let fullHtmlResult = `
                 <style>
                     .mu007-report-container {
@@ -6169,11 +6111,11 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
 
                         ${isLastPage ? `
-                            <div class="cert-signatures-grid" style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 30px; row-gap: 12px; text-align: center;">
-                                ${renderMu10007SigSlot(sample.sel_analyst_1 || 'naphaphon', 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
-                                ${renderMu10007SigSlot(sample.sel_analyst_2 || 'sakulkan', 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
-                                ${renderMu10007SigSlot(sample.sel_approver_1 || 'thitiporn', 'ผู้รับรอง', 'approver_1')}
-                                ${renderMu10007SigSlot(sample.sel_approver_2 || 'mallika', 'ผู้รับรอง', 'approver_2')}
+                            <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                                ${renderSignatureSlot(sample.sel_analyst_1 || 'naphaphon', 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
+                                ${renderSignatureSlot(sample.sel_analyst_2 || 'sakulkan', 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
+                                ${renderSignatureSlot(sample.sel_approver_1 || 'thitiporn', 'ผู้รับรอง', 'approver_1')}
+                                ${renderSignatureSlot(sample.sel_approver_2 || 'mallika', 'ผู้รับรอง', 'approver_2')}
                             </div>
                         ` : ''}
                     </div>
