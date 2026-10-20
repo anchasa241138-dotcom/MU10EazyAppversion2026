@@ -7751,7 +7751,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 }
                 if(h5) h5.style.setProperty('color', '#f59e0b', 'important');
                 if(line) {
-                    line.style.setProperty('background', 'rgba(255, 255, 255, 0.2)', 'important');
+                    line.style.setProperty('background', 'rgba(255, 255, 255, 0.35)', 'important');
                     line.style.setProperty('box-shadow', 'none', 'important');
                 }
             } else {
@@ -7762,7 +7762,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 }
                 if(h5) h5.style.setProperty('color', '#475569', 'important');
                 if(line) {
-                    line.style.setProperty('background', 'rgba(255, 255, 255, 0.15)', 'important');
+                    line.style.setProperty('background', 'rgba(255, 255, 255, 0.25)', 'important');
                     line.style.setProperty('box-shadow', 'none', 'important');
                 }
             }

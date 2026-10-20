@@ -2120,7 +2120,8 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   width: 3px !important;
   flex: 1 !important;
   min-height: 48px !important;
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
+  border-radius: 2px !important;
   margin: 0 !important;
   transition: all 0.3s ease !important;
 }
