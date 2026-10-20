@@ -8434,12 +8434,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const arr = [];
         let i = 1;
         while ((s['location_'+i] !== undefined || s['sample_name_'+i] !== undefined) && i <= 50) {
-            const loc = s['location_'+i] || (i === 1 ? s.location_name : '') || s['sample_name_'+i];
-            if (loc) arr.push(loc);
+            const sName = s['sample_name_'+i] || (i === 1 ? s.sample_name : '');
+            let nameStr = 'น้ำดื่มตู้หยอดเหรียญ';
+            if (sName && sName !== 'A' && sName !== '-') {
+                nameStr = sName.includes('น้ำ') ? sName : `น้ำดื่มตู้หยอดเหรียญ (ยี่ห้อ ${sName})`;
+            }
+            arr.push(nameStr);
             i++;
         }
         if (arr.length > 0) n = arr.join(', ');
-        else n = s.location_name || s.sample_name || '-';
+        else n = 'น้ำดื่มตู้หยอดเหรียญ';
     } else if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002' || s.form_type === 'MU.10-005' || s.form_type === 'MU.10-007') {
         const arr = [];
         let i = 1;
@@ -8487,10 +8491,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if (s.form_type === 'MU.10-006') {
                     const loc = s['location_' + idx] || (idx === 1 ? s.location_name : '');
                     const sName = s['sample_name_' + idx] || (idx === 1 ? s.sample_name : '');
-                    if (loc && sName && sName !== 'A' && loc !== sName) {
-                        sampleName = `${loc} (${sName})`;
+                    let brand = (sName && sName !== 'A' && sName !== '-' && sName !== loc) ? sName.trim() : '';
+                    if (brand) {
+                        if (brand.includes('น้ำดื่ม') || brand.includes('น้ำบริโภค')) {
+                            sampleName = brand;
+                        } else if (brand.toLowerCase().startsWith('ยี่ห้อ')) {
+                            sampleName = `น้ำดื่มตู้หยอดเหรียญ (${brand})`;
+                        } else {
+                            sampleName = `น้ำดื่มตู้หยอดเหรียญ (ยี่ห้อ ${brand})`;
+                        }
                     } else {
-                        sampleName = loc || sName || s.location_name || ('จุดตรวจที่ ' + idx);
+                        sampleName = 'น้ำดื่มตู้หยอดเหรียญ';
                     }
                 } else if (s.form_type === 'MU.10-007') {
                     const rawName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || s['sample_category_'+idx] || '-');
@@ -8565,6 +8576,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     summaries.push(outcome);
 
                     mu10006Details = {
+                        'ยี่ห้อตู้': s['sample_name_' + idx] || (idx === 1 ? s.sample_name : '') || '-',
+                        'ชื่อบริษัท/เจ้าของตู้': s['company_' + idx] || (idx === 1 ? s.company : '') || '-',
+                        'ระบบกรอง': s['system_' + idx] || (idx === 1 ? s.system : '') || '-',
                         'โคลิฟอร์ม (Coliform)': cVal,
                         'สรุปผลโคลิฟอร์ม': cSum,
                         'TDS (มก./ล.)': tVal,
@@ -8796,9 +8810,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     'รหัสแลป': currentLabNo,
                     'หน่วยงานที่เก็บ': agencyVal,
                     'ประเภทสถานที่เก็บ': locType,
-                    'สถานที่เก็บ': s.location_name || '-',
+                    'สถานที่เก็บ': (s.form_type === 'MU.10-006' ? (s['location_' + idx] || s.location_name) : s.location_name) || '-',
                     'ตำบล': addr.tambon,
-                    'อำเภอ': addr.amphoe,
+                    'อำเภอ': (s.form_type === 'MU.10-006' ? (s['amphoe_' + idx] || addr.amphoe) : addr.amphoe) || '-',
                     'จังหวัด': addr.province,
                     'ชื่อผู้เก็บตัวอย่าง': collectorName,
                     'ตำแหน่งผู้เก็บตัวอย่าง': collectorPos,
