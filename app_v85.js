@@ -7768,9 +7768,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
                     <td>${getRoleBadge(u.role)}</td>
                     <td><span class="badge" style="background-color: #f59e0b; color: white;">รออนุมัติ</span></td>
-                    <td>
-                        <button class="btn btn-success" style="padding: 5px 12px; font-size: 12px; margin-right: 5px; border-radius: 6px;" onclick="app.approveUser('${u.username}')"><i class="fa-solid fa-check"></i> อนุมัติ</button>
-                        <button class="btn btn-danger" style="padding: 5px 12px; font-size: 12px; border-radius: 6px;" onclick="app.rejectUser('${u.username}')"><i class="fa-solid fa-xmark"></i> ปฏิเสธ</button>
+                    <td style="white-space: nowrap;">
+                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 5px; border-radius: 6px;" onclick="app.viewUserDetails('${u.username}')"><i class="fa-solid fa-circle-info"></i> ตรวจสอบข้อมูล</button>
+                        <button class="btn btn-success" style="padding: 5px 10px; font-size: 12px; margin-right: 5px; border-radius: 6px;" onclick="app.approveUser('${u.username}')"><i class="fa-solid fa-check"></i> อนุมัติ</button>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; border-radius: 6px;" onclick="app.rejectUser('${u.username}')"><i class="fa-solid fa-xmark"></i> ปฏิเสธ</button>
                     </td>
                 </tr>
             `).join('');
@@ -7798,12 +7799,18 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         
         const getRoleName = (role) => {
             switch (role) {
-                case 'admin': return 'ผู้ดูแลระบบ (Admin)';
-                case 'lab': return 'เจ้าหน้าที่ห้องปฏิบัติการ (Lab)';
-                case 'certifier': return 'ผู้รับรองผลตรวจวิเคราะห์ (Certifier)';
-                case 'collector': return 'ผู้เก็บตัวอย่าง / ผู้ส่งตรวจ';
+                case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องปฏิบัติการ (Lab)</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองผลตรวจวิเคราะห์ (Certifier)</span>';
+                case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง / ผู้ส่งตรวจ</span>';
                 default: return role || '-';
             }
+        };
+
+        const getStatusBadge = (status) => {
+            if (status === 'approved') return '<span class="badge" style="background-color: #10b981; color: white;">ใช้งานได้ (อนุมัติแล้ว)</span>';
+            if (status === 'pending') return '<span class="badge" style="background-color: #f59e0b; color: white;">รอการตรวจสอบอนุมัติ</span>';
+            return `<span class="badge" style="background-color: #64748b; color: white;">${status || '-'}</span>`;
         };
 
         const content = document.getElementById('user-details-content');
@@ -7811,15 +7818,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             content.innerHTML = `
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; width: 40%; color: #64748b;">ชื่อ-นามสกุล:</td>
-                    <td style="padding: 10px;">${user.fullname || '-'}</td>
+                    <td style="padding: 10px;"><strong style="font-size: 15px; color: #0f172a;">${user.fullname || '-'}</strong></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">Username:</td>
-                    <td style="padding: 10px;"><code>${user.username || '-'}</code></td>
+                    <td style="padding: 10px;"><code style="font-size: 13.5px;">${user.username || '-'}</code></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">เลขบัตรประชาชน (CID):</td>
-                    <td style="padding: 10px;">${user.cid || '-'}</td>
+                    <td style="padding: 10px; font-family: monospace; font-weight: 600; color: #1e293b;">${user.cid || '-'}</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">วัน/เดือน/ปีเกิด:</td>
@@ -7831,21 +7838,48 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">สถานที่ปฏิบัติงาน:</td>
-                    <td style="padding: 10px;">${user.workplace || '-'}</td>
+                    <td style="padding: 10px;"><strong>${user.workplace || '-'}</strong></td>
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">ที่อยู่ (จังหวัด/อำเภอ/ตำบล):</td>
-                    <td style="padding: 10px;">${user.province || '-'} / ${user.district || '-'} / ${user.subdistrict || '-'}</td>
+                    <td style="padding: 10px;">${[user.subdistrict ? 'ต.' + user.subdistrict : '', user.district ? 'อ.' + user.district : '', user.province ? 'จ.' + user.province : ''].filter(Boolean).join(' ') || (user.province || '-')}</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">ประเภทบัญชี/บทบาท:</td>
                     <td style="padding: 10px;">${getRoleName(user.role)}</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; font-weight: bold; color: #64748b;">สถานะบัญชี:</td>
+                    <td style="padding: 10px;">${getStatusBadge(user.status)}</td>
                 </tr>
                 <tr>
                     <td style="padding: 10px; font-weight: bold; color: #64748b;">วันที่สมัคร:</td>
                     <td style="padding: 10px;">${user.createdAt ? new Date(user.createdAt).toLocaleString('th-TH') : '-'}</td>
                 </tr>
             `;
+        }
+
+        const actionsEl = document.getElementById('user-details-actions');
+        if (actionsEl) {
+            if (user.status === 'pending') {
+                actionsEl.innerHTML = `
+                    <button type="button" class="btn btn-success" style="padding: 8px 18px; margin-right: 8px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.approveUser('${user.username}')">
+                        <i class="fa-solid fa-check"></i> อนุมัติบัญชีนี้
+                    </button>
+                    <button type="button" class="btn btn-danger" style="padding: 8px 18px; margin-right: 8px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.rejectUser('${user.username}')">
+                        <i class="fa-solid fa-xmark"></i> ปฏิเสธ
+                    </button>
+                    <button type="button" class="btn btn-secondary" style="padding: 8px 18px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
+                        ปิด
+                    </button>
+                `;
+            } else {
+                actionsEl.innerHTML = `
+                    <button type="button" class="btn btn-secondary" style="padding: 8px 20px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
+                        ปิด
+                    </button>
+                `;
+            }
         }
         
         const modal = document.getElementById('userDetailsModal');
@@ -7906,57 +7940,126 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
 
     approveUser(username) {
+        const user = (this.users || []).find(u => u && u.username === username);
+        if (!user) {
+            Swal.fire('ข้อผิดพลาด', 'ไม่พบข้อมูลผู้ใช้งานนี้ในระบบ', 'error');
+            return;
+        }
+
+        const getRoleBadge = (role) => {
+            switch (role) {
+                case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องแลป (Lab)</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองผล (Certifier)</span>';
+                case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
+                default: return role || '-';
+            }
+        };
+
+        const regDate = user.createdAt 
+            ? new Date(user.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            : '-';
+
+        const addressStr = [user.subdistrict ? 'ต.' + user.subdistrict : '', user.district ? 'อ.' + user.district : '', user.province ? 'จ.' + user.province : ''].filter(Boolean).join(' ') || (user.province || '-');
+
+        const htmlContent = `
+            <div style="text-align: left; font-size: 13.5px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 12px 0 6px 0; color: #334155; line-height: 1.6;">
+                <div style="margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                    <div style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;">ชื่อ-นามสกุลผู้สมัคร</div>
+                    <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-top: 2px;">
+                        ${user.fullname || '-'} <small style="font-weight: 500; color: #64748b;">(@${user.username})</small>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+                    <div>
+                        <div style="font-size: 11px; font-weight: 600; color: #64748b;">เลขบัตรประชาชน (CID)</div>
+                        <div style="font-weight: 600; color: #1e293b; font-family: monospace;">${user.cid || '-'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 600; color: #64748b;">วัน/เดือน/ปีเกิด</div>
+                        <div style="font-weight: 500; color: #1e293b;">${user.birthdate || '-'}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+                    <div>
+                        <div style="font-size: 11px; font-weight: 600; color: #64748b;">ตำแหน่ง</div>
+                        <div style="font-weight: 500; color: #1e293b;">${user.position || '-'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 600; color: #64748b;">บทบาทที่ขอสิทธิ์</div>
+                        <div>${getRoleBadge(user.role)}</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <div style="font-size: 11px; font-weight: 600; color: #64748b;">สถานที่ปฏิบัติงาน / ที่อยู่</div>
+                    <div style="font-weight: 600; color: #1e293b;">${user.workplace || '-'}</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${addressStr}</div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; font-weight: 600; color: #64748b;">วันที่ลงทะเบียน</div>
+                    <div style="font-size: 12px; color: #475569;">${regDate}</div>
+                </div>
+            </div>
+            <div style="font-size: 13px; color: #0284c7; margin-top: 10px; font-weight: 600; text-align: center;">
+                <i class="fa-solid fa-shield-halved"></i> ตรวจสอบข้อมูลผู้สมัครเรียบร้อยแล้ว ยืนยันการอนุมัติ?
+            </div>
+        `;
+
         Swal.fire({
-            title: 'ยืนยันการอนุมัติ?',
-            text: `คุณต้องการอนุมัติบัญชี ${username} ใช่หรือไม่`,
-            icon: 'question',
+            title: 'ตรวจสอบและยืนยันการอนุมัติ',
+            html: htmlContent,
+            icon: 'info',
             showCancelButton: true,
-            confirmButtonText: 'ยืนยันอนุมัติ',
-            cancelButtonText: 'ยกเลิก'
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="fa-solid fa-check"></i> ยืนยันอนุมัติ',
+            cancelButtonText: 'ยกเลิก',
+            width: '560px',
+            focusCancel: false
         }).then((result) => {
             if (result.isConfirmed) {
-                const user = (this.users || []).find(u => u && u.username === username);
-                if (user) {
-                    user.status = 'approved';
-                    if (typeof db !== 'undefined' && user.uid) {
-                        db.ref('users/' + user.uid).update({ status: 'approved' }).then(() => {
-                            this.renderManageUsers();
-                            this.updateBadges();
-                            Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
-                        }).catch(err => {
-                            Swal.fire('ข้อผิดพลาด', err.message, 'error');
-                        });
-                    } else if (typeof db !== 'undefined') {
-                        db.ref('users').once('value', (snap) => {
-                            const all = snap.val() || {};
-                            for (const key in all) {
-                                if (all[key].username === username) {
-                                    db.ref('users/' + key).update({ status: 'approved' });
-                                    break;
-                                }
+                user.status = 'approved';
+                if (typeof db !== 'undefined' && user.uid) {
+                    db.ref('users/' + user.uid).update({ status: 'approved' }).then(() => {
+                        this.renderManageUsers();
+                        this.updateBadges();
+                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                    }).catch(err => {
+                        Swal.fire('ข้อผิดพลาด', err.message, 'error');
+                    });
+                } else if (typeof db !== 'undefined') {
+                    db.ref('users').once('value', (snap) => {
+                        const all = snap.val() || {};
+                        for (const key in all) {
+                            if (all[key].username === username) {
+                                db.ref('users/' + key).update({ status: 'approved' });
+                                break;
                             }
-                        });
-                        this.renderManageUsers();
-                        this.updateBadges();
-                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
-                    } else {
-                        this.renderManageUsers();
-                        this.updateBadges();
-                        Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
-                    }
+                        }
+                    });
+                    this.renderManageUsers();
+                    this.updateBadges();
+                    Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
+                } else {
+                    this.renderManageUsers();
+                    this.updateBadges();
+                    Swal.fire('สำเร็จ', 'อนุมัติบัญชีเรียบร้อยแล้ว', 'success');
                 }
             }
         });
     },
 
     rejectUser(username) {
+        const user = (this.users || []).find(u => u && u.username === username);
+        const displayName = user ? `${user.fullname || username} (${username})` : username;
         Swal.fire({
             title: 'ปฏิเสธและลบบัญชี?',
-            text: `คุณต้องการปฏิเสธและลบบัญชี ${username} ออกจากระบบใช่หรือไม่`,
+            html: `<p style="font-size:14px; color:#475569;">คุณต้องการปฏิเสธและลบบัญชี <strong>${displayName}</strong> ออกจากระบบใช่หรือไม่?</p>`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'ยืนยันการลบ',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="fa-solid fa-trash"></i> ยืนยันการปฏิเสธ',
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -7985,7 +8088,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     this.updateBadges();
                     Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
                 } else {
-                    this.users = (this.users || []).filter(u => u.username !== username);
+                    this.users = this.users.filter(u => u.username !== username);
                     this.renderManageUsers();
                     this.updateBadges();
                     Swal.fire('สำเร็จ', 'ลบบัญชีเรียบร้อยแล้ว', 'success');
