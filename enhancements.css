@@ -2066,16 +2066,73 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   border-radius: 22px !important;
 }
 
+.timeline-container {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 10px 20px !important;
+}
+
+.timeline-step {
+  display: flex !important;
+  gap: 20px !important;
+  position: relative !important;
+}
+
+.step-indicator {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 44px !important;
+  flex-shrink: 0 !important;
+}
+
 .timeline-step .step-icon {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
   background: #0a1834 !important;
   border: 2px solid rgba(255, 255, 255, 0.15) !important;
   color: #94a3b8 !important;
+  z-index: 2 !important;
+  flex-shrink: 0 !important;
 }
+
 .timeline-step.completed .step-icon {
   background: linear-gradient(135deg, #1d4ed8, #38bdf8) !important;
   border-color: #38bdf8 !important;
   color: #ffffff !important;
   box-shadow: 0 0 15px rgba(56, 189, 248, 0.45) !important;
+}
+
+.timeline-step.current .step-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  border-color: #f59e0b !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.5) !important;
+}
+
+.timeline-line {
+  width: 3px !important;
+  flex: 1 !important;
+  min-height: 48px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  margin: 0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.timeline-line.active {
+  background: linear-gradient(180deg, #0ea5e9 0%, #38bdf8 100%) !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5) !important;
+}
+
+.step-content {
+  flex: 1 !important;
+  padding-bottom: 28px !important;
 }
 
 /* 16. Login & Register Mode - Conceptzilla AI Agent Website Design Aesthetic */

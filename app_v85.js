@@ -7720,9 +7720,14 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             if(!el) return;
             const icon = el.querySelector('.step-icon');
             const h5 = el.querySelector('.step-content h5');
+            const line = el.querySelector('.timeline-line');
             
             if(icon) icon.style = '';
             if(h5) h5.style = '';
+            if(line) {
+                line.style = '';
+                line.classList.remove('active');
+            }
             
             if (index < currentStepIndex) {
                 el.classList.add('completed');
@@ -7732,9 +7737,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     icon.style.setProperty('box-shadow', '0 0 0 4px rgba(14, 165, 233, 0.25)', 'important');
                 }
                 if(h5) h5.style.setProperty('color', '#0ea5e9', 'important');
-                if (index < steps.length - 1) {
-                    const line = document.querySelectorAll('.timeline-line')[index];
-                    if(line) line.classList.add('active');
+                if(line) {
+                    line.classList.add('active');
+                    line.style.setProperty('background', 'linear-gradient(180deg, #0ea5e9 0%, #38bdf8 100%)', 'important');
+                    line.style.setProperty('box-shadow', '0 0 10px rgba(56, 189, 248, 0.5)', 'important');
                 }
             } else if (index === currentStepIndex) {
                 el.classList.add('current');
@@ -7744,6 +7750,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     icon.style.setProperty('box-shadow', '0 0 0 4px rgba(245, 158, 11, 0.3)', 'important');
                 }
                 if(h5) h5.style.setProperty('color', '#f59e0b', 'important');
+                if(line) {
+                    line.style.setProperty('background', 'rgba(255, 255, 255, 0.2)', 'important');
+                    line.style.setProperty('box-shadow', 'none', 'important');
+                }
             } else {
                 if(icon) {
                     icon.style.setProperty('background-color', '#e2e8f0', 'important');
@@ -7751,6 +7761,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     icon.style.setProperty('box-shadow', 'none', 'important');
                 }
                 if(h5) h5.style.setProperty('color', '#475569', 'important');
+                if(line) {
+                    line.style.setProperty('background', 'rgba(255, 255, 255, 0.15)', 'important');
+                    line.style.setProperty('box-shadow', 'none', 'important');
+                }
             }
         });
 
