@@ -670,27 +670,48 @@ const app = {
                         this.renderSavedRecords();
                     }
                     break;
-                case 'lab-verify':
+                case 'lab-verify': {
+                    const vAuth = document.getElementById('verify-auth-block');
+                    const vContent = document.getElementById('verify-content-wrapper');
                     if (!this.currentUser || !['lab', 'admin', 'certifier'].includes(this.currentUser.role)) {
+                        if (vAuth) vAuth.classList.remove('hidden');
+                        if (vContent) vContent.classList.add('hidden');
                         this.switchView('dashboard');
                         return;
                     }
+                    if (vAuth) vAuth.classList.add('hidden');
+                    if (vContent) vContent.classList.remove('hidden');
                     this.renderVerifyTable();
                     break;
-                case 'lab-analysis':
+                }
+                case 'lab-analysis': {
+                    const aAuth = document.getElementById('analysis-auth-block');
+                    const aContent = document.getElementById('analysis-content-wrapper');
                     if (!this.currentUser || !['lab', 'admin', 'certifier'].includes(this.currentUser.role)) {
+                        if (aAuth) aAuth.classList.remove('hidden');
+                        if (aContent) aContent.classList.add('hidden');
                         this.switchView('dashboard');
                         return;
                     }
+                    if (aAuth) aAuth.classList.add('hidden');
+                    if (aContent) aContent.classList.remove('hidden');
                     this.renderAnalysisTable();
                     break;
-                case 'lab-certify':
+                }
+                case 'lab-certify': {
+                    const cAuth = document.getElementById('certify-auth-block');
+                    const cContent = document.getElementById('certify-content-wrapper');
                     if (!this.currentUser || !['lab', 'admin', 'certifier'].includes(this.currentUser.role)) {
+                        if (cAuth) cAuth.classList.remove('hidden');
+                        if (cContent) cContent.classList.add('hidden');
                         this.switchView('dashboard');
                         return;
                     }
+                    if (cAuth) cAuth.classList.add('hidden');
+                    if (cContent) cContent.classList.remove('hidden');
                     this.renderCertifyTable();
                     break;
+                }
                 case 'download-results':
                     this.renderDownloadTable();
                     break;
@@ -869,7 +890,7 @@ const app = {
                 'record-notification-badge': (this.unreadRecordsCount > 0) ? this.unreadRecordsCount : 0,
                 'verify-notification-badge': visible.filter(s => s.status === 'registered').length,
                 'analysis-notification-badge': visible.filter(s => s.status === 'accepted').length,
-                'certify-notification-badge': visible.filter(s => s.status === 'analyzing' || s.status === 'summarized').length,
+                'certify-notification-badge': visible.filter(s => s.status === 'analyzing' || s.status === 'summarized' || s.status === 'analyst_signed').length,
                 'user-approval-badge': (this.users || []).filter(u => u.status === 'pending').length
             };
 
@@ -2635,10 +2656,13 @@ document.getElementById('formNameTitle').innerText = title;
     // Lab Verify Logic
     renderVerifyTable() {
         const tbody = document.getElementById('verifyTableBody');
-        const searchTerm = document.getElementById('searchVerifyTable').value.toLowerCase();
+        if (!tbody) return;
+        const searchInput = document.getElementById('searchVerifyTable');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         
-        // Show only 'registered' status
-        const pendingSamples = this.samples.filter(s => s.status === 'registered');
+        // Show only 'registered' status from visible samples
+        const samplesList = (typeof this.getVisibleSamples === 'function' ? this.getVisibleSamples() : this.samples) || [];
+        const pendingSamples = samplesList.filter(s => s.status === 'registered');
         
         tbody.innerHTML = '';
         
@@ -2978,10 +3002,13 @@ document.getElementById('formNameTitle').innerText = title;
     // Lab Analysis Logic
     renderAnalysisTable() {
         const tbody = document.getElementById('analysisTableBody');
-        const searchTerm = document.getElementById('searchAnalysisTable').value.toLowerCase();
+        if (!tbody) return;
+        const searchInput = document.getElementById('searchAnalysisTable');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         
-        // Show accepted or summarized
-        const activeSamples = this.samples.filter(s => ['accepted', 'summarized'].includes(s.status));
+        // Show accepted or summarized from visible samples
+        const samplesList = (typeof this.getVisibleSamples === 'function' ? this.getVisibleSamples() : this.samples) || [];
+        const activeSamples = samplesList.filter(s => ['accepted', 'summarized'].includes(s.status));
         
         tbody.innerHTML = '';
         
@@ -4630,9 +4657,12 @@ document.getElementById('formNameTitle').innerText = title;
     renderCertifyTable() {
         this.updateProvEmailButtonVisibility();
         const tbody = document.getElementById('certifyTableBody');
-        const searchTerm = document.getElementById('searchCertifyTable').value.toLowerCase();
+        if (!tbody) return;
+        const searchInput = document.getElementById('searchCertifyTable');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         
-        const reportSamples = this.samples.filter(s => s.status === 'summarized' || s.status === 'analyst_signed');
+        const samplesList = (typeof this.getVisibleSamples === 'function' ? this.getVisibleSamples() : this.samples) || [];
+        const reportSamples = samplesList.filter(s => s.status === 'summarized' || s.status === 'analyst_signed' || s.status === 'analyzing');
         
         tbody.innerHTML = '';
         
