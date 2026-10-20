@@ -1567,16 +1567,57 @@ body {
 
 /* Secondary & Outline Buttons */
 .btn-secondary, .btn-cancel, .btn-outline, .btn-default {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: none !important;
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  font-weight: 600 !important;
 }
 .btn-secondary:hover, .btn-cancel:hover, .btn-outline:hover {
-  background: rgba(56, 189, 248, 0.16) !important;
-  border-color: #38bdf8 !important;
-  color: #38bdf8 !important;
-  transform: translateY(-2px) !important;
+  background: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Secondary Buttons inside white modal cards */
+.modal-card .btn-secondary, 
+.modal-card .btn-cancel, 
+.modal-card .btn-outline, 
+.modal-card .btn-default,
+.modal-body .btn-secondary,
+.modal-body .btn-cancel,
+.modal-body .btn-outline,
+.modal-body .btn-default,
+.form-actions .btn-secondary {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.modal-card .btn-secondary i, 
+.modal-card .btn-cancel i, 
+.modal-body .btn-secondary i,
+.form-actions .btn-secondary i {
+  color: #64748b !important;
+}
+
+.modal-card .btn-secondary:hover, 
+.modal-card .btn-cancel:hover, 
+.modal-card .btn-outline:hover, 
+.modal-card .btn-default:hover,
+.modal-body .btn-secondary:hover,
+.modal-body .btn-cancel:hover,
+.modal-body .btn-outline:hover,
+.modal-body .btn-default:hover,
+.form-actions .btn-secondary:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
 }
 
 /* Danger / Reject Buttons */

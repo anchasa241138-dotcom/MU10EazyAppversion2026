@@ -16,7 +16,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v3.css?v=1792473600000">
+    <link rel="stylesheet" href="style_v3.css?v=1792477900000">
     <link rel="stylesheet" href="fonts.css?v=1791732670733">
 
     <style>
@@ -422,7 +422,73 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792399216265">
+    <link rel="stylesheet" href="enhancements.css?v=1792477900000">
+    <style>
+        /* Global Modal Cancel / Secondary Button visibility guarantee */
+        .modal-card .btn-secondary,
+        .modal-body .btn-secondary,
+        .modal-card .btn-cancel,
+        .modal-body .btn-cancel,
+        .modal-card .btn-default,
+        .modal-body .btn-default,
+        .modal-card .btn-outline,
+        .modal-body .btn-outline,
+        #analysisInputModal .btn-secondary,
+        #verifyAcceptModal .btn-secondary,
+        #verifyRejectModal .btn-secondary,
+        #certifyModal .btn-secondary {
+            background: #f1f5f9 !important;
+            background-color: #f1f5f9 !important;
+            color: #334155 !important;
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            cursor: pointer !important;
+        }
+
+        .modal-card .btn-secondary i,
+        .modal-body .btn-secondary i,
+        .modal-card .btn-cancel i,
+        .modal-body .btn-cancel i,
+        #analysisInputModal .btn-secondary i,
+        #verifyAcceptModal .btn-secondary i,
+        #verifyRejectModal .btn-secondary i,
+        #certifyModal .btn-secondary i {
+            color: #64748b !important;
+        }
+
+        .modal-card .btn-secondary:hover,
+        .modal-body .btn-secondary:hover,
+        .modal-card .btn-cancel:hover,
+        .modal-body .btn-cancel:hover,
+        .modal-card .btn-default:hover,
+        .modal-body .btn-default:hover,
+        .modal-card .btn-outline:hover,
+        .modal-body .btn-outline:hover,
+        #analysisInputModal .btn-secondary:hover,
+        #verifyAcceptModal .btn-secondary:hover,
+        #verifyRejectModal .btn-secondary:hover,
+        #certifyModal .btn-secondary:hover {
+            background: #e2e8f0 !important;
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+            border-color: #94a3b8 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(148, 163, 184, 0.25) !important;
+        }
+
+        .modal-card .btn-secondary:hover i,
+        .modal-body .btn-secondary:hover i,
+        #analysisInputModal .btn-secondary:hover i,
+        #verifyAcceptModal .btn-secondary:hover i,
+        #verifyRejectModal .btn-secondary:hover i,
+        #certifyModal .btn-secondary:hover i {
+            color: #0f172a !important;
+        }
+    </style>
 </head>
 <body>
     <!-- App Container -->
@@ -1675,7 +1741,7 @@
                     </tbody>
                 </table>
                 <div class="form-actions margin-top text-center" id="user-details-actions" style="margin-top: 20px;">
-                    <button type="button" class="btn btn-secondary" onclick="app.closeUserDetailsModal()">ปิด</button>
+                    <button type="button" class="btn btn-secondary" onclick="app.closeUserDetailsModal()" style="background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #334155 !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; font-weight: 600 !important; padding: 8px 22px !important; cursor: pointer !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important; visibility: visible !important; opacity: 1 !important;">ปิด</button>
                 </div>
             </div>
         </div>
@@ -1715,7 +1781,7 @@
                     </div>
                     <div class="form-actions margin-top">
                         <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> ยืนยันรับตัวอย่างเข้าระบบ</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyAcceptModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyAcceptModal()" style="background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #334155 !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; font-weight: 600 !important; padding: 10px 22px !important; display: inline-flex !important; align-items: center !important; gap: 8px !important; cursor: pointer !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important; visibility: visible !important; opacity: 1 !important;"><i class="fa-solid fa-xmark" style="color: #64748b !important;"></i> ยกเลิก</button>
                     </div>
                 </form>
             </div>
@@ -1753,7 +1819,7 @@
                     </div>
                     <div class="form-actions margin-top">
                         <button type="submit" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> ยืนยันการปฏิเสธการรับ</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyRejectModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeVerifyRejectModal()" style="background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #334155 !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; font-weight: 600 !important; padding: 10px 22px !important; display: inline-flex !important; align-items: center !important; gap: 8px !important; cursor: pointer !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important; visibility: visible !important; opacity: 1 !important;"><i class="fa-solid fa-xmark" style="color: #64748b !important;"></i> ยกเลิก</button>
                     </div>
                 </form>
             </div>
@@ -1832,7 +1898,7 @@
 
                     <div class="form-actions margin-top">
                         <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> บันทึกผลวิเคราะห์</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeAnalysisInputModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeAnalysisInputModal()" style="background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #334155 !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; font-weight: 600 !important; padding: 10px 22px !important; display: inline-flex !important; align-items: center !important; gap: 8px !important; cursor: pointer !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important; visibility: visible !important; opacity: 1 !important;"><i class="fa-solid fa-xmark" style="color: #64748b !important;"></i> ยกเลิก</button>
                     </div>
                 </form>
             </div>
@@ -1952,7 +2018,7 @@
                     <div id="modal-status-text" style="margin-top: 15px; margin-bottom: 15px; text-align: center; font-size: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;"></div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-success" id="btnApproveAndSign" ><i class="fa-solid fa-stamp"></i> อนุมัติรายงานและลงนามอิเล็กทรอนิกส์</button>
-                        <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()"><i class="fa-solid fa-xmark"></i> ยกเลิก</button>
+                        <button type="button" class="btn btn-secondary" onclick="app.closeCertifyModal()" style="background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #334155 !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; font-weight: 600 !important; padding: 10px 22px !important; display: inline-flex !important; align-items: center !important; gap: 8px !important; cursor: pointer !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important; visibility: visible !important; opacity: 1 !important;"><i class="fa-solid fa-xmark" style="color: #64748b !important;"></i> ยกเลิก</button>
                     </div>
                 </div>
 
@@ -2012,7 +2078,7 @@
                     </table>
                 </div>
                 <div style="text-align:center; margin-top:15px;">
-                    <button class="btn btn-secondary" onclick="closeFailedSamplesModal()">ปิดหน้าต่าง</button>
+                    <button class="btn btn-secondary" onclick="closeFailedSamplesModal()" style="background: #f1f5f9 !important; background-color: #f1f5f9 !important; color: #334155 !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; font-weight: 600 !important; padding: 8px 22px !important; cursor: pointer !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important; visibility: visible !important; opacity: 1 !important;">ปิดหน้าต่าง</button>
                 </div>
             </div>
         </div>
@@ -2167,6 +2233,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792473600000"></script>
+    <script src="app_v85.js?v=1792477900000"></script>
 </body>
 </html>
