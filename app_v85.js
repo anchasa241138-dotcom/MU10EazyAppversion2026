@@ -3949,18 +3949,18 @@ document.getElementById('formNameTitle').innerText = title;
                     <table style="width:100%; border-collapse:collapse; font-size:12px; min-width:850px;" border="1">
                         <thead>
                             <tr style="text-align:center; font-weight:bold;">
-                                <th rowspan="2" style="padding:6px; border:1px solid #cbd5e1; width:40px; background:#f8fafc;">ที่</th>
-                                <th rowspan="2" style="padding:6px; border:1px solid #cbd5e1; width:160px; background:#f8fafc;">ชื่อสถานที่</th>
-                                <th colspan="2" style="padding:6px; border:1px solid #cbd5e1; background:#f1f5f9; color:#1e293b;">วิเคราะห์ทางจุลชีววิทยา</th>
-                                <th colspan="4" style="padding:6px; border:1px solid #cbd5e1; background:#dcfce7; color:#14532d;">วิเคราะห์ทางเคมี</th>
-                                <th colspan="2" style="padding:6px; border:1px solid #cbd5e1; background:#fef9c3; color:#713f12;">วิเคราะห์ทางกายภาพ</th>
+                                <th rowspan="2" style="padding:6px; border:1px solid #cbd5e1; width:40px; background:#e2e8f0; color:#0f172a;">ที่</th>
+                                <th rowspan="2" style="padding:6px; border:1px solid #cbd5e1; width:160px; background:#e2e8f0; color:#0f172a;">ชื่อสถานที่</th>
+                                <th colspan="2" style="padding:6px; border:1px solid #cbd5e1; background:#e2e8f0; color:#0f172a;">วิเคราะห์ทางจุลชีววิทยา</th>
+                                <th colspan="4" style="padding:6px; border:1px solid #cbd5e1; background:#e2e8f0; color:#0f172a;">วิเคราะห์ทางเคมี</th>
+                                <th colspan="2" style="padding:6px; border:1px solid #cbd5e1; background:#e2e8f0; color:#0f172a;">วิเคราะห์ทางกายภาพ</th>
                             </tr>
                             <tr style="text-align:center; font-weight:bold; font-size:11.5px;">
-                                <th style="padding:4px; border:1px solid #cbd5e1; background:#f1f5f9;">Coliform<br><span style="font-size:10px; font-weight:normal;">(ต้องไม่พบ)</span></th>
-                                <th style="padding:4px; border:1px solid #cbd5e1; background:#f1f5f9; width:80px;">สรุปผล</th>
-                                <th colspan="2" style="padding:4px; border:1px solid #cbd5e1; background:#dcfce7;">TDS (≤ 50 มก./ล.)<br><span style="font-size:10px; font-weight:normal;">ค่าตรวจพบ / สรุปผล</span></th>
-                                <th colspan="2" style="padding:4px; border:1px solid #cbd5e1; background:#dcfce7;">Hardness (≤ 100 มก./ล.)<br><span style="font-size:10px; font-weight:normal;">ค่าตรวจพบ / สรุปผล</span></th>
-                                <th colspan="2" style="padding:4px; border:1px solid #cbd5e1; background:#fef9c3;">pH (6.5-8.5)<br><span style="font-size:10px; font-weight:normal;">ค่าตรวจพบ / สรุปผล</span></th>
+                                <th style="padding:4px; border:1px solid #cbd5e1; background:#f1f5f9; color:#0f172a;">Coliform<br><span style="font-size:10px; font-weight:normal;">(ต้องไม่พบ)</span></th>
+                                <th style="padding:4px; border:1px solid #cbd5e1; background:#f1f5f9; color:#0f172a; width:80px;">สรุปผล</th>
+                                <th colspan="2" style="padding:4px; border:1px solid #cbd5e1; background:#f1f5f9; color:#0f172a;">TDS (≤ 50 มก./ล.)<br><span style="font-size:10px; font-weight:normal;">ค่าตรวจพบ / สรุปผล</span></th>
+                                <th colspan="2" style="padding:4px; border:1px solid #cbd5e1; background:#f1f5f9; color:#0f172a;">Hardness (≤ 100 มก./ล.)<br><span style="font-size:10px; font-weight:normal;">ค่าตรวจพบ / สรุปผล</span></th>
+                                <th colspan="2" style="padding:4px; border:1px solid #cbd5e1; background:#f1f5f9; color:#0f172a;">pH (6.5-8.5)<br><span style="font-size:10px; font-weight:normal;">ค่าตรวจพบ / สรุปผล</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -5742,8 +5742,8 @@ document.getElementById('formNameTitle').innerText = title;
                       
                       <!-- RD-006 & Page No -->
                       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                          <div style="font-size: 14.5px; font-weight: bold;">RD-006</div>
-                          ${totalPages > 1 ? `<div style="font-size: 13.5px; color: #334155;">หน้าที่ ${page + 1}/${totalPages}</div>` : ''}
+                          <div style="font-size: 12.5px; color: #1e293b;">RD-006</div>
+                          ${totalPages > 1 ? `<div style="font-size: 12.5px; color: #1e293b;">หน้าที่ ${page + 1}/${totalPages}</div>` : ''}
                       </div>
 
                       <!-- Title -->
@@ -5782,27 +5782,27 @@ document.getElementById('formNameTitle').innerText = title;
                               <col style="width: 9%;">
                           </colgroup>
                           <thead>
-                              <tr style="background: #fff; font-weight: bold; height: 25px;">
-                                  <th rowspan="3" style="border: 1px solid #333; width: 4%; padding: 2px 1px; font-size: 11.5px; vertical-align: middle; box-sizing: border-box;">ที่</th>
-                                  <th rowspan="3" style="border: 1px solid #333; width: 21%; padding: 2px 6px; font-size: 11.5px; word-break: break-word; vertical-align: middle; box-sizing: border-box;">ชื่อสถานที่</th>
-                                  <th colspan="2" style="border: 1px solid #333; width: 16%; padding: 2px 1px; font-size: 11.5px; background: #e2e8f0; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางจุลชีววิทยา</th>
-                                  <th colspan="4" style="border: 1px solid #333; width: 40.5%; padding: 2px 1px; font-size: 11.5px; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางเคมี</th>
-                                  <th colspan="2" style="border: 1px solid #333; width: 18.5%; padding: 2px 1px; font-size: 11.5px; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางกายภาพ</th>
+                              <tr style="font-weight: bold; height: 25px;">
+                                  <th rowspan="3" style="border: 1px solid #333; width: 4%; padding: 2px 1px; font-size: 11.5px; background: #e2e8f0; color: #000; vertical-align: middle; box-sizing: border-box;">ที่</th>
+                                  <th rowspan="3" style="border: 1px solid #333; width: 21%; padding: 2px 6px; font-size: 11.5px; background: #e2e8f0; color: #000; word-break: break-word; vertical-align: middle; box-sizing: border-box;">ชื่อสถานที่</th>
+                                  <th colspan="2" style="border: 1px solid #333; width: 16%; padding: 2px 1px; font-size: 11.5px; background: #e2e8f0; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางจุลชีววิทยา</th>
+                                  <th colspan="4" style="border: 1px solid #333; width: 40.5%; padding: 2px 1px; font-size: 11.5px; background: #e2e8f0; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางเคมี</th>
+                                  <th colspan="2" style="border: 1px solid #333; width: 18.5%; padding: 2px 1px; font-size: 11.5px; background: #e2e8f0; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางกายภาพ</th>
                               </tr>
                               <tr style="font-weight: bold; height: 23px;">
-                                  <th rowspan="2" style="border: 1px solid #333; width: 7.5%; padding: 2px 1px; font-size: 10.5px; white-space: nowrap; line-height: 1.15; background: #e2e8f0; vertical-align: middle; box-sizing: border-box;">Coliform<br><span style="font-size: 9px; font-weight: normal;">(ต้องไม่พบ)</span></th>
-                                  <th rowspan="2" style="border: 1px solid #333; width: 8.5%; padding: 2px 1px; font-size: 11px; background: #e2e8f0; vertical-align: middle; box-sizing: border-box;">สรุปผล</th>
-                                  <th colspan="2" style="border: 1px solid #333; width: 22%; padding: 2px 1px; background: #5c9c3e; color: #fff; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">TDS ( ≤50 มก./ล.)</th>
-                                  <th colspan="2" style="border: 1px solid #333; width: 18.5%; padding: 2px 1px; font-size: 10.5px; white-space: nowrap; background: #e2e8f0; vertical-align: middle; box-sizing: border-box;">Hardness (≤100 มก./ล.)</th>
-                                  <th colspan="2" style="border: 1px solid #333; width: 18.5%; padding: 2px 1px; background: #ffe699; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">pH (6.5-8.5)</th>
+                                  <th rowspan="2" style="border: 1px solid #333; width: 7.5%; padding: 2px 1px; font-size: 10.5px; white-space: nowrap; line-height: 1.15; background: #f1f5f9; color: #000; vertical-align: middle; box-sizing: border-box;">Coliform<br><span style="font-size: 9px; font-weight: normal;">(ต้องไม่พบ)</span></th>
+                                  <th rowspan="2" style="border: 1px solid #333; width: 8.5%; padding: 2px 1px; font-size: 11px; background: #f1f5f9; color: #000; vertical-align: middle; box-sizing: border-box;">สรุปผล</th>
+                                  <th colspan="2" style="border: 1px solid #333; width: 22%; padding: 2px 1px; background: #f1f5f9; color: #000; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">TDS ( ≤50 มก./ล.)</th>
+                                  <th colspan="2" style="border: 1px solid #333; width: 18.5%; padding: 2px 1px; font-size: 10.5px; white-space: nowrap; background: #f1f5f9; color: #000; vertical-align: middle; box-sizing: border-box;">Hardness (≤100 มก./ล.)</th>
+                                  <th colspan="2" style="border: 1px solid #333; width: 18.5%; padding: 2px 1px; background: #f1f5f9; color: #000; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">pH (6.5-8.5)</th>
                               </tr>
                               <tr style="font-weight: bold; font-size: 10px; height: 23px;">
-                                  <th style="border: 1px solid #333; width: 9.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #fff; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
-                                  <th style="border: 1px solid #333; width: 12.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #fff; box-sizing: border-box;">สรุปผล</th>
-                                  <th style="border: 1px solid #333; width: 9.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #fff; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
-                                  <th style="border: 1px solid #333; width: 9%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #fff; box-sizing: border-box;">สรุปผล</th>
-                                  <th style="border: 1px solid #333; width: 9.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #fff; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
-                                  <th style="border: 1px solid #333; width: 9%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #fff; box-sizing: border-box;">สรุปผล</th>
+                                  <th style="border: 1px solid #333; width: 9.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #f8fafc; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1px solid #333; width: 12.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #f8fafc; color: #000; box-sizing: border-box;">สรุปผล</th>
+                                  <th style="border: 1px solid #333; width: 9.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #f8fafc; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1px solid #333; width: 9%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #f8fafc; color: #000; box-sizing: border-box;">สรุปผล</th>
+                                  <th style="border: 1px solid #333; width: 9.5%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #f8fafc; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1px solid #333; width: 9%; padding: 2px 2px; font-size: 10px; white-space: nowrap; vertical-align: middle; background: #f8fafc; color: #000; box-sizing: border-box;">สรุปผล</th>
                               </tr>
                           </thead>
                           <tbody>
