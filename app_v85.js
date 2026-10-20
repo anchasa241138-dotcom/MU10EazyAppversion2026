@@ -8493,7 +8493,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         sampleName = loc || sName || s.location_name || ('จุดตรวจที่ ' + idx);
                     }
                 } else if (s.form_type === 'MU.10-007') {
-                    sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || s['sample_category_'+idx] || '-');
+                    const rawName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || s['sample_category_'+idx] || '-');
+                    const sDetail = isFallback ? (s.sample_detail || s['sample_detail_1'] || '') : (s['sample_detail_'+idx] || '');
+                    if (sDetail && sDetail !== '-' && rawName !== '-' && !rawName.includes(sDetail)) {
+                        sampleName = `${rawName} (${sDetail})`;
+                    } else {
+                        sampleName = rawName || sDetail || '-';
+                    }
                 } else if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
                     sampleName = isFallback ? (s.sample_name || s['sample_name_1'] || '-') : (s['sample_name_'+idx] || s['sample_name_1'] || s.sample_name || '-');
                 } else {
@@ -8523,6 +8529,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 let mu10003Details = null;
                 let mu10005Details = null;
                 let mu10004Details = null;
+                let mu10007Details = null;
 
                 if (s.form_type === 'MU.10-006') {
                     const cVal = (s['analysis_coliform_' + idx] !== undefined && s['analysis_coliform_' + idx] !== '') 
@@ -8667,12 +8674,53 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     }
                 } else if (s.form_type === 'MU.10-007') {
                     substances.push('เชื้อโคลิฟอร์ม');
-                    const clean = s['analysis_cleanliness_'+idx] || (!isFallback ? '' : s['analysis_cleanliness_1']);
-                    if (clean) interpretations.push('ระดับความสะอาด ' + clean);
-                    const det = s['sample_detail_'+idx] || (!isFallback ? '' : s['sample_detail_1']);
-                    if (det) details.push(det);
-                    const sum = s['analysis_summary_'+idx] || (!isFallback ? '' : s.analysis_summary);
-                    if (sum) summaries.push(sum);
+                    
+                    const rawClean = s['analysis_cleanliness_'+idx] || (!isFallback ? '' : s['analysis_cleanliness_1']) || '';
+                    const sum = s['analysis_summary_'+idx] || (!isFallback ? '' : s.analysis_summary) || '';
+                    
+                    let cleanSymbol = '-';
+                    if (rawClean === '+' || rawClean === 'ไม่สะอาด') {
+                        cleanSymbol = '+';
+                    } else if (rawClean === '-' || rawClean === 'สะอาดมาก' || rawClean === 'สะอาด' || rawClean === 'ปานกลาง') {
+                        cleanSymbol = '-';
+                    } else if (sum === 'ไม่ผ่าน') {
+                        cleanSymbol = '+';
+                    } else if (sum === 'ผ่าน') {
+                        cleanSymbol = '-';
+                    } else if (rawClean) {
+                        cleanSymbol = rawClean;
+                    }
+
+                    // 1. การแปลผล: แปลผลการปนเปื้อนเชื้อโคลิฟอร์ม
+                    let interp = '-';
+                    if (cleanSymbol === '+' || sum === 'ไม่ผ่าน') {
+                        interp = 'พบเชื้อโคลิฟอร์ม (ไม่สะอาด)';
+                    } else if (cleanSymbol === '-' || sum === 'ผ่าน') {
+                        interp = 'ไม่พบเชื้อโคลิฟอร์ม (สะอาด)';
+                    }
+                    if (interp !== '-') interpretations.push(interp);
+
+                    // 2. ผลการตรวจวิเคราะห์: แสดงระดับความสะอาดของตัวอย่าง (+ หรือ -)
+                    let testResult = '-';
+                    if (cleanSymbol === '+') {
+                        testResult = 'ระดับความสะอาด (+)';
+                    } else if (cleanSymbol === '-') {
+                        testResult = 'ระดับความสะอาด (-)';
+                    } else if (cleanSymbol && cleanSymbol !== '-') {
+                        testResult = `ระดับความสะอาด (${cleanSymbol})`;
+                    }
+                    if (testResult !== '-') details.push(testResult);
+
+                    // 3. สรุปผล: ผ่าน / ไม่ผ่าน
+                    const rowSum = sum || (cleanSymbol === '+' ? 'ไม่ผ่าน' : (cleanSymbol === '-' ? 'ผ่าน' : '-'));
+                    if (rowSum && rowSum !== '-') summaries.push(rowSum);
+
+                    const sCat = s['sample_category_'+idx] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร'));
+                    const sDet = isFallback ? (s.sample_detail || s['sample_detail_1'] || '-') : (s['sample_detail_'+idx] || '-');
+                    mu10007Details = {
+                        'ประเภทตัวอย่าง': sCat,
+                        'รายละเอียดเพิ่มเติม/ชื่อผู้สัมผัส': sDet
+                    };
                 } else {
                     const sub = s['analysis_substance_'+idx] || s.analysis_substance;
                     if (sub) substances.push(sub);
@@ -8774,6 +8822,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if (mu10003Details) Object.assign(row, mu10003Details);
                 if (mu10005Details) Object.assign(row, mu10005Details);
                 if (mu10004Details) Object.assign(row, mu10004Details);
+                if (mu10007Details) Object.assign(row, mu10007Details);
 
                 return row;
             };
