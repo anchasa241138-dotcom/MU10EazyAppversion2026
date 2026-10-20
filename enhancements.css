@@ -1501,6 +1501,7 @@ body {
   padding: 14px 16px !important;
   font-size: 13.5px !important;
   letter-spacing: 0.3px !important;
+  white-space: nowrap !important;
 }
 
 .data-table tbody tr,
@@ -1528,6 +1529,7 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
   color: #e2e8f0 !important;
   font-size: 13.5px !important;
+  vertical-align: middle !important;
 }
 
 /* Balanced Full-Width Layout for Application Data Tables (No blank right space) */
@@ -1540,12 +1542,12 @@ body {
 /* #analysisTable: ตรวจวิเคราะห์ตัวอย่าง */
 #analysisTable th:nth-child(1), #analysisTable td:nth-child(1) { width: 11% !important; text-align: center !important; white-space: nowrap !important; }
 #analysisTable th:nth-child(2), #analysisTable td:nth-child(2) { width: 9% !important; text-align: center !important; white-space: nowrap !important; }
-#analysisTable th:nth-child(3), #analysisTable td:nth-child(3) { width: 18% !important; text-align: left !important; word-break: break-word !important; }
-#analysisTable th:nth-child(4), #analysisTable td:nth-child(4) { width: 16% !important; text-align: left !important; }
-#analysisTable th:nth-child(5), #analysisTable td:nth-child(5) { width: 18% !important; text-align: left !important; }
+#analysisTable th:nth-child(3), #analysisTable td:nth-child(3) { width: 16% !important; text-align: left !important; word-break: break-word !important; }
+#analysisTable th:nth-child(4), #analysisTable td:nth-child(4) { width: 15% !important; text-align: left !important; }
+#analysisTable th:nth-child(5), #analysisTable td:nth-child(5) { width: 17% !important; text-align: left !important; }
 #analysisTable th:nth-child(6), #analysisTable td:nth-child(6) { width: 10% !important; text-align: center !important; white-space: nowrap !important; }
-#analysisTable th:nth-child(7), #analysisTable td:nth-child(7) { width: 9% !important; text-align: center !important; white-space: nowrap !important; }
-#analysisTable th:nth-child(8), #analysisTable td:nth-child(8) { width: 9% !important; text-align: center !important; white-space: nowrap !important; }
+#analysisTable th:nth-child(7), #analysisTable td:nth-child(7) { width: 10% !important; text-align: center !important; white-space: nowrap !important; }
+#analysisTable th:nth-child(8), #analysisTable td:nth-child(8) { width: 12% !important; text-align: center !important; white-space: nowrap !important; }
 
 /* #verifyTable: ตรวจสอบตัวอย่าง (แลป) */
 #verifyTable th:nth-child(1), #verifyTable td:nth-child(1) { width: 11% !important; text-align: center !important; white-space: nowrap !important; }
