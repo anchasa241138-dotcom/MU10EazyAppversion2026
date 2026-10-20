@@ -16,7 +16,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v3.css?v=1792482800000">
+    <link rel="stylesheet" href="style_v3.css?v=1792483100000">
     <link rel="stylesheet" href="fonts.css?v=1791732670733">
 
     <style>
@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792482800000">
+    <link rel="stylesheet" href="enhancements.css?v=1792483100000">
     <style>
         /* Unified Conceptzilla Pill Theme for Modal Cancel / Secondary Buttons */
         .modal-card .btn-secondary,
@@ -555,6 +555,15 @@
         .step-content {
             flex: 1 !important;
             padding-bottom: 28px !important;
+        }
+
+        /* Final Step - Remove bottom line */
+        .timeline-step:last-child .timeline-line,
+        #step-approved .timeline-line {
+            display: none !important;
+        }
+        .timeline-step:last-child .step-content {
+            padding-bottom: 0 !important;
         }
     </style>
 </head>
@@ -1399,11 +1408,10 @@
                                 </div>
                             </div>
 
-                            <!-- Step 6 -->
+                            <!-- Step 6 (Final Step - No line below) -->
                             <div class="timeline-step" id="step-approved">
                                 <div class="step-indicator">
                                     <div class="step-icon"><i class="fa-solid fa-stamp"></i></div>
-                                    <div class="timeline-line"></div>
                                 </div>
                                 <div class="step-content">
                                     <h5>อนุมัติและรับรองรายงานผลตรวจวิเคราะห์</h5>
@@ -2330,6 +2338,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792482800000"></script>
+    <script src="app_v85.js?v=1792483100000"></script>
 </body>
 </html>

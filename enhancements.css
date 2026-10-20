@@ -2136,6 +2136,15 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   padding-bottom: 28px !important;
 }
 
+/* Final Step - Remove bottom line */
+.timeline-step:last-child .timeline-line,
+#step-approved .timeline-line {
+  display: none !important;
+}
+.timeline-step:last-child .step-content {
+  padding-bottom: 0 !important;
+}
+
 /* 16. Login & Register Mode - Conceptzilla AI Agent Website Design Aesthetic */
 body.require-login-mode {
   background: #030712 !important;
