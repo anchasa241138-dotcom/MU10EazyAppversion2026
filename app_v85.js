@@ -3057,8 +3057,15 @@ document.getElementById('formNameTitle').innerText = title;
                 <td>${new Date(s.lab_receive_date || s.created_at).toLocaleDateString('th-TH')}</td>
                 <td>${statusBadge}</td>
                 <td>
-                    <button class="btn btn-primary btn-text" onclick="app.openAnalysisInputModal('${s.ref_id}')"><i class="fa-solid fa-pen-to-square"></i> บันทึกผล</button>
-                    ${s.status === 'summarized' ? `<button class="btn btn-secondary btn-text" style="color:#0ea5e9; margin-top:4px; display:block;" onclick="app.generateSubmissionPDF({currentTarget: {dataset: {refId: '${s.ref_id}'}}})"><i class="fa-solid fa-file-pdf"></i> ใบนำส่งตัวอย่าง</button>` : ''}
+                    <div style="display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center;">
+                        <button class="btn btn-primary btn-text" onclick="app.openAnalysisInputModal('${s.ref_id}')" style="white-space: nowrap; padding: 6px 14px; font-size: 12.5px; width: 100%; max-width: 130px;">
+                            <i class="fa-solid fa-pen-to-square"></i> บันทึกผล
+                        </button>
+                        ${s.status === 'summarized' ? `
+                        <button class="btn btn-secondary btn-text" onclick="app.generateSubmissionPDF({currentTarget: {dataset: {refId: '${s.ref_id}'}}})" style="white-space: nowrap; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08); padding: 6px 14px; font-size: 12px; width: 100%; max-width: 130px;">
+                            <i class="fa-solid fa-file-pdf"></i> ใบนำส่งตัวอย่าง
+                        </button>` : ''}
+                    </div>
                 </td>
             `;
             tbody.appendChild(tr);
