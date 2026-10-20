@@ -6087,10 +6087,10 @@ document.getElementById('formNameTitle').innerText = title;
                             <td>${catDisplay}</td>
                             <td>${item.distributor || ''}</td>
                             <td>${sName}</td>
-                            <td style="${si2Val === 'พบ' ? 'color: #dc2626 !important; font-weight: bold !important;' : ''}">${si2Val}</td>
-                            <td style="${sumVal === 'ไม่ผ่าน' ? 'color: #dc2626 !important; font-weight: bold !important;' : ''}">${sumVal}</td>
+                            <td style="${si2Val === 'พบ' ? 'font-weight: bold !important; color: #000 !important;' : 'color: #000 !important;'}">${si2Val}</td>
+                            <td style="${sumVal === 'ไม่ผ่าน' ? 'font-weight: bold !important; color: #000 !important;' : 'color: #000 !important;'}">${sumVal}</td>
                             ${rIdx === 0 ? `
-                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: bold !important; color: ${overallPass ? '#000 !important;' : '#dc2626 !important;'}">
+                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: bold !important; color: #000 !important;">
                                     ${overallPass ? 'ผ่าน' : 'ไม่ผ่าน'}
                                 </td>
                             ` : ''}
@@ -7004,7 +7004,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <td style="border: 1px solid #000; padding: 4px; font-weight: 600;">${cat}</td>
                         <td style="border: 1px solid #000; padding: 4px 6px; text-align: left;">${detail}</td>
                         <td style="border: 1px solid #000; padding: 4px; font-weight: 500;">${clean}</td>
-                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold; color: ${sum === 'ไม่ผ่าน' ? '#dc2626' : (sum === 'ผ่าน' ? '#16a34a' : '#000')};">${sum}</td>
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold; color: #000;">${sum}</td>
                     </tr>
                 `;
             }
