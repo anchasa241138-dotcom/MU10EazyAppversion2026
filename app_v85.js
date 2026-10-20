@@ -6363,6 +6363,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if (sample.status === 'summarized') {
                     sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
                     sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
+                    sample.analyst_signed_timestamp = new Date().toISOString();
                     sample.status = 'analyst_signed';
                     this.saveSamples();
                     Swal.fire({
@@ -7666,9 +7667,22 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const badge = document.getElementById('track-current-status-badge');
         document.getElementById('trackingCertDownloadBar').classList.add('hidden');
 
-        // Update Timeline Steps
-        const steps = ['registered', 'accepted', 'analyzing', 'summarized', 'approved'];
-        let currentStepIndex = steps.indexOf(sample.status);
+        // Update Timeline Steps (6 Steps Standard GLP Workflow)
+        const steps = ['registered', 'accepted', 'analyzing', 'summarized', 'reported', 'approved'];
+        
+        let currentStepIndex = 1;
+        if(sample.status === 'registered') {
+            currentStepIndex = 1; // บันทึกข้อมูลแล้ว รอห้องปฏิบัติการตรวจรับ
+        } else if(sample.status === 'accepted' || sample.status === 'analyzing') {
+            currentStepIndex = 2; // ตรวจรับแล้ว อยู่ระหว่างการตรวจวิเคราะห์
+        } else if(sample.status === 'summarized') {
+            currentStepIndex = 4; // ตรวจเสร็จสิ้น รอออกรายงานผลตรวจวิเคราะห์ (รอผู้ตรวจลงนาม)
+        } else if(sample.status === 'analyst_signed') {
+            currentStepIndex = 5; // ออกรายงานและผู้ตรวจลงนามแล้ว รออนุมัติและรับรองรายงาน
+        } else if(sample.status === 'approved') {
+            currentStepIndex = 6; // อนุมัติและรับรองเรียบร้อย (ผ่านครบ 6 ขั้นตอน)
+        }
+
         if(sample.status === 'rejected') {
             badge.className = 'status-badge status-badge-current status-rejected';
             badge.innerText = 'ถูกปฏิเสธการรับตัวอย่าง';
@@ -7682,11 +7696,23 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             return `${d.toLocaleDateString('th-TH')} ${d.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})} น.`;
         };
         
-        document.getElementById('time-registered').innerText = formatTime(sample.created_at);
-        document.getElementById('time-accepted').innerText = formatTime(sample.lab_receive_timestamp || sample.lab_receive_date);
-        document.getElementById('time-analyzing').innerText = formatTime(sample.lab_receive_timestamp || sample.lab_receive_date);
-        document.getElementById('time-summarized').innerText = formatTime(sample.analysis_timestamp || sample.analysis_date);
-        document.getElementById('time-approved').innerText = formatTime(sample.approved_timestamp || (sample.status === 'approved' ? new Date().toISOString() : null));
+        const elTimeReg = document.getElementById('time-registered');
+        if (elTimeReg) elTimeReg.innerText = formatTime(sample.created_at);
+
+        const elTimeAcc = document.getElementById('time-accepted');
+        if (elTimeAcc) elTimeAcc.innerText = formatTime(sample.lab_receive_timestamp || sample.lab_receive_date);
+
+        const elTimeAna = document.getElementById('time-analyzing');
+        if (elTimeAna) elTimeAna.innerText = formatTime(sample.lab_receive_timestamp || sample.lab_receive_date);
+
+        const elTimeSum = document.getElementById('time-summarized');
+        if (elTimeSum) elTimeSum.innerText = formatTime(sample.analysis_timestamp || sample.analysis_date);
+
+        const elTimeRep = document.getElementById('time-reported');
+        if (elTimeRep) elTimeRep.innerText = formatTime(sample.analyst_signed_timestamp || (['analyst_signed', 'approved'].includes(sample.status) ? (sample.analysis_timestamp || sample.analysis_date) : null));
+
+        const elTimeApp = document.getElementById('time-approved');
+        if (elTimeApp) elTimeApp.innerText = formatTime(sample.approved_timestamp || (sample.status === 'approved' ? new Date().toISOString() : null));
 
         // Apply classes and inline colors to guarantee visibility with important
         steps.forEach((step, index) => {
@@ -7703,10 +7729,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if(icon) {
                     icon.style.setProperty('background-color', '#0ea5e9', 'important');
                     icon.style.setProperty('color', '#ffffff', 'important');
-                    icon.style.setProperty('box-shadow', '0 0 0 4px rgba(13,148,136,0.2)', 'important');
+                    icon.style.setProperty('box-shadow', '0 0 0 4px rgba(14, 165, 233, 0.25)', 'important');
                 }
                 if(h5) h5.style.setProperty('color', '#0ea5e9', 'important');
-                if (index < 4) {
+                if (index < steps.length - 1) {
                     const line = document.querySelectorAll('.timeline-line')[index];
                     if(line) line.classList.add('active');
                 }
@@ -7715,7 +7741,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if(icon) {
                     icon.style.setProperty('background-color', '#f59e0b', 'important');
                     icon.style.setProperty('color', '#ffffff', 'important');
-                    icon.style.setProperty('box-shadow', '0 0 0 4px rgba(217,119,6,0.25)', 'important');
+                    icon.style.setProperty('box-shadow', '0 0 0 4px rgba(245, 158, 11, 0.3)', 'important');
                 }
                 if(h5) h5.style.setProperty('color', '#f59e0b', 'important');
             } else {
@@ -7730,15 +7756,19 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         // Update Badge text
         const statusMap = {
-            'registered': ['รอตรวจรับ', '#eff6ff', '#1d4ed8'],
-            'accepted': ['กำลังวิเคราะห์', '#f0fdf4', '#15803d'],
-            'summarized': ['รอรับรองผล', '#faf5ff', '#6b21a8'],
-            'approved': ['อนุมัติผลวิเคราะห์เรียบร้อย', '#ecfdf5', '#047857']
+            'registered': ['รอตรวจรับตัวอย่าง', '#eff6ff', '#1d4ed8'],
+            'accepted': ['กำลังตรวจวิเคราะห์', '#f0fdf4', '#15803d'],
+            'analyzing': ['กำลังตรวจวิเคราะห์', '#f0fdf4', '#15803d'],
+            'summarized': ['ตรวจเสร็จสิ้น (รอออกรายงาน)', '#fffbeb', '#b45309'],
+            'analyst_signed': ['ออกรายงานแล้ว (รอรับรองผล)', '#faf5ff', '#6b21a8'],
+            'approved': ['อนุมัติและรับรองผลเรียบร้อย', '#ecfdf5', '#047857']
         };
-        badge.innerText = statusMap[sample.status][0];
-        badge.className = 'status-badge status-badge-current';
-        badge.style.setProperty('background-color', statusMap[sample.status][1], 'important');
-        badge.style.setProperty('color', statusMap[sample.status][2], 'important');
+        if(statusMap[sample.status]) {
+            badge.innerText = statusMap[sample.status][0];
+            badge.className = 'status-badge status-badge-current';
+            badge.style.setProperty('background-color', statusMap[sample.status][1], 'important');
+            badge.style.setProperty('color', statusMap[sample.status][2], 'important');
+        }
 
         if(sample.status === 'approved') {
             document.getElementById('trackingCertDownloadBar').classList.remove('hidden');

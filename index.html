@@ -16,7 +16,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v3.css?v=1792478800000">
+    <link rel="stylesheet" href="style_v3.css?v=1792480000000">
     <link rel="stylesheet" href="fonts.css?v=1791732670733">
 
     <style>
@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792478800000">
+    <link rel="stylesheet" href="enhancements.css?v=1792480000000">
     <style>
         /* Unified Conceptzilla Pill Theme for Modal Cancel / Secondary Buttons */
         .modal-card .btn-secondary,
@@ -1290,14 +1290,14 @@
                             </div>
                         </div>
 
-                        <!-- Progress Timeline -->
+                        <!-- Progress Timeline (6 Steps Standard GLP Workflow) -->
                         <div class="timeline-container">
                             <div class="timeline-step" id="step-registered">
                                 <div class="step-icon"><i class="fa-solid fa-file-signature"></i></div>
                                 <div class="step-content">
-                                    <h5>รับตัวอย่างเข้าสู่ระบบ</h5>
+                                    <h5>1. บันทึกตัวอย่างเข้าสู่ระบบ</h5>
                                     <p class="step-desc" id="desc-registered">ขึ้นทะเบียนบันทึกข้อมูลตัวอย่างเข้าระบบ</p>
-                                    <span class="step-time-stamp" id="time-registered">22 มิ.ย. 2569 14:00</span>
+                                    <span class="step-time-stamp" id="time-registered">-</span>
                                 </div>
                             </div>
                             <div class="timeline-line"></div>
@@ -1305,29 +1305,39 @@
                             <div class="timeline-step" id="step-accepted">
                                 <div class="step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
                                 <div class="step-content">
-                                    <h5>ห้องปฏิบัติการตรวจสอบรับตัวอย่าง</h5>
-                                    <p class="step-desc" id="desc-accepted">รอผลการพิจารณาตรวจสอบความถูกต้องจากเจ้าหน้าที่ห้องแลป</p>
+                                    <h5>2. ห้องปฏิบัติการตรวจสอบรับตัวอย่าง</h5>
+                                    <p class="step-desc" id="desc-accepted">ห้องปฏิบัติการตรวจสอบความถูกต้องและออกรหัส Lab No.</p>
                                     <span class="step-time-stamp" id="time-accepted">-</span>
                                 </div>
                             </div>
                             <div class="timeline-line"></div>
 
                             <div class="timeline-step" id="step-analyzing">
-                                <div class="step-icon"><i class="fa-solid fa-flask"></i></div>
+                                <div class="step-icon"><i class="fa-solid fa-flask-vial"></i></div>
                                 <div class="step-content">
-                                    <h5>อยู่ระหว่างการตรวจวิเคราะห์</h5>
-                                    <p class="step-desc" id="desc-analyzing">รอวิเคราะห์ตัวอย่างทางเคมีและชีววิทยาตามเกณฑ์มาตรฐาน</p>
+                                    <h5>3. อยู่ระหว่างการตรวจวิเคราะห์</h5>
+                                    <p class="step-desc" id="desc-analyzing">นำตัวอย่างเข้าตรวจวิเคราะห์ทางห้องปฏิบัติการตามเกณฑ์มาตรฐาน</p>
                                     <span class="step-time-stamp" id="time-analyzing">-</span>
                                 </div>
                             </div>
                             <div class="timeline-line"></div>
 
                             <div class="timeline-step" id="step-summarized">
-                                <div class="step-icon"><i class="fa-solid fa-list-check"></i></div>
+                                <div class="step-icon"><i class="fa-solid fa-square-poll-vertical"></i></div>
                                 <div class="step-content">
-                                    <h5>สรุปผลตรวจวิเคราะห์</h5>
-                                    <p class="step-desc" id="desc-summarized">เจ้าหน้าที่สรุปรายงานผลวิเคราะห์เบื้องต้น</p>
+                                    <h5>4. ตรวจเสร็จสิ้น</h5>
+                                    <p class="step-desc" id="desc-summarized">เจ้าหน้าที่แลปตรวจวิเคราะห์และบันทึกผลการทดสอบเข้าระบบ</p>
                                     <span class="step-time-stamp" id="time-summarized">-</span>
+                                </div>
+                            </div>
+                            <div class="timeline-line"></div>
+
+                            <div class="timeline-step" id="step-reported">
+                                <div class="step-icon"><i class="fa-solid fa-file-lines"></i></div>
+                                <div class="step-content">
+                                    <h5>5. ออกรายงานผลตรวจวิเคราะห์</h5>
+                                    <p class="step-desc" id="desc-reported">ออกร่างรายงานผลตรวจวิเคราะห์อิเล็กทรอนิกส์และผู้ตรวจลงนาม</p>
+                                    <span class="step-time-stamp" id="time-reported">-</span>
                                 </div>
                             </div>
                             <div class="timeline-line"></div>
@@ -1335,8 +1345,8 @@
                             <div class="timeline-step" id="step-approved">
                                 <div class="step-icon"><i class="fa-solid fa-stamp"></i></div>
                                 <div class="step-content">
-                                    <h5>อนุมัติและรับรองรายงาน</h5>
-                                    <p class="step-desc" id="desc-approved">หัวหน้าห้องปฏิบัติการอนุมัติใบรายงานอิเล็กทรอนิกส์</p>
+                                    <h5>6. อนุมัติและรับรองรายงานผลตรวจวิเคราะห์</h5>
+                                    <p class="step-desc" id="desc-approved">ผู้มีอำนาจลงนามอนุมัติและรับรองใบรายงานผลอย่างเป็นทางการ</p>
                                     <span class="step-time-stamp" id="time-approved">-</span>
                                 </div>
                             </div>
@@ -2259,6 +2269,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792478800000"></script>
+    <script src="app_v85.js?v=1792480000000"></script>
 </body>
 </html>
