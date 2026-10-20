@@ -3723,10 +3723,15 @@ document.getElementById('formNameTitle').innerText = title;
         } else if (sample.form_type === 'MU.10-007') {
             const items = [];
             let idx = 1;
-            while ((sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined) && idx <= 50) {
+            const maxQty = parseInt(sample.sample_qty, 10);
+            while ((sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined || sample['analysis_summary_' + idx] !== undefined) && idx <= 50) {
+                if (!isNaN(maxQty) && maxQty > 0 && items.length >= maxQty) break;
+
                 const sName = (sample['sample_name_' + idx] || '').trim();
                 const sDetail = (sample['sample_detail_' + idx] || '').trim();
-                if (sName !== '' || sDetail !== '' || sample['analysis_summary_' + idx]) {
+                const dist = (sample['distributor_' + idx] || '').trim();
+                const hasData = (sName !== '' || sDetail !== '' || dist !== '' || sample['analysis_summary_' + idx] !== undefined || sample['analysis_cleanliness_' + idx] !== undefined);
+                if (hasData) {
                     const rawClean = sample['analysis_cleanliness_' + idx];
                     let cleanliness = '-';
                     if (rawClean === '+' || rawClean === 'ไม่สะอาด') {
@@ -3755,7 +3760,8 @@ document.getElementById('formNameTitle').innerText = title;
             }
             if (items.length === 0) {
                 const defaultCats = ['มือ1', 'มือ2', 'ภาชนะ', 'ภาชนะ', 'ภาชนะ', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร'];
-                for (let i = 1; i <= 10; i++) {
+                const fallbackCount = (!isNaN(maxQty) && maxQty > 0) ? maxQty : 10;
+                for (let i = 1; i <= fallbackCount; i++) {
                     const rawClean = sample['analysis_cleanliness_' + i];
                     let cleanliness = '-';
                     if (rawClean === '+' || rawClean === 'ไม่สะอาด') {
@@ -4587,7 +4593,7 @@ document.getElementById('formNameTitle').innerText = title;
             } else if (sample.form_type === 'MU.10-007') {
                 let passCount = 0;
                 let totalCount = 0;
-                for (let idx = 1; idx <= 10; idx++) {
+                for (let idx = 1; idx <= 50; idx++) {
                     const cleanEl = document.getElementById('analysis-cleanliness-' + idx);
                     const sumEl = document.getElementById('analysis-summary-' + idx);
                     if (cleanEl || sumEl) {
@@ -4598,10 +4604,12 @@ document.getElementById('formNameTitle').innerText = title;
                         sample['analysis_summary_' + idx] = sumVal;
                         sample['analysis_summary_outcome_' + idx] = sumVal;
                         if (sumVal === 'ผ่าน') passCount++;
+                    } else if (idx > 10) {
+                        break;
                     }
                 }
                 const overallSum = document.getElementById('analysis-summary-outcome')?.value;
-                const hiddenPct = document.getElementById('mu07-hidden-percent')?.value || '';
+                const hiddenPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(1).replace('.0', '') + '%' : '100%';
                 sample.analysis_pass_percent = hiddenPct;
                 if (overallSum) {
                     sample.analysis_summary = overallSum;
@@ -5870,7 +5878,10 @@ document.getElementById('formNameTitle').innerText = title;
 
             const items = [];
             let idx = 1;
-            while ((sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined) && idx <= 50) {
+            const maxQty = parseInt(sample.sample_qty, 10);
+            while ((sample['sample_name_' + idx] !== undefined || sample['sample_category_' + idx] !== undefined || sample['analysis_summary_' + idx] !== undefined) && idx <= 50) {
+                if (!isNaN(maxQty) && maxQty > 0 && items.length >= maxQty) break;
+
                 const sName = (sample['sample_name_' + idx] || '').trim();
                 const sDetail = (sample['sample_detail_' + idx] || '').trim();
                 const sCat = sample['sample_category_' + idx] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร'));
@@ -5884,7 +5895,11 @@ document.getElementById('formNameTitle').innerText = title;
                 if (!sSum) sSum = (sClean === '+' ? 'ไม่ผ่าน' : 'ผ่าน');
                 const dist = sample['distributor_' + idx] || '';
 
-                if (sName !== '' || sDetail !== '' || sample['analysis_cleanliness_' + idx] || sample['analysis_summary_' + idx] || sample['sample_category_' + idx]) {
+                const hasValidData = (sName !== '' || sDetail !== '' || dist !== '' || 
+                                     (sample['analysis_cleanliness_' + idx] !== undefined && sample['analysis_cleanliness_' + idx] !== '') || 
+                                     (sample['analysis_summary_' + idx] !== undefined && sample['analysis_summary_' + idx] !== ''));
+
+                if (hasValidData) {
                     items.push({
                         idx: items.length + 1,
                         originalIdx: idx,
@@ -5901,7 +5916,8 @@ document.getElementById('formNameTitle').innerText = title;
 
             if (items.length === 0) {
                 const defaultCats = ['มือ1', 'มือ2', 'ภาชนะ', 'ภาชนะ', 'ภาชนะ', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร', 'อาหาร'];
-                for (let i = 1; i <= 10; i++) {
+                const fallbackCount = (!isNaN(maxQty) && maxQty > 0) ? maxQty : 10;
+                for (let i = 1; i <= fallbackCount; i++) {
                     const rawClean = sample['analysis_cleanliness_' + i];
                     let sClean = '-';
                     if (rawClean === '+' || rawClean === 'ไม่สะอาด') sClean = '+';
@@ -6670,14 +6686,22 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     label_summary: sample[`label_summary_${idx}`] || ''
                 });
             } else if (sample.form_type === 'MU.10-007') {
-                sampleItems.push({
-                    idx: idx,
-                    category: sample[`sample_category_${idx}`] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร')),
-                    name: sample[`sample_name_${idx}`] || '',
-                    detail: sample[`sample_detail_${idx}`] || '',
-                    cleanliness: sample[`analysis_cleanliness_${idx}`] || '',
-                    summary: sample[`analysis_summary_${idx}`] || ''
-                });
+                const sName = (sample[`sample_name_${idx}`] || '').trim();
+                const sDetail = (sample[`sample_detail_${idx}`] || '').trim();
+                const sClean = sample[`analysis_cleanliness_${idx}`] || '';
+                const sSum = sample[`analysis_summary_${idx}`] || '';
+                const maxQty = parseInt(sample.sample_qty, 10);
+                const hasData = (sName !== '' || sDetail !== '' || sClean !== '' || sSum !== '');
+                if (hasData && (isNaN(maxQty) || maxQty <= 0 || sampleItems.length < maxQty)) {
+                    sampleItems.push({
+                        idx: sampleItems.length + 1,
+                        category: sample[`sample_category_${idx}`] || (idx <= 2 ? (idx === 1 ? 'มือ1' : 'มือ2') : (idx <= 5 ? 'ภาชนะ' : 'อาหาร')),
+                        name: sName || ('ตัวอย่างที่ ' + idx),
+                        detail: sDetail,
+                        cleanliness: sClean,
+                        summary: sSum
+                    });
+                }
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({
                     distributor: sample[`distributor_${idx}`] || '',
@@ -6713,8 +6737,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         
         // Remove completely empty rows that the user might have cleared in the UI
         sampleItems = sampleItems.filter(item => {
+            if (sample.form_type === 'MU.10-007') {
+                return (item.name && item.name.trim() !== '') || 
+                       (item.detail && item.detail.trim() !== '') || 
+                       (item.cleanliness && item.cleanliness.trim() !== '') || 
+                       (item.summary && item.summary.trim() !== '');
+            }
             return Object.values(item).some(val => val && String(val).trim() !== '');
         });
+        if (sample.form_type === 'MU.10-007') {
+            sampleItems.forEach((it, i) => it.idx = i + 1);
+        }
         
         // Fallback: if old single-entry style
 
