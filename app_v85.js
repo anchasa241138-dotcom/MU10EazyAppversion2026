@@ -302,7 +302,6 @@ const app = {
             const data = snapshot.val();
             if (data) {
                 this.users = Array.isArray(data) ? data.filter(Boolean) : Object.values(data);
-                this.updateAuthUI();
                 this.updateBadges();
                 const muView = document.getElementById('view-manage-users');
                 if (muView && muView.classList.contains('active')) {
@@ -328,7 +327,6 @@ const app = {
                 if (data) {
                     this.users = Array.isArray(data) ? data.filter(Boolean) : Object.values(data);
                 }
-                this.updateAuthUI();
                 const muView = document.getElementById('view-manage-users');
                 if (muView && muView.classList.contains('active')) {
                     this.renderManageUsers();
@@ -940,8 +938,6 @@ const app = {
                 this.switchView('dashboard');
             } else if (currentViewName === 'manage-users' && !isAdmin) {
                 this.switchView('dashboard');
-            } else {
-                this.switchView(currentViewName);
             }
         }
     },
