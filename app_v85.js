@@ -8884,7 +8884,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; ${failTextColor}">${item.failed}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">
                         <a href="${pdfLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                            📄 เปิด PDF
+                            เปิด PDF
                         </a>
                     </td>
                 </tr>
@@ -8896,13 +8896,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (failCount > 0) {
             obsHtml = `
                 <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; line-height: 1.6;">
-                    <strong>⚠️ ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failCount} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
+                    <strong>ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failCount} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
                 </div>
             `;
         } else if (totalCount > 0) {
             obsHtml = `
                 <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #166534; line-height: 1.6;">
-                    <strong>✅ ผลการตรวจวิเคราะห์:</strong> ตัวอย่างทั้งหมดจำนวน <strong>${totalCount} ตัวอย่าง</strong> ผ่านเกณฑ์มาตรฐานความปลอดภัย ไม่พบสารเคมีตกค้าง
+                    <strong>ผลการตรวจวิเคราะห์:</strong> ตัวอย่างทั้งหมดจำนวน <strong>${totalCount} ตัวอย่าง</strong> ผ่านเกณฑ์มาตรฐานความปลอดภัย ไม่พบสารเคมีตกค้าง
                 </div>
             `;
         } else {
@@ -8925,7 +8925,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                 <!-- Meta Summary Box -->
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #0284c7; font-size: 15px;">📊 สรุปภาพรวมผลการตรวจวิเคราะห์</h4>
+                    <h4 style="margin: 0 0 10px 0; color: #0284c7; font-size: 15px;">สรุปภาพรวมผลการตรวจวิเคราะห์</h4>
                     <table style="width: 100%; border: none; font-size: 13.5px; line-height: 1.85;">
                         <tr>
                             <td style="width: 160px; font-weight: bold; color: #475569;">กิจกรรม :</td>
@@ -8956,13 +8956,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                 <!-- KPI Counts Table -->
                 <div style="margin-bottom: 20px;">
-                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 13.5px; color: #334155;">📋 ตารางจำนวนตัวอย่างทั้งหมด / ผ่านเกณฑ์มาตรฐาน / ตรวจพบสารตกค้าง (ไม่ผ่าน)</div>
+                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 13.5px; color: #334155;">ตารางจำนวนตัวอย่างทั้งหมด / ผ่านเกณฑ์มาตรฐาน / ตรวจพบสารตกค้าง (ไม่ผ่าน)</div>
                     <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 14px;">
                         <thead>
                             <tr style="background-color: #f1f5f9; color: #0f172a;">
-                                <th style="border: 1px solid #cbd5e1; padding: 10px;">📦 จำนวนตัวอย่างทั้งหมด</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #15803d;">🟢 ผ่านเกณฑ์มาตรฐาน</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #b91c1c;">🔴 ตรวจพบสารตกค้าง (ไม่ผ่าน)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 10px;">จำนวนตัวอย่างทั้งหมด</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #15803d;">ผ่านเกณฑ์มาตรฐาน</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 10px; color: #b91c1c;">ตรวจพบสารตกค้าง (ไม่ผ่าน)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -8978,7 +8978,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <!-- Detailed Breakdown Table -->
                 <div style="margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: bold; font-size: 13.5px; color: #334155;">📋 ตารางแจกแจงผลการตรวจ${isAllMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'} (เลือกส่งได้):</span>
+                        <span style="font-weight: bold; font-size: 13.5px; color: #334155;">ตารางแจกแจงผลการตรวจ${isAllMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'} (เลือกส่งได้):</span>
                         <label style="font-size: 12px; color: #0284c7; cursor: pointer;">
                             <input type="checkbox" onchange="app.toggleSelectAllEmailItems(this.checked)" checked style="margin-right: 4px;"> เลือกทั้งหมด
                         </label>
@@ -9010,7 +9010,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <!-- Action CTA Link -->
                 <div style="text-align: center; padding-top: 14px; border-top: 1px solid #e2e8f0;">
                     <a href="${appUrl}" target="_blank" style="display: inline-block; background-color: #0284c7; color: #ffffff !important; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
-                        📥 คลิกที่นี่ เพื่อเข้าสู่ระบบ Mobi SmartLab 10 หรือดาวน์โหลดตารางสรุป Excel ทั้งหมด
+                        คลิกที่นี่ เพื่อเข้าสู่ระบบ Mobi SmartLab 10 หรือดาวน์โหลดตารางสรุป Excel ทั้งหมด
                     </a>
                 </div>
             </div>
