@@ -512,14 +512,29 @@ const app = {
         document.getElementById('btnDownloadCertPDF').addEventListener('click', this.generateCertificatePDF.bind(this));
         
         // E-Tracking
-        document.getElementById('btnSearchTracking').addEventListener('click', this.handleTrackingSearch.bind(this));
-        document.getElementById('btnDownloadTrackingCert').addEventListener('click', () => {
-             const trackId = document.getElementById('track-sample-id').textContent.replace('รหัสตัวอย่าง: ', '');
-             const sample = this.samples.find(s => s.lab_id === trackId || s.ref_id === trackId);
-             if(sample) {
-                 this.openCertifyModal(sample.ref_id, true); // Open in view-only mode
-             }
-        });
+        const btnSearchTracking = document.getElementById('btnSearchTracking');
+        if (btnSearchTracking) {
+            btnSearchTracking.addEventListener('click', this.handleTrackingSearch.bind(this));
+        }
+        const trackingSearchInput = document.getElementById('trackingSearchInput');
+        if (trackingSearchInput) {
+            trackingSearchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.handleTrackingSearch();
+                }
+            });
+        }
+        const btnDownloadTrackingCert = document.getElementById('btnDownloadTrackingCert');
+        if (btnDownloadTrackingCert) {
+            btnDownloadTrackingCert.addEventListener('click', () => {
+                 const trackIdEl = document.getElementById('track-sample-id');
+                 const refId = trackIdEl ? trackIdEl.getAttribute('data-ref-id') : null;
+                 const sample = this.samples.find(s => (refId && (s.ref_id === refId || s.lab_id === refId)));
+                 if(sample) {
+                     this.openCertifyModal(sample.ref_id, true); // Open in view-only mode
+                 }
+            });
+        }
 
         // Export
         const btnFilterApply = document.getElementById('btnFilterApply');
@@ -7640,23 +7655,75 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
     // E-Tracking
     handleTrackingSearch() {
-        const query = document.getElementById('trackingSearchInput').value.trim().toUpperCase();
-        if(!query) return;
+        const inputEl = document.getElementById('trackingSearchInput');
+        const query = inputEl ? inputEl.value.trim().toUpperCase() : '';
+        if(!query) {
+            Swal.fire('กรุณาระบุรหัส', 'กรุณาระบุรหัสอ้างอิงส่งตรวจ (เช่น MU001-691004001)', 'info');
+            return;
+        }
 
-        const sample = this.samples.find(s => s.ref_id.toUpperCase() === query || (s.lab_id && s.lab_id.toUpperCase() === query));
+        const sample = this.samples.find(s => (s.ref_id && s.ref_id.toUpperCase() === query) || (s.lab_id && s.lab_id.toUpperCase() === query));
         
         if(!sample) {
-            Swal.fire('ไม่พบข้อมูล', 'ไม่พบรหัสตัวอย่างดังกล่าวในระบบ', 'warning');
+            Swal.fire('ไม่พบข้อมูล', 'ไม่พบรหัสตัวอย่างดังกล่าวในระบบ กรุณาตรวจสอบรหัสอ้างอิงส่งตรวจอีกครั้ง', 'warning');
             document.getElementById('trackingResultWrapper').classList.add('hidden');
             return;
         }
 
         document.getElementById('trackingResultWrapper').classList.remove('hidden');
-        document.getElementById('track-sample-id').innerText = `รหัส: ${sample.lab_id || sample.ref_id}`;
-        document.getElementById('track-sample-name').innerText = sample.sample_name;
-        document.getElementById('track-form-type').innerText = sample.form_type;
-        document.getElementById('track-location').innerText = `${sample.location_name} จ.${sample.province}`;
-        document.getElementById('track-collector').innerText = sample.collector_name;
+        
+        const trackIdEl = document.getElementById('track-sample-id');
+        if (trackIdEl) {
+            trackIdEl.setAttribute('data-ref-id', sample.ref_id);
+            trackIdEl.innerHTML = `<span style="font-weight:700;">รหัสอ้างอิงส่งตรวจ:</span> <span style="color:#0284c7;">${sample.ref_id}</span>`;
+        }
+
+        const trackLabEl = document.getElementById('track-lab-id');
+        if (trackLabEl) {
+            if (sample.lab_id) {
+                trackLabEl.innerHTML = `<span style="font-weight:600; color:#0f172a;">${sample.lab_id}</span> <span style="font-size:12px; color:#64748b;">(Lab No. ${sample.lab_no || '-'})</span>`;
+            } else {
+                trackLabEl.innerHTML = `<span style="color:#f59e0b; font-style:italic;"><i class="fa-solid fa-hourglass-half"></i> รอห้องปฏิบัติการรับและออกรหัส</span>`;
+            }
+        }
+
+        const trackDateEl = document.getElementById('track-sample-date');
+        if (trackDateEl) {
+            const rawDate = sample.sampling_date || sample.collection_date || (sample.created_at ? sample.created_at.split('T')[0] : '');
+            if (rawDate) {
+                try {
+                    trackDateEl.innerText = new Date(rawDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                } catch(e) {
+                    trackDateEl.innerText = rawDate;
+                }
+            } else {
+                trackDateEl.innerText = '-';
+            }
+        }
+
+        // Aggregate sample names from sample_name_1..N or fallback to sample_name
+        const sampleNames = [];
+        for (let i = 1; i <= 30; i++) {
+            if (sample[`sample_name_${i}`]) {
+                sampleNames.push(sample[`sample_name_${i}`]);
+            }
+        }
+        if (sampleNames.length === 0 && sample.sample_name) {
+            sampleNames.push(sample.sample_name);
+        }
+        const sampleNameEl = document.getElementById('track-sample-name');
+        if (sampleNameEl) {
+            sampleNameEl.innerText = sampleNames.length > 0 ? sampleNames.join(', ') : '-';
+        }
+
+        const formTypeEl = document.getElementById('track-form-type');
+        if (formTypeEl) formTypeEl.innerText = sample.form_type || '-';
+
+        const locEl = document.getElementById('track-location');
+        if (locEl) locEl.innerText = `${sample.location_name || '-'} จ.${sample.province || '-'}`;
+
+        const colEl = document.getElementById('track-collector');
+        if (colEl) colEl.innerText = sample.collector_name || '-';
 
         // Reset Timeline
         document.querySelectorAll('.timeline-step').forEach(el => {
