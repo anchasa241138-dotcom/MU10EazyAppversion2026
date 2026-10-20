@@ -1285,8 +1285,27 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content-header" style="margin-top: 30px;">
+                    <div class="content-header" style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                         <h2><i class="fa-solid fa-users"></i> รายชื่อผู้ใช้งานที่อนุมัติแล้ว</h2>
+                    </div>
+
+                    <!-- Role Filter Tabs (4 User Types) -->
+                    <div class="user-role-filter-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+                        <button type="button" class="btn-role-tab active" data-role="all" onclick="app.filterApprovedUsers('all')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #0284c7; background: #0284c7; color: white; cursor: pointer; transition: all 0.2s;">
+                            <i class="fa-solid fa-users"></i> ทั้งหมด <span class="badge" id="count-role-all" style="background: rgba(255,255,255,0.25); margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
+                        </button>
+                        <button type="button" class="btn-role-tab" data-role="collector" onclick="app.filterApprovedUsers('collector')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #64748b; cursor: pointer; transition: all 0.2s;">
+                            <i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง <span class="badge" id="count-role-collector" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
+                        </button>
+                        <button type="button" class="btn-role-tab" data-role="lab" onclick="app.filterApprovedUsers('lab')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #10b981; cursor: pointer; transition: all 0.2s;">
+                            <i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป <span class="badge" id="count-role-lab" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
+                        </button>
+                        <button type="button" class="btn-role-tab" data-role="certifier" onclick="app.filterApprovedUsers('certifier')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #8b5cf6; cursor: pointer; transition: all 0.2s;">
+                            <i class="fa-solid fa-stamp"></i> ผู้รับรอง <span class="badge" id="count-role-certifier" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
+                        </button>
+                        <button type="button" class="btn-role-tab" data-role="executive" onclick="app.filterApprovedUsers('executive')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #ea580c; cursor: pointer; transition: all 0.2s;">
+                            <i class="fa-solid fa-user-tie"></i> ผู้บริหาร <span class="badge" id="count-role-executive" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
+                        </button>
                     </div>
                     <div class="card">
                         <div class="card-body">
@@ -1532,9 +1551,10 @@
                         <div class="input-icon-wrapper">
                             <label for="reg-role">ประเภทบัญชี <span class="required">*</span></label>
                             <select id="reg-role" required>
-                                <option value="collector">ผู้เก็บตัวอย่าง / ผู้ส่งตรวจทั่วไป</option>
-                                <option value="lab">เจ้าหน้าที่ห้องปฏิบัติการ</option>
-                                <option value="certifier">ผู้รับรองผลตรวจวิเคราะห์</option>
+                                <option value="collector">ผู้เก็บตัวอย่าง</option>
+                                <option value="lab">เจ้าหน้าที่แลป</option>
+                                <option value="certifier">ผู้รับรอง</option>
+                                <option value="executive">ผู้บริหาร</option>
                             </select>
                             <i class="fa-solid fa-user-shield"></i>
                         </div>
@@ -2147,6 +2167,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792466200000"></script>
+    <script src="app_v85.js?v=1792466900000"></script>
 </body>
 </html>

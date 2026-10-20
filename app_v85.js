@@ -194,7 +194,7 @@ const app = {
 
     getVisibleSamples() {
         if (!this.currentUser) return [];
-        if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier') {
+        if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier' || this.currentUser.role === 'executive') {
             return this.samples;
         }
         
@@ -904,7 +904,7 @@ const app = {
             authButtons.innerHTML = `<button class="btn btn-secondary" onclick="app.logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>`;
             userStatusCard.innerHTML = `
                 <div class="user-status-name"><i class="fa-solid fa-circle-user"></i> ${this.currentUser.fullname}</div>
-                <div class="user-status-role">${role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : role === 'certifier' ? 'ผู้รับรองผลตรวจวิเคราะห์' : 'ผู้เก็บตัวอย่าง'}</div>
+                <div class="user-status-role">${role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : role === 'executive' ? 'ผู้บริหาร' : role === 'lab' ? 'เจ้าหน้าที่แลป' : role === 'certifier' ? 'ผู้รับรอง' : 'ผู้เก็บตัวอย่าง'}</div>
             `;
         } else {
             authButtons.innerHTML = `<button class="btn btn-primary" onclick="app.showLoginModal()"><i class="fa-solid fa-user-lock"></i> เข้าสู่ระบบ</button>`;
@@ -7749,8 +7749,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const getRoleBadge = (role) => {
             switch (role) {
                 case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
-                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องแลป (Lab)</span>';
-                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองผล (Certifier)</span>';
+                case 'executive': return '<span style="color:#ea580c; font-weight:600;"><i class="fa-solid fa-user-tie"></i> ผู้บริหาร</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรอง</span>';
                 case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
                 default: return role || '-';
             }
@@ -7776,21 +7777,194 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </tr>
             `).join('');
             
-        approvedTbody.innerHTML = approvedUsers.length === 0
-            ? '<tr><td colspan="6" class="text-center" style="padding: 20px; color: #94a3b8;">ไม่มีผู้ใช้งานในระบบ</td></tr>'
-            : approvedUsers.map(u => `
-                <tr>
-                    <td><strong>${u.fullname || '-'}</strong></td>
-                    <td><code>${u.username}</code></td>
-                    <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
-                    <td>${getRoleBadge(u.role)}</td>
-                    <td><span class="badge" style="background-color: #10b981; color: white;">ใช้งานได้</span></td>
-                    <td>
-                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 5px; border-radius: 6px;" onclick="app.viewUserDetails('${u.username}')"><i class="fa-solid fa-circle-info"></i> ดูข้อมูล</button>
-                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; border-radius: 6px;" onclick="app.deleteUser('${u.username}')"><i class="fa-solid fa-trash"></i> ลบ</button>
-                    </td>
-                </tr>
-            `).join('');
+        // 4 User Categories breakdown
+        const collectorUsers = approvedUsers.filter(u => u.role === 'collector');
+        const labUsers = approvedUsers.filter(u => u.role === 'lab');
+        const certifierUsers = approvedUsers.filter(u => u.role === 'certifier');
+        const executiveUsers = approvedUsers.filter(u => u.role === 'executive');
+
+        const setBadge = (id, count) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = count;
+        };
+        setBadge('count-role-all', approvedUsers.length);
+        setBadge('count-role-collector', collectorUsers.length);
+        setBadge('count-role-lab', labUsers.length);
+        setBadge('count-role-certifier', certifierUsers.length);
+        setBadge('count-role-executive', executiveUsers.length);
+
+        const renderUserRow = (u) => `
+            <tr>
+                <td><strong>${u.fullname || '-'}</strong></td>
+                <td><code>${u.username}</code></td>
+                <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
+                <td>${getRoleBadge(u.role)}</td>
+                <td><span class="badge" style="background-color: #10b981; color: white;">ใช้งานได้</span></td>
+                <td style="white-space: nowrap;">
+                    <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 4px; border-radius: 6px;" onclick="app.viewUserDetails('${u.username}')"><i class="fa-solid fa-circle-info"></i> ดูข้อมูล</button>
+                    <button class="btn btn-warning" style="padding: 5px 10px; font-size: 12px; margin-right: 4px; border-radius: 6px; background: #f59e0b; color: white; border: none;" onclick="app.changeUserRole('${u.username}')" title="เปลี่ยนประเภทบทบาท"><i class="fa-solid fa-user-gear"></i> เปลี่ยนบทบาท</button>
+                    <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; border-radius: 6px;" onclick="app.deleteUser('${u.username}')"><i class="fa-solid fa-trash"></i> ลบ</button>
+                </td>
+            </tr>
+        `;
+
+        const activeFilter = this.currentApprovedRoleFilter || 'all';
+
+        if (approvedUsers.length === 0) {
+            approvedTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 24px; color: #94a3b8;">ไม่มีผู้ใช้งานในระบบ</td></tr>';
+        } else if (activeFilter === 'all') {
+            const categories = [
+                { role: 'collector', name: 'ผู้เก็บตัวอย่าง', icon: 'fa-vial', color: '#64748b', list: collectorUsers },
+                { role: 'lab', name: 'เจ้าหน้าที่แลป', icon: 'fa-flask', color: '#10b981', list: labUsers },
+                { role: 'certifier', name: 'ผู้รับรอง', icon: 'fa-stamp', color: '#8b5cf6', list: certifierUsers },
+                { role: 'executive', name: 'ผู้บริหาร', icon: 'fa-user-tie', color: '#ea580c', list: executiveUsers }
+            ];
+
+            let html = '';
+            categories.forEach(cat => {
+                if (cat.list.length > 0) {
+                    html += `
+                        <tr style="background: #f8fafc; border-top: 2px solid #e2e8f0; border-bottom: 1.5px solid #e2e8f0;">
+                            <td colspan="6" style="padding: 10px 14px; font-size: 13.5px; font-weight: 700; color: #1e293b;">
+                                <i class="fa-solid ${cat.icon}" style="color: ${cat.color}; margin-right: 8px;"></i> ${cat.name} 
+                                <span class="badge" style="background: ${cat.color}; color: #fff; font-size: 11px; margin-left: 6px; padding: 2px 8px; border-radius: 12px;">${cat.list.length} คน</span>
+                            </td>
+                        </tr>
+                    `;
+                    html += cat.list.map(renderUserRow).join('');
+                }
+            });
+
+            const otherUsers = approvedUsers.filter(u => !['collector', 'lab', 'certifier', 'executive'].includes(u.role));
+            if (otherUsers.length > 0) {
+                html += `
+                    <tr style="background: #f8fafc; border-top: 2px solid #e2e8f0;">
+                        <td colspan="6" style="padding: 10px 14px; font-size: 13.5px; font-weight: 700; color: #1e293b;">
+                            <i class="fa-solid fa-users" style="color: #64748b; margin-right: 8px;"></i> บทบาทอื่นๆ (${otherUsers.length} คน)
+                        </td>
+                    </tr>
+                `;
+                html += otherUsers.map(renderUserRow).join('');
+            }
+
+            approvedTbody.innerHTML = html;
+        } else {
+            const filtered = approvedUsers.filter(u => u.role === activeFilter);
+            if (filtered.length === 0) {
+                approvedTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 24px; color: #94a3b8;">ไม่มีผู้ใช้งานประเภทนี้ในระบบ</td></tr>';
+            } else {
+                approvedTbody.innerHTML = filtered.map(renderUserRow).join('');
+            }
+        }
+    },
+
+    filterApprovedUsers(role) {
+        this.currentApprovedRoleFilter = role;
+        document.querySelectorAll('.btn-role-tab').forEach(btn => {
+            const btnRole = btn.getAttribute('data-role');
+            const isActive = btnRole === role;
+            btn.classList.toggle('active', isActive);
+            if (isActive) {
+                const colorMap = {
+                    'all': '#0284c7',
+                    'collector': '#64748b',
+                    'lab': '#10b981',
+                    'certifier': '#8b5cf6',
+                    'executive': '#ea580c'
+                };
+                const bg = colorMap[role] || '#0284c7';
+                btn.style.background = bg;
+                btn.style.borderColor = bg;
+                btn.style.color = '#ffffff';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = '#cbd5e1';
+                const textColors = {
+                    'all': '#0284c7',
+                    'collector': '#64748b',
+                    'lab': '#10b981',
+                    'certifier': '#8b5cf6',
+                    'executive': '#ea580c'
+                };
+                btn.style.color = textColors[btnRole] || '#64748b';
+            }
+        });
+        this.renderManageUsers();
+    },
+
+    changeUserRole(username) {
+        const user = (this.users || []).find(u => u && u.username === username);
+        if (!user) return;
+        
+        const roleOptions = [
+            { val: 'collector', text: 'ผู้เก็บตัวอย่าง' },
+            { val: 'lab', text: 'เจ้าหน้าที่แลป' },
+            { val: 'certifier', text: 'ผู้รับรอง' },
+            { val: 'executive', text: 'ผู้บริหาร' }
+        ];
+
+        const optionsHtml = roleOptions.map(r => `
+            <option value="${r.val}" ${user.role === r.val ? 'selected' : ''}>${r.text}</option>
+        `).join('');
+
+        Swal.fire({
+            title: 'เปลี่ยนประเภท/บทบาทผู้ใช้งาน',
+            html: `
+                <div style="text-align: left; font-size: 14px; margin-bottom: 12px; color: #475569;">
+                    ผู้ใช้งาน: <strong style="color: #0f172a;">${user.fullname || username}</strong> <br>
+                    <small>ชื่อผู้ใช้ (@${user.username})</small>
+                </div>
+                <div style="text-align: left;">
+                    <label style="font-size: 13px; font-weight: 600; color: #334155; display: block; margin-bottom: 6px;">
+                        เลือกประเภทบทบาทใหม่ (4 ประเภท):
+                    </label>
+                    <select id="swal-new-role" class="swal2-input" style="width: 100%; margin: 0; padding: 10px 12px; font-size: 14px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+                        ${optionsHtml}
+                    </select>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยน',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#0284c7',
+            cancelButtonColor: '#64748b',
+            preConfirm: () => {
+                const val = document.getElementById('swal-new-role').value;
+                if (!val) {
+                    Swal.showValidationMessage('กรุณาเลือกประเภทบทบาท');
+                    return false;
+                }
+                return val;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const newRole = result.value;
+                user.role = newRole;
+                if (typeof db !== 'undefined' && user.uid) {
+                    db.ref('users/' + user.uid).update({ role: newRole }).then(() => {
+                        this.renderManageUsers();
+                        Swal.fire('สำเร็จ', 'เปลี่ยนประเภทบทบาทเรียบร้อยแล้ว', 'success');
+                    }).catch(err => {
+                        Swal.fire('ข้อผิดพลาด', err.message, 'error');
+                    });
+                } else if (typeof db !== 'undefined') {
+                    db.ref('users').once('value', (snap) => {
+                        const all = snap.val() || {};
+                        for (const key in all) {
+                            if (all[key].username === username) {
+                                db.ref('users/' + key).update({ role: newRole });
+                                break;
+                            }
+                        }
+                    });
+                    this.renderManageUsers();
+                    Swal.fire('สำเร็จ', 'เปลี่ยนประเภทบทบาทเรียบร้อยแล้ว', 'success');
+                } else {
+                    this.renderManageUsers();
+                    Swal.fire('สำเร็จ', 'เปลี่ยนประเภทบทบาทเรียบร้อยแล้ว', 'success');
+                }
+            }
+        });
     },
 
     viewUserDetails(username) {
@@ -7800,9 +7974,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const getRoleName = (role) => {
             switch (role) {
                 case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
-                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องปฏิบัติการ (Lab)</span>';
-                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองผลตรวจวิเคราะห์ (Certifier)</span>';
-                case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง / ผู้ส่งตรวจ</span>';
+                case 'executive': return '<span style="color:#ea580c; font-weight:600;"><i class="fa-solid fa-user-tie"></i> ผู้บริหาร</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรอง</span>';
+                case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
                 default: return role || '-';
             }
         };
@@ -7863,18 +8038,27 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (actionsEl) {
             if (user.status === 'pending') {
                 actionsEl.innerHTML = `
-                    <button type="button" class="btn btn-success" style="padding: 8px 18px; margin-right: 8px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.approveUser('${user.username}')">
+                    <button type="button" class="btn btn-success" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.approveUser('${user.username}')">
                         <i class="fa-solid fa-check"></i> อนุมัติบัญชีนี้
                     </button>
-                    <button type="button" class="btn btn-danger" style="padding: 8px 18px; margin-right: 8px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.rejectUser('${user.username}')">
+                    <button type="button" class="btn btn-warning" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px; background: #f59e0b; color: white; border: none;" onclick="app.closeUserDetailsModal(); app.changeUserRole('${user.username}')">
+                        <i class="fa-solid fa-user-gear"></i> เปลี่ยนบทบาท
+                    </button>
+                    <button type="button" class="btn btn-danger" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.rejectUser('${user.username}')">
                         <i class="fa-solid fa-xmark"></i> ปฏิเสธ
                     </button>
-                    <button type="button" class="btn btn-secondary" style="padding: 8px 18px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
+                    <button type="button" class="btn btn-secondary" style="padding: 8px 16px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
                         ปิด
                     </button>
                 `;
             } else {
                 actionsEl.innerHTML = `
+                    <button type="button" class="btn btn-warning" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px; background: #f59e0b; color: white; border: none;" onclick="app.closeUserDetailsModal(); app.changeUserRole('${user.username}')">
+                        <i class="fa-solid fa-user-gear"></i> เปลี่ยนบทบาท
+                    </button>
+                    <button type="button" class="btn btn-danger" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.deleteUser('${user.username}')">
+                        <i class="fa-solid fa-trash"></i> ลบบัญชี
+                    </button>
                     <button type="button" class="btn btn-secondary" style="padding: 8px 20px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
                         ปิด
                     </button>
@@ -7949,8 +8133,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const getRoleBadge = (role) => {
             switch (role) {
                 case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
-                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องแลป (Lab)</span>';
-                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองผล (Certifier)</span>';
+                case 'executive': return '<span style="color:#ea580c; font-weight:600;"><i class="fa-solid fa-user-tie"></i> ผู้บริหาร</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรอง</span>';
                 case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
                 default: return role || '-';
             }
