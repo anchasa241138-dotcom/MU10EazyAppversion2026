@@ -1317,12 +1317,12 @@
                 <section class="content-view" id="view-e-tracking">
                     <div class="tracking-search-section">
                         <div class="section-title-wrapper text-center">
-                            <h3><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบสถานะการตรวจวิเคราะห์ตัวอย่าง (E-Tracking)</h3>
-                            <p>ระบุรหัสตัวอย่างอ้างอิงชั่วคราว (เช่น TEMP-XXXXX) หรือรหัสตัวอย่างแลป (เช่น SSK-XXXX-XXXX) เพื่อติดตามความคืบหน้า</p>
+                            <h3><i class="fa-solid fa-route"></i> ตรวจสอบสถานะการตรวจวิเคราะห์ตัวอย่าง (E-Tracking)</h3>
+                            <p>ระบุ <strong>"รหัสอ้างอิงส่งตรวจ (Ref ID)"</strong> (เช่น <span style="color:#0284c7; font-weight:600;">MU001-691004001</span>) ที่ได้รับเมื่อบันทึกข้อมูลสำเร็จ เพื่อติดตามความคืบหน้า</p>
                         </div>
                         <div class="search-bar-center">
-                            <input type="text" id="trackingSearchInput" placeholder="กรอกรหัสตัวอย่างของคุณที่นี่...">
-                            <button class="btn btn-primary" id="btnSearchTracking"><i class="fa-solid fa-magnifying-glass"></i> ค้นหา</button>
+                            <input type="text" id="trackingSearchInput" placeholder="กรอกรหัสอ้างอิงส่งตรวจ เช่น MU001-691004001">
+                            <button class="btn btn-primary" id="btnSearchTracking"><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบสถานะ</button>
                         </div>
                     </div>
 
@@ -1330,14 +1330,16 @@
                     <div class="tracking-results-wrapper hidden" id="trackingResultWrapper">
                         <div class="tracking-metadata-card">
                             <div class="metadata-header">
-                                <h4 id="track-sample-id">รหัสตัวอย่าง: SSK-2026-0001</h4>
+                                <h4 id="track-sample-id"><span style="font-weight:700;">รหัสอ้างอิงส่งตรวจ:</span> <span style="color:#0284c7;">-</span></h4>
                                 <span class="status-badge status-badge-current" id="track-current-status-badge">กำลังตรวจวิเคราะห์</span>
                             </div>
                             <div class="metadata-grid">
-                                <div><strong>ชื่อตัวอย่าง:</strong> <span id="track-sample-name">ผักคะน้า</span></div>
-                                <div><strong>ฟอร์มบันทึก:</strong> <span id="track-form-type">MU.10-001 (ผักและผลไม้)</span></div>
-                                <div><strong>สถานที่จัดส่ง:</strong> <span id="track-location">ตลาดสดเทศบาล จ.ศรีสะเกษ</span></div>
-                                <div><strong>ผู้จัดส่ง:</strong> <span id="track-collector">นายสมชาย รักสะอาด</span></div>
+                                <div><strong>รหัส Lab:</strong> <span id="track-lab-id">-</span></div>
+                                <div><strong>วันที่ส่งตรวจ:</strong> <span id="track-sample-date">-</span></div>
+                                <div><strong>ชื่อตัวอย่าง:</strong> <span id="track-sample-name">-</span></div>
+                                <div><strong>ฟอร์มบันทึก:</strong> <span id="track-form-type">-</span></div>
+                                <div><strong>สถานที่เก็บตัวอย่าง:</strong> <span id="track-location">-</span></div>
+                                <div><strong>ผู้เก็บ/ส่งตัวอย่าง:</strong> <span id="track-collector">-</span></div>
                             </div>
                         </div>
 
@@ -2338,6 +2340,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792483100000"></script>
+    <script src="app_v85.js?v=1792484000000"></script>
 </body>
 </html>
