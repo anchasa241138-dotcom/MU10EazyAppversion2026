@@ -9035,7 +9035,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             Swal.fire({
                 icon: 'warning',
                 title: 'กรุณาระบุอีเมลผู้รับ',
-                text: 'โปรดกรอกอีเมลผู้รับผิดชอบงานระดับจังหวัด (เช่น anchasa.241138@gmail.com)'
+                text: 'โปรดกรอกอีเมลผู้รับผิดชอบงานระดับจังหวัด (เช่น anchasa.241138@gmail.com, kungmu10@gmail.com)'
             });
             return;
         }
@@ -9052,6 +9052,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         }
 
         try {
+            const emailList = recipient.split(/[,;]+/).map(e => e.trim()).filter(Boolean);
+            const primaryEmail = emailList[0] || 'anchasa.241138@gmail.com';
+            const ccEmails = emailList.slice(1).join(', ');
+
             const payload = {
                 _subject: subject,
                 _replyto: 'noreply@mu10-smartlab.moph.go.th',
@@ -9064,6 +9068,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 "ลิงก์เข้าสู่ระบบ": `${window.location.origin}${window.location.pathname}#download-results`,
                 html: htmlBody
             };
+
+            if (ccEmails) {
+                payload._cc = ccEmails;
+            }
 
             let sentOk = false;
 
@@ -9098,7 +9106,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
             // Option 2: FormSubmit AJAX endpoint
             if (!sentOk) {
-                const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipient)}`, {
+                const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(primaryEmail)}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
