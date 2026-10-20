@@ -2054,8 +2054,8 @@ document.getElementById('formNameTitle').innerText = title;
                         <input type="text" name="sample_name_${this.globalSampleIndex}" value="${defName}" placeholder="${defHint}" style="font-size: 13.5px;" oninput="app.updateTotalGlobalSamples()">
                     </div>
                     <div class="form-group">
-                        <label>รายละเอียดเพิ่มเติม / หมายเหตุ</label>
-                        <input type="text" name="sample_detail_${this.globalSampleIndex}" placeholder="เช่น คนปรุงอาหาร, ล้างสะอาด, พร้อมบริโภค" style="font-size: 13.5px;">
+                        <label>ตัวอย่าง</label>
+                        <input type="text" name="sample_detail_${this.globalSampleIndex}" placeholder="เช่น นาย ก, คนปรุงอาหาร, จาน, ข้าวสวย" style="font-size: 13.5px;">
                     </div>
                 </div>`;
         } else if (formType === 'MU.10-006') {
@@ -8733,7 +8733,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const sDet = isFallback ? (s.sample_detail || s['sample_detail_1'] || '-') : (s['sample_detail_'+idx] || '-');
                     mu10007Details = {
                         'ประเภทตัวอย่าง': sCat,
-                        'รายละเอียดเพิ่มเติม/ชื่อผู้สัมผัส': sDet
+                        'ตัวอย่าง': sDet
                     };
                 } else {
                     const sub = s['analysis_substance_'+idx] || s.analysis_substance;
