@@ -3332,6 +3332,48 @@ document.getElementById('formNameTitle').innerText = title;
         }
     },
 
+    selectMu10004Polar(idx, value) {
+        const hiddenEl = document.getElementById('analysis-interpretation-4-' + idx);
+        if (hiddenEl) {
+            hiddenEl.value = value;
+        }
+
+        // Set radio input checked state
+        const radios = document.querySelectorAll(`input[name="polar_radio_${idx}"]`);
+        radios.forEach(r => {
+            r.checked = (r.value === value);
+        });
+
+        // Highlight selected button card
+        const cards = {
+            '<20%': document.getElementById(`polar-opt-${idx}-lt20`),
+            '20-25%': document.getElementById(`polar-opt-${idx}-2025`),
+            '>25%': document.getElementById(`polar-opt-${idx}-gt25`)
+        };
+
+        Object.keys(cards).forEach(k => {
+            const el = cards[k];
+            if (!el) return;
+            if (k === value) {
+                if (k === '>25%') {
+                    el.style.borderColor = '#ef4444';
+                    el.style.background = '#fef2f2';
+                    el.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+                } else {
+                    el.style.borderColor = '#10b981';
+                    el.style.background = '#ecfdf5';
+                    el.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.2)';
+                }
+            } else {
+                el.style.borderColor = '#cbd5e1';
+                el.style.background = '#ffffff';
+                el.style.boxShadow = 'none';
+            }
+        });
+
+        this.handleMu10004InterpretationChange(idx);
+    },
+
     handleMu10004InterpretationChange(idx) {
         const el = document.getElementById('analysis-interpretation-4-' + idx);
         const resultInput = document.getElementById('analysis-detail-results-4-' + idx);
@@ -3718,32 +3760,65 @@ document.getElementById('formNameTitle').innerText = title;
 
             sampleNames.forEach(item => {
                 const dateStr = item.date ? new Date(item.date).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric'}) : '-';
-                html += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
-                            <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ครั้งที่เก็บ: ${item.idx} | วันที่เก็บตัวอย่าง: ${dateStr} | ตัวอย่าง: ${item.name}</h5>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>ผลการตรวจสารโพลาร์ <span class="required">*</span></label>
-                                    <select id="analysis-interpretation-4-${item.idx}" required onchange="app.handleMu10004InterpretationChange('${item.idx}')">
-                                        <option value="">-- เลือกผลสารโพลาร์ --</option>
-                                        <option value="<20%">&lt;20%</option>
-                                        <option value="20-25%">20-25%</option>
-                                        <option value=">25%">&gt;25%</option>
-                                    </select>
-                                </div>
+                html += `
+                    <div style="background:#ffffff; padding:16px 20px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:14px; flex-wrap: wrap; gap: 8px;">
+                            <div style="font-weight: 700; color: #0f172a; font-size: 14px;">
+                                <i class="fa-solid fa-flask-vial" style="color: #0284c7; margin-right: 6px;"></i>
+                                ครั้งที่เก็บ: ${item.idx} | วันที่เก็บตัวอย่าง: ${dateStr}
                             </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>การแปลผล</label>
-                                    <input type="text" id="analysis-detail-results-4-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
-                                    <span class="input-helper">เติมอัตโนมัติจากการแปลผล</span>
-                                </div>
-                                <div class="form-group">
-                                    <label>สรุปผล</label>
-                                    <input type="text" id="analysis-summary-outcome-4-${item.idx}" readonly class="readonly-input" style="font-weight:700; font-size:14px;">
-                                    <span class="input-helper">คำนวณอัตโนมัติจากการแปลผล</span>
-                                </div>
+                            <div style="font-size: 13.5px; color: #475569; font-weight: 600;">
+                                ตัวอย่าง: <span style="color: #0284c7;">${item.name}</span>
                             </div>
-                        </div>`;
+                        </div>
+
+                        <!-- ตัวเลือกแบบปุ่มให้ติ๊ก (Polar result clickable choices) -->
+                        <div style="margin-bottom: 14px;">
+                            <label style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 8px; display: block;">
+                                ผลการตรวจสารโพลาร์ <span class="required" style="color: #ef4444;">*</span>:
+                            </label>
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap;" id="polar-btn-group-${item.idx}">
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-lt20" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '<20%')">
+                                    <input type="radio" name="polar_radio_${item.idx}" value="<20%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&lt; 20%</div>
+                                        <div style="font-size: 11.5px; color: #64748b;">(สีชมพู / ผ่าน)</div>
+                                    </div>
+                                </label>
+
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-2025" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '20-25%')">
+                                    <input type="radio" name="polar_radio_${item.idx}" value="20-25%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">20 - 25%</div>
+                                        <div style="font-size: 11.5px; color: #64748b;">(สีชมพูจาง / ผ่าน)</div>
+                                    </div>
+                                </label>
+
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-gt25" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '>25%')">
+                                    <input type="radio" name="polar_radio_${item.idx}" value=">25%" style="width: 18px; height: 18px; accent-color: #dc2626; cursor: pointer; margin: 0;">
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&gt; 25%</div>
+                                        <div style="font-size: 11.5px; color: #64748b;">(ไม่มีสี / ไม่ผ่าน)</div>
+                                    </div>
+                                </label>
+                            </div>
+                            <input type="hidden" id="analysis-interpretation-4-${item.idx}" value="" required>
+                        </div>
+
+                        <!-- ผลการแปลผล และ สรุปผล -->
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 12.5px; font-weight: 600; color: #475569;">การแปลผล</label>
+                                <input type="text" id="analysis-detail-results-4-${item.idx}" readonly class="readonly-input" style="font-weight: 600; border-radius: 8px; padding: 8px 12px;" placeholder="-">
+                                <span class="input-helper" style="font-size: 11px; color: #94a3b8;">เติมอัตโนมัติจากการแปลผล</span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 12.5px; font-weight: 600; color: #475569;">สรุปผล</label>
+                                <input type="text" id="analysis-summary-outcome-4-${item.idx}" readonly class="readonly-input" style="font-weight: 700; font-size: 14px; border-radius: 8px; padding: 8px 12px;" placeholder="-">
+                                <span class="input-helper" style="font-size: 11px; color: #94a3b8;">คำนวณอัตโนมัติจากการแปลผล</span>
+                            </div>
+                        </div>
+                    </div>`;
             });
 
             html += `
@@ -3758,11 +3833,7 @@ document.getElementById('formNameTitle').innerText = title;
             sampleNames.forEach(item => {
                 const interp = sample[`analysis_interpretation_4_${item.idx}`];
                 if (interp) {
-                    const sel = document.getElementById(`analysis-interpretation-4-${item.idx}`);
-                    if (sel) {
-                        sel.value = interp;
-                        app.handleMu10004InterpretationChange(item.idx);
-                    }
+                    app.selectMu10004Polar(item.idx, interp);
                 }
             });
             if (sample.analysis_comment) {
@@ -4572,6 +4643,15 @@ document.getElementById('formNameTitle').innerText = title;
                     if (sample['item_sampling_date_' + idx] !== undefined || sample['sample_name_' + idx] !== undefined || (idx === 1 && defaultName)) {
                         const interpEl = document.getElementById('analysis-interpretation-4-' + idx);
                         if (interpEl) {
+                            if (!interpEl.value) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'กรุณาเลือกผลการตรวจสารโพลาร์',
+                                    text: `กรุณาติ๊กเลือกผลการตรวจสารโพลาร์ สำหรับครั้งที่เก็บ ${idx}`,
+                                    confirmButtonColor: '#0284c7'
+                                });
+                                return;
+                            }
                             totalCount++;
                             sample['analysis_interpretation_4_' + idx] = interpEl.value;
                             sample['analysis_details_4_' + idx] = document.getElementById('analysis-detail-results-4-' + idx)?.value || '';
