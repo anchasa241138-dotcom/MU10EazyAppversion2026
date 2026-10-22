@@ -7214,7 +7214,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             let tableRowsHTML = '';
             for (let i = 0; i < 7; i++) {
                 const item = sampleItems[i];
-                if (item && (item.food_category || item.food_type || item.oil_type || item.sample_name)) {
+                if (item && (item.food_category || item.food_type || item.oil_type || item.sample_name || sample['analysis_interpretation_4_' + (i + 1)])) {
                     const interp = sample['analysis_interpretation_4_' + (i + 1)] || '';
                     const isLessThan20 = interp === '<20%';
                     const is20to25 = interp === '20-25%';
@@ -7225,13 +7225,31 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const isPass = isGood;
                     const isFail = isBad;
                     
-                    let rowDate = item.item_sampling_date ? new Date(item.item_sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric'}) : samplingDate;
+                    let rowDate = item.item_sampling_date ? new Date(item.item_sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric'}) : (samplingDate || '');
 
                     tableRowsHTML += `
-                        <tr style="height: 40px; text-align:left;"> <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px; text-align:center;">${i + 1}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">${rowDate}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">${isLessThan20 ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">${is20to25 ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">${isGreaterThan25 ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">${isBad ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">${isGood ? '[✓]' : '[ ]'}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px; font-weight:bold; text-align:center;">${isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : '')}</td> </tr>`;
+                        <tr style="height: 40px; text-align:left;">
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px; text-align:center;">${i + 1}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">${rowDate}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:12px; font-weight:bold; text-align:center;">${isLessThan20 ? '✓' : ''}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:12px; font-weight:bold; text-align:center;">${is20to25 ? '✓' : ''}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:12px; font-weight:bold; text-align:center;">${isGreaterThan25 ? '✓' : ''}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:12px; font-weight:bold; text-align:center;">${isBad ? '✓' : ''}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:12px; font-weight:bold; text-align:center;">${isGood ? '✓' : ''}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px; font-weight:bold; text-align:center;">${isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : '')}</td>
+                        </tr>`;
                 } else {
                     tableRowsHTML += `
-                        <tr style="height: 40px; text-align:left;"> <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px; text-align:center;">${i + 1}</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px;"> </td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;">[ ]</td> <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px;"> </td> </tr>`;
+                        <tr style="height: 40px; text-align:left;">
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px; text-align:center;">${i + 1}</td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11px;"></td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;"></td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;"></td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;"></td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;"></td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11px; text-align:center;"></td>
+                            <td style="border:1px solid #555; vertical-align:middle; font-size:11.5px;"></td>
+                        </tr>`;
                 }
             }
 
