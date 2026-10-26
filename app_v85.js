@@ -640,6 +640,13 @@ const app = {
             if (spanEl && titleEl) titleEl.innerText = spanEl.innerText;
         }
 
+        // Toggle tracking-view-active on body for bloom field gradient background
+        if (viewId === 'e-tracking') {
+            document.body.classList.add('tracking-view-active');
+        } else {
+            document.body.classList.remove('tracking-view-active');
+        }
+
         this.updateProvEmailButtonVisibility();
         this.updateEditApprovalButtonVisibility();
 
