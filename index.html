@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793000966172">
+    <link rel="stylesheet" href="enhancements.css?v=1793002486465">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1548,9 +1548,15 @@
                     <div id="analysis-content-wrapper">
                         <div class="table-container">
                             <div class="table-header-bar">
-                                <h3>รายการตัวอย่างในระบบที่อยู่ระหว่างการตรวจวิเคราะห์</h3>
+                                <div>
+                                    <h3><i class="fa-solid fa-flask" style="color: #0f274e; margin-right: 8px;"></i>รายการตัวอย่างในระบบที่อยู่ระหว่างการตรวจวิเคราะห์</h3>
+                                    <p>บันทึกผลการทดสอบทางห้องปฏิบัติการและสรุปผลการวิเคราะห์</p>
+                                </div>
                                 <div class="table-actions">
-                                    <input type="text" class="search-input" id="searchAnalysisTable" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง...">
+                                    <div class="search-box-wrapper" style="position: relative;">
+                                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                                        <input type="text" class="search-input" id="searchAnalysisTable" placeholder="ค้นหา รหัสแลป, ชื่อตัวอย่าง...">
+                                    </div>
                                 </div>
                             </div>
                             <div class="responsive-table">
@@ -1590,12 +1596,18 @@
                     <div id="certify-content-wrapper">
                         <div class="table-container">
                             <div class="table-header-bar">
-                                <h3>รายการรายงานผลที่รออนุมัติและรับรองผลอิเล็กทรอนิกส์</h3>
-                                <div class="table-actions">
-                                    <button type="button" class="btn btn-primary btn-prov-email-dispatch" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
+                                <div>
+                                    <h3><i class="fa-solid fa-stamp" style="color: #0f274e; margin-right: 8px;"></i>รายการรายงานผลที่รออนุมัติและรับรองผลอิเล็กทรอนิกส์</h3>
+                                    <p>ตรวจสอบความถูกต้องของผลวิเคราะห์และลงนามรับรองผลทางอิเล็กทรอนิกส์</p>
+                                </div>
+                                <div class="table-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <button type="button" class="btn btn-primary btn-prov-email-dispatch" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
                                         <i class="fa-solid fa-paper-plane"></i> ✉️ ส่งอีเมลสรุปประจำรอบให้จังหวัด
                                     </button>
-                                    <input type="text" class="search-input" id="searchCertifyTable" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง...">
+                                    <div class="search-box-wrapper" style="position: relative;">
+                                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                                        <input type="text" class="search-input" id="searchCertifyTable" placeholder="ค้นหา รหัสแลป, ชื่อตัวอย่าง...">
+                                    </div>
                                 </div>
                             </div>
                             <div class="responsive-table">
@@ -1635,12 +1647,18 @@
                     <div id="download-content-wrapper">
                         <div class="table-container">
                             <div class="table-header-bar">
-                                <h3>รายการผลตรวจวิเคราะห์ที่ผ่านการรับรองแล้ว (พร้อมดาวน์โหลด)</h3>
-                                <div class="table-actions">
-                                    <button type="button" class="btn btn-primary btn-prov-email-dispatch" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25); margin-right: 8px;">
+                                <div>
+                                    <h3><i class="fa-solid fa-file-circle-check" style="color: #0f274e; margin-right: 8px;"></i>รายการผลตรวจวิเคราะห์ที่ผ่านการรับรองแล้ว (พร้อมดาวน์โหลด)</h3>
+                                    <p>ค้นหาและดาวน์โหลดเอกสารรายงานผลการตรวจวิเคราะห์ฉบับสมบูรณ์ (PDF)</p>
+                                </div>
+                                <div class="table-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <button type="button" class="btn btn-primary btn-prov-email-dispatch" onclick="app.openProvincialEmailModal('อุบลราชธานี')" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #2563eb); border: none; border-radius: 9999px; padding: 7px 18px; font-weight: 600; font-size: 13px; color: #fff; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
                                         <i class="fa-solid fa-paper-plane"></i> ✉️ ส่งอีเมลสรุปประจำรอบให้จังหวัด
                                     </button>
-                                    <input type="text" id="searchDownloadTable" class="search-input" placeholder="ค้นหาตามรหัสแลป/ชื่อตัวอย่าง..." onkeyup="app.renderDownloadTable()">
+                                    <div class="search-box-wrapper" style="position: relative;">
+                                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                                        <input type="text" id="searchDownloadTable" class="search-input" placeholder="ค้นหา รหัสแลป, ชื่อตัวอย่าง..." onkeyup="app.renderDownloadTable()">
+                                    </div>
                                 </div>
                             </div>
                             <div class="responsive-table">
@@ -2692,6 +2710,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793000966172"></script>
+    <script src="app_v85.js?v=1793002486465"></script>
 </body>
 </html>
