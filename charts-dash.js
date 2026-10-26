@@ -705,158 +705,13 @@ function updateSubstanceCharts(samples) {
         formTypeChartInstance.update();
     }
 
-    // Check if we need to build the DOM
-    if (grid.children.length === 0) {
-            
+    // Store samples and stats globally for interactive re-rendering
+    window.currentCachedSamples = samples;
+    window.currentCachedStats = stats;
 
-    for (const key in stats) {
-        const item = stats[key];
-            const col = document.createElement('div'); col.id = 'substance-col-' + key;
-            col.style.cssText = 'background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;';
-            col.innerHTML = `
-                  <h6 style="margin: 0 0 12px 0; font-weight: 700; color: #0f172a; text-align: center; font-size: 15px;">${item.label}</h6>
-                  <div id="substance-text-${key}" style="width: 100%; margin-bottom: 12px;"></div>
-                  <div style="position: relative; width: 100%; height: 180px; margin: 0 auto;">
-                      <canvas id="substance-chart-${key}"></canvas>
-                  </div>
-                  <div id="substance-action-${key}" style="width: 100%; margin-top: 12px;"></div>
-              `;
-            grid.appendChild(col);
-        }
-    }
+    // Render modern substance analytics UI (Requirements 1, 2, 3)
+    renderModernSubstanceAnalytics(samples, stats);
 
-    // Now update charts
-    for (const key in stats) {
-        const colEl = document.getElementById('substance-col-' + key);
-        if (colEl) {
-            if (targetSubstance !== 'all' && targetSubstance !== key) {
-                colEl.style.display = 'none';
-            } else {
-                colEl.style.display = 'flex';
-                if (targetSubstance === key) {
-                    colEl.style.border = '2px solid #2563eb';
-                    colEl.style.boxShadow = '0 8px 24px rgba(37, 99, 235, 0.18)';
-                } else {
-                    colEl.style.border = '1px solid #e2e8f0';
-                    colEl.style.boxShadow = '0 4px 16px rgba(0,0,0,0.04)';
-                }
-            }
-        }
-        const item = stats[key];
-        const ctx = document.getElementById('substance-chart-' + key);
-        if(!ctx) continue;
-        
-        const dataValues = [item.pass, item.fail];
-        
-        let viewBtn = item.fail > 0 
-            ? `<button type="button" onclick="openFailedSamplesModal('${key}', '${item.label}')" style="width: 100%; padding: 8px; background-color: #fff1f2; border: 1px solid #fecdd3; color: #e11d48; border-radius: 9999px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-search"></i> ดูตัวอย่างที่ไม่ผ่าน</button>`
-            : `<div style="height: 33px;"></div>`;
-            
-        const passPct = item.total > 0 ? ((item.pass / item.total) * 100).toFixed(1) : 0;
-        const failPct = item.total > 0 ? ((item.fail / item.total) * 100).toFixed(1) : 0;
-        
-        const miniCardStyle = "display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 8px 8px; width: 31%; box-sizing: border-box; transition: transform 0.2s;";
-        const iconStyle = "display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 10px; color: #fff; font-size: 14px; margin-right: 6px; flex-shrink: 0;";
-
-        document.getElementById('substance-text-' + key).innerHTML = `
-            <div style="display: flex; justify-content: space-between; width: 100%;">
-                <div style="${miniCardStyle}">
-                    <div style="${iconStyle} background-color: #0284c7;"><i class="fa-solid fa-database"></i></div>
-                    <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 12px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ตรวจ</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #0284c7;">${item.total}</div>
-                    </div>
-                </div>
-                <div style="${miniCardStyle}">
-                    <div style="${iconStyle} background-color: #059669;"><i class="fa-solid fa-check"></i></div>
-                    <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 12px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ผ่าน</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #059669;">${item.pass} <span style="font-size: 11px; color: #64748b; font-weight: normal;">(${passPct}%)</span></div>
-                    </div>
-                </div>
-                <div style="${miniCardStyle}">
-                    <div style="${iconStyle} background-color: #e11d48;"><i class="fa-solid fa-xmark"></i></div>
-                    <div style="text-align: left; line-height: 1.1; overflow: hidden;">
-                        <div style="font-size: 12px; color: #64748b; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">ไม่ผ่าน</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #e11d48;">${item.fail} <span style="font-size: 11px; color: #64748b; font-weight: normal;">(${failPct}%)</span></div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        const actionDiv = document.getElementById('substance-action-' + key);
-        if (actionDiv) {
-            actionDiv.innerHTML = viewBtn;
-        }
-
-        // Build failed samples breakdown pie chart
-        let failedSamplesList = window.currentFailedSamples[key] || [];
-        let uniqueFails = [];
-        let seenFails = new Set();
-        failedSamplesList.forEach(s => {
-            let identifier = s.name + s.date + s.province;
-            if(!seenFails.has(identifier)) {
-                seenFails.add(identifier);
-                uniqueFails.push(s);
-            }
-        });
-
-        let nameCounts = {};
-        uniqueFails.forEach(s => {
-            let n = s.name || 'ไม่ระบุ';
-            nameCounts[n] = (nameCounts[n] || 0) + 1;
-        });
-        
-        let chartLabels = Object.keys(nameCounts).map(name => `${name} (${nameCounts[name]})`);
-        let chartData = Object.values(nameCounts);
-        let bgColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'];
-
-        if (chartData.length === 0) {
-            chartLabels = ['ไม่มีตัวอย่างที่ไม่ผ่าน'];
-            chartData = [1];
-            bgColors = ['#e2e8f0']; // Clean light gray ring
-        }
-
-        if (substanceChartInstances[key]) {
-            substanceChartInstances[key].data.labels = chartLabels;
-            substanceChartInstances[key].data.datasets[0].data = chartData;
-            substanceChartInstances[key].data.datasets[0].backgroundColor = bgColors;
-            substanceChartInstances[key].update();
-        } else {
-            substanceChartInstances[key] = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        data: chartData,
-                        backgroundColor: bgColors,
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '60%',
-                    plugins: {
-                        legend: { 
-                            display: true,
-                            position: 'bottom',
-                            labels: { font: { family: 'Kanit', size: 11 }, usePointStyle: true, boxWidth: 6, padding: 8, color: '#64748b' }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    if (context.label === 'ไม่มีตัวอย่างที่ไม่ผ่าน') return ' ไม่มีตัวอย่างที่ไม่ผ่าน';
-                                    return ' ' + context.label + ' ตัวอย่าง';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
     // Call update safety rankings
     if (typeof updateSafetyRankings === 'function') {
         updateSafetyRankings(stats);
@@ -1107,7 +962,16 @@ window.openFailedSamplesModal = function(key, label) {
     const tbody = document.getElementById('failedSamplesTableBody');
     tbody.innerHTML = '';
     
-    const samples = window.currentFailedSamples[key] || [];
+    let samples = [];
+    if (key === 'all') {
+        for (const k in window.currentFailedSamples) {
+            if (k !== 'all' && Array.isArray(window.currentFailedSamples[k])) {
+                samples = samples.concat(window.currentFailedSamples[k]);
+            }
+        }
+    } else {
+        samples = window.currentFailedSamples[key] || [];
+    }
     
     if (samples.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่พบข้อมูลตัวอย่างที่ไม่ผ่าน</td></tr>';
@@ -1253,3 +1117,455 @@ window.filterSubstanceQuick = function(substanceKey) {
         }
     });
 };
+
+
+// ==========================================================================
+// MODERN SUBSTANCE ANALYTICS (Coast & Usage + Business/General Stats)
+// ==========================================================================
+let monthlySubstanceChartInstance = null;
+window.currentActiveSubstance = 'all';
+
+// Fiscal Month Index Calculator (ต.ค. 69 = 0, ..., ก.ย. 70 = 11)
+function getFiscalMonthIndex(rawDate) {
+    if (!rawDate) return 0;
+    let y = 0, m = 0;
+    if (typeof rawDate === 'string' && rawDate.includes('-')) {
+        const parts = rawDate.split('T')[0].split('-');
+        y = parseInt(parts[0], 10);
+        m = parseInt(parts[1], 10);
+    } else {
+        const dt = new Date(rawDate);
+        if (!isNaN(dt.getTime())) {
+            y = dt.getFullYear();
+            m = dt.getMonth() + 1;
+        }
+    }
+    if (!m) return 0;
+    if (y > 2500) y -= 543;
+    if (m >= 10) return m - 10;
+    return m + 2;
+}
+
+// Render or Update Substance Pills
+function renderSubstancePillsBar() {
+    const pillsBar = document.getElementById('substancePillsBar');
+    if (!pillsBar) return;
+    
+    const subList = [
+        { key: 'all', label: 'ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
+        { key: 'pesticide', label: 'ยาฆ่าแมลง', icon: 'fa-leaf' },
+        { key: 'borax', label: 'สารบอแรกซ์', icon: 'fa-drumstick-bite' },
+        { key: 'formalin', label: 'สารฟอร์มาลิน', icon: 'fa-fish' },
+        { key: 'bleach', label: 'สารฟอกขาว', icon: 'fa-wand-magic-sparkles' },
+        { key: 'salicylic', label: 'สารกันรา', icon: 'fa-seedling' },
+        { key: 'agonist', label: 'สารเร่งเนื้อแดง', icon: 'fa-bacon' },
+        { key: 'polar', label: 'สารโพลาร์', icon: 'fa-fire' },
+        { key: 'coliformWater', label: 'โคลิฟอร์มในน้ำ', icon: 'fa-droplet' },
+        { key: 'coliformFood', label: 'โคลิฟอร์มในอาหาร', icon: 'fa-bowl-food' },
+        { key: 'foodLabel', label: 'ฉลากอาหาร', icon: 'fa-tag' }
+    ];
+
+    if (pillsBar.children.length === 0) {
+        pillsBar.innerHTML = subList.map(item => `
+            <button type="button" class="substance-pill-btn ${(window.currentActiveSubstance || 'all') === item.key ? 'active' : ''}" 
+                    id="pill-sub-${item.key}" onclick="window.selectSubstanceAnalytics('${item.key}')">
+                <i class="fa-solid ${item.icon}"></i>
+                <span>${item.label}</span>
+            </button>
+        `).join('');
+    } else {
+        // Just update active classes
+        subList.forEach(item => {
+            const btn = document.getElementById('pill-sub-' + item.key);
+            if (btn) {
+                if ((window.currentActiveSubstance || 'all') === item.key) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
+        });
+    }
+}
+
+// User Action: Select substance to view
+window.selectSubstanceAnalytics = function(subKey) {
+    window.currentActiveSubstance = subKey || 'all';
+    
+    // Sync dropdown
+    const selectEl = document.getElementById('substanceAnalyticsSelect');
+    if (selectEl && selectEl.value !== window.currentActiveSubstance) {
+        selectEl.value = window.currentActiveSubstance;
+    }
+    
+    // Sync pills
+    renderSubstancePillsBar();
+    
+    // Re-render views
+    if (window.currentCachedSamples && window.currentCachedStats) {
+        updateModernSubstanceAnalyticsView(window.currentCachedSamples, window.currentCachedStats);
+    }
+};
+
+// Open failed samples modal for current selected substance
+window.openCurrentActiveSubstanceModal = function() {
+    const key = window.currentActiveSubstance || 'all';
+    let label = 'ทุกสารที่ตรวจวิเคราะห์';
+    if (key !== 'all' && window.substanceDictionary[key]) {
+        label = window.substanceDictionary[key].label;
+    }
+    window.openFailedSamplesModal(key, label);
+};
+
+// Main Modern Substance Analytics Renderer
+function renderModernSubstanceAnalytics(samples, stats) {
+    renderSubstancePillsBar();
+    updateModernSubstanceAnalyticsView(samples, stats);
+}
+
+// Update the 3 widgets based on active substance
+function updateModernSubstanceAnalyticsView(samples, stats) {
+    const selectedKey = window.currentActiveSubstance || 'all';
+    const subInfo = window.substanceDictionary[selectedKey] || { label: 'สารที่ตรวจทั้งหมด (10 รายการ)' };
+    
+    // Update badge in Business Stat
+    const subBadge = document.getElementById('businessStatSubstanceBadge');
+    if (subBadge) {
+        subBadge.innerText = subInfo.label;
+    }
+
+    // Update monthly chart subtitle
+    const monthlySubEl = document.getElementById('monthlyChartSubtitle');
+    if (monthlySubEl) {
+        monthlySubEl.innerText = selectedKey === 'all' 
+            ? 'สารที่ตรวจทั้งหมด (10 รายการ) ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)' 
+            : subInfo.label + ' ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)';
+    }
+
+    // =========================================================================
+    // REQUIREMENT 1: Coast & Usage Bar Chart (12 Fiscal Months: ต.ค. 69 - ก.ย. 70)
+    // =========================================================================
+    const fiscalLabels = ['ต.ค. 69', 'พ.ย. 69', 'ธ.ค. 69', 'ม.ค. 70', 'ก.พ. 70', 'มี.ค. 70', 'เม.ย. 70', 'พ.ค. 70', 'มิ.ย. 70', 'ก.ค. 70', 'ส.ค. 70', 'ก.ย. 70'];
+    const monthlyTotals = new Array(12).fill(0);
+    const monthlyPass = new Array(12).fill(0);
+    const monthlyFail = new Array(12).fill(0);
+
+    (samples || []).forEach(s => {
+        const rawDate = s.collection_date || s.sampling_date || (s.created_at ? s.created_at.split('T')[0] : '');
+        const mIdx = getFiscalMonthIndex(rawDate);
+        if (mIdx < 0 || mIdx > 11) return;
+
+        let idx = 1;
+        let hasItems = false;
+        const checkSampleItem = (index) => {
+            if (selectedKey !== 'all' && !window.itemMatchesSubstance(s, index, selectedKey)) return;
+            hasItems = true;
+            monthlyTotals[mIdx]++;
+
+            const sum = window.getItemSubstanceSummary(s, index, selectedKey);
+            if (sum && sum.includes('ไม่ผ่าน')) {
+                monthlyFail[mIdx]++;
+            } else if (sum && sum.includes('ผ่าน')) {
+                monthlyPass[mIdx]++;
+            } else if (s.status === 'approved') {
+                monthlyPass[mIdx]++;
+            }
+        };
+
+        while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+            if (s['item_status_' + idx] !== 'rejected') {
+                checkSampleItem(idx);
+            }
+            idx++;
+        }
+        if (!hasItems && s.sample_name && s.status !== 'rejected') {
+            checkSampleItem(null);
+        }
+    });
+
+    // Summary calculation
+    const totalYearCount = monthlyTotals.reduce((a, b) => a + b, 0);
+    let maxMonthVal = 0;
+    let peakMonthIdx = 0;
+    monthlyTotals.forEach((val, i) => {
+        if (val > maxMonthVal) {
+            maxMonthVal = val;
+            peakMonthIdx = i;
+        }
+    });
+    const monthlyAvg = (totalYearCount / 12).toFixed(1);
+
+    const totalEl = document.getElementById('substanceTotalYearCount');
+    if (totalEl) totalEl.innerText = totalYearCount.toLocaleString() + ' ตัวอย่าง';
+
+    const peakEl = document.getElementById('substancePeakMonth');
+    if (peakEl) peakEl.innerText = totalYearCount > 0 ? `${fiscalLabels[peakMonthIdx]} (${maxMonthVal} ตัวอย่าง)` : '-';
+
+    const avgEl = document.getElementById('substanceMonthlyAvg');
+    if (avgEl) avgEl.innerText = monthlyAvg + ' ตัวอย่าง/เดือน';
+
+    // Chart.js Bar + Spline Line
+    const monthlyChartCanvas = document.getElementById('monthlySubstanceChart');
+    if (monthlyChartCanvas) {
+        const ctx = monthlyChartCanvas.getContext('2d');
+        
+        // Colors for 12 monthly pill bars (Image 2 Coast & Usage style)
+        const barPalette = [
+            '#38bdf8', '#0284c7', '#6366f1', '#8b5cf6', 
+            '#a855f7', '#ec4899', '#f43f5e', '#f97316', 
+            '#eab308', '#10b981', '#14b8a6', '#06b6d4'
+        ];
+
+        if (monthlySubstanceChartInstance) {
+            monthlySubstanceChartInstance.data.labels = fiscalLabels;
+            monthlySubstanceChartInstance.data.datasets[0].data = monthlyTotals;
+            monthlySubstanceChartInstance.data.datasets[1].data = monthlyTotals;
+            monthlySubstanceChartInstance.update();
+        } else {
+            monthlySubstanceChartInstance = new Chart(ctx, {
+                data: {
+                    labels: fiscalLabels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'จำนวนตัวอย่างที่ตรวจ',
+                            data: monthlyTotals,
+                            backgroundColor: barPalette,
+                            borderRadius: 12,
+                            borderSkipped: false,
+                            barPercentage: 0.52,
+                            order: 2
+                        },
+                        {
+                            type: 'line',
+                            label: 'เส้นแนวโน้มการตรวจ',
+                            data: monthlyTotals,
+                            borderColor: '#0284c7',
+                            borderWidth: 3,
+                            tension: 0.42,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#0284c7',
+                            pointBorderWidth: 3,
+                            pointHoverRadius: 8,
+                            pointHoverBackgroundColor: '#0284c7',
+                            pointHoverBorderColor: '#ffffff',
+                            pointHoverBorderWidth: 3,
+                            fill: false,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 15, bottom: 5, left: 5, right: 5 }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#e2e8f0',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            cornerRadius: 12,
+                            padding: 12,
+                            titleFont: { family: "'Prompt', sans-serif", weight: 'bold', size: 13 },
+                            bodyFont: { family: "'Prompt', sans-serif", size: 12 },
+                            callbacks: {
+                                title: function(items) {
+                                    return 'ประจำเดือน ' + items[0].label;
+                                },
+                                label: function(context) {
+                                    const idx = context.dataIndex;
+                                    const t = monthlyTotals[idx] || 0;
+                                    const p = monthlyPass[idx] || 0;
+                                    const f = monthlyFail[idx] || 0;
+                                    if (context.datasetIndex === 0) {
+                                        return [
+                                            ' ตรวจสะสม: ' + t + ' ตัวอย่าง',
+                                            ' ผ่านเกณฑ์: ' + p + ' ตัวอย่าง',
+                                            ' ไม่ผ่านเกณฑ์: ' + f + ' ตัวอย่าง'
+                                        ];
+                                    }
+                                    return null;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { family: "'Prompt', sans-serif", size: 11.5, weight: '500' },
+                                color: '#475569'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 10,
+                            grid: {
+                                color: 'rgba(226, 232, 240, 0.8)',
+                                borderDash: [5, 5]
+                            },
+                            ticks: {
+                                font: { family: "'Prompt', sans-serif", size: 11 },
+                                color: '#64748b',
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // =========================================================================
+    // REQUIREMENT 3: Business STATISTIC (Concentric Rings + ผ่าน/ไม่ผ่าน ร้อยละ)
+    // =========================================================================
+    let bTotal = 0, bPass = 0, bFail = 0;
+    if (selectedKey === 'all') {
+        Object.values(stats).forEach(s => {
+            bTotal += s.total;
+            bPass += s.pass;
+            bFail += s.fail;
+        });
+    } else if (stats[selectedKey]) {
+        bTotal = stats[selectedKey].total;
+        bPass = stats[selectedKey].pass;
+        bFail = stats[selectedKey].fail;
+    }
+
+    const passPctVal = bTotal > 0 ? ((bPass / bTotal) * 100).toFixed(1) : '100.0';
+    const failPctVal = bTotal > 0 ? ((bFail / bTotal) * 100).toFixed(1) : '0.0';
+
+    // SVG concentric rings update
+    // Circumference: Outer = 2 * PI * 62 = 389.5, Inner = 2 * PI * 44 = 276.4
+    const passOffset = 389.5 * (1 - (parseFloat(passPctVal) / 100));
+    const failOffset = 276.4 * (1 - (parseFloat(failPctVal) / 100));
+
+    const passCircle = document.getElementById('concentricPassCircle');
+    const failCircle = document.getElementById('concentricFailCircle');
+    if (passCircle) passCircle.style.strokeDashoffset = passOffset;
+    if (failCircle) failCircle.style.strokeDashoffset = failOffset;
+
+    const ringCenterRate = document.getElementById('ringCenterPassRate');
+    if (ringCenterRate) {
+        ringCenterRate.innerText = '+' + passPctVal + '%';
+    }
+
+    const passPctEl = document.getElementById('businessStatPassPct');
+    if (passPctEl) passPctEl.innerText = passPctVal + '%';
+
+    const passCountEl = document.getElementById('businessStatPassCount');
+    if (passCountEl) passCountEl.innerText = '(' + bPass.toLocaleString() + ' ตัวอย่าง)';
+
+    const failPctEl = document.getElementById('businessStatFailPct');
+    if (failPctEl) failPctEl.innerText = failPctVal + '%';
+
+    const failCountEl = document.getElementById('businessStatFailCount');
+    if (failCountEl) failCountEl.innerText = '(' + bFail.toLocaleString() + ' ตัวอย่าง)';
+
+    // =========================================================================
+    // REQUIREMENT 2: General Statistic (ตัวอย่างและจำนวนที่ไม่ผ่าน)
+    // =========================================================================
+    let failedItemsList = [];
+    if (selectedKey === 'all') {
+        for (const k in window.currentFailedSamples) {
+            if (Array.isArray(window.currentFailedSamples[k])) {
+                failedItemsList = failedItemsList.concat(window.currentFailedSamples[k]);
+            }
+        }
+    } else {
+        failedItemsList = window.currentFailedSamples[selectedKey] || [];
+    }
+
+    // Filter unique by sample name + date + province
+    const uniqueFails = [];
+    const seen = new Set();
+    failedItemsList.forEach(s => {
+        const id = (s.name || '') + (s.date || '') + (s.province || '');
+        if (!seen.has(id)) {
+            seen.add(id);
+            uniqueFails.push(s);
+        }
+    });
+
+    // Group counts by sample name
+    const nameCounts = {};
+    uniqueFails.forEach(s => {
+        const n = s.name || 'ไม่ระบุชื่อตัวอย่าง';
+        nameCounts[n] = (nameCounts[n] || 0) + 1;
+    });
+
+    const sortedNames = Object.keys(nameCounts).sort((a, b) => nameCounts[b] - nameCounts[a]);
+    const totalFailedCount = uniqueFails.length;
+
+    const failBadge = document.getElementById('generalStatFailBadge');
+    if (failBadge) {
+        failBadge.innerText = totalFailedCount + ' ตัวอย่าง';
+        if (totalFailedCount > 0) {
+            failBadge.style.background = '#fff1f2';
+            failBadge.style.color = '#e11d48';
+            failBadge.style.borderColor = '#fecdd3';
+        } else {
+            failBadge.style.background = '#ecfdf5';
+            failBadge.style.color = '#059669';
+            failBadge.style.borderColor = '#a7f3d0';
+        }
+    }
+
+    const failedContainer = document.getElementById('failedSamplesListContainer');
+    const modalBtn = document.getElementById('btnOpenSubstanceFailModal');
+
+    if (failedContainer) {
+        if (sortedNames.length === 0) {
+            failedContainer.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 26px 16px; background: #ffffff; border: 1.5px dashed #bbf7d0; border-radius: 14px; text-align: center;">
+                    <div style="width: 42px; height: 42px; border-radius: 50%; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px;">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div style="font-size: 13.5px; font-weight: 700; color: #065f46; font-family: 'Prompt', sans-serif;">ไม่พบตัวอย่างที่ไม่ผ่านเกณฑ์</div>
+                    <div style="font-size: 11.5px; color: #64748b; font-family: 'Prompt', sans-serif; margin-top: 2px;">ทุกตัวอย่างผ่านมาตรฐานความปลอดภัย (100%)</div>
+                </div>
+            `;
+            if (modalBtn) {
+                modalBtn.style.opacity = '0.6';
+                modalBtn.style.cursor = 'default';
+                modalBtn.innerHTML = '<i class="fa-solid fa-circle-check" style="color: #059669;"></i> ทุกตัวอย่างผ่านมาตรฐานความปลอดภัย';
+                modalBtn.onclick = null;
+            }
+        } else {
+            failedContainer.innerHTML = sortedNames.map(name => {
+                const count = nameCounts[name];
+                const pct = totalFailedCount > 0 ? ((count / totalFailedCount) * 100).toFixed(1) : 0;
+                return `
+                    <div class="failed-sample-card">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="failed-sample-icon-box">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div>
+                                <div class="failed-sample-name">${name}</div>
+                                <div class="failed-sample-sub">พบไม่ผ่านมาตรฐาน</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="failed-sample-badge-count">${count} ตัวอย่าง</span>
+                            <span class="failed-sample-badge-pct">(${pct}%)</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (modalBtn) {
+                modalBtn.style.opacity = '1';
+                modalBtn.style.cursor = 'pointer';
+                modalBtn.innerHTML = `<i class="fa-solid fa-magnifying-glass-chart"></i> ดูรายละเอียดตัวอย่างที่ไม่ผ่านทั้งหมด (${totalFailedCount} รายการ)`;
+                modalBtn.onclick = window.openCurrentActiveSubstanceModal;
+            }
+        }
+    }
+}
