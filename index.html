@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1792700000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793000966172">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1500,9 +1500,15 @@
                     <div id="verify-content-wrapper">
                         <div class="table-container">
                             <div class="table-header-bar">
-                                <h3>รายการตัวอย่างที่รอตรวจสอบรับเข้าระบบ</h3>
+                                <div>
+                                    <h3><i class="fa-solid fa-list-check" style="color: #0f274e; margin-right: 8px;"></i>รายการตัวอย่างที่รอตรวจสอบรับเข้าระบบ</h3>
+                                    <p>ตรวจสอบและกดปุ่มดูรายละเอียดเพื่อรับตัวอย่างเข้าสู่ห้องปฏิบัติการ</p>
+                                </div>
                                 <div class="table-actions">
-                                    <input type="text" class="search-input" id="searchVerifyTable" placeholder="ค้นหาตามรหัส/ชื่อตัวอย่าง/จังหวัด...">
+                                    <div class="search-box-wrapper" style="position: relative;">
+                                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                                        <input type="text" class="search-input" id="searchVerifyTable" placeholder="ค้นหา รหัสอ้างอิง, ชื่อตัวอย่าง, จังหวัด...">
+                                    </div>
                                 </div>
                             </div>
                             <div class="responsive-table">
@@ -2686,6 +2692,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1792690000000"></script>
+    <script src="app_v85.js?v=1793000966172"></script>
 </body>
 </html>
