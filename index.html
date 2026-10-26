@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793005019991">
+    <link rel="stylesheet" href="enhancements.css?v=1793007799360">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1262,19 +1262,223 @@
                             </div>
                         </div>
 
-                        <!-- NEW: Substance Table -->
-                        <div class="chart-container large-chart" style="grid-column: 1 / -1; margin-top: 5px;">
-                            <div class="chart-header">
-                                <h4><i class="fa-solid fa-flask"></i> สัดส่วนผลการตรวจวิเคราะห์แยกตามรายสาร (10 รายการ)</h4>
-                                <div class="chart-header-actions">
-                                    <button type="button" class="outcrowd-dots-btn" title="ตัวเลือกเพิ่มเติม"><i class="fa-solid fa-ellipsis"></i></button>
+                        <!-- NEW: Modern Substance Analytics Dashboard Section -->
+                        <div class="chart-container large-chart modern-substance-analytics-card" style="grid-column: 1 / -1; margin-top: 15px;">
+                            <!-- Header & Controls -->
+                            <div class="substance-card-header">
+                                <div class="substance-header-title-box">
+                                    <div class="substance-icon-badge">
+                                        <i class="fa-solid fa-flask-vial"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="substance-main-title"><i class="fa-solid fa-flask"></i> สัดส่วนผลการตรวจวิเคราะห์แยกตามรายสาร (10 รายการ)</h4>
+                                        <div class="substance-header-meta">
+                                            <span>ปีงบประมาณ 2570</span>
+                                            <span class="badge-fiscal-pill">
+                                                <i class="fa-regular fa-calendar-check"></i> ต.ค. 69 - ก.ย. 70
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="substance-header-controls">
+                                    <label for="substanceAnalyticsSelect" class="substance-select-label">เลือกสารที่ตรวจ:</label>
+                                    <div class="substance-select-wrapper">
+                                        <select id="substanceAnalyticsSelect" class="dashboard-filter-select substance-custom-dropdown" onchange="window.selectSubstanceAnalytics(this.value)">
+                                            <option value="all">🧪 สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)</option>
+                                            <option value="pesticide">🥬 ยาฆ่าแมลง (MU.10-001)</option>
+                                            <option value="borax">🥩 สารบอแรกซ์ (MU.10-002)</option>
+                                            <option value="formalin">🐟 สารฟอร์มาลิน (MU.10-002)</option>
+                                            <option value="bleach">🥢 สารฟอกขาว (MU.10-002)</option>
+                                            <option value="salicylic">🥒 สารกันรา (MU.10-002)</option>
+                                            <option value="agonist">🥓 สารเร่งเนื้อแดง (MU.10-002)</option>
+                                            <option value="polar">🍳 สารโพลาร์ในน้ำมันทอด (MU.10-003, 004)</option>
+                                            <option value="coliformWater">💧 โคลิฟอร์มในน้ำ (MU.10-006)</option>
+                                            <option value="coliformFood">🍲 โคลิฟอร์มในอาหาร (MU.10-007)</option>
+                                            <option value="foodLabel">🏷️ ฉลากอาหาร (MU.10-008)</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div style="padding: 10px 0;">
-                                <div id="substance-charts-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%;">
-                                    <!-- 10 charts will be dynamically generated here -->
-                                </div>
+
+                            <!-- Substance Quick Tabs (Pill Buttons) -->
+                            <div class="substance-pills-bar" id="substancePillsBar">
+                                <!-- Generated dynamically -->
                             </div>
+
+                            <!-- Analytics 3-Component Grid Layout -->
+                            <div class="substance-analytics-layout">
+                                
+                                <!-- REQUIREMENT 1: Monthly Comparison Bar Chart (Coast & Usage style - Image 2) -->
+                                <div class="coast-usage-card">
+                                    <div class="coast-usage-header">
+                                        <div>
+                                            <h5 class="coast-usage-title">
+                                                <i class="fa-solid fa-chart-column"></i>
+                                                จำนวนตัวอย่างที่ตรวจเปรียบเทียบรายเดือน
+                                            </h5>
+                                            <span class="coast-usage-subtitle" id="monthlyChartSubtitle">ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)</span>
+                                        </div>
+                                        <div class="monthly-legend-pill">
+                                            <span class="legend-bar"><span class="legend-dot-bar"></span> จำนวนตัวอย่าง</span>
+                                            <span class="legend-line"><span class="legend-line-shape"></span> เส้นแนวโน้ม</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Chart Canvas Container -->
+                                    <div class="coast-chart-canvas-wrapper">
+                                        <canvas id="monthlySubstanceChart"></canvas>
+                                    </div>
+
+                                    <!-- Bottom Summary Chips -->
+                                    <div class="coast-summary-grid">
+                                        <div class="coast-summary-chip">
+                                            <div class="chip-label">ตรวจสะสมทั้งปี</div>
+                                            <div class="chip-value text-sky" id="substanceTotalYearCount">0</div>
+                                        </div>
+                                        <div class="coast-summary-chip">
+                                            <div class="chip-label">เดือนตรวจสูงสุด</div>
+                                            <div class="chip-value text-dark" id="substancePeakMonth">-</div>
+                                        </div>
+                                        <div class="coast-summary-chip">
+                                            <div class="chip-label">เฉลี่ยต่อเดือน</div>
+                                            <div class="chip-value text-emerald" id="substanceMonthlyAvg">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- RIGHT COLUMN: Business Statistic + General Statistic -->
+                                <div class="substance-right-column">
+
+                                    <!-- REQUIREMENT 3: Business STATISTIC - ผ่าน / ไม่ผ่าน (Image 4) -->
+                                    <div class="business-statistic-card">
+                                        <div class="business-stat-header">
+                                            <h5 class="business-stat-title">
+                                                <i class="fa-solid fa-chart-pie"></i>
+                                                สัดส่วนผลการวิเคราะห์ (ผ่าน vs ไม่ผ่าน)
+                                            </h5>
+                                            <span id="businessStatSubstanceBadge" class="business-stat-badge">ทั้งหมด</span>
+                                        </div>
+
+                                        <div class="business-stat-body">
+                                            <!-- Concentric Circular Rings SVG -->
+                                            <div class="concentric-rings-container">
+                                                <svg viewBox="0 0 160 160" class="concentric-rings-svg">
+                                                    <defs>
+                                                        <linearGradient id="ringPassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" stop-color="#10b981"/>
+                                                            <stop offset="100%" stop-color="#059669"/>
+                                                        </linearGradient>
+                                                        <linearGradient id="ringFailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" stop-color="#f43f5e"/>
+                                                            <stop offset="100%" stop-color="#e11d48"/>
+                                                        </linearGradient>
+                                                        <filter id="ringGlowPass" x="-20%" y="-20%" width="140%" height="140%">
+                                                            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#10b981" flood-opacity="0.35"/>
+                                                        </filter>
+                                                        <filter id="ringGlowFail" x="-20%" y="-20%" width="140%" height="140%">
+                                                            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#f43f5e" flood-opacity="0.35"/>
+                                                        </filter>
+                                                    </defs>
+                                                    <!-- Track 1 Outer (Pass) -->
+                                                    <circle cx="80" cy="80" r="62" fill="none" stroke="#f1f5f9" stroke-width="12" />
+                                                    <circle id="concentricPassCircle" cx="80" cy="80" r="62" fill="none" stroke="url(#ringPassGrad)" stroke-width="12"
+                                                            stroke-linecap="round" stroke-dasharray="389.5" stroke-dashoffset="0" filter="url(#ringGlowPass)"/>
+                                                    <!-- Track 2 Inner (Fail) -->
+                                                    <circle cx="80" cy="80" r="44" fill="none" stroke="#f1f5f9" stroke-width="10" />
+                                                    <circle id="concentricFailCircle" cx="80" cy="80" r="44" fill="none" stroke="url(#ringFailGrad)" stroke-width="10"
+                                                            stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4" filter="url(#ringGlowFail)"/>
+                                                </svg>
+                                                <!-- Center Badge -->
+                                                <div class="ring-center-badge-box">
+                                                    <span id="ringCenterPassRate" class="ring-center-rate-badge">+100%</span>
+                                                    <span class="ring-center-sub">อัตราผ่าน</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Metric Items with Organic Wavy Trendlines -->
+                                            <div class="business-metrics-list">
+                                                <!-- ผ่านเกณฑ์ -->
+                                                <div class="business-metric-item">
+                                                    <div>
+                                                        <div class="metric-status-row">
+                                                            <span class="metric-indicator pass"></span>
+                                                            <span class="metric-label">ผ่านเกณฑ์</span>
+                                                        </div>
+                                                        <div class="metric-values-row">
+                                                            <span id="businessStatPassPct" class="metric-pct pass">100.0%</span>
+                                                            <span id="businessStatPassCount" class="metric-count">(0 ตัวอย่าง)</span>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Wavy SVG Trendline -->
+                                                    <div class="wavy-trendline-box">
+                                                        <svg width="65" height="26" viewBox="0 0 65 26" fill="none">
+                                                            <path d="M 2 18 Q 15 4, 30 16 T 55 6" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+                                                            <circle cx="55" cy="6" r="3.5" fill="#10b981"/>
+                                                            <circle cx="55" cy="6" r="6" fill="#10b981" fill-opacity="0.25"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+
+                                                <!-- ไม่ผ่านเกณฑ์ -->
+                                                <div class="business-metric-item">
+                                                    <div>
+                                                        <div class="metric-status-row">
+                                                            <span class="metric-indicator fail"></span>
+                                                            <span class="metric-label">ไม่ผ่านเกณฑ์</span>
+                                                        </div>
+                                                        <div class="metric-values-row">
+                                                            <span id="businessStatFailPct" class="metric-pct fail">0.0%</span>
+                                                            <span id="businessStatFailCount" class="metric-count">(0 ตัวอย่าง)</span>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Wavy SVG Trendline -->
+                                                    <div class="wavy-trendline-box">
+                                                        <svg width="65" height="26" viewBox="0 0 65 26" fill="none">
+                                                            <path d="M 2 8 Q 15 22, 30 12 T 55 20" stroke="#f43f5e" stroke-width="2.5" stroke-linecap="round"/>
+                                                            <circle cx="55" cy="20" r="3.5" fill="#f43f5e"/>
+                                                            <circle cx="55" cy="20" r="6" fill="#f43f5e" fill-opacity="0.25"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- REQUIREMENT 2: General Statistic - ตัวอย่างและจำนวนที่ไม่ผ่าน (Image 3) -->
+                                    <div class="general-statistic-card">
+                                        <div class="general-stat-header">
+                                            <div>
+                                                <h5 class="general-stat-title">
+                                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                                    ตัวอย่างและจำนวนที่ไม่ผ่าน
+                                                </h5>
+                                                <span class="general-stat-subtitle">รายการตัวอย่างที่ไม่ผ่านมาตรฐาน</span>
+                                            </div>
+                                            <span id="generalStatFailBadge" class="general-stat-fail-badge">
+                                                0 ตัวอย่าง
+                                            </span>
+                                        </div>
+
+                                        <!-- Failed Samples List Container -->
+                                        <div id="failedSamplesListContainer" class="failed-samples-container">
+                                            <!-- Dynamically populated failed items -->
+                                        </div>
+
+                                        <!-- Action Button: Open Detail Modal -->
+                                        <div class="general-stat-footer">
+                                            <button type="button" id="btnOpenSubstanceFailModal" class="btn-open-failed-modal" onclick="window.openCurrentActiveSubstanceModal()">
+                                                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                                                ดูรายละเอียดตัวอย่างที่ไม่ผ่านทั้งหมด
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Backward Compatibility Hidden Anchor -->
+                            <div id="substance-charts-grid" style="display: none;"></div>
                         </div>
                     </div>
                 </section>
@@ -2689,7 +2893,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1792132800000"></script>
+    <script src="charts-dash.js?v=1793007799360"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
