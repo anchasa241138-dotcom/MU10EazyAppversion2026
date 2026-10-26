@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793003605915">
+    <link rel="stylesheet" href="enhancements.css?v=1793005019991">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1208,7 +1208,11 @@
                             <div class="chart-body">
                                 <canvas id="formTypeChart"></canvas>
                             </div>
-                            <div class="outcrowd-explore-card" style="margin-top: 15px;">
+                        </div>
+
+                        <!-- TOP 3 Safety Ranking Section -->
+                        <div class="chart-container large-chart" style="grid-column: 1 / -1; margin-top: 5px; padding: 22px;">
+                            <div class="outcrowd-explore-card" style="margin-bottom: 20px;">
                                 <div class="explore-header-row">
                                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                                     <span>สำรวจข้อมูลด่วนตามสารที่ตรวจ (Quick Filter):</span>
@@ -1227,10 +1231,6 @@
                                     <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('foodLabel')">🏷️ ฉลากอาหาร</button>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- TOP 3 Safety Ranking Section -->
-                        <div class="chart-container large-chart" style="grid-column: 1 / -1; margin-top: 5px; padding: 22px;">
                             <div class="safety-ranking-grid">
                                 <!-- TOP 3 ปลอดภัยที่สุด -->
                                 <div class="ranking-panel safe-panel">
@@ -2710,6 +2710,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793003605915"></script>
+    <script src="app_v85.js?v=1793005019991"></script>
 </body>
 </html>
