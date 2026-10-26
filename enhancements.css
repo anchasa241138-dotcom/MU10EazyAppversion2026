@@ -2146,6 +2146,48 @@ body.tracking-view-active .content-body,
   color: #1e293b !important;
 }
 
+/* Force Font 'Prompt' for ALL text in E-Tracking page */
+#view-e-tracking,
+#view-e-tracking *,
+#view-e-tracking h1,
+#view-e-tracking h2,
+#view-e-tracking h3,
+#view-e-tracking h4,
+#view-e-tracking h5,
+#view-e-tracking h6,
+#view-e-tracking p,
+#view-e-tracking span,
+#view-e-tracking strong,
+#view-e-tracking b,
+#view-e-tracking div,
+#view-e-tracking label,
+#view-e-tracking input,
+#view-e-tracking button,
+#view-e-tracking select,
+#view-e-tracking textarea,
+#view-e-tracking .section-title-wrapper,
+#view-e-tracking .section-title-wrapper *,
+#view-e-tracking .tracking-search-section,
+#view-e-tracking .tracking-results-wrapper,
+#view-e-tracking .tracking-metadata-card,
+#view-e-tracking .tracking-metadata-card *,
+#view-e-tracking .timeline-container,
+#view-e-tracking .timeline-container *,
+#view-e-tracking .step-content,
+#view-e-tracking .step-content *,
+#view-e-tracking .status-badge,
+#view-e-tracking .status-badge-current,
+#view-e-tracking .tracking-action-bar,
+#view-e-tracking .tracking-action-bar * {
+  font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+body.tracking-view-active #currentViewTitle,
+body:has(#view-e-tracking.active) #currentViewTitle {
+  font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+
 /* Glassmorphism Cards on Bloom Field Background */
 #view-e-tracking .tracking-search-section,
 #view-e-tracking .tracking-results-wrapper,
