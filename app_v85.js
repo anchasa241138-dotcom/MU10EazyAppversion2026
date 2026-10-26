@@ -580,6 +580,11 @@ const app = {
         const hash = window.location.hash || sessionStorage.getItem('pending_route_hash') || '';
         if (!hash) return;
 
+        if (hash === '#tracking' || hash === '#e-tracking') {
+            this.switchView('e-tracking');
+            return;
+        }
+
         if (!this.currentUser) {
             sessionStorage.setItem('pending_route_hash', hash);
             return;
@@ -640,11 +645,13 @@ const app = {
             if (spanEl && titleEl) titleEl.innerText = spanEl.innerText;
         }
 
-        // Toggle tracking-view-active on body for bloom field gradient background
+        // Toggle tracking-view-active on body & html for bloom field gradient background
         if (viewId === 'e-tracking') {
             document.body.classList.add('tracking-view-active');
+            document.documentElement.classList.add('tracking-view-active');
         } else {
             document.body.classList.remove('tracking-view-active');
+            document.documentElement.classList.remove('tracking-view-active');
         }
 
         this.updateProvEmailButtonVisibility();
