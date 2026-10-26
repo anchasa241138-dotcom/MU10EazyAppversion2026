@@ -3326,74 +3326,75 @@ body.require-login-mode::before {
   padding: 10px 14px !important;
 }
 
+
 /* ========================================================
-   Modern Soothing Excel Download Filter & Table Header (สบายตา & อ่านง่าย)
+   Clean Light Excel Download Filter & Table (สไตล์หน้าตรวจสอบตัวอย่าง แลป)
    ======================================================== */
-.excel-filter-card {
-  background: linear-gradient(135deg, rgba(11, 25, 52, 0.92) 0%, rgba(6, 15, 33, 0.96) 100%) !important;
-  border: 1px solid rgba(56, 189, 248, 0.22) !important;
-  border-radius: 20px !important;
-  padding: 22px 26px !important;
-  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  margin-bottom: 22px !important;
-  transition: all 0.3s ease !important;
+#view-data-download .excel-filter-card {
+  background: #ffffff !important;
+  border: 1px solid #eef1f6 !important;
+  border-radius: 24px !important;
+  padding: 26px 30px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  margin-bottom: 24px !important;
+  color: #0f172a !important;
 }
 
-.excel-filter-header {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
+#view-data-download .excel-filter-header {
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding-bottom: 16px !important;
   margin-bottom: 20px !important;
-  padding-bottom: 14px !important;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.14) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   flex-wrap: wrap !important;
   gap: 12px !important;
 }
 
-.excel-filter-title {
+#view-data-download .excel-filter-title {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
 }
 
-.excel-filter-badge {
-  width: 40px !important;
-  height: 40px !important;
+#view-data-download .excel-filter-badge {
+  width: 42px !important;
+  height: 42px !important;
   border-radius: 12px !important;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.28) 0%, rgba(56, 189, 248, 0.16) 100%) !important;
-  border: 1px solid rgba(56, 189, 248, 0.35) !important;
-  color: #38bdf8 !important;
+  background: #eff6ff !important;
+  border: 1px solid #dbeafe !important;
+  color: #2563eb !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 16px !important;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.18) !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12) !important;
   flex-shrink: 0 !important;
 }
 
-.excel-filter-title h3 {
+#view-data-download .excel-filter-title h3 {
   margin: 0 !important;
-  font-size: 17px !important;
+  font-size: 18px !important;
   font-weight: 700 !important;
-  color: #ffffff !important;
-  letter-spacing: 0.2px !important;
+  color: #0f172a !important;
+  letter-spacing: -0.2px !important;
 }
 
-.excel-filter-title p {
-  margin: 2px 0 0 0 !important;
-  font-size: 12.5px !important;
-  color: #94a3b8 !important;
+#view-data-download .excel-filter-title p {
+  margin: 3px 0 0 0 !important;
+  font-size: 13px !important;
+  color: #64748b !important;
 }
 
-.btn-filter-reset {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  color: #cbd5e1 !important;
-  font-size: 12.5px !important;
-  font-weight: 500 !important;
-  padding: 7px 16px !important;
+#view-data-download .btn-filter-reset {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
   border-radius: 9999px !important;
   cursor: pointer !important;
   display: inline-flex !important;
@@ -3403,14 +3404,14 @@ body.require-login-mode::before {
   font-family: inherit !important;
 }
 
-.btn-filter-reset:hover {
-  background: rgba(239, 68, 68, 0.15) !important;
-  border-color: rgba(239, 68, 68, 0.4) !important;
-  color: #fca5a5 !important;
+#view-data-download .btn-filter-reset:hover {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #b91c1c !important;
   transform: translateY(-1px) !important;
 }
 
-.excel-filter-grid {
+#view-data-download .excel-filter-grid {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
   gap: 16px !important;
@@ -3418,93 +3419,92 @@ body.require-login-mode::before {
 }
 
 @media (min-width: 1280px) {
-  .excel-filter-grid {
+  #view-data-download .excel-filter-grid {
     grid-template-columns: 1.15fr 1.35fr 1.25fr 1.05fr 1.05fr auto !important;
   }
 }
 
-.excel-filter-group {
+#view-data-download .excel-filter-group {
   display: flex !important;
   flex-direction: column !important;
   gap: 6px !important;
 }
 
-.excel-filter-group label {
-  font-size: 12.5px !important;
+#view-data-download .excel-filter-group label {
+  font-size: 13px !important;
   font-weight: 600 !important;
-  color: #93c5fd !important;
+  color: #334155 !important;
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
-  letter-spacing: 0.2px !important;
+  letter-spacing: normal !important;
 }
 
-.excel-filter-group label i {
-  color: #38bdf8 !important;
+#view-data-download .excel-filter-group label i {
+  color: #0284c7 !important;
   font-size: 12px !important;
 }
 
-.excel-input-wrapper {
+#view-data-download .excel-input-wrapper {
   position: relative !important;
   width: 100% !important;
 }
 
-.excel-filter-group select,
-.excel-filter-group input[type="date"] {
+#view-data-download .excel-filter-group select,
+#view-data-download .excel-filter-group input[type="date"] {
   width: 100% !important;
   height: 42px !important;
-  background: rgba(10, 20, 42, 0.82) !important;
-  border: 1.5px solid rgba(56, 189, 248, 0.25) !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
   border-radius: 12px !important;
-  color: #f8fafc !important;
+  color: #0f172a !important;
   font-size: 13.5px !important;
   font-weight: 500 !important;
   padding: 0 12px !important;
   outline: none !important;
   transition: all 0.25s ease !important;
-  color-scheme: dark !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25) !important;
+  color-scheme: light !important;
+  box-shadow: none !important;
   font-family: inherit !important;
   cursor: pointer !important;
 }
 
-.excel-filter-group select:hover,
-.excel-filter-group input[type="date"]:hover {
-  border-color: rgba(56, 189, 248, 0.5) !important;
-  background: rgba(14, 28, 58, 0.9) !important;
+#view-data-download .excel-filter-group select:hover,
+#view-data-download .excel-filter-group input[type="date"]:hover {
+  border-color: #94a3b8 !important;
+  background: #ffffff !important;
 }
 
-.excel-filter-group select:focus,
-.excel-filter-group input[type="date"]:focus {
-  border-color: #38bdf8 !important;
-  background: rgba(16, 32, 68, 0.95) !important;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+#view-data-download .excel-filter-group select:focus,
+#view-data-download .excel-filter-group input[type="date"]:focus {
+  border-color: #2563eb !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
 }
 
-.excel-filter-group select option {
-  background: #09152b !important;
-  background-color: #09152b !important;
-  color: #f1f5f9 !important;
+#view-data-download .excel-filter-group select option {
+  background: #ffffff !important;
+  color: #0f172a !important;
   padding: 10px 14px !important;
   font-size: 13.5px !important;
 }
 
-.excel-filter-group input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.85) sepia(1) saturate(5) hue-rotate(175deg);
-  cursor: pointer;
+#view-data-download .excel-filter-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none !important;
+  cursor: pointer !important;
 }
 
-.btn-excel-search {
+#view-data-download .btn-excel-search {
   height: 42px !important;
   min-width: 136px !important;
-  padding: 0 20px !important;
-  border-radius: 12px !important;
-  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%) !important;
-  border: 1px solid rgba(56, 189, 248, 0.4) !important;
+  padding: 0 24px !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+  border: none !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   font-size: 13.5px !important;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.38) !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -3514,60 +3514,62 @@ body.require-login-mode::before {
   white-space: nowrap !important;
 }
 
-.btn-excel-search:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%) !important;
-  box-shadow: 0 6px 24px rgba(56, 189, 248, 0.5) !important;
-  transform: translateY(-2px) !important;
+#view-data-download .btn-excel-search:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%) !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45) !important;
+  transform: translateY(-1px) !important;
 }
 
 /* Polished Table Header & Excel Download Bar */
-.excel-table-header {
+#view-data-download .excel-table-header {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  padding: 14px 20px !important;
-  background: rgba(10, 24, 52, 0.65) !important;
-  border: 1px solid rgba(56, 189, 248, 0.18) !important;
-  border-radius: 16px !important;
-  margin-bottom: 14px !important;
-  backdrop-filter: blur(12px) !important;
+  padding: 0 0 18px 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  border-radius: 0 !important;
+  margin-bottom: 20px !important;
+  backdrop-filter: none !important;
   flex-wrap: wrap !important;
   gap: 12px !important;
 }
 
-.excel-count-badge {
-  color: #e2e8f0 !important;
-  font-size: 14.5px !important;
-  font-weight: 600 !important;
+#view-data-download .excel-count-badge {
+  color: #0f172a !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 10px !important;
+  letter-spacing: -0.2px !important;
 }
 
-.excel-count-badge i {
-  color: #38bdf8 !important;
-  font-size: 15px !important;
+#view-data-download .excel-count-badge i {
+  color: #0f274e !important;
+  font-size: 18px !important;
 }
 
-.excel-count-badge .count-pill {
-  background: rgba(56, 189, 248, 0.18) !important;
-  color: #38bdf8 !important;
-  border: 1px solid rgba(56, 189, 248, 0.35) !important;
-  padding: 2px 10px !important;
+#view-data-download .excel-count-badge .count-pill {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+  padding: 3px 14px !important;
   border-radius: 9999px !important;
   font-weight: 700 !important;
-  font-size: 13.5px !important;
-  letter-spacing: 0.3px !important;
+  font-size: 14px !important;
+  letter-spacing: 0.2px !important;
 }
 
-.btn-download-excel-glow {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+#view-data-download .btn-download-excel-glow {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(52, 211, 153, 0.35) !important;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35) !important;
-  padding: 9px 22px !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3) !important;
+  padding: 10px 24px !important;
   border-radius: 9999px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   font-size: 13.5px !important;
   transition: all 0.25s ease !important;
   display: inline-flex !important;
@@ -3576,9 +3578,12 @@ body.require-login-mode::before {
   cursor: pointer !important;
 }
 
-.btn-download-excel-glow:hover {
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
-  box-shadow: 0 6px 24px rgba(52, 211, 153, 0.5) !important;
+#view-data-download .btn-download-excel-glow:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.42) !important;
+  transform: translateY(-1px) !important;
+}
+
   transform: translateY(-2px) !important;
 }
 
@@ -3651,7 +3656,8 @@ body.require-login-mode::before {
 #view-lab-verify,
 #view-lab-analysis,
 #view-lab-certify,
-#view-download-results {
+#view-download-results,
+#view-data-download {
   background: #eceef2 !important;
   border-radius: 28px !important;
   padding: 30px !important;
@@ -3669,6 +3675,8 @@ body.require-login-mode::before {
 #view-lab-certify *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-download-results,
 #view-download-results *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#view-data-download,
+#view-data-download *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #sampleDetailPreviewModal,
 #sampleDetailPreviewModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #verifyAcceptModal,
@@ -3688,7 +3696,9 @@ body:has(#view-download-results.active) #currentViewTitle,
 body.lab-verify-view-active #currentViewTitle,
 body.lab-analysis-view-active #currentViewTitle,
 body.lab-certify-view-active #currentViewTitle,
-body.download-results-view-active #currentViewTitle {
+body.download-results-view-active #currentViewTitle,
+body:has(#view-data-download.active) #currentViewTitle,
+body.data-download-view-active #currentViewTitle {
   font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
@@ -3697,6 +3707,7 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-analysis i, #view-lab-analysis .fa, #view-lab-analysis .fas, #view-lab-analysis .fa-solid, #view-lab-analysis .fa-regular,
 #view-lab-certify i, #view-lab-certify .fa, #view-lab-certify .fas, #view-lab-certify .fa-solid, #view-lab-certify .fa-regular,
 #view-download-results i, #view-download-results .fa, #view-download-results .fas, #view-download-results .fa-solid, #view-download-results .fa-regular,
+#view-data-download i, #view-data-download .fa, #view-data-download .fas, #view-data-download .fa-solid, #view-data-download .fa-regular,
 #sampleDetailPreviewModal i, #sampleDetailPreviewModal .fa, #sampleDetailPreviewModal .fas, #sampleDetailPreviewModal .fa-solid, #sampleDetailPreviewModal .fa-regular,
 #verifyAcceptModal i, #verifyAcceptModal .fa, #verifyAcceptModal .fas, #verifyAcceptModal .fa-solid, #verifyAcceptModal .fa-regular,
 #verifyRejectModal i, #verifyRejectModal .fa, #verifyRejectModal .fas, #verifyRejectModal .fa-solid, #verifyRejectModal .fa-regular,
@@ -3710,7 +3721,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify .table-container,
 #view-lab-analysis .table-container,
 #view-lab-certify .table-container,
-#view-download-results .table-container {
+#view-download-results .table-container,
+#view-data-download .table-container {
   background: #ffffff !important;
   border: 1px solid #eef1f6 !important;
   border-radius: 24px !important;
@@ -3795,7 +3807,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify .responsive-table,
 #view-lab-analysis .responsive-table,
 #view-lab-certify .responsive-table,
-#view-download-results .responsive-table {
+#view-download-results .responsive-table,
+#view-data-download .responsive-table {
   width: 100% !important;
   overflow-x: auto !important;
   border-radius: 16px !important;
@@ -3807,7 +3820,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify #verifyTable,
 #view-lab-analysis #analysisTable,
 #view-lab-certify #certifyTable,
-#view-download-results #downloadTable {
+#view-download-results #downloadTable,
+#view-data-download #exportTable {
   width: 100% !important;
   min-width: 100% !important;
   table-layout: auto !important;
@@ -3821,7 +3835,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify #verifyTable thead tr,
 #view-lab-analysis #analysisTable thead tr,
 #view-lab-certify #certifyTable thead tr,
-#view-download-results #downloadTable thead tr {
+#view-download-results #downloadTable thead tr,
+#view-data-download #exportTable thead tr {
   background: #0f274e !important;
   color: #ffffff !important;
   border-bottom: 2px solid rgba(56, 189, 248, 0.35) !important;
@@ -3830,7 +3845,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify #verifyTable thead th,
 #view-lab-analysis #analysisTable thead th,
 #view-lab-certify #certifyTable thead th,
-#view-download-results #downloadTable thead th {
+#view-download-results #downloadTable thead th,
+#view-data-download #exportTable thead th {
   background: #0f274e !important;
   color: #ffffff !important;
   font-weight: 700 !important;
@@ -3847,7 +3863,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify #verifyTable tbody tr,
 #view-lab-analysis #analysisTable tbody tr,
 #view-lab-certify #certifyTable tbody tr,
-#view-download-results #downloadTable tbody tr {
+#view-download-results #downloadTable tbody tr,
+#view-data-download #exportTable tbody tr {
   background: #ffffff !important;
   color: #334155 !important;
   border-bottom: 1px solid #f1f5f9 !important;
@@ -3857,21 +3874,24 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify #verifyTable tbody tr:nth-child(even),
 #view-lab-analysis #analysisTable tbody tr:nth-child(even),
 #view-lab-certify #certifyTable tbody tr:nth-child(even),
-#view-download-results #downloadTable tbody tr:nth-child(even) {
+#view-download-results #downloadTable tbody tr:nth-child(even),
+#view-data-download #exportTable tbody tr:nth-child(even) {
   background: #f8fafc !important;
 }
 
 #view-lab-verify #verifyTable tbody tr:hover,
 #view-lab-analysis #analysisTable tbody tr:hover,
 #view-lab-certify #certifyTable tbody tr:hover,
-#view-download-results #downloadTable tbody tr:hover {
+#view-download-results #downloadTable tbody tr:hover,
+#view-data-download #exportTable tbody tr:hover {
   background: #eff6ff !important;
 }
 
 #view-lab-verify #verifyTable tbody td,
 #view-lab-analysis #analysisTable tbody td,
 #view-lab-certify #certifyTable tbody td,
-#view-download-results #downloadTable tbody td {
+#view-download-results #downloadTable tbody td,
+#view-data-download #exportTable tbody td {
   padding: 14px 16px !important;
   border-bottom: 1px solid #f1f5f9 !important;
   color: #334155 !important;
@@ -3889,7 +3909,9 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-certify #certifyTable tbody td:nth-child(1),
 #view-lab-certify #certifyTable tbody td:nth-child(1) strong,
 #view-download-results #downloadTable tbody td:nth-child(1),
-#view-download-results #downloadTable tbody td:nth-child(1) strong {
+#view-download-results #downloadTable tbody td:nth-child(1) strong,
+#view-data-download #exportTable tbody td:nth-child(1),
+#view-data-download #exportTable tbody td:nth-child(1) strong {
   color: #0284c7 !important;
   font-weight: 700 !important;
   letter-spacing: 0.2px !important;
@@ -3900,7 +3922,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify #verifyTable tbody td:nth-child(2),
 #view-lab-analysis #analysisTable tbody td:nth-child(2),
 #view-lab-certify #certifyTable tbody td:nth-child(2),
-#view-download-results #downloadTable tbody td:nth-child(2) {
+#view-download-results #downloadTable tbody td:nth-child(2),
+#view-data-download #exportTable tbody td:nth-child(2) {
   white-space: nowrap !important;
   text-align: center !important;
 }
@@ -3912,7 +3935,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-certify #certifyTable .status-badge:not(.status-pending):not(.status-warning):not(.status-rejected):not(.status-approved),
 #view-lab-certify #certifyTable .form-type-badge,
 #view-download-results #downloadTable .badge:not(.bg-success):not(.bg-danger),
-#view-download-results #downloadTable .form-type-badge {
+#view-download-results #downloadTable .form-type-badge,
+#view-data-download #exportTable .form-type-badge {
   background-color: #0f274e !important;
   background: #0f274e !important;
   color: #ffffff !important;
@@ -4062,7 +4086,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify .auth-notice-card,
 #view-lab-analysis .auth-notice-card,
 #view-lab-certify .auth-notice-card,
-#view-download-results .empty-state {
+#view-download-results .empty-state,
+#view-data-download .auth-notice-card {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 20px !important;
@@ -4075,7 +4100,8 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify .auth-notice-card h3,
 #view-lab-analysis .auth-notice-card h3,
 #view-lab-certify .auth-notice-card h3,
-#view-download-results .empty-state h3 {
+#view-download-results .empty-state h3,
+#view-data-download .auth-notice-card h3 {
   color: #0f172a !important;
   font-weight: 700 !important;
 }
@@ -4083,14 +4109,16 @@ body.download-results-view-active #currentViewTitle {
 #view-lab-verify .auth-notice-card p,
 #view-lab-analysis .auth-notice-card p,
 #view-lab-certify .auth-notice-card p,
-#view-download-results .empty-state p {
+#view-download-results .empty-state p,
+#view-data-download .auth-notice-card p {
   color: #64748b !important;
 }
 
 #view-lab-verify .auth-notice-card .auth-lock-icon,
 #view-lab-analysis .auth-notice-card .auth-lock-icon,
 #view-lab-certify .auth-notice-card .auth-lock-icon,
-#view-download-results .empty-state i {
+#view-download-results .empty-state i,
+#view-data-download .auth-notice-card .auth-lock-icon {
   color: #0284c7 !important;
   font-size: 48px !important;
   margin-bottom: 16px !important;
