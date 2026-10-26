@@ -654,11 +654,14 @@ const app = {
             document.documentElement.classList.remove('tracking-view-active');
         }
 
-        if (viewId === 'lab-verify') {
-            document.body.classList.add('lab-verify-view-active');
-        } else {
-            document.body.classList.remove('lab-verify-view-active');
-        }
+        const labViews = ['lab-verify', 'lab-analysis', 'lab-certify', 'download-results'];
+        labViews.forEach(v => {
+            if (viewId === v) {
+                document.body.classList.add(v + '-view-active');
+            } else {
+                document.body.classList.remove(v + '-view-active');
+            }
+        });
 
         this.updateProvEmailButtonVisibility();
         this.updateEditApprovalButtonVisibility();
@@ -784,7 +787,7 @@ const app = {
         tbody.innerHTML = '';
         
         if(approvedSamples.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 30px; color: #64748b;">ไม่พบรายการที่พร้อมดาวน์โหลด</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 30px; color: #64748b; font-weight: 500;">ไม่พบรายการที่พร้อมดาวน์โหลด</td></tr>';
             return;
         }
 
@@ -815,7 +818,7 @@ const app = {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${s.lab_no || s.lab_id}</strong></td>
-                <td><span class="badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
+                <td><span class="badge form-type-badge">${s.form_type}</span></td>
                 <td>${displayName.length > 50 ? displayName.substring(0, 50) + '...' : displayName}</td>
                 <td>ดูรายละเอียดในเอกสาร...</td>
                 <td>${summaryBadge}</td>
@@ -3057,7 +3060,7 @@ document.getElementById('formNameTitle').innerText = title;
                 
             tr.innerHTML = `
                 <td><strong>${s.lab_no || s.lab_id}</strong></td>
-                <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
+                <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                 <td>${(()=>{
     let n = s.sample_name || '';
     if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
@@ -3092,7 +3095,7 @@ document.getElementById('formNameTitle').innerText = title;
         });
         
         if (tbody.innerHTML === '') {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center">ไม่มีรายการที่อยู่ระหว่างวิเคราะห์</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding: 24px; color: #64748b; font-weight: 500;">ไม่มีรายการที่อยู่ระหว่างวิเคราะห์</td></tr>';
         }
     },
 
@@ -4811,7 +4814,7 @@ document.getElementById('formNameTitle').innerText = title;
       const tr = document.createElement('tr');
               tr.innerHTML = `
                   <td><strong>${s.lab_no || s.lab_id}</strong></td>
-                  <td><span class="status-badge" style="background:#f1f5f9; color:#475569;">${s.form_type}</span></td>
+                  <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                   <td>${(()=>{
     let n = s.sample_name || '';
     if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
@@ -4838,7 +4841,7 @@ document.getElementById('formNameTitle').innerText = title;
         });
         
          if (tbody.innerHTML === '') {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center">ไม่มีรายงานที่รออนุมัติ</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 24px; color: #64748b; font-weight: 500;">ไม่มีรายงานที่รออนุมัติ</td></tr>';
         }
     },
 
