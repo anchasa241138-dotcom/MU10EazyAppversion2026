@@ -3634,14 +3634,24 @@ body.require-login-mode::before {
 
 
 
+
+
 /* ==========================================================================
-   LAB VERIFICATION VIEW (ตรวจรับตัวอย่าง - แลป) - Clean Light Modern Theme
-   Matches the design language of 'รายการตัวอย่างที่บันทึกไว้สำหรับแบบฟอร์มนี้'
-   Font: Prompt across the entire view and its verification modals
+   LAB & RESULTS DATA VIEWS - Clean Light Modern Theme
+   Views:
+     - #view-lab-verify (ตรวจสอบตัวอย่าง (แลป))
+     - #view-lab-analysis (ตรวจวิเคราะห์ตัวอย่าง)
+     - #view-lab-certify (รับรองผลตรวจวิเคราะห์)
+     - #view-download-results (ดาวน์โหลดผลตรวจวิเคราะห์)
+   Design: Matches 'รายการตัวอย่างที่บันทึกไว้สำหรับแบบฟอร์มนี้'
+   Font: Prompt across all views, modals, and headers
    ========================================================================== */
 
-/* 1. Global View Container */
-#view-lab-verify {
+/* 1. Global View Containers */
+#view-lab-verify,
+#view-lab-analysis,
+#view-lab-certify,
+#view-download-results {
   background: #eceef2 !important;
   border-radius: 28px !important;
   padding: 30px !important;
@@ -3650,46 +3660,57 @@ body.require-login-mode::before {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
 }
 
-/* 2. Font 'Prompt' for View, Modals, and Top Title */
+/* 2. Font 'Prompt' for Views, Modals, and Top Title */
 #view-lab-verify,
 #view-lab-verify *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#view-lab-analysis,
+#view-lab-analysis *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#view-lab-certify,
+#view-lab-certify *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#view-download-results,
+#view-download-results *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #sampleDetailPreviewModal,
 #sampleDetailPreviewModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #verifyAcceptModal,
 #verifyAcceptModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #verifyRejectModal,
 #verifyRejectModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#analysisInputModal,
+#analysisInputModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#certifyModal,
+#certifyModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#provincialEmailModal,
+#provincialEmailModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 body:has(#view-lab-verify.active) #currentViewTitle,
-body.lab-verify-view-active #currentViewTitle {
+body:has(#view-lab-analysis.active) #currentViewTitle,
+body:has(#view-lab-certify.active) #currentViewTitle,
+body:has(#view-download-results.active) #currentViewTitle,
+body.lab-verify-view-active #currentViewTitle,
+body.lab-analysis-view-active #currentViewTitle,
+body.lab-certify-view-active #currentViewTitle,
+body.download-results-view-active #currentViewTitle {
   font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
-/* Ensure FontAwesome icons retain correct icon font */
-#view-lab-verify i,
-#view-lab-verify .fa,
-#view-lab-verify .fas,
-#view-lab-verify .fa-solid,
-#view-lab-verify .fa-regular,
-#sampleDetailPreviewModal i,
-#sampleDetailPreviewModal .fa,
-#sampleDetailPreviewModal .fas,
-#sampleDetailPreviewModal .fa-solid,
-#sampleDetailPreviewModal .fa-regular,
-#verifyAcceptModal i,
-#verifyAcceptModal .fa,
-#verifyAcceptModal .fas,
-#verifyAcceptModal .fa-solid,
-#verifyAcceptModal .fa-regular,
-#verifyRejectModal i,
-#verifyRejectModal .fa,
-#verifyRejectModal .fas,
-#verifyRejectModal .fa-solid,
-#verifyRejectModal .fa-regular {
+/* Retain FontAwesome Icon font integrity across views & modals */
+#view-lab-verify i, #view-lab-verify .fa, #view-lab-verify .fas, #view-lab-verify .fa-solid, #view-lab-verify .fa-regular,
+#view-lab-analysis i, #view-lab-analysis .fa, #view-lab-analysis .fas, #view-lab-analysis .fa-solid, #view-lab-analysis .fa-regular,
+#view-lab-certify i, #view-lab-certify .fa, #view-lab-certify .fas, #view-lab-certify .fa-solid, #view-lab-certify .fa-regular,
+#view-download-results i, #view-download-results .fa, #view-download-results .fas, #view-download-results .fa-solid, #view-download-results .fa-regular,
+#sampleDetailPreviewModal i, #sampleDetailPreviewModal .fa, #sampleDetailPreviewModal .fas, #sampleDetailPreviewModal .fa-solid, #sampleDetailPreviewModal .fa-regular,
+#verifyAcceptModal i, #verifyAcceptModal .fa, #verifyAcceptModal .fas, #verifyAcceptModal .fa-solid, #verifyAcceptModal .fa-regular,
+#verifyRejectModal i, #verifyRejectModal .fa, #verifyRejectModal .fas, #verifyRejectModal .fa-solid, #verifyRejectModal .fa-regular,
+#analysisInputModal i, #analysisInputModal .fa, #analysisInputModal .fas, #analysisInputModal .fa-solid, #analysisInputModal .fa-regular,
+#certifyModal i, #certifyModal .fa, #certifyModal .fas, #certifyModal .fa-solid, #certifyModal .fa-regular,
+#provincialEmailModal i, #provincialEmailModal .fa, #provincialEmailModal .fas, #provincialEmailModal .fa-solid, #provincialEmailModal .fa-regular {
   font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
 }
 
-/* 3. Card Container (Pure White Card on Soft Gray Canvas) */
-#view-lab-verify .table-container {
+/* 3. Card Containers (Pure White Card on Soft Gray Canvas) */
+#view-lab-verify .table-container,
+#view-lab-analysis .table-container,
+#view-lab-certify .table-container,
+#view-download-results .table-container {
   background: #ffffff !important;
   border: 1px solid #eef1f6 !important;
   border-radius: 24px !important;
@@ -3703,8 +3724,11 @@ body.lab-verify-view-active #currentViewTitle {
   margin: 0 !important;
 }
 
-/* 4. Table Header Bar & Search Input */
-#view-lab-verify .table-header-bar {
+/* 4. Table Header Bars & Search Inputs */
+#view-lab-verify .table-header-bar,
+#view-lab-analysis .table-header-bar,
+#view-lab-certify .table-header-bar,
+#view-download-results .table-header-bar {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -3715,7 +3739,10 @@ body.lab-verify-view-active #currentViewTitle {
   gap: 16px !important;
 }
 
-#view-lab-verify .table-header-bar h3 {
+#view-lab-verify .table-header-bar h3,
+#view-lab-analysis .table-header-bar h3,
+#view-lab-certify .table-header-bar h3,
+#view-download-results .table-header-bar h3 {
   color: #0f172a !important;
   font-weight: 700 !important;
   font-size: 20px !important;
@@ -3723,13 +3750,19 @@ body.lab-verify-view-active #currentViewTitle {
   letter-spacing: -0.2px !important;
 }
 
-#view-lab-verify .table-header-bar p {
+#view-lab-verify .table-header-bar p,
+#view-lab-analysis .table-header-bar p,
+#view-lab-certify .table-header-bar p,
+#view-download-results .table-header-bar p {
   color: #64748b !important;
   font-size: 13.5px !important;
   margin: 0 !important;
 }
 
-#view-lab-verify #searchVerifyTable {
+#view-lab-verify #searchVerifyTable,
+#view-lab-analysis #searchAnalysisTable,
+#view-lab-certify #searchCertifyTable,
+#view-download-results #searchDownloadTable {
   background: #ffffff !important;
   border: 1.5px solid #cbd5e1 !important;
   color: #0f172a !important;
@@ -3742,18 +3775,27 @@ body.lab-verify-view-active #currentViewTitle {
   transition: all 0.2s ease !important;
 }
 
-#view-lab-verify #searchVerifyTable:focus {
+#view-lab-verify #searchVerifyTable:focus,
+#view-lab-analysis #searchAnalysisTable:focus,
+#view-lab-certify #searchCertifyTable:focus,
+#view-download-results #searchDownloadTable:focus {
   border-color: #2563eb !important;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
 }
 
-#view-lab-verify #searchVerifyTable::placeholder {
+#view-lab-verify #searchVerifyTable::placeholder,
+#view-lab-analysis #searchAnalysisTable::placeholder,
+#view-lab-certify #searchCertifyTable::placeholder,
+#view-download-results #searchDownloadTable::placeholder {
   color: #94a3b8 !important;
   font-size: 13px !important;
 }
 
-/* 5. Responsive Table Wrapper & Base Table */
-#view-lab-verify .responsive-table {
+/* 5. Responsive Table Wrappers & Base Tables */
+#view-lab-verify .responsive-table,
+#view-lab-analysis .responsive-table,
+#view-lab-certify .responsive-table,
+#view-download-results .responsive-table {
   width: 100% !important;
   overflow-x: auto !important;
   border-radius: 16px !important;
@@ -3762,7 +3804,10 @@ body.lab-verify-view-active #currentViewTitle {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
 }
 
-#view-lab-verify #verifyTable {
+#view-lab-verify #verifyTable,
+#view-lab-analysis #analysisTable,
+#view-lab-certify #certifyTable,
+#view-download-results #downloadTable {
   width: 100% !important;
   min-width: 100% !important;
   table-layout: auto !important;
@@ -3773,13 +3818,19 @@ body.lab-verify-view-active #currentViewTitle {
 }
 
 /* 6. Dark Navy Header (matching Image 2) */
-#view-lab-verify #verifyTable thead tr {
+#view-lab-verify #verifyTable thead tr,
+#view-lab-analysis #analysisTable thead tr,
+#view-lab-certify #certifyTable thead tr,
+#view-download-results #downloadTable thead tr {
   background: #0f274e !important;
   color: #ffffff !important;
   border-bottom: 2px solid rgba(56, 189, 248, 0.35) !important;
 }
 
-#view-lab-verify #verifyTable thead th {
+#view-lab-verify #verifyTable thead th,
+#view-lab-analysis #analysisTable thead th,
+#view-lab-certify #certifyTable thead th,
+#view-download-results #downloadTable thead th {
   background: #0f274e !important;
   color: #ffffff !important;
   font-weight: 700 !important;
@@ -3793,22 +3844,34 @@ body.lab-verify-view-active #currentViewTitle {
 }
 
 /* 7. Table Rows (Alternating White / Subtle Off-White) */
-#view-lab-verify #verifyTable tbody tr {
+#view-lab-verify #verifyTable tbody tr,
+#view-lab-analysis #analysisTable tbody tr,
+#view-lab-certify #certifyTable tbody tr,
+#view-download-results #downloadTable tbody tr {
   background: #ffffff !important;
   color: #334155 !important;
   border-bottom: 1px solid #f1f5f9 !important;
   transition: background-color 0.15s ease !important;
 }
 
-#view-lab-verify #verifyTable tbody tr:nth-child(even) {
+#view-lab-verify #verifyTable tbody tr:nth-child(even),
+#view-lab-analysis #analysisTable tbody tr:nth-child(even),
+#view-lab-certify #certifyTable tbody tr:nth-child(even),
+#view-download-results #downloadTable tbody tr:nth-child(even) {
   background: #f8fafc !important;
 }
 
-#view-lab-verify #verifyTable tbody tr:hover {
+#view-lab-verify #verifyTable tbody tr:hover,
+#view-lab-analysis #analysisTable tbody tr:hover,
+#view-lab-certify #certifyTable tbody tr:hover,
+#view-download-results #downloadTable tbody tr:hover {
   background: #eff6ff !important;
 }
 
-#view-lab-verify #verifyTable tbody td {
+#view-lab-verify #verifyTable tbody td,
+#view-lab-analysis #analysisTable tbody td,
+#view-lab-certify #certifyTable tbody td,
+#view-download-results #downloadTable tbody td {
   padding: 14px 16px !important;
   border-bottom: 1px solid #f1f5f9 !important;
   color: #334155 !important;
@@ -3818,9 +3881,15 @@ body.lab-verify-view-active #currentViewTitle {
 }
 
 /* Column Specific Styles */
-/* Column 1: Ref ID in vibrant electric blue */
+/* Column 1: Ref ID / Lab ID in vibrant electric blue */
 #view-lab-verify #verifyTable tbody td:nth-child(1),
-#view-lab-verify #verifyTable tbody td:nth-child(1) strong {
+#view-lab-verify #verifyTable tbody td:nth-child(1) strong,
+#view-lab-analysis #analysisTable tbody td:nth-child(1),
+#view-lab-analysis #analysisTable tbody td:nth-child(1) strong,
+#view-lab-certify #certifyTable tbody td:nth-child(1),
+#view-lab-certify #certifyTable tbody td:nth-child(1) strong,
+#view-download-results #downloadTable tbody td:nth-child(1),
+#view-download-results #downloadTable tbody td:nth-child(1) strong {
   color: #0284c7 !important;
   font-weight: 700 !important;
   letter-spacing: 0.2px !important;
@@ -3828,13 +3897,22 @@ body.lab-verify-view-active #currentViewTitle {
 }
 
 /* Column 2: Form badge in dark navy */
-#view-lab-verify #verifyTable tbody td:nth-child(2) {
+#view-lab-verify #verifyTable tbody td:nth-child(2),
+#view-lab-analysis #analysisTable tbody td:nth-child(2),
+#view-lab-certify #certifyTable tbody td:nth-child(2),
+#view-download-results #downloadTable tbody td:nth-child(2) {
   white-space: nowrap !important;
   text-align: center !important;
 }
 
 #view-lab-verify #verifyTable .status-badge:not(.status-registered),
-#view-lab-verify #verifyTable .form-type-badge {
+#view-lab-verify #verifyTable .form-type-badge,
+#view-lab-analysis #analysisTable .status-badge:not(.status-analyzing):not(.status-summarized),
+#view-lab-analysis #analysisTable .form-type-badge,
+#view-lab-certify #certifyTable .status-badge:not(.status-pending):not(.status-warning):not(.status-rejected):not(.status-approved),
+#view-lab-certify #certifyTable .form-type-badge,
+#view-download-results #downloadTable .badge:not(.bg-success):not(.bg-danger),
+#view-download-results #downloadTable .form-type-badge {
   background-color: #0f274e !important;
   background: #0f274e !important;
   color: #ffffff !important;
@@ -3848,13 +3926,9 @@ body.lab-verify-view-active #currentViewTitle {
   border: none !important;
 }
 
-/* Column 7: Status badge 'รอตรวจรับ' */
-#view-lab-verify #verifyTable tbody td:nth-child(7) {
-  white-space: nowrap !important;
-  text-align: center !important;
-}
-
-#view-lab-verify #verifyTable .status-badge.status-registered {
+/* Status Badges */
+#view-lab-verify #verifyTable .status-registered,
+#view-lab-analysis #analysisTable .status-analyzing {
   background: #eff6ff !important;
   color: #1d4ed8 !important;
   border: 1px solid #bfdbfe !important;
@@ -3866,46 +3940,129 @@ body.lab-verify-view-active #currentViewTitle {
   box-shadow: 0 1px 3px rgba(29, 78, 216, 0.08) !important;
 }
 
-/* Column 8: Action button 'ดูรายละเอียด' */
-#view-lab-verify #verifyTable tbody td:nth-child(8) {
-  white-space: nowrap !important;
-  text-align: center !important;
+#view-lab-analysis #analysisTable .status-summarized {
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+  border-radius: 9999px !important;
+  padding: 4px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+  box-shadow: 0 1px 3px rgba(21, 128, 61, 0.08) !important;
 }
 
+#view-lab-certify #certifyTable .status-pending,
+#view-lab-certify #certifyTable .status-warning {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+  border-radius: 9999px !important;
+  padding: 4px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+}
+
+#view-lab-certify #certifyTable .status-approved {
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+  border-radius: 9999px !important;
+  padding: 4px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+}
+
+#view-lab-certify #certifyTable .status-rejected {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 9999px !important;
+  padding: 4px 14px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+}
+
+/* Action Buttons across all 4 tables */
 #view-lab-verify #verifyTable button,
 #view-lab-verify #verifyTable .btn,
-#view-lab-verify #verifyTable .btn-primary {
-  background: linear-gradient(135deg, #0284c7, #2563eb) !important;
-  color: #ffffff !important;
-  border: none !important;
+#view-lab-analysis #analysisTable button,
+#view-lab-analysis #analysisTable .btn,
+#view-lab-certify #certifyTable button,
+#view-lab-certify #certifyTable .btn,
+#view-download-results #downloadTable button,
+#view-download-results #downloadTable .btn {
   border-radius: 9999px !important;
   padding: 8px 18px !important;
   font-size: 13px !important;
   font-weight: 600 !important;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.28) !important;
   cursor: pointer !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
   transition: all 0.2s ease !important;
+  border: none !important;
+  text-decoration: none !important;
 }
 
-#view-lab-verify #verifyTable button:hover,
-#view-lab-verify #verifyTable .btn:hover,
-#view-lab-verify #verifyTable .btn-primary:hover {
+#view-lab-verify #verifyTable .btn-primary,
+#view-lab-analysis #analysisTable .btn-primary,
+#view-lab-certify #certifyTable .btn-primary,
+#view-download-results #downloadTable .btn-primary {
+  background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.28) !important;
+}
+
+#view-lab-verify #verifyTable .btn-primary:hover,
+#view-lab-analysis #analysisTable .btn-primary:hover,
+#view-lab-certify #certifyTable .btn-primary:hover,
+#view-download-results #downloadTable .btn-primary:hover {
   background: linear-gradient(135deg, #0369a1, #1d4ed8) !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4) !important;
   color: #ffffff !important;
 }
 
-#view-lab-verify #verifyTable button i,
-#view-lab-verify #verifyTable .btn i {
+#view-lab-certify #certifyTable .btn-success,
+#view-download-results #downloadTable .btn-success,
+#view-download-results #downloadTable .btn-pdf,
+#view-lab-certify #certifyTable .btn-pdf {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.28) !important;
+}
+
+#view-lab-certify #certifyTable .btn-success:hover,
+#view-download-results #downloadTable .btn-success:hover,
+#view-download-results #downloadTable .btn-pdf:hover,
+#view-lab-certify #certifyTable .btn-pdf:hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
   color: #ffffff !important;
 }
 
-/* 8. Auth notice card inside Lab Verify (Clean Modern Light) */
-#view-lab-verify .auth-notice-card {
+#view-lab-analysis #analysisTable .btn-secondary {
+  background: #f1f5f9 !important;
+  color: #0284c7 !important;
+  border: 1px solid #bae6fd !important;
+}
+
+#view-lab-analysis #analysisTable .btn-secondary:hover {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Auth Notice Cards & Empty States */
+#view-lab-verify .auth-notice-card,
+#view-lab-analysis .auth-notice-card,
+#view-lab-certify .auth-notice-card,
+#view-download-results .empty-state {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 20px !important;
@@ -3915,16 +4072,25 @@ body.lab-verify-view-active #currentViewTitle {
   text-align: center !important;
 }
 
-#view-lab-verify .auth-notice-card h3 {
+#view-lab-verify .auth-notice-card h3,
+#view-lab-analysis .auth-notice-card h3,
+#view-lab-certify .auth-notice-card h3,
+#view-download-results .empty-state h3 {
   color: #0f172a !important;
   font-weight: 700 !important;
 }
 
-#view-lab-verify .auth-notice-card p {
+#view-lab-verify .auth-notice-card p,
+#view-lab-analysis .auth-notice-card p,
+#view-lab-certify .auth-notice-card p,
+#view-download-results .empty-state p {
   color: #64748b !important;
 }
 
-#view-lab-verify .auth-notice-card .auth-lock-icon {
+#view-lab-verify .auth-notice-card .auth-lock-icon,
+#view-lab-analysis .auth-notice-card .auth-lock-icon,
+#view-lab-certify .auth-notice-card .auth-lock-icon,
+#view-download-results .empty-state i {
   color: #0284c7 !important;
   font-size: 48px !important;
   margin-bottom: 16px !important;
