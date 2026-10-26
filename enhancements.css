@@ -2111,10 +2111,15 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
    Palette: #DCEBF7, #B9D4EC, #F3D9E4, #F7EFE3
    Applied STRICTLY and ONLY to the "ตรวจสอบสถานะ (E-Tracking)" page
    ========================================================================== */
+body.tracking-view-active,
+body:has(#view-e-tracking.active),
+html:has(#view-e-tracking.active),
+html.tracking-view-active,
 body.tracking-view-active .main-content,
 body.tracking-view-active .content-body,
 .main-content:has(#view-e-tracking.active),
-.content-body:has(#view-e-tracking.active) {
+.content-body:has(#view-e-tracking.active),
+#view-e-tracking.active {
   background-color: #f7efe3 !important;
   background-image:
     /* Subtle vignette perimeter shading */
@@ -2143,11 +2148,12 @@ body.tracking-view-active .content-body,
 
 /* Glassmorphism Cards on Bloom Field Background */
 #view-e-tracking .tracking-search-section,
-#view-e-tracking .tracking-results-wrapper {
-  background: rgba(255, 255, 255, 0.72) !important;
+#view-e-tracking .tracking-results-wrapper,
+#view-e-tracking #trackingResultWrapper {
+  background: rgba(255, 255, 255, 0.76) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
   border-radius: 24px !important;
   box-shadow: 0 20px 45px -12px rgba(100, 116, 139, 0.15), 0 0 1px 1px rgba(255, 255, 255, 0.95) !important;
   padding: 38px 32px !important;
