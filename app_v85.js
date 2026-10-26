@@ -654,7 +654,7 @@ const app = {
             document.documentElement.classList.remove('tracking-view-active');
         }
 
-        const labViews = ['lab-verify', 'lab-analysis', 'lab-certify', 'download-results'];
+        const labViews = ['lab-verify', 'lab-analysis', 'lab-certify', 'download-results', 'data-download'];
         labViews.forEach(v => {
             if (viewId === v) {
                 document.body.classList.add(v + '-view-active');
@@ -8546,6 +8546,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         document.getElementById('filtered-count').innerText = filtered.length;
         const tbody = document.getElementById('exportTableBody');
         tbody.innerHTML = '';
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding: 30px; color: #64748b; font-weight: 500;">ไม่พบข้อมูลตามเงื่อนไขตัวกรอง</td></tr>';
+            this.currentExportData = [];
+            return;
+        }
 
         filtered.forEach(s => {
             const tr = document.createElement('tr');
@@ -8554,8 +8559,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             let agencyDisplay = s.agency || (addr.province !== '-' ? `สสจ.${addr.province}` : '-');
             let provDisplay = addr.province !== '-' ? addr.province : (s.province || '-');
             tr.innerHTML = `
-                <td>${s.lab_id || s.ref_id}</td>
-                <td>${s.form_type}</td>
+                <td><strong>${s.lab_id || s.ref_id}</strong></td>
+                <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                 <td>${(()=>{
     let n = s.sample_name || '';
     if (s.form_type === 'MU.10-006') {
