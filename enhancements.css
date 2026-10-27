@@ -1271,11 +1271,41 @@ body {
   transition: all 0.25s ease !important;
 }
 
-.form-select-card.step-process-card:hover .step-action-btn {
+.step-action-btn span {
+  padding-right: 0 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--step-color) !important;
+  font-family: 'Prompt', sans-serif !important;
+  transition: color 0.25s ease !important;
+}
+
+.step-action-btn i {
+  font-size: 11px !important;
+  color: var(--step-color) !important;
+  transition: transform 0.25s ease, color 0.25s ease !important;
+}
+
+.form-select-card.step-process-card:hover .step-action-btn,
+.step-action-btn:hover {
   background: var(--step-color) !important;
-  color: #ffffff !important;
   border-color: var(--step-color) !important;
   box-shadow: 0 4px 12px var(--step-glow) !important;
+}
+
+.form-select-card.step-process-card:hover .step-action-btn,
+.form-select-card.step-process-card:hover .step-action-btn span,
+.form-select-card.step-process-card:hover .step-action-btn i,
+.step-action-btn:hover,
+.step-action-btn:hover span,
+.step-action-btn:hover i {
+  color: #ffffff !important;
+}
+
+.form-select-card.step-process-card:hover .step-action-btn i,
+.step-action-btn:hover i {
+  transform: translateX(3px) !important;
+  color: #ffffff !important;
 }
 
 /* ==========================================================
