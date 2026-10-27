@@ -1944,14 +1944,13 @@ body {
 #certifyTable th:nth-child(6), #certifyTable td:nth-child(6) { width: 14% !important; text-align: center !important; }
 #certifyTable th:nth-child(7), #certifyTable td:nth-child(7) { width: 13% !important; text-align: center !important; white-space: nowrap !important; }
 
-/* #downloadTable: ดาวน์โหลดผลตรวจวิเคราะห์ */
-#downloadTable th:nth-child(1), #downloadTable td:nth-child(1) { width: 12% !important; text-align: center !important; white-space: nowrap !important; }
-#downloadTable th:nth-child(2), #downloadTable td:nth-child(2) { width: 10% !important; text-align: center !important; white-space: nowrap !important; }
-#downloadTable th:nth-child(3), #downloadTable td:nth-child(3) { width: 20% !important; text-align: left !important; word-break: break-word !important; }
-#downloadTable th:nth-child(4), #downloadTable td:nth-child(4) { width: 14% !important; text-align: center !important; }
-#downloadTable th:nth-child(5), #downloadTable td:nth-child(5) { width: 14% !important; text-align: center !important; }
-#downloadTable th:nth-child(6), #downloadTable td:nth-child(6) { width: 15% !important; text-align: left !important; }
-#downloadTable th:nth-child(7), #downloadTable td:nth-child(7) { width: 15% !important; text-align: center !important; white-space: nowrap !important; }
+/* #downloadTable: ดาวน์โหลดผลตรวจวิเคราะห์ (6 คอลัมน์: รหัสตัวอย่าง, ประเภทฟอร์ม, หน่วยงานที่เก็บ, สถานที่เก็บ, วันที่ตรวจวิเคราะห์, ดาวน์โหลดรายงาน) */
+#downloadTable th:nth-child(1), #downloadTable td:nth-child(1) { width: 13% !important; text-align: center !important; white-space: nowrap !important; }
+#downloadTable th:nth-child(2), #downloadTable td:nth-child(2) { width: 12% !important; text-align: center !important; white-space: nowrap !important; }
+#downloadTable th:nth-child(3), #downloadTable td:nth-child(3) { width: 22% !important; text-align: left !important; }
+#downloadTable th:nth-child(4), #downloadTable td:nth-child(4) { width: 22% !important; text-align: left !important; }
+#downloadTable th:nth-child(5), #downloadTable td:nth-child(5) { width: 14% !important; text-align: center !important; white-space: nowrap !important; }
+#downloadTable th:nth-child(6), #downloadTable td:nth-child(6) { width: 17% !important; text-align: center !important; white-space: nowrap !important; }
 
 /* 11. CONCEPTZILLA PILL BUTTONS (Electric Blue & Cyan Gradient) */
 .btn, button.btn {
