@@ -1068,9 +1068,9 @@ body {
   width: 40px !important;
   height: 40px !important;
   border-radius: 12px !important;
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
-  color: #94a3b8 !important;
+  background: var(--step-light) !important;
+  border: 1px solid var(--step-border) !important;
+  color: var(--step-color) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1088,9 +1088,9 @@ body {
 .step-badge-pill {
   font-size: 11px !important;
   font-weight: 700 !important;
-  color: #475569 !important;
-  background: #f1f5f9 !important;
-  border: 1px solid #e2e8f0 !important;
+  color: var(--step-color) !important;
+  background: var(--step-light) !important;
+  border: 1px solid var(--step-border) !important;
   padding: 3px 10px !important;
   border-radius: 9999px !important;
   font-family: 'Prompt', sans-serif !important;
@@ -1213,15 +1213,16 @@ body {
 .step-title {
   font-size: 16px !important;
   font-weight: 700 !important;
-  color: #0f172a !important;
+  color: var(--step-color) !important;
   margin: 0 0 5px 0 !important;
   font-family: 'Prompt', sans-serif !important;
   line-height: 1.35 !important;
-  transition: color 0.2s ease !important;
+  transition: all 0.25s ease !important;
 }
 
 .form-select-card.step-process-card:hover .step-title {
   color: var(--step-color) !important;
+  filter: brightness(0.9) !important;
 }
 
 .step-desc {
@@ -1250,11 +1251,11 @@ body {
   width: 100% !important;
   padding: 8px 14px !important;
   border-radius: 12px !important;
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  border: 1px solid var(--step-border) !important;
   font-size: 12px !important;
   font-weight: 600 !important;
-  color: #475569 !important;
+  color: var(--step-color) !important;
   font-family: 'Prompt', sans-serif !important;
   transition: all 0.25s ease !important;
 }
@@ -1270,36 +1271,36 @@ body {
    INDIVIDUAL STEP THEME PALETTES (01-08)
    ========================================================== */
 
-/* Step 01: ผักและผลไม้ (MU.10-001) - Amber / Sun Yellow */
+/* Step 01: ผักและผลไม้ (MU.10-001) - Rich Amber Gold */
 .form-select-card.step-process-card[data-step="1"] {
-  --step-color: #f59e0b;
+  --step-color: #d97706;
   --step-light: #fef3c7;
   --step-border: #fde68a;
-  --step-glow: rgba(245, 158, 11, 0.22);
+  --step-glow: rgba(217, 119, 6, 0.22);
 }
 
 /* Step 02: สารปนเปื้อน 5 ชนิด (MU.10-002) - Vibrant Tangerine */
 .form-select-card.step-process-card[data-step="2"] {
-  --step-color: #f97316;
+  --step-color: #ea580c;
   --step-light: #ffedd5;
   --step-border: #fed7aa;
-  --step-glow: rgba(249, 115, 22, 0.22);
+  --step-glow: rgba(234, 88, 12, 0.22);
 }
 
 /* Step 03: น้ำมันทอดซ้ำ Ebro/Testo (MU.10-003) - Vivid Magenta Pink */
 .form-select-card.step-process-card[data-step="3"] {
-  --step-color: #ec4899;
+  --step-color: #db2777;
   --step-light: #fce7f3;
   --step-border: #fbcfe8;
-  --step-glow: rgba(236, 72, 153, 0.22);
+  --step-glow: rgba(219, 39, 119, 0.22);
 }
 
 /* Step 04: น้ำมันทอดซ้ำ Test Kit (MU.10-004) - Deep Violet Purple */
 .form-select-card.step-process-card[data-step="4"] {
-  --step-color: #8b5cf6;
+  --step-color: #7c3aed;
   --step-light: #ede9fe;
   --step-border: #ddd6fe;
-  --step-glow: rgba(139, 92, 246, 0.22);
+  --step-glow: rgba(124, 58, 237, 0.22);
 }
 
 /* Step 05: เกลือบริโภค (MU.10-005) - Electric Royal Blue */
@@ -1312,26 +1313,26 @@ body {
 
 /* Step 06: น้ำบริโภค (MU.10-006) - Cyan Ocean Azure */
 .form-select-card.step-process-card[data-step="6"] {
-  --step-color: #06b6d4;
-  --step-light: #cffafe;
-  --step-border: #a5f3fc;
-  --step-glow: rgba(6, 182, 212, 0.22);
+  --step-color: #0284c7;
+  --step-light: #e0f2fe;
+  --step-border: #bae6fd;
+  --step-glow: rgba(2, 132, 199, 0.22);
 }
 
 /* Step 07: เชื้อโคลิฟอร์มขั้นต้น SI-2 (MU.10-007) - Radiant Emerald Green */
 .form-select-card.step-process-card[data-step="7"] {
-  --step-color: #10b981;
+  --step-color: #059669;
   --step-light: #d1fae5;
   --step-border: #a7f3d0;
-  --step-glow: rgba(16, 185, 129, 0.22);
+  --step-glow: rgba(5, 150, 105, 0.22);
 }
 
 /* Step 08: ตรวจฉลากอาหาร (MU.10-008) - Rose Coral Red */
 .form-select-card.step-process-card[data-step="8"] {
-  --step-color: #f43f5e;
+  --step-color: #e11d48;
   --step-light: #ffe4e6;
   --step-border: #fecdd3;
-  --step-glow: rgba(244, 63, 94, 0.22);
+  --step-glow: rgba(225, 29, 72, 0.22);
 }
 
 /* ==========================================================
