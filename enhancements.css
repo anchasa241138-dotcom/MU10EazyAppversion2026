@@ -1,3 +1,14 @@
+
+/* Absolute priority for .hidden across all views and components */
+.hidden,
+.form-selection-grid.hidden,
+.process-infographic-grid.hidden,
+.section-title-wrapper.hidden,
+.record-hero-header.hidden,
+.form-editor-container.hidden {
+  display: none !important;
+}
+
 /* ==========================================================================
    CONCEPTZILLA AI AGENT DESIGN SYSTEM (Inspired by Conceptzilla / AI Agent Design)
    Deep Midnight Cobalt Blue (#060c18), Celestial Horizon Cyan Glow (#38bdf8),
