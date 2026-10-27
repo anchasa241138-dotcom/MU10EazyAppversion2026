@@ -16,7 +16,7 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v3.css?v=1792483100000">
+    <link rel="stylesheet" href="style_v3.css?v=1793091700000">
     <link rel="stylesheet" href="fonts.css?v=1791732670733">
 
     <style>
@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793091150000">
+    <link rel="stylesheet" href="enhancements.css?v=1793091700000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -910,6 +910,16 @@
         }
         .timeline-step:last-child .step-content {
             padding-bottom: 0 !important;
+        }
+    </style>
+    <style id="step-process-card-action-hover-fix">
+        /* Force button text and icon to turn white on hover */
+        .form-select-card.step-process-card:hover .step-action-btn,
+        .form-select-card.step-process-card:hover .step-action-btn *,
+        .step-action-btn:hover,
+        .step-action-btn:hover * {
+            color: #ffffff !important;
+            fill: #ffffff !important;
         }
     </style>
 </head>
@@ -3125,6 +3135,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793090709269"></script>
+    <script src="app_v85.js?v=1793091700000"></script>
 </body>
 </html>
