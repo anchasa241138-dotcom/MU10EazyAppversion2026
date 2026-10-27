@@ -950,7 +950,7 @@ body {
    ========================================================== */
 
 /* Hero Header */
-.record-hero-header {
+.record-hero-header:not(.hidden) {
   display: flex !important;
   align-items: center !important;
   gap: 18px !important;
@@ -994,7 +994,7 @@ body {
 }
 
 /* 4-Column Infographic Grid */
-.form-selection-grid.process-infographic-grid {
+.form-selection-grid.process-infographic-grid:not(.hidden) {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
   gap: 22px !important;
@@ -1003,14 +1003,14 @@ body {
 }
 
 @media (max-width: 1280px) {
-  .form-selection-grid.process-infographic-grid {
+  .form-selection-grid.process-infographic-grid:not(.hidden) {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 20px !important;
   }
 }
 
 @media (max-width: 640px) {
-  .form-selection-grid.process-infographic-grid {
+  .form-selection-grid.process-infographic-grid:not(.hidden) {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
   }
@@ -5026,4 +5026,21 @@ body.data-download-view-active #currentViewTitle {
   border-color: #fda4af;
   color: #be123c;
   transform: translateY(-1px);
+}
+
+
+/* Absolute priority .hidden override at end of stylesheet */
+.hidden,
+[hidden],
+.form-selection-grid.hidden,
+.process-infographic-grid.hidden,
+.section-title-wrapper.hidden,
+.record-hero-header.hidden,
+.form-editor-container.hidden,
+#record-content-wrapper .form-selection-grid.hidden,
+#record-content-wrapper .process-infographic-grid.hidden,
+#record-content-wrapper .section-title-wrapper.hidden,
+#record-content-wrapper .record-hero-header.hidden,
+#record-content-wrapper .form-editor-container.hidden {
+  display: none !important;
 }
