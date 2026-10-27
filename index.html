@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793007799360">
+    <link rel="stylesheet" href="enhancements.css?v=1793089028674">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1492,51 +1492,265 @@
                     </div>
 
                     <div id="record-content-wrapper">
-                        <!-- Form Selection Cards -->
-                        <div class="section-title-wrapper">
-                            <h3>เลือกประเภทแบบบันทึกการเก็บตัวอย่าง (MU.10-001 - MU.10-008)</h3>
-                            <p>กรุณาเลือกฟอร์มที่ต้องการบันทึกข้อมูลและส่งวิเคราะห์</p>
+                        <!-- Form Selection Cards Header -->
+                        <div class="section-title-wrapper record-hero-header">
+                            <div class="record-hero-icon-box">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <div class="record-hero-text">
+                                <h3 class="record-main-title">เลือกประเภทแบบบันทึกการเก็บตัวอย่าง (MU.10-001 – MU.10-008)</h3>
+                                <p class="record-sub-title">กรุณาเลือกฟอร์มที่ต้องการบันทึกข้อมูลตัวอย่างและการตรวจวิเคราะห์ภาคสนาม</p>
+                            </div>
                         </div>
-                        <div class="form-selection-grid">
-                            <button class="form-select-card" data-form-type="MU.10-001">
-                                <div class="form-card-badge">MU.10-001</div>
-                                <i class="fa-solid fa-carrot form-icon"></i>
-                                <span>ผักและผลไม้</span>
+
+                        <!-- Modern Infographic Process Grid (Styled after Vector Workflow Infographics) -->
+                        <div class="form-selection-grid process-infographic-grid">
+                            <!-- STEP 01: MU.10-001 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-001" data-step="1">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-carrot"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-001</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">01</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">ผักและผลไม้</h4>
+                                    <p class="step-desc">ตรวจวิเคราะห์สารเคมีกำจัดแมลงตกค้างในผักและผลไม้สด</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-002">
-                                <div class="form-card-badge">MU.10-002</div>
-                                <i class="fa-solid fa-triangle-exclamation form-icon"></i>
-                                <span>สารปนเปื้อน 5 ชนิด</span>
+
+                            <!-- STEP 02: MU.10-002 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-002" data-step="2">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-002</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">02</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">สารปนเปื้อน 5 ชนิด</h4>
+                                    <p class="step-desc">ตรวจหาบอแรกซ์ ฟอร์มาลิน สารฟอกขาว สารกันรา และสารเร่งเนื้อแดง</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-003">
-                                <div class="form-card-badge">MU.10-003</div>
-                                <i class="fa-solid fa-droplet form-icon"></i>
-                                <span>น้ำมันทอดซ้ำ (Ebro/Testo)</span>
+
+                            <!-- STEP 03: MU.10-003 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-003" data-step="3">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-droplet"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-003</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">03</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">น้ำมันทอดซ้ำ (Ebro/Testo)</h4>
+                                    <p class="step-desc">ตรวจวัดปริมาณสารโพลาร์ด้วยเครื่องตรวจวัดน้ำมันทอดซ้ำดิจิทัล</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-004">
-                                <div class="form-card-badge">MU.10-004</div>
-                                <i class="fa-solid fa-vials form-icon"></i>
-                                <span>น้ำมันทอดซ้ำ (Test Kit)</span>
+
+                            <!-- STEP 04: MU.10-004 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-004" data-step="4">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-vials"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-004</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">04</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">น้ำมันทอดซ้ำ (Test Kit)</h4>
+                                    <p class="step-desc">ตรวจคัดกรองสารโพลาร์ในน้ำมันทอดอาหารด้วยชุดทดสอบรวดเร็ว</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-005">
-                                <div class="form-card-badge">MU.10-005</div>
-                                <i class="fa-solid fa-cubes form-icon"></i>
-                                <span>เกลือบริโภค</span>
+
+                            <!-- STEP 05: MU.10-005 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-005" data-step="5">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-cubes"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-005</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">05</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">เกลือบริโภค</h4>
+                                    <p class="step-desc">ตรวจวัดปริมาณสารไอโอดีนในเกลือบริโภคตามมาตรฐานความปลอดภัย</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-006">
-                                <div class="form-card-badge">MU.10-006</div>
-                                <i class="fa-solid fa-glass-water form-icon"></i>
-                                <span>น้ำบริโภค</span>
+
+                            <!-- STEP 06: MU.10-006 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-006" data-step="6">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-glass-water"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-006</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">06</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">น้ำบริโภค</h4>
+                                    <p class="step-desc">ตรวจวิเคราะห์คุณภาพและมาตรฐานทางกายภาพ-เคมีของน้ำดื่มบริโภค</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-007">
-                                <div class="form-card-badge">MU.10-007</div>
-                                <i class="fa-solid fa-biohazard form-icon"></i>
-                                <span>เชื้อโคลิฟอร์มขั้นต้น (SI-2)</span>
+
+                            <!-- STEP 07: MU.10-007 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-007" data-step="7">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-biohazard"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-007</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">07</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">เชื้อโคลิฟอร์มขั้นต้น (SI-2)</h4>
+                                    <p class="step-desc">ตรวจวิเคราะห์การปนเปื้อนเชื้อโคลิฟอร์มแบคทีเรียในอาหารและภาชนะ</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
-                            <button class="form-select-card" data-form-type="MU.10-008">
-                                <div class="form-card-badge">MU.10-008</div>
-                                <i class="fa-solid fa-tags form-icon"></i>
-                                <span>ตรวจฉลากอาหาร</span>
+
+                            <!-- STEP 08: MU.10-008 -->
+                            <button type="button" class="form-select-card step-process-card" data-form-type="MU.10-008" data-step="8">
+                                <div class="step-card-header">
+                                    <div class="step-corner-icon">
+                                        <i class="fa-solid fa-tags"></i>
+                                    </div>
+                                    <span class="step-badge-pill">MU.10-008</span>
+                                </div>
+                                <div class="step-focal-row">
+                                    <div class="step-disc-wrapper">
+                                        <div class="step-number-disc">
+                                            <span class="step-number">08</span>
+                                        </div>
+                                    </div>
+                                    <div class="step-flow-track">
+                                        <span class="step-flow-line"></span>
+                                        <span class="step-flow-arrow"><i class="fa-solid fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div class="step-info-body">
+                                    <h4 class="step-title">ตรวจฉลากอาหาร</h4>
+                                    <p class="step-desc">ตรวจสอบความถูกต้องและการแสดงข้อมูลบนฉลากอาหารตามมาตรฐาน อย.</p>
+                                </div>
+                                <div class="step-card-footer">
+                                    <span class="step-action-btn">
+                                        <span>บันทึกตัวอย่าง</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
                             </button>
                         </div>
 
