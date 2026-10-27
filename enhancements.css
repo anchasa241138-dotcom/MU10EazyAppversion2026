@@ -1296,10 +1296,13 @@ body {
 .form-select-card.step-process-card:hover .step-action-btn,
 .form-select-card.step-process-card:hover .step-action-btn span,
 .form-select-card.step-process-card:hover .step-action-btn i,
+.form-select-card.step-process-card:hover .step-action-btn *,
 .step-action-btn:hover,
 .step-action-btn:hover span,
-.step-action-btn:hover i {
+.step-action-btn:hover i,
+.step-action-btn:hover * {
   color: #ffffff !important;
+  fill: #ffffff !important;
 }
 
 .form-select-card.step-process-card:hover .step-action-btn i,
