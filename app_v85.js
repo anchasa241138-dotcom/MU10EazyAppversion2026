@@ -446,10 +446,29 @@ const app = {
         });
 
         document.getElementById('backToFormSelection').addEventListener('click', () => {
-            document.getElementById('formEditorContainer').classList.add('hidden');
-            document.querySelector('.form-selection-grid').classList.remove('hidden');
-            document.querySelector('.section-title-wrapper').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const formEditor = document.getElementById('formEditorContainer');
+            if (formEditor) {
+                formEditor.classList.add('hidden');
+                formEditor.style.setProperty('display', 'none', 'important');
+            }
+            const grid = document.querySelector('.form-selection-grid');
+            if (grid) {
+                grid.classList.remove('hidden');
+                grid.style.removeProperty('display');
+            }
+            const titleWrapper = document.querySelector('.section-title-wrapper');
+            if (titleWrapper) {
+                titleWrapper.classList.remove('hidden');
+                titleWrapper.style.removeProperty('display');
+            }
+            const heroHeader = document.querySelector('.record-hero-header');
+            if (heroHeader) {
+                heroHeader.classList.remove('hidden');
+                heroHeader.style.removeProperty('display');
+            }
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
             
             const recordsWrapper = document.getElementById('savedRecordsContainerWrapper');
             if (recordsWrapper) recordsWrapper.classList.add('hidden');
@@ -1310,10 +1329,29 @@ const app = {
 
     // Forms Logic
     openFormEditor(formType) {
-        document.querySelector('.form-selection-grid').classList.add('hidden');
-        document.querySelector('.section-title-wrapper').classList.add('hidden');
-        document.getElementById('formEditorContainer').classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const grid = document.querySelector('.form-selection-grid');
+        if (grid) {
+            grid.classList.add('hidden');
+            grid.style.setProperty('display', 'none', 'important');
+        }
+        const titleWrapper = document.querySelector('.section-title-wrapper');
+        if (titleWrapper) {
+            titleWrapper.classList.add('hidden');
+            titleWrapper.style.setProperty('display', 'none', 'important');
+        }
+        const heroHeader = document.querySelector('.record-hero-header');
+        if (heroHeader) {
+            heroHeader.classList.add('hidden');
+            heroHeader.style.setProperty('display', 'none', 'important');
+        }
+        const formEditor = document.getElementById('formEditorContainer');
+        if (formEditor) {
+            formEditor.classList.remove('hidden');
+            formEditor.style.setProperty('display', 'block', 'important');
+        }
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
         
         const recordsWrapper = document.getElementById('savedRecordsContainerWrapper');
         if (recordsWrapper) recordsWrapper.classList.remove('hidden');
