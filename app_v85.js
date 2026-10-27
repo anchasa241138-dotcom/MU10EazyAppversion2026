@@ -4843,7 +4843,27 @@ document.getElementById('formNameTitle').innerText = title;
             }
             if (!locDisplay) locDisplay = '-';
 
-            const searchHaystack = `${s.lab_no || s.lab_id || s.ref_id || ''} ${s.form_type || ''} ${s.sample_name || ''} ${agencyVal} ${locDisplay} ${provName}`.toLowerCase();
+            let dateDisplay = '-';
+            const rawDate = s.analysis_date || s.lab_receive_date || s.created_at;
+            if (rawDate) {
+                try {
+                    dateDisplay = new Date(rawDate).toLocaleDateString('th-TH');
+                } catch(e) {
+                    dateDisplay = rawDate;
+                }
+            }
+
+            const displayStatus = s.status === 'summarized' 
+                ? 'รอผู้ตรวจวิเคราะห์และผู้รับรองลงนาม' 
+                : (s.status === 'analyst_signed' ? 'รอผู้รับรองลงนาม' : (s.status === 'approved' ? 'รับรองแล้ว' : (s.analysis_summary || 'รออนุมัติ')));
+
+            const statusClass = s.status === 'summarized' 
+                ? 'status-pending' 
+                : (s.status === 'analyst_signed' 
+                    ? 'status-warning' 
+                    : (s.status === 'approved' ? 'status-approved' : (s.analysis_summary && s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved')));
+
+            const searchHaystack = `${s.lab_no || s.lab_id || s.ref_id || ''} ${s.form_type || ''} ${s.sample_name || ''} ${agencyVal} ${locDisplay} ${provName} ${dateDisplay} ${displayStatus}`.toLowerCase();
             if (searchTerm && !searchHaystack.includes(searchTerm)) return;
             
             const isApproved = s.status === 'approved';
@@ -4866,6 +4886,8 @@ document.getElementById('formNameTitle').innerText = title;
                 <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                 <td>${agencyVal}</td>
                 <td>${locDisplay}</td>
+                <td style="text-align:center; white-space:nowrap;">${dateDisplay}</td>
+                <td style="text-align:center;"><span class="status-badge ${statusClass}">${displayStatus}</span></td>
                 <td style="text-align:center;">
                     ${actionBtn}
                     ${underActionStatus}
@@ -4875,7 +4897,7 @@ document.getElementById('formNameTitle').innerText = title;
         });
         
         if (tbody.innerHTML === '') {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding: 24px; color: #64748b; font-weight: 500;">ไม่มีรายงานที่รออนุมัติ</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 24px; color: #64748b; font-weight: 500;">ไม่มีรายงานที่รออนุมัติ</td></tr>';
         }
     },
 
