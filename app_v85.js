@@ -800,53 +800,59 @@ const app = {
         const tbody = document.getElementById('downloadTableBody');
         if (!tbody) return;
         const searchInput = document.getElementById('searchDownloadTable');
-        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         
         const approvedSamples = this.getVisibleSamples().filter(s => s.status === 'approved');
         
         tbody.innerHTML = '';
         
         if(approvedSamples.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 30px; color: #64748b; font-weight: 500;">ไม่พบรายการที่พร้อมดาวน์โหลด</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 30px; color: #64748b; font-weight: 500;">ไม่พบรายการที่พร้อมดาวน์โหลด</td></tr>';
             return;
         }
 
         approvedSamples.forEach(s => {
-            if (searchTerm && !`${s.lab_no || s.lab_id} ${s.sample_name}`.toLowerCase().includes(searchTerm)) return;
-            
-            const sampleNames = [];
-            let idx = 1;
-            while (s['sample_name_' + idx] !== undefined && idx <= 50) {
-                if (s['sample_name_' + idx]) sampleNames.push(s['sample_name_' + idx]);
-                idx++;
+            const addr = typeof this.resolveSampleAddress === 'function' ? this.resolveSampleAddress(s) : { province: s.province || '-' };
+            const agencyVal = s.agency || (addr.province && addr.province !== '-' ? `สสจ.${addr.province}` : (s.province ? `สสจ.${s.province}` : '-'));
+            let locName = s.location_name || '';
+            const provName = (addr.province && addr.province !== '-') ? addr.province : (s.province || '');
+            let locDisplay = locName;
+            if (provName) {
+                if (!locDisplay) locDisplay = `จ.${provName}`;
+                else if (!locDisplay.includes(provName)) locDisplay = `${locDisplay} จ.${provName}`;
             }
-            if (sampleNames.length === 0 && s.sample_name) {
-                sampleNames.push(s.sample_name);
-            }
-            const displayName = sampleNames.join(', ') || '-';
+            if (!locDisplay) locDisplay = '-';
 
-            const summary = s.analysis_summary || 'ผ่าน';
-            let summaryBadge = '';
-            if (summary.includes('ไม่ผ่าน')) {
-                summaryBadge = `<span class="badge" style="background:#fee2e2; color:#991b1b;">${summary}</span>`;
-            } else {
-                summaryBadge = `<span class="badge" style="background:#dcfce7; color:#166534;">${summary}</span>`;
+            let dateDisplay = '-';
+            const rawDate = s.analysis_date || s.lab_receive_date || s.created_at;
+            if (rawDate) {
+                try {
+                    dateDisplay = new Date(rawDate).toLocaleDateString('th-TH');
+                } catch(e) {
+                    dateDisplay = rawDate;
+                }
             }
+
+            const searchHaystack = `${s.lab_no || s.lab_id || s.ref_id || ''} ${s.form_type || ''} ${agencyVal} ${locDisplay} ${provName} ${dateDisplay} ${s.sample_name || ''}`.toLowerCase();
+            if (searchTerm && !searchHaystack.includes(searchTerm)) return;
 
             const actionBtn = `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-download"></i> ดาวน์โหลดรายงาน PDF</button>`;
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><strong>${s.lab_no || s.lab_id}</strong></td>
+                <td><strong>${s.lab_no || s.lab_id || s.ref_id}</strong></td>
                 <td><span class="badge form-type-badge">${s.form_type}</span></td>
-                <td>${displayName.length > 50 ? displayName.substring(0, 50) + '...' : displayName}</td>
-                <td>ดูรายละเอียดในเอกสาร...</td>
-                <td>${summaryBadge}</td>
-                <td>${s.approver_name || s.sel_approver_1 || '-'}</td>
-                <td>${actionBtn}</td>
+                <td>${agencyVal}</td>
+                <td>${locDisplay}</td>
+                <td style="text-align:center; white-space:nowrap;">${dateDisplay}</td>
+                <td style="text-align:center; white-space:nowrap;">${actionBtn}</td>
             `;
             tbody.appendChild(tr);
         });
+
+        if (tbody.innerHTML === '') {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 30px; color: #64748b; font-weight: 500;">ไม่พบรายการที่ตรงกับคำค้นหา</td></tr>';
+        }
     },
 
     updateDashboardStats() {
