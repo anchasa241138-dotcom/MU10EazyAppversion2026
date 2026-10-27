@@ -155,13 +155,12 @@ function initDashboardCharts() {
                 'สารเร่งเนื้อแดง',
                 'สารโพลาร์ในน้ำมันทอดอาหาร',
                 'โคลิฟอร์มในอาหาร',
-                'โคลิฟอร์มในน้ำ',
-                'ฉลากอาหาร'
+                'โคลิฟอร์มในน้ำ'
             ],
             datasets: [
                 {
                     label: 'ผ่านเกณฑ์',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: 'rgba(56, 189, 248, 0.85)',
                     borderColor: '#38bdf8',
                     borderWidth: 1,
@@ -169,7 +168,7 @@ function initDashboardCharts() {
                 },
                 {
                     label: 'ไม่ผ่านเกณฑ์',
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: 'rgba(244, 63, 94, 0.85)',
                     borderColor: '#f43f5e',
                     borderWidth: 1,
@@ -222,7 +221,7 @@ function initDashboardCharts() {
 
 // Substance dictionary and helper matching functions
 window.substanceDictionary = {
-    'all': { label: 'สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
+    'all': { label: 'สารที่ตรวจวิเคราะห์ทั้งหมด (9 รายการ)', icon: 'fa-flask' },
     'pesticide': { label: 'ยาฆ่าแมลง', form: 'MU.10-001', icon: 'fa-leaf' },
     'borax': { label: 'สารบอแรกซ์', form: 'MU.10-002', icon: 'fa-drumstick-bite' },
     'formalin': { label: 'สารฟอร์มาลิน', form: 'MU.10-002', icon: 'fa-fish' },
@@ -232,16 +231,15 @@ window.substanceDictionary = {
     'polar': { label: 'สารโพลาร์ในน้ำมันทอดอาหาร', form: 'MU.10-003, 004', icon: 'fa-fire' },
     'coliformFood': { label: 'โคลิฟอร์มในอาหาร', form: 'MU.10-007', icon: 'fa-bowl-food' },
     'coliformWater': { label: 'โคลิฟอร์มในน้ำ', form: 'MU.10-006', icon: 'fa-droplet' },
-    'foodLabel': { label: 'ฉลากอาหาร', form: 'MU.10-008', icon: 'fa-tag' }
 };
 
 window.itemMatchesSubstance = function(s, idx, targetSubstance) {
+    if (s.form_type === 'MU.10-008') return false; // Exclude foodLabel from dashboard entirely
     if (!targetSubstance || targetSubstance === 'all') return true;
     if (targetSubstance === 'pesticide') return s.form_type === 'MU.10-001';
     if (targetSubstance === 'polar') return s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004';
     if (targetSubstance === 'coliformWater') return s.form_type === 'MU.10-006';
     if (targetSubstance === 'coliformFood') return s.form_type === 'MU.10-007';
-    if (targetSubstance === 'foodLabel') return s.form_type === 'MU.10-008';
     
     if (s.form_type === 'MU.10-002') {
         const getVal = (key) => idx ? (s[key + '_' + idx] !== undefined ? s[key + '_' + idx] : s[key]) : s[key];
@@ -510,7 +508,6 @@ function updateSubstanceCharts(samples) {
         'polar': { label: 'สารโพลาร์ในน้ำมันทอดอาหาร', total: 0, pass: 0, fail: 0 },
         'coliformFood': { label: 'โคลิฟอร์มในอาหาร', total: 0, pass: 0, fail: 0 },
         'coliformWater': { label: 'โคลิฟอร์มในน้ำ', total: 0, pass: 0, fail: 0 },
-        'foodLabel': { label: 'ฉลากอาหาร', total: 0, pass: 0, fail: 0 }
     };
     
     // Reset global failed samples
@@ -680,13 +677,6 @@ function updateSubstanceCharts(samples) {
             inc('coliformFood', getSingleSummary());
         } else if (s.form_type === 'MU.10-006') {
             inc('coliformWater', getColiformWaterSummary());
-        } else if (s.form_type === 'MU.10-008') {
-            const lblSum = (idx ? (s['label_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
-                        || s.label_summary
-                        || s.analysis_summary_outcome
-                        || s.analysis_summary
-                        || '';
-            inc('foodLabel', lblSum.includes('ไม่ผ่าน') ? 'ไม่ผ่าน' : (lblSum.includes('ผ่าน') ? 'ผ่าน' : null));
         }
     }
 
@@ -1152,7 +1142,7 @@ function renderSubstancePillsBar() {
     if (!pillsBar) return;
     
     const subList = [
-        { key: 'all', label: 'ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
+        { key: 'all', label: 'ทั้งหมด (9 รายการ)', icon: 'fa-flask' },
         { key: 'pesticide', label: 'ยาฆ่าแมลง', icon: 'fa-leaf' },
         { key: 'borax', label: 'สารบอแรกซ์', icon: 'fa-drumstick-bite' },
         { key: 'formalin', label: 'สารฟอร์มาลิน', icon: 'fa-fish' },
@@ -1162,7 +1152,6 @@ function renderSubstancePillsBar() {
         { key: 'polar', label: 'สารโพลาร์', icon: 'fa-fire' },
         { key: 'coliformWater', label: 'โคลิฟอร์มในน้ำ', icon: 'fa-droplet' },
         { key: 'coliformFood', label: 'โคลิฟอร์มในอาหาร', icon: 'fa-bowl-food' },
-        { key: 'foodLabel', label: 'ฉลากอาหาร', icon: 'fa-tag' }
     ];
 
     if (pillsBar.children.length === 0) {
@@ -1226,7 +1215,7 @@ function renderModernSubstanceAnalytics(samples, stats) {
 // Update the 3 widgets based on active substance
 function updateModernSubstanceAnalyticsView(samples, stats) {
     const selectedKey = window.currentActiveSubstance || 'all';
-    const subInfo = window.substanceDictionary[selectedKey] || { label: 'สารที่ตรวจทั้งหมด (10 รายการ)' };
+    const subInfo = window.substanceDictionary[selectedKey] || { label: 'สารที่ตรวจทั้งหมด (9 รายการ)' };
     
     // Update badge in Business Stat
     const subBadge = document.getElementById('businessStatSubstanceBadge');
@@ -1238,7 +1227,7 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
     const monthlySubEl = document.getElementById('monthlyChartSubtitle');
     if (monthlySubEl) {
         monthlySubEl.innerText = selectedKey === 'all' 
-            ? 'สารที่ตรวจทั้งหมด (10 รายการ) ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)' 
+            ? 'สารที่ตรวจทั้งหมด (9 รายการ) ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)' 
             : subInfo.label + ' ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)';
     }
 
