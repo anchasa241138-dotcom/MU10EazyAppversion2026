@@ -449,6 +449,7 @@ const app = {
             document.getElementById('formEditorContainer').classList.add('hidden');
             document.querySelector('.form-selection-grid').classList.remove('hidden');
             document.querySelector('.section-title-wrapper').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
             const recordsWrapper = document.getElementById('savedRecordsContainerWrapper');
             if (recordsWrapper) recordsWrapper.classList.add('hidden');
@@ -1312,6 +1313,7 @@ const app = {
         document.querySelector('.form-selection-grid').classList.add('hidden');
         document.querySelector('.section-title-wrapper').classList.add('hidden');
         document.getElementById('formEditorContainer').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         
         const recordsWrapper = document.getElementById('savedRecordsContainerWrapper');
         if (recordsWrapper) recordsWrapper.classList.remove('hidden');
