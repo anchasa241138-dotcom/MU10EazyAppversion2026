@@ -830,7 +830,7 @@ const app = {
     },
 
     updateDashboardStats() {
-        let visible = this.getVisibleSamples();
+        let visible = this.getVisibleSamples().filter(s => s.form_type !== 'MU.10-008');
         const filterEl = document.getElementById('dashProvinceFilter');
         if (filterEl && filterEl.value !== 'all') {
             visible = visible.filter(s => s.province === filterEl.value);
