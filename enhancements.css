@@ -1935,14 +1935,12 @@ body {
 #verifyTable th:nth-child(7), #verifyTable td:nth-child(7) { width: 9% !important; text-align: center !important; white-space: nowrap !important; }
 #verifyTable th:nth-child(8), #verifyTable td:nth-child(8) { width: 9% !important; text-align: center !important; white-space: nowrap !important; }
 
-/* #certifyTable: รับรองผลตรวจวิเคราะห์ */
-#certifyTable th:nth-child(1), #certifyTable td:nth-child(1) { width: 12% !important; text-align: center !important; white-space: nowrap !important; }
-#certifyTable th:nth-child(2), #certifyTable td:nth-child(2) { width: 10% !important; text-align: center !important; white-space: nowrap !important; }
-#certifyTable th:nth-child(3), #certifyTable td:nth-child(3) { width: 20% !important; text-align: left !important; word-break: break-word !important; }
-#certifyTable th:nth-child(4), #certifyTable td:nth-child(4) { width: 14% !important; text-align: center !important; }
-#certifyTable th:nth-child(5), #certifyTable td:nth-child(5) { width: 14% !important; text-align: center !important; }
-#certifyTable th:nth-child(6), #certifyTable td:nth-child(6) { width: 15% !important; text-align: left !important; }
-#certifyTable th:nth-child(7), #certifyTable td:nth-child(7) { width: 15% !important; text-align: center !important; white-space: nowrap !important; }
+/* #certifyTable: รับรองผลตรวจวิเคราะห์ (5 คอลัมน์: รหัสตัวอย่าง, ประเภทฟอร์ม, หน่วยงานที่เก็บ, สถานที่เก็บ, การจัดการ) */
+#certifyTable th:nth-child(1), #certifyTable td:nth-child(1) { width: 16% !important; text-align: center !important; white-space: nowrap !important; }
+#certifyTable th:nth-child(2), #certifyTable td:nth-child(2) { width: 14% !important; text-align: center !important; white-space: nowrap !important; }
+#certifyTable th:nth-child(3), #certifyTable td:nth-child(3) { width: 25% !important; text-align: left !important; }
+#certifyTable th:nth-child(4), #certifyTable td:nth-child(4) { width: 27% !important; text-align: left !important; }
+#certifyTable th:nth-child(5), #certifyTable td:nth-child(5) { width: 18% !important; text-align: center !important; white-space: nowrap !important; }
 
 /* #downloadTable: ดาวน์โหลดผลตรวจวิเคราะห์ */
 #downloadTable th:nth-child(1), #downloadTable td:nth-child(1) { width: 12% !important; text-align: center !important; white-space: nowrap !important; }
