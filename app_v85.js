@@ -4832,56 +4832,50 @@ document.getElementById('formNameTitle').innerText = title;
         tbody.innerHTML = '';
         
         reportSamples.forEach(s => {
-            if (searchTerm && !`${s.lab_no || s.lab_id} ${s.sample_name}`.toLowerCase().includes(searchTerm)) return;
+            const addr = typeof this.resolveSampleAddress === 'function' ? this.resolveSampleAddress(s) : { province: s.province || '-' };
+            const agencyVal = s.agency || (addr.province && addr.province !== '-' ? `สสจ.${addr.province}` : (s.province ? `สสจ.${s.province}` : '-'));
+            let locName = s.location_name || '';
+            const provName = (addr.province && addr.province !== '-') ? addr.province : (s.province || '');
+            let locDisplay = locName;
+            if (provName) {
+                if (!locDisplay) locDisplay = `จ.${provName}`;
+                else if (!locDisplay.includes(provName)) locDisplay = `${locDisplay} จ.${provName}`;
+            }
+            if (!locDisplay) locDisplay = '-';
+
+            const searchHaystack = `${s.lab_no || s.lab_id || s.ref_id || ''} ${s.form_type || ''} ${s.sample_name || ''} ${agencyVal} ${locDisplay} ${provName}`.toLowerCase();
+            if (searchTerm && !searchHaystack.includes(searchTerm)) return;
             
             const isApproved = s.status === 'approved';
             const actionBtn = isApproved 
-        ? `<button class="btn btn-sm btn-pdf" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-file-pdf"></i> ดูรายงาน PDF</button>`
-        : (s.status === 'summarized' 
-            ? `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-pen-nib"></i> ลงนามผู้ตรวจ</button>` 
-            : `<button class="btn btn-success btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-stamp"></i> ลงนามผู้รับรอง</button>`);
+                ? `<button class="btn btn-sm btn-pdf" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-file-pdf"></i> ดูรายงาน PDF</button>`
+                : (s.status === 'summarized' 
+                    ? `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-pen-nib"></i> ลงนามผู้ตรวจ</button>` 
+                    : `<button class="btn btn-success btn-text" onclick="app.openCertifyModal('${s.ref_id}')"><i class="fa-solid fa-stamp"></i> ลงนามผู้รับรอง</button>`);
         
-    const displayStatus = s.status === 'summarized' ? 'รอผู้ตรวจวิเคราะห์และผู้รับรองลงนาม' : (s.status === 'analyst_signed' ? 'รอผู้รับรองลงนาม' : s.analysis_summary);
-      const statusClass = s.status === 'summarized' ? 'status-pending' : (s.status === 'analyst_signed' ? 'status-warning' : (s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved'));
-          
-      let underActionStatus = '';
-      if (s.status === 'summarized') {
-          underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#eab308; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> รอผู้ตรวจวิเคราะห์<br>และผู้รับรองลงนาม</div>';
-      } else if (s.status === 'analyst_signed') {
-          underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</div>';
-      }
+            let underActionStatus = '';
+            if (s.status === 'summarized') {
+                underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#eab308; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> รอผู้ตรวจวิเคราะห์<br>และผู้รับรองลงนาม</div>';
+            } else if (s.status === 'analyst_signed') {
+                underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</div>';
+            }
 
-      const tr = document.createElement('tr');
-              tr.innerHTML = `
-                  <td><strong>${s.lab_no || s.lab_id}</strong></td>
-                  <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
-                  <td>${(()=>{
-    let n = s.sample_name || '';
-    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
-        const arr = [];
-        let i = 1;
-        while(s['sample_name_'+i] !== undefined && i <= 50) {
-            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
-            i++;
-        }
-        if(arr.length > 0) n = arr.join(', ');
-    }
-    if(!n) n = '-';
-    return n.length > 30 ? n.substring(0,30) + '...' : n;
-})()}</td>
-                  <td><small>${(s.analysis_details || s.analysis_details_1 || "-").substring(0, 30)}...</small></td>
-                  <td><span class="status-badge ${statusClass}">${displayStatus}</span></td>
-                  <td>${s.analysis_analyst}</td>
-                  <td style="text-align:center;">
-                      ${actionBtn}
-                      ${underActionStatus}
-                  </td>
-              `;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${s.lab_no || s.lab_id || s.ref_id}</strong></td>
+                <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
+                <td>${agencyVal}</td>
+                <td>${locDisplay}</td>
+                <td style="text-align:center;">
+                    ${actionBtn}
+                    ${underActionStatus}
+                </td>
+            `;
             tbody.appendChild(tr);
         });
         
-         if (tbody.innerHTML === '') {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 24px; color: #64748b; font-weight: 500;">ไม่มีรายงานที่รออนุมัติ</td></tr>';
+        if (tbody.innerHTML === '') {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding: 24px; color: #64748b; font-weight: 500;">ไม่มีรายงานที่รออนุมัติ</td></tr>';
         }
     },
 
