@@ -568,7 +568,7 @@ body {
 .form-select-card[data-form-type="MU.10-007"] .form-icon { background: linear-gradient(135deg, #f43f5e, #e11d48); box-shadow: 0 8px 15px rgba(244,63,94,0.25); }
 .form-select-card[data-form-type="MU.10-008"] .form-icon { background: linear-gradient(135deg, #a855f7, #9333ea); box-shadow: 0 8px 15px rgba(168,85,247,0.25); }
 
-.form-select-card span {
+.form-select-card:not(.step-process-card) span {
     font-size: 15px;
     font-weight: 700;
     color: #1e293b;
@@ -583,7 +583,7 @@ body {
     padding-right: 75px; /* leave room for badge on the right */
 }
 
-.form-select-card:hover span {
+.form-select-card:not(.step-process-card):hover span {
     color: #2563eb;
 }
 
