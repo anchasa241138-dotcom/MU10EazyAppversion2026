@@ -1064,7 +1064,7 @@
                                 <i class="fa-solid fa-flask filter-pill-icon"></i>
                                 <span class="filter-pill-label">สารที่ตรวจ:</span>
                                 <select id="dashSubstanceFilter" class="dashboard-filter-select" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.getVisibleSamples());">
-                                    <option value="all">🧪 สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)</option>
+                                    <option value="all">🧪 สารที่ตรวจวิเคราะห์ทั้งหมด (9 รายการ)</option>
                                     <option value="pesticide">🥬 ยาฆ่าแมลง (MU.10-001)</option>
                                     <option value="borax">🥩 สารบอแรกซ์ (MU.10-002)</option>
                                     <option value="formalin">🐟 สารฟอร์มาลิน (MU.10-002)</option>
@@ -1074,7 +1074,6 @@
                                     <option value="polar">🍳 สารโพลาร์ในน้ำมันทอด (MU.10-003, 004)</option>
                                     <option value="coliformWater">💧 โคลิฟอร์มในน้ำ (MU.10-006)</option>
                                     <option value="coliformFood">🍲 โคลิฟอร์มในอาหาร (MU.10-007)</option>
-                                    <option value="foodLabel">🏷️ ตรวจสอบฉลากอาหาร (MU.10-008)</option>
                                 </select>
                             </div>
                         </div>
@@ -1218,7 +1217,7 @@
                                     <span>สำรวจข้อมูลด่วนตามสารที่ตรวจ (Quick Filter):</span>
                                 </div>
                                 <div class="explore-chips" id="substance-explore-chips">
-                                    <button type="button" class="explore-chip active" onclick="window.filterSubstanceQuick('all')">🧪 ทั้งหมด (10 รายการ)</button>
+                                    <button type="button" class="explore-chip active" onclick="window.filterSubstanceQuick('all')">🧪 ทั้งหมด (9 รายการ)</button>
                                     <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('pesticide')">🥬 ยาฆ่าแมลง</button>
                                     <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('borax')">🥩 สารบอแรกซ์</button>
                                     <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('formalin')">🐟 สารฟอร์มาลิน</button>
@@ -1228,7 +1227,6 @@
                                     <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('polar')">🍳 สารโพลาร์</button>
                                     <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('coliformWater')">💧 โคลิฟอร์มในน้ำ</button>
                                     <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('coliformFood')">🍲 โคลิฟอร์มในอาหาร</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('foodLabel')">🏷️ ฉลากอาหาร</button>
                                 </div>
                             </div>
                             <div class="safety-ranking-grid">
@@ -1271,7 +1269,7 @@
                                         <i class="fa-solid fa-flask-vial"></i>
                                     </div>
                                     <div>
-                                        <h4 class="substance-main-title"><i class="fa-solid fa-flask"></i> สัดส่วนผลการตรวจวิเคราะห์แยกตามรายสาร (10 รายการ)</h4>
+                                        <h4 class="substance-main-title"><i class="fa-solid fa-flask"></i> สัดส่วนผลการตรวจวิเคราะห์แยกตามรายสาร (9 รายการ)</h4>
                                         <div class="substance-header-meta">
                                             <span>ปีงบประมาณ 2570</span>
                                             <span class="badge-fiscal-pill">
@@ -1284,7 +1282,7 @@
                                     <label for="substanceAnalyticsSelect" class="substance-select-label">เลือกสารที่ตรวจ:</label>
                                     <div class="substance-select-wrapper">
                                         <select id="substanceAnalyticsSelect" class="dashboard-filter-select substance-custom-dropdown" onchange="window.selectSubstanceAnalytics(this.value)">
-                                            <option value="all">🧪 สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)</option>
+                                            <option value="all">🧪 สารที่ตรวจวิเคราะห์ทั้งหมด (9 รายการ)</option>
                                             <option value="pesticide">🥬 ยาฆ่าแมลง (MU.10-001)</option>
                                             <option value="borax">🥩 สารบอแรกซ์ (MU.10-002)</option>
                                             <option value="formalin">🐟 สารฟอร์มาลิน (MU.10-002)</option>
@@ -1294,7 +1292,6 @@
                                             <option value="polar">🍳 สารโพลาร์ในน้ำมันทอด (MU.10-003, 004)</option>
                                             <option value="coliformWater">💧 โคลิฟอร์มในน้ำ (MU.10-006)</option>
                                             <option value="coliformFood">🍲 โคลิฟอร์มในอาหาร (MU.10-007)</option>
-                                            <option value="foodLabel">🏷️ ฉลากอาหาร (MU.10-008)</option>
                                         </select>
                                     </div>
                                 </div>
@@ -2893,7 +2890,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793007799360"></script>
+    <script src="charts-dash.js?v=1793074233967"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -2914,6 +2911,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793005019991"></script>
+    <script src="app_v85.js?v=1793074233967"></script>
 </body>
 </html>
