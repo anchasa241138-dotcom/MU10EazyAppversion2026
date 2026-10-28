@@ -578,6 +578,7 @@ const app = {
                 if (s) s.value = 'ALL';
                 if (sd) sd.value = '';
                 if (ed) ed.value = '';
+                this.resetFormMultiselect();
                 this.renderExportTable();
             });
         }
@@ -585,6 +586,7 @@ const app = {
             const el = document.getElementById(id);
             if (el) el.addEventListener('change', this.renderExportTable.bind(this));
         });
+        this.initFormMultiselect();
         
         // Live Search Listeners
         document.getElementById('searchVerifyTable').addEventListener('input', this.renderVerifyTable.bind(this));
@@ -8588,17 +8590,133 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         });
     },
 
+    initFormMultiselect() {
+        const trigger = document.getElementById('formMultiselectTrigger');
+        const wrapper = document.getElementById('formMultiselectWrapper');
+        const chkAll = document.getElementById('chkFormAll');
+        const btnClear = document.getElementById('btnQuickClearForms');
+        const chks = document.querySelectorAll('.chk-form-opt');
+
+        if (trigger && wrapper) {
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                wrapper.classList.toggle('open');
+            });
+
+            // Prevent clicks inside dropdown from closing it
+            const dropdown = document.getElementById('formMultiselectDropdown');
+            if (dropdown) {
+                dropdown.addEventListener('click', (e) => e.stopPropagation());
+            }
+
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (!wrapper.contains(e.target)) {
+                    wrapper.classList.remove('open');
+                }
+            });
+        }
+
+        if (chkAll) {
+            chkAll.addEventListener('change', () => {
+                chks.forEach(cb => cb.checked = chkAll.checked);
+                this.updateFormMultiselectLabel();
+                this.renderExportTable();
+            });
+        }
+
+        if (btnClear) {
+            btnClear.addEventListener('click', () => {
+                chks.forEach(cb => cb.checked = false);
+                if (chkAll) chkAll.checked = false;
+                this.updateFormMultiselectLabel();
+                this.renderExportTable();
+            });
+        }
+
+        chks.forEach(cb => {
+            cb.addEventListener('change', () => {
+                this.updateFormMultiselectLabel();
+                this.renderExportTable();
+            });
+        });
+
+        this.updateFormMultiselectLabel();
+    },
+
+    resetFormMultiselect() {
+        const chkAll = document.getElementById('chkFormAll');
+        const chks = document.querySelectorAll('.chk-form-opt');
+        if (chkAll) chkAll.checked = true;
+        chks.forEach(cb => cb.checked = true);
+        this.updateFormMultiselectLabel();
+    },
+
+    getSelectedFormTypes() {
+        const checkboxes = document.querySelectorAll('.chk-form-opt:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    },
+
+    updateFormMultiselectLabel() {
+        const chks = document.querySelectorAll('.chk-form-opt');
+        const checked = document.querySelectorAll('.chk-form-opt:checked');
+        const allChk = document.getElementById('chkFormAll');
+        const textEl = document.getElementById('formMultiselectText');
+        const hiddenEl = document.getElementById('filter-form-type');
+
+        if (!textEl) return;
+
+        if (chks.length > 0 && checked.length === chks.length) {
+            textEl.innerHTML = '<span class="badge-count-all">ทุกฟอร์มบันทึก</span>';
+            if (allChk) allChk.checked = true;
+            if (hiddenEl) hiddenEl.value = 'ALL';
+        } else if (checked.length === 0) {
+            textEl.innerHTML = '<span style="color: #94a3b8;">เลือกแบบฟอร์ม... (0)</span>';
+            if (allChk) allChk.checked = false;
+            if (hiddenEl) hiddenEl.value = 'NONE';
+        } else if (checked.length === 1) {
+            const val = checked[0].value;
+            const optName = checked[0].closest('label')?.querySelector('.form-opt-name')?.innerText || '';
+            textEl.innerHTML = '<span class="selected-pill">' + val + '</span> <span style="font-size:12px; color:#475569; overflow:hidden; text-overflow:ellipsis;">' + optName + '</span>';
+            if (allChk) allChk.checked = false;
+            if (hiddenEl) hiddenEl.value = val;
+        } else {
+            const vals = Array.from(checked).map(c => c.value.replace('MU.10-', '')).join(', ');
+            textEl.innerHTML = '<span class="badge-count-selected">เลือกแล้ว ' + checked.length + ' ฟอร์ม</span> <span style="font-size:11.5px; color:#64748b;">(' + vals + ')</span>';
+            if (allChk) allChk.checked = false;
+            if (hiddenEl) hiddenEl.value = Array.from(checked).map(c => c.value).join(',');
+        }
+    },
+
     renderExportTable() {
-        const province = document.getElementById('filter-province').value;
-        const formType = document.getElementById('filter-form-type').value;
-        const status = document.getElementById('filter-status').value;
-        const startDate = document.getElementById('filter-start-date').value;
-        const endDate = document.getElementById('filter-end-date').value;
+        const pEl = document.getElementById('filter-province');
+        const sEl = document.getElementById('filter-status');
+        const sdEl = document.getElementById('filter-start-date');
+        const edEl = document.getElementById('filter-end-date');
+
+        const province = pEl ? pEl.value : 'ALL';
+        const status = sEl ? sEl.value : 'ALL';
+        const startDate = sdEl ? sdEl.value : '';
+        const endDate = edEl ? edEl.value : '';
+
+        // Multi-select Form Types
+        const selectedFormTypes = this.getSelectedFormTypes();
+        const allFormCheckboxes = document.querySelectorAll('.chk-form-opt');
+        const isAllForms = allFormCheckboxes.length > 0 && selectedFormTypes.length === allFormCheckboxes.length;
 
         let filtered = this.getVisibleSamples().filter(s => {
             let match = true;
             if(province !== 'ALL' && s.province !== province) match = false;
-            if(formType !== 'ALL' && s.form_type !== formType) match = false;
+
+            // Form Type filter (allows multiple form selection)
+            if (allFormCheckboxes.length > 0 && !isAllForms) {
+                if (selectedFormTypes.length === 0) {
+                    match = false; // No form selected
+                } else if (!selectedFormTypes.includes(s.form_type)) {
+                    match = false;
+                }
+            }
+
             if(status !== 'ALL' && s.status !== status) match = false;
             if(startDate && new Date(s.sampling_date) < new Date(startDate)) match = false;
             if(endDate && new Date(s.sampling_date) > new Date(endDate)) match = false;
