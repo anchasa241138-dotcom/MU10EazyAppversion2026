@@ -364,6 +364,12 @@ function updateDashboardCharts(samples) {
     }
     if (!provinceChartInstance || !resultRatioChartInstance || !formTypeChartInstance) return;
 
+    if (Array.isArray(samples)) {
+        if (!window.allUnfilteredDatabaseSamples || samples.length >= window.allUnfilteredDatabaseSamples.length) {
+            window.allUnfilteredDatabaseSamples = samples;
+        }
+    }
+
     const filterEl = document.getElementById('dashProvinceFilter');
     if (filterEl && filterEl.value !== 'all') {
         samples = samples.filter(s => s.province === filterEl.value);
@@ -507,6 +513,20 @@ function updateDashboardCharts(samples) {
     // Call Substance Charts Update
     if (typeof updateSubstanceCharts === 'function') {
         updateSubstanceCharts(samples);
+    }
+
+    // Call Strategic Modules (4 Dimensions)
+    if (typeof updateStrategicKPITargets === 'function') {
+        updateStrategicKPITargets(window.allUnfilteredDatabaseSamples || samples);
+    }
+    if (typeof updateTurnaroundTimeSLA === 'function') {
+        updateTurnaroundTimeSLA(samples);
+    }
+    if (typeof updateCorrectiveActionGovernance === 'function') {
+        updateCorrectiveActionGovernance(samples);
+    }
+    if (typeof updateLocationRiskAndFoodMatrix === 'function') {
+        updateLocationRiskAndFoodMatrix(samples);
     }
 }
 
@@ -988,7 +1008,7 @@ window.openFailedSamplesModal = function(key, label) {
     }
     
     if (samples.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center">ไม่พบข้อมูลตัวอย่างที่ไม่ผ่าน</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 20px;">ไม่พบข้อมูลตัวอย่างที่ไม่ผ่าน</td></tr>';
         const pieWrapper = document.getElementById('failedSamplesPieChart')?.parentElement?.parentElement;
         if(pieWrapper) pieWrapper.style.display = 'none';
     } else {
@@ -996,9 +1016,10 @@ window.openFailedSamplesModal = function(key, label) {
         let uniqueSamples = [];
         let seen = new Set();
         samples.forEach(s => {
-            let identifier = s.name + s.date + s.province;
+            let identifier = s.code || (s.name + s.date + s.province);
             if(!seen.has(identifier)) {
                 seen.add(identifier);
+                s.identifier = identifier;
                 uniqueSamples.push(s);
             }
         });
@@ -1071,24 +1092,36 @@ window.openFailedSamplesModal = function(key, label) {
             tr.onmouseover = () => tr.style.backgroundColor = '#f1f5f9';
             tr.onmouseout = () => tr.style.backgroundColor = rowBg;
 
+            const idKey = s.identifier || s.code || (s.name + s.date + s.province);
+            const curAction = window.getSampleAction ? window.getSampleAction(idKey) : 'pending';
+
             tr.innerHTML = `
-                <td style="padding: 12px 16px;">
+                <td style="padding: 12px 14px;">
                     <div style="font-weight: 600; color: #0f172a;">${s.name || '-'}</div>
                     <div style="font-size: 12px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
                 </td>
-                <td style="padding: 12px 16px; color: #334155;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
-                <td style="padding: 12px 16px;">
+                <td style="padding: 12px 14px; color: #334155;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
+                <td style="padding: 12px 14px;">
                     <div style="color: #0f172a; font-weight: 500;">${s.source || '-'}</div>
                     <div style="font-size: 13px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
                 </td>
-                <td style="padding: 12px 16px;">
+                <td style="padding: 12px 14px;">
                     <div style="color: #0f172a;">อ.${s.district || '-'}</div>
                     <div style="font-size: 13px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
                 </td>
-                <td style="padding: 12px 16px;">
+                <td style="padding: 12px 14px;">
                     <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; background-color: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 700; border: 1px solid #bae6fd; white-space: nowrap;">
                         ${s.form_type || '-'}
                     </span>
+                </td>
+                <td style="padding: 12px 14px;">
+                    <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;">
+                        <option value="pending" ${curAction === 'pending' ? 'selected' : ''}>🟡 อยู่ระหว่างติดตาม</option>
+                        <option value="warned" ${curAction === 'warned' ? 'selected' : ''}>🔵 ตักเตือน/แนะนำ</option>
+                        <option value="seized" ${curAction === 'seized' ? 'selected' : ''}>🟠 อายัด/ทำลายสินค้า</option>
+                        <option value="fined" ${curAction === 'fined' ? 'selected' : ''}>🔴 ดำเนินคดี/เปรียบเทียบปรับ</option>
+                        <option value="retested_passed" ${curAction === 'retested_passed' ? 'selected' : ''}>🟢 สุ่มตรวจซ้ำรอบ 2 ผ่าน</option>
+                    </select>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -1611,3 +1644,453 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
         }
     }
 }
+
+
+/* ==========================================================================
+   STRATEGIC EXECUTIVE MODULES (4 DIMENSIONS) IMPLEMENTATION
+   ========================================================================== */
+
+// 1. STRATEGIC TARGETS (มิติที่ 1: แผนยุทธศาสตร์และเป้าหมาย)
+window.STRATEGIC_TARGETS_2570 = {
+    total: 5245,
+    chemical: 4895,
+    microbiology: 350,
+    provinces: {
+        'อุบลราชธานี': { chemical: 1630, micro: 120, total: 1750, id: 'ubon' },
+        'ศรีสะเกษ': { chemical: 1430, micro: 110, total: 1540, id: 'sisaket' },
+        'มุกดาหาร': { chemical: 630, micro: 40, total: 670, id: 'muk' },
+        'อำนาจเจริญ': { chemical: 630, micro: 40, total: 670, id: 'amnat' },
+        'ยโสธร': { chemical: 575, micro: 40, total: 615, id: 'yasothon' }
+    }
+};
+
+function updateStrategicKPITargets(allSamples) {
+    if (!Array.isArray(allSamples)) return;
+    const targetConfig = window.STRATEGIC_TARGETS_2570;
+
+    // Total Region 10
+    const totalActual = allSamples.length;
+    const totalTarget = targetConfig.total;
+    const totalPct = totalTarget > 0 ? ((totalActual / totalTarget) * 100).toFixed(1) : '0.0';
+
+    const totalCountEl = document.getElementById('kpi-total-actual-count');
+    const totalPctEl = document.getElementById('kpi-total-actual-pct');
+    const totalBarEl = document.getElementById('kpi-total-progress-bar');
+
+    if (totalCountEl) totalCountEl.innerText = `${totalActual.toLocaleString()} / ${totalTarget.toLocaleString()} ตัวอย่าง`;
+    if (totalPctEl) totalPctEl.innerText = `${totalPct}%`;
+    if (totalBarEl) {
+        totalBarEl.style.width = `${Math.min(parseFloat(totalPct), 100)}%`;
+        if (parseFloat(totalPct) >= 80) {
+            totalBarEl.style.background = 'linear-gradient(90deg, #34d399 0%, #059669 100%)';
+        } else if (parseFloat(totalPct) >= 50) {
+            totalBarEl.style.background = 'linear-gradient(90deg, #facc15 0%, #d97706 100%)';
+        } else {
+            totalBarEl.style.background = 'linear-gradient(90deg, #38bdf8 0%, #0284c7 100%)';
+        }
+    }
+
+    // 5 Provinces
+    for (const provName in targetConfig.provinces) {
+        const pInfo = targetConfig.provinces[provName];
+        const pSamples = allSamples.filter(s => s.province === provName || (s.agency && s.agency.includes(provName)));
+        const actualCount = pSamples.length;
+        const target = pInfo.total;
+        const pct = target > 0 ? ((actualCount / target) * 100).toFixed(1) : '0.0';
+
+        const actualEl = document.getElementById(`pt-actual-${pInfo.id}`);
+        const pctEl = document.getElementById(`pt-pct-${pInfo.id}`);
+        const fillEl = document.getElementById(`pt-fill-${pInfo.id}`);
+        const statusEl = document.getElementById(`pt-status-${pInfo.id}`);
+
+        if (actualEl) actualEl.innerText = actualCount.toLocaleString();
+        if (pctEl) pctEl.innerText = `${pct}%`;
+        if (fillEl) {
+            fillEl.style.width = `${Math.min(parseFloat(pct), 100)}%`;
+            fillEl.className = 'pt-fill ' + (parseFloat(pct) >= 80 ? 'fill-success' : (parseFloat(pct) >= 50 ? 'fill-warning' : 'fill-danger'));
+        }
+        if (statusEl) {
+            if (parseFloat(pct) >= 80) {
+                statusEl.className = 'pt-status-pill pill-success';
+                statusEl.innerText = 'ตามเป้าหมาย';
+            } else if (parseFloat(pct) >= 50) {
+                statusEl.className = 'pt-status-pill pill-warning';
+                statusEl.innerText = 'ปานกลาง';
+            } else {
+                statusEl.className = 'pt-status-pill pill-danger';
+                statusEl.innerText = 'ต้องเร่งรัด';
+            }
+        }
+    }
+}
+window.updateStrategicKPITargets = updateStrategicKPITargets;
+
+
+// 2. TURNAROUND TIME & SLA MONITORING (มิติที่ 2: TAT 72 ชั่วโมง)
+window.currentOverdueSamples = [];
+
+function updateTurnaroundTimeSLA(samples) {
+    if (!Array.isArray(samples)) return;
+    const now = new Date();
+    let totalCompletedDays = 0;
+    let completedCount = 0;
+    let withinSLACount = 0;
+    window.currentOverdueSamples = [];
+
+    samples.forEach(s => {
+        const rawRecDate = s.lab_receive_date || s.lab_receive_timestamp || s.created_at;
+        if (!rawRecDate) return;
+        const recDate = new Date(rawRecDate);
+        if (isNaN(recDate.getTime())) return;
+
+        const isCompleted = s.status === 'approved' || s.status === 'completed' || s.status === 'analyzed' || !!s.analysis_date;
+        if (isCompleted) {
+            const rawAnaDate = s.analysis_date || s.analysis_timestamp || s.updated_at || s.created_at;
+            const anaDate = new Date(rawAnaDate);
+            let diffDays = 0;
+            if (!isNaN(anaDate.getTime()) && anaDate >= recDate) {
+                diffDays = (anaDate.getTime() - recDate.getTime()) / (1000 * 60 * 60 * 24);
+            } else {
+                diffDays = 1.0;
+            }
+            diffDays = Math.max(0.5, Math.min(diffDays, 14));
+            totalCompletedDays += diffDays;
+            completedCount++;
+            if (diffDays <= 3.0) {
+                withinSLACount++;
+            }
+        } else {
+            // Sample still in progress
+            const elapsedDays = (now.getTime() - recDate.getTime()) / (1000 * 60 * 60 * 24);
+            if (elapsedDays > 3.0) {
+                window.currentOverdueSamples.push({
+                    code: s.lab_id || s.sample_id || s.ref_id || '-',
+                    name: s.sample_name || s.sample_name_1 || 'ตัวอย่างตรวจวิเคราะห์',
+                    receiveDate: recDate.toLocaleDateString('th-TH'),
+                    elapsedDays: elapsedDays.toFixed(1),
+                    elapsedHours: Math.round(elapsedDays * 24),
+                    agency: s.agency || s.source || '-',
+                    province: s.province || '-',
+                    status: s.status === 'received' ? 'รับตัวอย่างแล้ว (รอตรวจ)' : 'รอรับตัวอย่าง'
+                });
+            }
+        }
+    });
+
+    const avgDays = completedCount > 0 ? (totalCompletedDays / completedCount).toFixed(1) : '2.1';
+    const slaRate = completedCount > 0 ? ((withinSLACount / completedCount) * 100).toFixed(1) + '%' : '100%';
+    const overdueCount = window.currentOverdueSamples.length;
+
+    const avgEl = document.getElementById('tat-avg-days');
+    const rateEl = document.getElementById('tat-sla-rate');
+    const overdueEl = document.getElementById('tat-overdue-count');
+    const alertContainer = document.getElementById('tat-alert-container');
+
+    if (avgEl) avgEl.innerText = `${avgDays} วัน`;
+    if (rateEl) {
+        rateEl.innerText = slaRate;
+        rateEl.style.color = parseFloat(slaRate) >= 90 ? '#10b981' : '#f59e0b';
+    }
+    if (overdueEl) overdueEl.innerText = overdueCount;
+
+    if (alertContainer) {
+        if (overdueCount > 0) {
+            alertContainer.innerHTML = `
+                <div class="ops-alert-banner alert-danger">
+                    <span><i class="fa-solid fa-triangle-exclamation"></i> พบตัวอย่างที่รอนานเกิน 3 วัน (ค้างท่อ) จำนวน <strong>${overdueCount}</strong> รายการ</span>
+                    <button type="button" class="btn-view-overdue" onclick="window.openOverdueSamplesModal()">
+                        <i class="fa-solid fa-magnifying-glass"></i> ดูตัวอย่างค้างท่อ
+                    </button>
+                </div>
+            `;
+        } else {
+            alertContainer.innerHTML = `
+                <div class="ops-alert-banner alert-success">
+                    <span><i class="fa-solid fa-circle-check"></i> ตัวอย่างทั้งหมดตรวจเสร็จทันตามเกณฑ์มาตรฐาน 3 วัน (ไม่พบค้างท่อ)</span>
+                </div>
+            `;
+        }
+    }
+}
+window.updateTurnaroundTimeSLA = updateTurnaroundTimeSLA;
+
+// Overdue Modal Control
+window.openOverdueSamplesModal = function() {
+    const tbody = document.getElementById('overdueSamplesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const list = window.currentOverdueSamples || [];
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #10b981;"><i class="fa-solid fa-circle-check"></i> ไม่พบตัวอย่างค้างท่อเกินเกณฑ์มาตรฐาน 3 วัน</td></tr>';
+    } else {
+        list.forEach((s, idx) => {
+            const tr = document.createElement('tr');
+            tr.style.backgroundColor = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+            tr.style.borderBottom = '1px solid #e2e8f0';
+            tr.innerHTML = `
+                <td style="padding: 12px 14px;">
+                    <div style="font-weight: 700; color: #0f172a;">${s.name}</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code}</div>
+                </td>
+                <td style="padding: 12px 14px; color: #334155;">${s.receiveDate}</td>
+                <td style="padding: 12px 14px;">
+                    <span style="color: #dc2626; font-weight: 700; background: #fee2e2; padding: 3px 8px; border-radius: 6px;">
+                        ค้าง ${s.elapsedDays} วัน (${s.elapsedHours} ชม.)
+                    </span>
+                </td>
+                <td style="padding: 12px 14px;">
+                    <div style="font-weight: 600; color: #1e293b;">${s.agency}</div>
+                    <div style="font-size: 12px; color: #64748b;">จ.${s.province}</div>
+                </td>
+                <td style="padding: 12px 14px;">
+                    <span style="background: #fef9c3; color: #854d0e; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 700;">
+                        ${s.status}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+    document.getElementById('overdueSamplesModal')?.classList.add('active');
+};
+
+window.closeOverdueSamplesModal = function() {
+    document.getElementById('overdueSamplesModal')?.classList.remove('active');
+};
+
+
+// 3. CORRECTIVE ACTION GOVERNANCE (มิติที่ 5: การติดตามผลหลังพบปัญหา)
+window.getStoredCorrectiveActions = function() {
+    try {
+        return JSON.parse(localStorage.getItem('sskmoph_corrective_actions') || '{}');
+    } catch(e) {
+        return {};
+    }
+};
+
+window.getSampleAction = function(identifier) {
+    const actions = window.getStoredCorrectiveActions();
+    return actions[identifier] || 'pending';
+};
+
+window.updateSampleAction = function(identifier, newStatus) {
+    try {
+        const actions = window.getStoredCorrectiveActions();
+        actions[identifier] = newStatus;
+        localStorage.setItem('sskmoph_corrective_actions', JSON.stringify(actions));
+        if (window.currentCachedSamples) {
+            updateCorrectiveActionGovernance(window.currentCachedSamples);
+        }
+    } catch(e) {
+        console.error('Error saving action status:', e);
+    }
+};
+
+function updateCorrectiveActionGovernance(samples) {
+    const actions = window.getStoredCorrectiveActions();
+    
+    // Gather all unique failed samples
+    let allFailedIdentifiers = new Set();
+    for (const k in window.currentFailedSamples) {
+        if (k !== 'all' && Array.isArray(window.currentFailedSamples[k])) {
+            window.currentFailedSamples[k].forEach(s => {
+                const id = s.code || (s.name + s.date + s.province);
+                allFailedIdentifiers.add(id);
+            });
+        }
+    }
+
+    const totalFailed = allFailedIdentifiers.size;
+    let counts = {
+        pending: 0,
+        warned: 0,
+        seized: 0,
+        fined: 0,
+        retested_passed: 0
+    };
+
+    allFailedIdentifiers.forEach(id => {
+        const st = actions[id] || 'pending';
+        if (counts[st] !== undefined) counts[st]++;
+        else counts.pending++;
+    });
+
+    const closedCount = counts.warned + counts.seized + counts.fined + counts.retested_passed;
+    const closedPct = totalFailed > 0 ? ((closedCount / totalFailed) * 100).toFixed(1) : '100.0';
+    const pendingPct = totalFailed > 0 ? ((counts.pending / totalFailed) * 100).toFixed(1) : '0.0';
+
+    const failEl = document.getElementById('action-total-fail');
+    const closedEl = document.getElementById('action-closed-pct');
+    const pendEl = document.getElementById('action-pending-pct');
+    const barEl = document.getElementById('action-closed-bar');
+
+    if (failEl) failEl.innerText = totalFailed;
+    if (closedEl) closedEl.innerText = `${closedPct}%`;
+    if (pendEl) pendEl.innerText = `${pendingPct}%`;
+    if (barEl) {
+        barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
+    }
+
+    const cPend = document.getElementById('chip-pending-count');
+    const cWarn = document.getElementById('chip-warned-count');
+    const cSeiz = document.getElementById('chip-seized-count');
+    const cFine = document.getElementById('chip-fined-count');
+    const cRetest = document.getElementById('chip-retest-count');
+
+    if (cPend) cPend.innerText = counts.pending;
+    if (cWarn) cWarn.innerText = counts.warned;
+    if (cSeiz) cSeiz.innerText = counts.seized;
+    if (cFine) cFine.innerText = counts.fined;
+    if (cRetest) cRetest.innerText = counts.retested_passed;
+}
+window.updateCorrectiveActionGovernance = updateCorrectiveActionGovernance;
+
+
+// 4. LOCATION RISK & HIGH-RISK FOOD MATRIX (มิติที่ 4)
+function updateLocationRiskAndFoodMatrix(samples) {
+    if (!Array.isArray(samples)) return;
+
+    // 10 Location Types from Form MU.10
+    const locationCategories = [
+        { name: 'ตลาดสด', icon: 'fa-basket-shopping' },
+        { name: 'ตลาดนัด', icon: 'fa-tent' },
+        { name: 'ห้างสรรพสินค้า/ซุปเปอร์มาร์เก็ต', icon: 'fa-cart-shopping' },
+        { name: 'ห้องเย็น', icon: 'fa-snowflake' },
+        { name: 'โรงเรียน/สถานศึกษา', icon: 'fa-school' },
+        { name: 'โรงพยาบาล/สถานพยาบาล', icon: 'fa-hospital' },
+        { name: 'ร้านอาหาร', icon: 'fa-utensils' },
+        { name: 'แผงลอยจำหน่ายอาหาร', icon: 'fa-store' },
+        { name: 'โรงงาน/สถานที่ผลิตอาหาร', icon: 'fa-industry' },
+        { name: 'อื่นๆ', icon: 'fa-location-dot' }
+    ];
+
+    const locStats = {};
+    locationCategories.forEach(lc => {
+        locStats[lc.name] = { ...lc, total: 0, fail: 0 };
+    });
+
+    function resolveLocType(s) {
+        if (s.location_type && locStats[s.location_type]) return s.location_type;
+        const text = (s.collection_place || s.collection_location || s.location_name || s.agency || '').toLowerCase();
+        if (text.includes('ตลาดสด')) return 'ตลาดสด';
+        if (text.includes('ตลาดนัด') || text.includes('ถนนคนเดิน')) return 'ตลาดนัด';
+        if (text.includes('ห้าง') || text.includes('ซุปเปอร์') || text.includes('บิ๊กซี') || text.includes('โลตัส') || text.includes('แม็คโคร')) return 'ห้างสรรพสินค้า/ซุปเปอร์มาร์เก็ต';
+        if (text.includes('ห้องเย็น')) return 'ห้องเย็น';
+        if (text.includes('โรงเรียน') || text.includes('ศูนย์เด็ก')) return 'โรงเรียน/สถานศึกษา';
+        if (text.includes('โรงพยาบาล') || text.includes('รพ.') || text.includes('รพ.สต.')) return 'โรงพยาบาล/สถานพยาบาล';
+        if (text.includes('ร้านอาหาร') || text.includes('ครัว')) return 'ร้านอาหาร';
+        if (text.includes('แผงลอย') || text.includes('รถเร่')) return 'แผงลอยจำหน่ายอาหาร';
+        if (text.includes('โรงงาน') || text.includes('ผลิต')) return 'โรงงาน/สถานที่ผลิตอาหาร';
+        return 'ตลาดสด';
+    }
+
+    samples.forEach(s => {
+        const lType = resolveLocType(s);
+        if (locStats[lType]) {
+            locStats[lType].total++;
+            let isFail = false;
+            let idx = 1;
+            while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+                const sum = window.getItemSubstanceSummary ? window.getItemSubstanceSummary(s, idx, 'all') : '';
+                if (sum && sum.includes('ไม่ผ่าน')) {
+                    isFail = true;
+                    break;
+                }
+                idx++;
+            }
+            if (!isFail && s.sample_name) {
+                const sum = window.getItemSubstanceSummary ? window.getItemSubstanceSummary(s, null, 'all') : '';
+                if (sum && sum.includes('ไม่ผ่าน')) isFail = true;
+            }
+            if (isFail) locStats[lType].fail++;
+        }
+    });
+
+    // Render Location Risk List
+    const locContainer = document.getElementById('locationRiskListContainer');
+    if (locContainer) {
+        const sortedLocs = Object.values(locStats).sort((a, b) => b.fail - a.fail || b.total - a.total);
+        const maxTotal = Math.max(...sortedLocs.map(l => l.total), 1);
+
+        locContainer.innerHTML = sortedLocs.map(l => {
+            const failPct = l.total > 0 ? ((l.fail / l.total) * 100).toFixed(1) : '0.0';
+            const widthPct = Math.min((l.total / maxTotal) * 100, 100);
+            const hasFail = l.fail > 0;
+            return `
+                <div class="loc-risk-item">
+                    <div class="loc-risk-left">
+                        <div class="loc-icon-badge"><i class="fa-solid ${l.icon}"></i></div>
+                        <span class="loc-name">${l.name}</span>
+                    </div>
+                    <div class="loc-risk-bar-box">
+                        <div class="loc-track">
+                            <div class="loc-fill ${hasFail ? 'has-fail' : ''}" style="width: ${widthPct}%;"></div>
+                        </div>
+                        <div class="loc-meta-sub">
+                            <span>ตรวจ ${l.total} ตัวอย่าง</span>
+                            <span>${hasFail ? `พบไม่ผ่าน ${l.fail} (${failPct}%)` : 'ปลอดภัย 100%'}</span>
+                        </div>
+                    </div>
+                    <span class="loc-badge-stat ${hasFail ? 'badge-fail' : 'badge-safe'}">
+                        ${hasFail ? `${failPct}% เสี่ยง` : 'ปลอดภัย'}
+                    </span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 2. High-Risk Food Matrix (Top 5 Non-compliant Foods)
+    const foodMap = {};
+    for (const subKey in window.currentFailedSamples) {
+        if (subKey === 'all') continue;
+        const subLabel = window.substanceDictionary[subKey]?.label || subKey;
+        const failedItems = window.currentFailedSamples[subKey] || [];
+        failedItems.forEach(item => {
+            const foodName = (item.name || 'ไม่ระบุชื่ออาหาร').trim();
+            if (!foodMap[foodName]) {
+                foodMap[foodName] = { name: foodName, count: 0, substances: new Set() };
+            }
+            foodMap[foodName].count++;
+            foodMap[foodName].substances.add(subLabel);
+        });
+    }
+
+    const foodContainer = document.getElementById('highRiskFoodMatrixContainer');
+    if (foodContainer) {
+        const sortedFoods = Object.values(foodMap).sort((a, b) => b.count - a.count).slice(0, 5);
+        if (sortedFoods.length === 0) {
+            foodContainer.innerHTML = `
+                <div style="text-align: center; padding: 35px 20px; color: #10b981; font-weight: 600;">
+                    <i class="fa-solid fa-shield-check" style="font-size: 36px; margin-bottom: 10px; display: block;"></i>
+                    ไม่พบรายการอาหารที่มีสารปนเปื้อนเกินมาตรฐาน (ปลอดภัย 100%)
+                </div>
+            `;
+        } else {
+            const rankColors = [
+                'linear-gradient(135deg, #ef4444, #dc2626)',
+                'linear-gradient(135deg, #f97316, #ea580c)',
+                'linear-gradient(135deg, #f59e0b, #d97706)',
+                'linear-gradient(135deg, #64748b, #475569)',
+                'linear-gradient(135deg, #94a3b8, #64748b)'
+            ];
+            foodContainer.innerHTML = sortedFoods.map((f, idx) => {
+                const subTags = Array.from(f.substances).map(s => `<span class="substance-mini-tag">${s}</span>`).join('');
+                return `
+                    <div class="food-matrix-item">
+                        <div class="food-rank-badge" style="background: ${rankColors[idx] || rankColors[4]};">
+                            ${idx + 1}
+                        </div>
+                        <div class="food-matrix-info">
+                            <div class="food-matrix-name">${f.name}</div>
+                            <div class="food-matrix-substances">${subTags}</div>
+                        </div>
+                        <div class="food-matrix-count">
+                            ${f.count} <small>ตัวอย่างที่พบ</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+}
+window.updateLocationRiskAndFoodMatrix = updateLocationRiskAndFoodMatrix;
