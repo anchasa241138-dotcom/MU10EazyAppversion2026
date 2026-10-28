@@ -3504,24 +3504,22 @@ body.require-login-mode::before {
   flex-direction: row !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
-  gap: 8px !important;
+  gap: 12px !important;
+  width: 100% !important;
   max-width: 100% !important;
-  overflow-x: auto !important;
-  scrollbar-width: thin !important;
-  -webkit-overflow-scrolling: touch !important;
+  flex: 1 !important;
 }
 
 .filter-pill-item {
   display: inline-flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  flex-shrink: 0 !important;
   white-space: nowrap !important;
-  gap: 6px !important;
+  gap: 8px !important;
   background: #ffffff !important;
   border: 1.5px solid #e2e8f0 !important;
   border-radius: 9999px !important;
-  padding: 5px 12px !important;
+  padding: 6px 16px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
   transition: all 0.2s ease !important;
 }
@@ -3535,7 +3533,8 @@ body.require-login-mode::before {
 
 .filter-pill-icon {
   color: #2563eb !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
+  flex-shrink: 0 !important;
 }
 
 .filter-pill-label {
@@ -3543,6 +3542,7 @@ body.require-login-mode::before {
   font-weight: 700 !important;
   color: #334155 !important;
   white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .filter-pill-sep {
@@ -3550,6 +3550,11 @@ body.require-login-mode::before {
   font-weight: 600 !important;
   font-size: 13px !important;
   padding: 0 2px !important;
+  flex-shrink: 0 !important;
+}
+
+.filter-pill-date {
+  flex-shrink: 0 !important;
 }
 
 .dashboard-filter-date,
@@ -3558,6 +3563,19 @@ body.require-login-mode::before {
   max-width: 116px !important;
   padding: 2px 2px !important;
   font-size: 12px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Allow dropdown filter pills to expand and fill the right side */
+.overview-controls-group .filter-pill-item.filter-pill-expand,
+.overview-controls-group .filter-pill-item:has(select) {
+  flex: 1 1 200px !important;
+  min-width: 0 !important;
+}
+
+.overview-controls-group .filter-pill-item.filter-pill-expand-wide {
+  flex: 1.4 1 280px !important;
+  min-width: 0 !important;
 }
 
 .dashboard-filter-date,
@@ -3569,35 +3587,27 @@ body.require-login-mode::before {
   background-color: transparent !important;
   border: none !important;
   color: #0f172a !important;
-  padding: 3px 4px !important;
+  padding: 3px 6px !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   box-shadow: none !important;
   outline: none !important;
   cursor: pointer !important;
-  font-family: 'Kanit', sans-serif !important;
+  font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   -webkit-appearance: menulist !important;
   appearance: menulist !important;
-  max-width: 210px !important;
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
 
-#dashProvinceFilter {
-  max-width: 180px !important;
-}
-
+#dashProvinceFilter,
 #dashSubstanceFilter {
-  max-width: 230px !important;
-}
-
-@media (min-width: 1560px) {
-  #dashProvinceFilter {
-    max-width: 240px !important;
-  }
-  #dashSubstanceFilter {
-    max-width: 320px !important;
-  }
+  width: 100% !important;
+  max-width: none !important;
 }
 
 .dashboard-filter-select option,
