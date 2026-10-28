@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793160400000">
+    <link rel="stylesheet" href="enhancements.css?v=1793163000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1146,6 +1146,150 @@
                         </div>
                     </div>
 
+                    <!-- STRATEGIC SECTION 1: Target & KPI Tracking (มิติที่ 1) -->
+                    <div class="strategic-kpi-card">
+                        <div class="strategic-card-header">
+                            <div class="strategic-title-box">
+                                <div class="strategic-icon-badge" style="background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff;">
+                                    <i class="fa-solid fa-bullseye"></i>
+                                </div>
+                                <div>
+                                    <h4 class="strategic-main-title">แผนยุทธศาสตร์และเป้าหมายการตรวจวิเคราะห์ ปีงบประมาณ 2570</h4>
+                                    <span class="strategic-sub-title">เปรียบเทียบผลงานตรวจจริงเทียบกับเป้าหมายตามยุทธศาสตร์ เขตสุขภาพที่ 10</span>
+                                </div>
+                            </div>
+                            <div class="strategic-header-right">
+                                <div class="target-total-badge">
+                                    <span class="lbl">เป้าหมายรวมเขต 10:</span>
+                                    <span class="val">5,245 ตัวอย่าง</span>
+                                    <span class="sub">(เคมี 4,895 + จุลินทรีย์ 350)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overall Progress Capsule -->
+                        <div class="strategic-overall-box">
+                            <div class="overall-progress-meta">
+                                <span class="overall-title"><i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริงภาพรวมเขต 10:</span>
+                                <div>
+                                    <span class="overall-count" id="kpi-total-actual-count">0 / 5,245 ตัวอย่าง</span>
+                                    <span class="overall-pct-badge" id="kpi-total-actual-pct" style="margin-left: 8px;">0.0%</span>
+                                </div>
+                            </div>
+                            <div class="strategic-progress-track">
+                                <div class="strategic-progress-fill" id="kpi-total-progress-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 5 Provinces Target Cards Grid -->
+                        <div class="province-targets-grid">
+                            <!-- อุบลราชธานี: 1,750 -->
+                            <div class="province-target-card" id="ptarget-ubon">
+                                <div class="pt-header">
+                                    <span class="pt-name"><i class="fa-solid fa-location-dot" style="color: #0284c7;"></i> อุบลราชธานี</span>
+                                    <span class="pt-status-pill pill-danger" id="pt-status-ubon">ต้องเร่งรัด</span>
+                                </div>
+                                <div class="pt-numbers">
+                                    <span class="pt-actual" id="pt-actual-ubon">0</span>
+                                    <span class="pt-divider">/</span>
+                                    <span class="pt-target">1,750</span>
+                                    <span class="pt-unit">ตัวอย่าง</span>
+                                </div>
+                                <div class="pt-track">
+                                    <div class="pt-fill fill-danger" id="pt-fill-ubon" style="width: 0%;"></div>
+                                </div>
+                                <div class="pt-footer">
+                                    <span class="pt-breakdown">เคมี 1,630 | จุลินทรีย์ 120</span>
+                                    <span class="pt-pct" id="pt-pct-ubon">0.0%</span>
+                                </div>
+                            </div>
+
+                            <!-- ศรีสะเกษ: 1,540 -->
+                            <div class="province-target-card" id="ptarget-sisaket">
+                                <div class="pt-header">
+                                    <span class="pt-name"><i class="fa-solid fa-location-dot" style="color: #0284c7;"></i> ศรีสะเกษ</span>
+                                    <span class="pt-status-pill pill-danger" id="pt-status-sisaket">ต้องเร่งรัด</span>
+                                </div>
+                                <div class="pt-numbers">
+                                    <span class="pt-actual" id="pt-actual-sisaket">0</span>
+                                    <span class="pt-divider">/</span>
+                                    <span class="pt-target">1,540</span>
+                                    <span class="pt-unit">ตัวอย่าง</span>
+                                </div>
+                                <div class="pt-track">
+                                    <div class="pt-fill fill-danger" id="pt-fill-sisaket" style="width: 0%;"></div>
+                                </div>
+                                <div class="pt-footer">
+                                    <span class="pt-breakdown">เคมี 1,430 | จุลินทรีย์ 110</span>
+                                    <span class="pt-pct" id="pt-pct-sisaket">0.0%</span>
+                                </div>
+                            </div>
+
+                            <!-- มุกดาหาร: 670 -->
+                            <div class="province-target-card" id="ptarget-muk">
+                                <div class="pt-header">
+                                    <span class="pt-name"><i class="fa-solid fa-location-dot" style="color: #0284c7;"></i> มุกดาหาร</span>
+                                    <span class="pt-status-pill pill-danger" id="pt-status-muk">ต้องเร่งรัด</span>
+                                </div>
+                                <div class="pt-numbers">
+                                    <span class="pt-actual" id="pt-actual-muk">0</span>
+                                    <span class="pt-divider">/</span>
+                                    <span class="pt-target">670</span>
+                                    <span class="pt-unit">ตัวอย่าง</span>
+                                </div>
+                                <div class="pt-track">
+                                    <div class="pt-fill fill-danger" id="pt-fill-muk" style="width: 0%;"></div>
+                                </div>
+                                <div class="pt-footer">
+                                    <span class="pt-breakdown">เคมี 630 | จุลินทรีย์ 40</span>
+                                    <span class="pt-pct" id="pt-pct-muk">0.0%</span>
+                                </div>
+                            </div>
+
+                            <!-- อำนาจเจริญ: 670 -->
+                            <div class="province-target-card" id="ptarget-amnat">
+                                <div class="pt-header">
+                                    <span class="pt-name"><i class="fa-solid fa-location-dot" style="color: #0284c7;"></i> อำนาจเจริญ</span>
+                                    <span class="pt-status-pill pill-danger" id="pt-status-amnat">ต้องเร่งรัด</span>
+                                </div>
+                                <div class="pt-numbers">
+                                    <span class="pt-actual" id="pt-actual-amnat">0</span>
+                                    <span class="pt-divider">/</span>
+                                    <span class="pt-target">670</span>
+                                    <span class="pt-unit">ตัวอย่าง</span>
+                                </div>
+                                <div class="pt-track">
+                                    <div class="pt-fill fill-danger" id="pt-fill-amnat" style="width: 0%;"></div>
+                                </div>
+                                <div class="pt-footer">
+                                    <span class="pt-breakdown">เคมี 630 | จุลินทรีย์ 40</span>
+                                    <span class="pt-pct" id="pt-pct-amnat">0.0%</span>
+                                </div>
+                            </div>
+
+                            <!-- ยโสธร: 615 -->
+                            <div class="province-target-card" id="ptarget-yasothon">
+                                <div class="pt-header">
+                                    <span class="pt-name"><i class="fa-solid fa-location-dot" style="color: #0284c7;"></i> ยโสธร</span>
+                                    <span class="pt-status-pill pill-danger" id="pt-status-yasothon">ต้องเร่งรัด</span>
+                                </div>
+                                <div class="pt-numbers">
+                                    <span class="pt-actual" id="pt-actual-yasothon">0</span>
+                                    <span class="pt-divider">/</span>
+                                    <span class="pt-target">615</span>
+                                    <span class="pt-unit">ตัวอย่าง</span>
+                                </div>
+                                <div class="pt-track">
+                                    <div class="pt-fill fill-danger" id="pt-fill-yasothon" style="width: 0%;"></div>
+                                </div>
+                                <div class="pt-footer">
+                                    <span class="pt-breakdown">เคมี 575 | จุลินทรีย์ 40</span>
+                                    <span class="pt-pct" id="pt-pct-yasothon">0.0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Dashboard Charts Layout -->
                     <div class="dashboard-grid">
                         <div class="chart-container" style="grid-column: span 2;">
@@ -1277,6 +1421,82 @@
                                     <div id="top-danger-list" class="ranking-list">
                                         <!-- Dynamically generated -->
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STRATEGIC OPERATIONS & GOVERNANCE ROW (มิติที่ 2 & มิติที่ 5) -->
+                        <div class="strategic-ops-grid">
+                            <!-- มิติที่ 2: TAT & SLA Monitor -->
+                            <div class="ops-card">
+                                <div class="ops-card-header">
+                                    <div>
+                                        <h4 class="ops-header-title">
+                                            <i class="fa-solid fa-stopwatch-20" style="color: #0284c7;"></i>
+                                            ประสิทธิภาพและระยะเวลาตรวจวิเคราะห์ (TAT & SLA)
+                                        </h4>
+                                        <span class="ops-header-sub">เกณฑ์มาตรฐานห้องปฏิบัติการเฉลี่ย 3 วัน (72 ชั่วโมง) นับจากรับตัวอย่างเข้าแลป</span>
+                                    </div>
+                                    <span class="pt-status-pill pill-success" style="font-size: 11px;">SLA 72 ชม.</span>
+                                </div>
+                                <div class="ops-stat-tiles">
+                                    <div class="ops-tile">
+                                        <span class="ops-tile-val" id="tat-avg-days">0.0 วัน</span>
+                                        <span class="ops-tile-lbl">ระยะเวลาเฉลี่ย (TAT)</span>
+                                    </div>
+                                    <div class="ops-tile">
+                                        <span class="ops-tile-val" id="tat-sla-rate" style="color: #10b981;">100%</span>
+                                        <span class="ops-tile-lbl">ทันตามกำหนด (On-Time)</span>
+                                    </div>
+                                    <div class="ops-tile">
+                                        <span class="ops-tile-val" id="tat-overdue-count" style="color: #ef4444;">0</span>
+                                        <span class="ops-tile-lbl">ค้างท่อเกิน 3 วัน</span>
+                                    </div>
+                                </div>
+                                <div id="tat-alert-container">
+                                    <div class="ops-alert-banner alert-success">
+                                        <span><i class="fa-solid fa-circle-check"></i> ตัวอย่างทั้งหมดตรวจเสร็จทันตามเกณฑ์มาตรฐาน (ไม่พบค้างท่อ)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- มิติที่ 5: Corrective Action Closed-Loop Governance -->
+                            <div class="ops-card">
+                                <div class="ops-card-header">
+                                    <div>
+                                        <h4 class="ops-header-title">
+                                            <i class="fa-solid fa-scale-balanced" style="color: #e11d48;"></i>
+                                            การติดตามผลการดำเนินงานหลังพบปัญหา
+                                        </h4>
+                                        <span class="ops-header-sub">การจัดการตัวอย่างที่ไม่ผ่านมาตรฐาน (Closed-Loop Governance)</span>
+                                    </div>
+                                    <span class="pt-status-pill pill-warning" style="font-size: 11px;">Follow-up</span>
+                                </div>
+                                <div class="ops-stat-tiles">
+                                    <div class="ops-tile">
+                                        <span class="ops-tile-val" id="action-total-fail">0</span>
+                                        <span class="ops-tile-lbl">ตัวอย่างไม่ผ่าน</span>
+                                    </div>
+                                    <div class="ops-tile">
+                                        <span class="ops-tile-val" id="action-closed-pct" style="color: #10b981;">0.0%</span>
+                                        <span class="ops-tile-lbl">แก้ไขแล้วเสร็จ (Closed)</span>
+                                    </div>
+                                    <div class="ops-tile">
+                                        <span class="ops-tile-val" id="action-pending-pct" style="color: #f59e0b;">0.0%</span>
+                                        <span class="ops-tile-lbl">อยู่ระหว่างติดตาม</span>
+                                    </div>
+                                </div>
+                                <!-- Progress Track -->
+                                <div class="pt-track" style="height: 10px; margin-bottom: 8px;">
+                                    <div class="pt-fill fill-success" id="action-closed-bar" style="width: 0%;"></div>
+                                </div>
+                                <!-- Cluster of Action Counts -->
+                                <div class="action-pills-cluster">
+                                    <span class="action-chip"><span style="color: #d97706;">🟡 ติดตาม:</span> <strong id="chip-pending-count">0</strong></span>
+                                    <span class="action-chip"><span style="color: #0284c7;">🔵 ตักเตือน:</span> <strong id="chip-warned-count">0</strong></span>
+                                    <span class="action-chip"><span style="color: #ea580c;">🟠 อายัด/ทำลาย:</span> <strong id="chip-seized-count">0</strong></span>
+                                    <span class="action-chip"><span style="color: #dc2626;">🔴 ปรับ/คดี:</span> <strong id="chip-fined-count">0</strong></span>
+                                    <span class="action-chip"><span style="color: #059669;">🟢 ตรวจซ้ำผ่าน:</span> <strong id="chip-retest-count">0</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -1502,6 +1722,43 @@
 
                             <!-- Backward Compatibility Hidden Anchor -->
                             <div id="substance-charts-grid" style="display: none;"></div>
+                        </div>
+
+                        <!-- STRATEGIC RISK INTELLIGENCE ROW (มิติที่ 4) -->
+                        <div class="strategic-risk-grid">
+                            <!-- 1. Location Risk Breakdown (10 Categories) -->
+                            <div class="ops-card">
+                                <div class="ops-card-header">
+                                    <div>
+                                        <h4 class="ops-header-title">
+                                            <i class="fa-solid fa-store" style="color: #0284c7;"></i>
+                                            ความเสี่ยงแยกตาม 10 ประเภทสถานที่เก็บตัวอย่าง
+                                        </h4>
+                                        <span class="ops-header-sub">สัดส่วนการตรวจพบสารไม่ผ่านเกณฑ์เปรียบเทียบตามแหล่งจำหน่าย / สถานที่ผลิต</span>
+                                    </div>
+                                    <span class="pt-status-pill pill-success" style="font-size: 11px;">10 ประเภท</span>
+                                </div>
+                                <div class="location-risk-list" id="locationRiskListContainer">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- 2. High-Risk Food Matrix -->
+                            <div class="ops-card">
+                                <div class="ops-card-header">
+                                    <div>
+                                        <h4 class="ops-header-title">
+                                            <i class="fa-solid fa-utensils" style="color: #e11d48;"></i>
+                                            5 อันดับอาหารที่พบการปนเปื้อนสูงสุด
+                                        </h4>
+                                        <span class="ops-header-sub">รายการอาหารที่ไม่ผ่านมาตรฐานบ่อยที่สุดเพื่อวางมาตรการสุ่มตรวจเฉพาะกลุ่ม</span>
+                                    </div>
+                                    <span class="pt-status-pill pill-danger" style="font-size: 11px;">High-Risk</span>
+                                </div>
+                                <div class="top-food-matrix-list" id="highRiskFoodMatrixContainer">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -3028,7 +3285,7 @@
         
     <!-- Failed Samples Modal -->
     <div class="modal-overlay" id="failedSamplesModal">
-        <div class="modal-card" style="max-width: 800px; width: 90%;">
+        <div class="modal-card" style="max-width: 960px; width: 95%;">
             <div class="modal-header" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff;">
                 <h4 style="color:#fff; margin:0;"><i class="fa-solid fa-triangle-exclamation"></i> รายชื่อตัวอย่างที่ไม่ผ่าน: <span id="failedSubstanceName"></span></h4>
                 <button class="close-modal-btn" onclick="closeFailedSamplesModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
@@ -3045,14 +3302,15 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table style="width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14.5px; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
                         <thead style="background: #f1f5f9; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
                             <tr>
-                                <th style="padding: 12px 16px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">ชื่อตัวอย่าง / รหัส</th>
-                                <th style="padding: 12px 16px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">วันที่เก็บ</th>
-                                <th style="padding: 12px 16px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">แหล่งที่มา / สถานที่เก็บ</th>
-                                <th style="padding: 12px 16px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">อำเภอ / จังหวัด</th>
-                                <th style="padding: 12px 16px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">แบบฟอร์ม</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">ชื่อตัวอย่าง / รหัส</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">วันที่เก็บ</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">แหล่งที่มา / สถานที่เก็บ</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">อำเภอ / จังหวัด</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">แบบฟอร์ม</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1; min-width: 175px;">การดำเนินงาน (Action Status)</th>
                             </tr>
                         </thead>
                         <tbody id="failedSamplesTableBody">
@@ -3062,6 +3320,37 @@
                 </div>
                 <div style="text-align:center; margin-top:15px;">
                     <button class="btn btn-secondary" onclick="closeFailedSamplesModal()" style="background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 10px 24px !important; font-weight: 700 !important; font-size: 14px !important; cursor: pointer !important; box-shadow: 0 4px 18px rgba(71, 85, 105, 0.35) !important;">ปิดหน้าต่าง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overdue Samples Modal (มิติที่ 2: TAT & SLA Monitor) -->
+    <div class="modal-overlay" id="overdueSamplesModal">
+        <div class="modal-card" style="max-width: 920px; width: 95%;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff;">
+                <h4 style="color:#fff; margin:0;"><i class="fa-solid fa-clock-rotate-left"></i> ตัวอย่างที่ค้างท่อเกินเกณฑ์มาตรฐาน (> 3 วัน / 72 ชม.)</h4>
+                <button class="close-modal-btn" onclick="closeOverdueSamplesModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px; max-height: 65vh; overflow-y: auto;">
+                <div class="table-responsive">
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                        <thead style="background: #f1f5f9; position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">รหัสตัวอย่าง / ชื่อตัวอย่าง</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">วันที่รับเข้าแลป</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">ระยะเวลาค้าง</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">หน่วยงานที่ส่ง / พื้นที่</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">สถานะปัจจุบัน</th>
+                            </tr>
+                        </thead>
+                        <tbody id="overdueSamplesTableBody">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align:center; margin-top:15px;">
+                    <button class="btn btn-secondary" onclick="closeOverdueSamplesModal()" style="background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 10px 24px !important; font-weight: 700 !important; font-size: 14px !important; cursor: pointer !important;">ปิดหน้าต่าง</button>
                 </div>
             </div>
         </div>
@@ -3195,7 +3484,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793159900000"></script>
+    <script src="charts-dash.js?v=1793163000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
