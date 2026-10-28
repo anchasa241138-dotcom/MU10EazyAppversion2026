@@ -388,8 +388,12 @@ function updateDashboardCharts(samples) {
         }
     });
 
-    // Sync active style on Substance Quick Filter chips
+    // Sync active style on Substance Quick Filter (dropdown & chips)
     const curSub = subFilterEl ? subFilterEl.value : 'all';
+    const rankSelect = document.getElementById('rankingSubstanceQuickSelect');
+    if (rankSelect && rankSelect.value !== curSub) {
+        rankSelect.value = curSub;
+    }
     document.querySelectorAll('#substance-explore-chips .explore-chip').forEach(chip => {
         if ((curSub === 'all' && chip.innerText.includes('ทั้งหมด')) || (curSub !== 'all' && chip.getAttribute('onclick') && chip.getAttribute('onclick').includes(curSub))) {
             chip.classList.add('active');
@@ -1158,6 +1162,10 @@ window.filterSubstanceQuick = function(substanceKey) {
     if (filterEl) {
         filterEl.value = substanceKey;
         filterEl.dispatchEvent(new Event('change'));
+    }
+    const rankSelect = document.getElementById('rankingSubstanceQuickSelect');
+    if (rankSelect && rankSelect.value !== substanceKey) {
+        rankSelect.value = substanceKey;
     }
     document.querySelectorAll('#substance-explore-chips .explore-chip').forEach(chip => {
         if ((substanceKey === 'all' && chip.innerText.includes('ทั้งหมด')) || (substanceKey !== 'all' && chip.getAttribute('onclick') && chip.getAttribute('onclick').includes(substanceKey))) {
