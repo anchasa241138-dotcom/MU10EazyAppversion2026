@@ -5426,8 +5426,9 @@ body.manage-users-view-active #currentViewTitle {
 .business-stat-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 14px;
+  gap: 12px;
 }
 
 .business-stat-title {
@@ -5437,12 +5438,25 @@ body.manage-users-view-active #currentViewTitle {
   color: #0f172a;
   font-family: 'Prompt', sans-serif !important;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
+  line-height: 1.35;
 }
 
 .business-stat-title i {
   color: #10b981;
+  font-size: 17px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.business-stat-title .business-stat-sub {
+  display: block;
+  white-space: nowrap;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 2px;
 }
 
 .business-stat-badge {
