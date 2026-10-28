@@ -4132,7 +4132,8 @@ body.require-login-mode::before {
 #view-lab-analysis,
 #view-lab-certify,
 #view-download-results,
-#view-data-download {
+#view-data-download,
+#view-manage-users {
   background: #eceef2 !important;
   border-radius: 28px !important;
   padding: 30px !important;
@@ -4152,6 +4153,10 @@ body.require-login-mode::before {
 #view-download-results *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-data-download,
 #view-data-download *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#view-manage-users,
+#view-manage-users *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#userDetailsModal,
+#userDetailsModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #sampleDetailPreviewModal,
 #sampleDetailPreviewModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #verifyAcceptModal,
@@ -4168,12 +4173,14 @@ body:has(#view-lab-verify.active) #currentViewTitle,
 body:has(#view-lab-analysis.active) #currentViewTitle,
 body:has(#view-lab-certify.active) #currentViewTitle,
 body:has(#view-download-results.active) #currentViewTitle,
+body:has(#view-data-download.active) #currentViewTitle,
+body:has(#view-manage-users.active) #currentViewTitle,
 body.lab-verify-view-active #currentViewTitle,
 body.lab-analysis-view-active #currentViewTitle,
 body.lab-certify-view-active #currentViewTitle,
 body.download-results-view-active #currentViewTitle,
-body:has(#view-data-download.active) #currentViewTitle,
-body.data-download-view-active #currentViewTitle {
+body.data-download-view-active #currentViewTitle,
+body.manage-users-view-active #currentViewTitle {
   font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
@@ -4183,6 +4190,8 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-certify i, #view-lab-certify .fa, #view-lab-certify .fas, #view-lab-certify .fa-solid, #view-lab-certify .fa-regular,
 #view-download-results i, #view-download-results .fa, #view-download-results .fas, #view-download-results .fa-solid, #view-download-results .fa-regular,
 #view-data-download i, #view-data-download .fa, #view-data-download .fas, #view-data-download .fa-solid, #view-data-download .fa-regular,
+#view-manage-users i, #view-manage-users .fa, #view-manage-users .fas, #view-manage-users .fa-solid, #view-manage-users .fa-regular,
+#userDetailsModal i, #userDetailsModal .fa, #userDetailsModal .fas, #userDetailsModal .fa-solid, #userDetailsModal .fa-regular,
 #sampleDetailPreviewModal i, #sampleDetailPreviewModal .fa, #sampleDetailPreviewModal .fas, #sampleDetailPreviewModal .fa-solid, #sampleDetailPreviewModal .fa-regular,
 #verifyAcceptModal i, #verifyAcceptModal .fa, #verifyAcceptModal .fas, #verifyAcceptModal .fa-solid, #verifyAcceptModal .fa-regular,
 #verifyRejectModal i, #verifyRejectModal .fa, #verifyRejectModal .fas, #verifyRejectModal .fa-solid, #verifyRejectModal .fa-regular,
@@ -4197,7 +4206,10 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis .table-container,
 #view-lab-certify .table-container,
 #view-download-results .table-container,
-#view-data-download .table-container {
+#view-data-download .table-container,
+#view-manage-users .table-container,
+#view-manage-users .card,
+#view-manage-users .user-manage-card {
   background: #ffffff !important;
   border: 1px solid #eef1f6 !important;
   border-radius: 24px !important;
@@ -4208,7 +4220,7 @@ body.data-download-view-active #currentViewTitle {
   padding: 28px 32px !important;
   max-width: 100% !important;
   width: 100% !important;
-  margin: 0 !important;
+  margin: 0 0 24px 0 !important;
 }
 
 /* 4. Table Header Bars & Search Inputs */
@@ -4283,7 +4295,8 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis .responsive-table,
 #view-lab-certify .responsive-table,
 #view-download-results .responsive-table,
-#view-data-download .responsive-table {
+#view-data-download .responsive-table,
+#view-manage-users .responsive-table {
   width: 100% !important;
   overflow-x: auto !important;
   border-radius: 16px !important;
@@ -4296,7 +4309,9 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis #analysisTable,
 #view-lab-certify #certifyTable,
 #view-download-results #downloadTable,
-#view-data-download #exportTable {
+#view-data-download #exportTable,
+#view-manage-users #pending-users-table,
+#view-manage-users #approved-users-table {
   width: 100% !important;
   min-width: 100% !important;
   table-layout: auto !important;
@@ -4311,7 +4326,9 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis #analysisTable thead tr,
 #view-lab-certify #certifyTable thead tr,
 #view-download-results #downloadTable thead tr,
-#view-data-download #exportTable thead tr {
+#view-data-download #exportTable thead tr,
+#view-manage-users #pending-users-table thead tr,
+#view-manage-users #approved-users-table thead tr {
   background: #0f274e !important;
   color: #ffffff !important;
   border-bottom: 2px solid rgba(56, 189, 248, 0.35) !important;
@@ -4321,7 +4338,9 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis #analysisTable thead th,
 #view-lab-certify #certifyTable thead th,
 #view-download-results #downloadTable thead th,
-#view-data-download #exportTable thead th {
+#view-data-download #exportTable thead th,
+#view-manage-users #pending-users-table thead th,
+#view-manage-users #approved-users-table thead th {
   background: #0f274e !important;
   color: #ffffff !important;
   font-weight: 700 !important;
@@ -4339,7 +4358,9 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis #analysisTable tbody tr,
 #view-lab-certify #certifyTable tbody tr,
 #view-download-results #downloadTable tbody tr,
-#view-data-download #exportTable tbody tr {
+#view-data-download #exportTable tbody tr,
+#view-manage-users #pending-users-table tbody tr,
+#view-manage-users #approved-users-table tbody tr {
   background: #ffffff !important;
   color: #334155 !important;
   border-bottom: 1px solid #f1f5f9 !important;
@@ -4350,7 +4371,9 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis #analysisTable tbody tr:nth-child(even),
 #view-lab-certify #certifyTable tbody tr:nth-child(even),
 #view-download-results #downloadTable tbody tr:nth-child(even),
-#view-data-download #exportTable tbody tr:nth-child(even) {
+#view-data-download #exportTable tbody tr:nth-child(even),
+#view-manage-users #pending-users-table tbody tr:nth-child(even),
+#view-manage-users #approved-users-table tbody tr:nth-child(even) {
   background: #f8fafc !important;
 }
 
@@ -4358,7 +4381,9 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis #analysisTable tbody tr:hover,
 #view-lab-certify #certifyTable tbody tr:hover,
 #view-download-results #downloadTable tbody tr:hover,
-#view-data-download #exportTable tbody tr:hover {
+#view-data-download #exportTable tbody tr:hover,
+#view-manage-users #pending-users-table tbody tr:hover,
+#view-manage-users #approved-users-table tbody tr:hover {
   background: #eff6ff !important;
 }
 
@@ -4366,7 +4391,9 @@ body.data-download-view-active #currentViewTitle {
 #view-lab-analysis #analysisTable tbody td,
 #view-lab-certify #certifyTable tbody td,
 #view-download-results #downloadTable tbody td,
-#view-data-download #exportTable tbody td {
+#view-data-download #exportTable tbody td,
+#view-manage-users #pending-users-table tbody td,
+#view-manage-users #approved-users-table tbody td {
   padding: 14px 16px !important;
   border-bottom: 1px solid #f1f5f9 !important;
   color: #334155 !important;
@@ -4597,6 +4624,398 @@ body.data-download-view-active #currentViewTitle {
   color: #0284c7 !important;
   font-size: 48px !important;
   margin-bottom: 16px !important;
+}
+
+/* ==========================================================================
+   USER MANAGEMENT (#view-manage-users) LIGHT THEME DESIGN
+   Matches #view-data-download styling with High-Contrast Pure White Cards,
+   Prompt Font, Navy Tables, Pill Action Buttons & Filters
+   ========================================================================== */
+
+#view-manage-users .user-manage-card {
+  background: #ffffff !important;
+  border: 1px solid #eef1f6 !important;
+  border-radius: 24px !important;
+  padding: 26px 30px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  margin-bottom: 24px !important;
+}
+
+#view-manage-users .user-manage-header-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 20px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+}
+
+#view-manage-users .user-header-title-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+#view-manage-users .user-badge-pending {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  background: #fef3c7 !important;
+  border: 1px solid #fde68a !important;
+  color: #d97706 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 19px !important;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15) !important;
+  flex-shrink: 0 !important;
+}
+
+#view-manage-users .user-badge-approved {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  background: #eff6ff !important;
+  border: 1px solid #dbeafe !important;
+  color: #0284c7 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 19px !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15) !important;
+  flex-shrink: 0 !important;
+}
+
+#view-manage-users .user-header-title-box h3 {
+  margin: 0 !important;
+  font-size: 18.5px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.2px !important;
+}
+
+#view-manage-users .user-header-title-box p {
+  margin: 3px 0 0 0 !important;
+  font-size: 13px !important;
+  color: #64748b !important;
+}
+
+#view-manage-users .btn-user-refresh {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #334155 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 9999px !important;
+  padding: 8px 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-manage-users .btn-user-refresh:hover {
+  background: #f0f9ff !important;
+  border-color: #0284c7 !important;
+  color: #0284c7 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.15) !important;
+}
+
+/* User Search Box */
+#view-manage-users .user-search-wrapper {
+  position: relative !important;
+  width: 320px !important;
+  max-width: 100% !important;
+}
+
+#view-manage-users .user-search-icon {
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #94a3b8 !important;
+  font-size: 13.5px !important;
+  pointer-events: none !important;
+}
+
+#view-manage-users #searchApprovedUsers {
+  width: 100% !important;
+  height: 42px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  border-radius: 9999px !important;
+  padding: 8px 16px 8px 38px !important;
+  font-size: 13.5px !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-manage-users #searchApprovedUsers:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+#view-manage-users #searchApprovedUsers::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Role Filter Tabs */
+#view-manage-users .user-role-filter-tabs {
+  display: flex !important;
+  gap: 8px !important;
+  margin-bottom: 20px !important;
+  flex-wrap: wrap !important;
+}
+
+#view-manage-users .btn-role-tab {
+  padding: 8px 18px !important;
+  border-radius: 9999px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+#view-manage-users .btn-role-tab:hover {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  transform: translateY(-1px) !important;
+}
+
+#view-manage-users .btn-role-tab .badge {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+  font-size: 11px !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+  margin-left: 4px !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease !important;
+}
+
+#view-manage-users .btn-role-tab.active {
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12) !important;
+}
+
+#view-manage-users .btn-role-tab.active .badge {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
+#view-manage-users .btn-role-tab[data-role="all"].active {
+  background: #0284c7 !important;
+  border-color: #0284c7 !important;
+}
+#view-manage-users .btn-role-tab[data-role="collector"].active {
+  background: #475569 !important;
+  border-color: #475569 !important;
+}
+#view-manage-users .btn-role-tab[data-role="lab"].active {
+  background: #059669 !important;
+  border-color: #059669 !important;
+}
+#view-manage-users .btn-role-tab[data-role="certifier"].active {
+  background: #7c3aed !important;
+  border-color: #7c3aed !important;
+}
+#view-manage-users .btn-role-tab[data-role="executive"].active {
+  background: #ea580c !important;
+  border-color: #ea580c !important;
+}
+
+/* User Table Action Buttons */
+#view-manage-users table .btn {
+  border-radius: 9999px !important;
+  padding: 6px 14px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+#view-manage-users table .btn-primary {
+  background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.28) !important;
+}
+#view-manage-users table .btn-primary:hover {
+  background: linear-gradient(135deg, #0369a1, #1d4ed8) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4) !important;
+}
+
+#view-manage-users table .btn-success {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.28) !important;
+}
+#view-manage-users table .btn-success:hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+#view-manage-users table .btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.28) !important;
+}
+#view-manage-users table .btn-warning:hover {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+}
+
+#view-manage-users table .btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.28) !important;
+}
+#view-manage-users table .btn-danger:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* User Role Badges */
+.role-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px 12px !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+.role-badge.role-collector {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+.role-badge.role-lab {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+.role-badge.role-certifier {
+  background: #f5f3ff !important;
+  color: #6d28d9 !important;
+  border: 1px solid #ddd6fe !important;
+}
+.role-badge.role-executive {
+  background: #fff7ed !important;
+  color: #c2410c !important;
+  border: 1px solid #fed7aa !important;
+}
+.role-badge.role-admin {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.user-status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 12px !important;
+  border-radius: 9999px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+.user-status-active {
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+}
+.user-status-pending {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+}
+
+/* Username code pill */
+#view-manage-users table code {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+}
+
+/* User Details Modal styling */
+#userDetailsModal .modal-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 24px !important;
+  color: #0f172a !important;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.22), 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+  overflow: hidden !important;
+}
+
+#userDetailsModal .modal-header {
+  background: #0f274e !important;
+  color: #ffffff !important;
+  padding: 18px 24px !important;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.35) !important;
+}
+
+#userDetailsModal .modal-header h4 {
+  color: #ffffff !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+
+#userDetailsModal .modal-header .close-modal-btn {
+  color: #ffffff !important;
+}
+
+#userDetailsModal .modal-body {
+  padding: 24px !important;
+  background: #ffffff !important;
+}
+
+#userDetailsModal #user-details-content tr {
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+#userDetailsModal #user-details-content td {
+  padding: 11px 14px !important;
+  font-size: 13.5px !important;
+}
+
+#userDetailsModal #user-details-content td:first-child {
+  color: #64748b !important;
+  font-weight: 600 !important;
+}
+
+#userDetailsModal #user-details-content td:last-child {
+  color: #0f172a !important;
 }
 
 
