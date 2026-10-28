@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793094000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793154800000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -2338,20 +2338,68 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="excel-filter-group">
-                                    <label for="filter-form-type"><i class="fa-solid fa-file-waveform"></i> ประเภทฟอร์มบันทึก</label>
-                                    <div class="excel-input-wrapper">
-                                        <select id="filter-form-type" name="filter_form_type">
-                                            <option value="ALL">ทุกฟอร์มบันทึก</option>
-                                            <option value="MU.10-001">MU.10-001 ผักและผลไม้</option>
-                                            <option value="MU.10-002">MU.10-002 สารปนเปื้อน 5 ชนิด</option>
-                                            <option value="MU.10-003">MU.10-003 น้ำมันทอดซ้ำ (Ebro/Testo)</option>
-                                            <option value="MU.10-004">MU.10-004 น้ำมันทอดซ้ำ (Test Kit)</option>
-                                            <option value="MU.10-005">MU.10-005 เกลือบริโภค</option>
-                                            <option value="MU.10-006">MU.10-006 ตู้น้ำดื่มหยอดเหรียญ</option>
-                                            <option value="MU.10-007">MU.10-007 เชื้อโคลิฟอร์มขั้นต้น (SI-2)</option>
-                                            <option value="MU.10-008">MU.10-008 ตรวจฉลากอาหาร</option>
-                                        </select>
+                                <div class="excel-filter-group form-multiselect-group">
+                                    <label><i class="fa-solid fa-file-waveform"></i> ประเภทฟอร์มบันทึก</label>
+                                    <div class="excel-input-wrapper form-multiselect-wrapper" id="formMultiselectWrapper">
+                                        <button type="button" class="form-multiselect-trigger" id="formMultiselectTrigger" aria-expanded="false">
+                                            <span class="multiselect-text" id="formMultiselectText">
+                                                <span class="badge-count-all">ทุกฟอร์มบันทึก</span>
+                                            </span>
+                                            <i class="fa-solid fa-chevron-down multiselect-chevron"></i>
+                                        </button>
+                                        <input type="hidden" id="filter-form-type" name="filter_form_type" value="ALL">
+                                        <div class="form-multiselect-dropdown" id="formMultiselectDropdown">
+                                            <div class="multiselect-select-all-row">
+                                                <label class="multiselect-item select-all">
+                                                    <input type="checkbox" id="chkFormAll" checked>
+                                                    <span class="item-label-bold">เลือกทั้งหมด (ทุกฟอร์ม)</span>
+                                                </label>
+                                                <button type="button" class="btn-quick-clear" id="btnQuickClearForms">ล้าง</button>
+                                            </div>
+                                            <div class="multiselect-divider"></div>
+                                            <div class="multiselect-items-scroll">
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-001" checked>
+                                                    <span class="form-opt-code">MU.10-001</span>
+                                                    <span class="form-opt-name">ผักและผลไม้</span>
+                                                </label>
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-002" checked>
+                                                    <span class="form-opt-code">MU.10-002</span>
+                                                    <span class="form-opt-name">สารปนเปื้อน 5 ชนิด</span>
+                                                </label>
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-003" checked>
+                                                    <span class="form-opt-code">MU.10-003</span>
+                                                    <span class="form-opt-name">น้ำมันทอดซ้ำ (Ebro/Testo)</span>
+                                                </label>
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-004" checked>
+                                                    <span class="form-opt-code">MU.10-004</span>
+                                                    <span class="form-opt-name">น้ำมันทอดซ้ำ (Test Kit)</span>
+                                                </label>
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-005" checked>
+                                                    <span class="form-opt-code">MU.10-005</span>
+                                                    <span class="form-opt-name">เกลือบริโภค</span>
+                                                </label>
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-006" checked>
+                                                    <span class="form-opt-code">MU.10-006</span>
+                                                    <span class="form-opt-name">ตู้น้ำดื่มหยอดเหรียญ</span>
+                                                </label>
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-007" checked>
+                                                    <span class="form-opt-code">MU.10-007</span>
+                                                    <span class="form-opt-name">เชื้อโคลิฟอร์มขั้นต้น (SI-2)</span>
+                                                </label>
+                                                <label class="multiselect-item">
+                                                    <input type="checkbox" class="chk-form-opt" value="MU.10-008" checked>
+                                                    <span class="form-opt-code">MU.10-008</span>
+                                                    <span class="form-opt-name">ตรวจฉลากอาหาร</span>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="excel-filter-group">
@@ -3134,6 +3182,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793094000000"></script>
+    <script src="app_v85.js?v=1793154800000"></script>
 </body>
 </html>
