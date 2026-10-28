@@ -2521,9 +2521,9 @@ body.tracking-view-active .content-body,
   color: #1e293b !important;
 }
 
-/* Force Font 'Prompt' for ALL text in E-Tracking page */
+/* Force Font 'Prompt' for text in E-Tracking page while preserving FontAwesome icons */
 #view-e-tracking,
-#view-e-tracking *,
+#view-e-tracking *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-e-tracking h1,
 #view-e-tracking h2,
 #view-e-tracking h3,
@@ -2531,30 +2531,41 @@ body.tracking-view-active .content-body,
 #view-e-tracking h5,
 #view-e-tracking h6,
 #view-e-tracking p,
-#view-e-tracking span,
+#view-e-tracking span:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-e-tracking strong,
 #view-e-tracking b,
-#view-e-tracking div,
+#view-e-tracking div:not(.step-icon),
 #view-e-tracking label,
 #view-e-tracking input,
 #view-e-tracking button,
 #view-e-tracking select,
 #view-e-tracking textarea,
 #view-e-tracking .section-title-wrapper,
-#view-e-tracking .section-title-wrapper *,
+#view-e-tracking .section-title-wrapper *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-e-tracking .tracking-search-section,
 #view-e-tracking .tracking-results-wrapper,
 #view-e-tracking .tracking-metadata-card,
-#view-e-tracking .tracking-metadata-card *,
+#view-e-tracking .tracking-metadata-card *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-e-tracking .timeline-container,
-#view-e-tracking .timeline-container *,
+#view-e-tracking .timeline-container *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-e-tracking .step-content,
-#view-e-tracking .step-content *,
+#view-e-tracking .step-content *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-e-tracking .status-badge,
 #view-e-tracking .status-badge-current,
 #view-e-tracking .tracking-action-bar,
-#view-e-tracking .tracking-action-bar * {
+#view-e-tracking .tracking-action-bar *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular) {
   font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+#view-e-tracking i,
+#view-e-tracking .fa,
+#view-e-tracking .fas,
+#view-e-tracking .fa-solid,
+#view-e-tracking .fa-regular {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  display: inline-block !important;
 }
 
 body.tracking-view-active #currentViewTitle,
