@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793156800000">
+    <link rel="stylesheet" href="enhancements.css?v=1793157500000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1050,15 +1050,15 @@
                     </div>
 
                     <div class="dashboard-filter" style="justify-content: flex-start;">
-                        <div class="overview-controls-group" style="flex: 1;">
-                            <div class="filter-pill-item">
+                        <div class="overview-controls-group" style="flex: 1; width: 100%;">
+                            <div class="filter-pill-item filter-pill-date">
                                 <i class="fa-regular fa-calendar filter-pill-icon"></i>
                                 <span class="filter-pill-label">วันที่:</span>
                                 <input type="date" id="dashStartDate" class="dashboard-filter-date" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.getVisibleSamples());">
                                 <span class="filter-pill-sep">-</span>
                                 <input type="date" id="dashEndDate" class="dashboard-filter-date" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.getVisibleSamples());">
                             </div>
-                            <div class="filter-pill-item">
+                            <div class="filter-pill-item filter-pill-expand">
                                 <i class="fa-solid fa-location-dot filter-pill-icon"></i>
                                 <span class="filter-pill-label">พื้นที่:</span>
                                 <select id="dashProvinceFilter" class="dashboard-filter-select" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.getVisibleSamples());">
@@ -1070,7 +1070,7 @@
                                     <option value="ยโสธร">📍 ยโสธร</option>
                                 </select>
                             </div>
-                            <div class="filter-pill-item">
+                            <div class="filter-pill-item filter-pill-expand filter-pill-expand-wide">
                                 <i class="fa-solid fa-flask filter-pill-icon"></i>
                                 <span class="filter-pill-label">สารที่ตรวจ:</span>
                                 <select id="dashSubstanceFilter" class="dashboard-filter-select" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.getVisibleSamples());">
