@@ -47,7 +47,7 @@ function initDashboardCharts() {
         data: {
             labels: ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'],
             datasets: [{
-                label: 'จำนวนตัวอย่างที่ส่งตรวจ (รายจังหวัด)',
+                label: 'จำนวนตัวอย่างตรวจวิเคราะห์แยกรายจังหวัด',
                 data: [0, 0, 0, 0, 0],
                 backgroundColor: [grad1, grad2, grad3, grad4, grad5],
                 borderColor: ['#38bdf8', '#22d3ee', '#818cf8', '#a855f7', '#34d399'],
