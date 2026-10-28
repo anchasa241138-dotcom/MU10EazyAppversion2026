@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793154800000">
+    <link rel="stylesheet" href="enhancements.css?v=1793156800000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -2225,74 +2225,92 @@
 
                 <!-- VIEW: MANAGE USERS -->
                 <section class="content-view" id="view-manage-users">
-                    <div class="content-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                        <h2><i class="fa-solid fa-users-gear"></i> จัดการผู้ใช้งาน (รออนุมัติ)</h2>
-                        <button type="button" class="btn btn-secondary" onclick="app.fetchUsers(); Swal.fire({icon:'info', title:'กำลังรีเฟรชข้อมูล...', timer:700, showConfirmButton:false});" style="border-radius: 9999px; padding: 6px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                            <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชข้อมูลผู้ใช้
-                        </button>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="responsive-table">
-                                <table class="modern-table" id="pending-users-table">
-                                    <thead>
-                                        <tr>
-                                            <th>วันที่สมัคร</th>
-                                            <th>ชื่อ-นามสกุล</th>
-                                            <th>หน่วยงาน/สถานที่</th>
-                                            <th>บทบาท</th>
-                                            <th>สถานะ</th>
-                                            <th>การจัดการ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Pending users will be rendered here -->
-                                    </tbody>
-                                </table>
+                    <!-- Card 1: ผู้ใช้งานรออนุมัติ -->
+                    <div class="table-container user-manage-card">
+                        <div class="user-manage-header-bar">
+                            <div class="user-header-title-box">
+                                <span class="user-badge-pending"><i class="fa-solid fa-user-clock"></i></span>
+                                <div>
+                                    <h3>จัดการผู้ใช้งาน (รออนุมัติ)</h3>
+                                    <p>รายชื่อผู้สมัครหรือผู้ขอสิทธิ์เข้าใช้งานระบบที่รอเจ้าหน้าที่ตรวจสอบและอนุมัติ</p>
+                                </div>
+                            </div>
+                            <div class="user-manage-actions-top">
+                                <button type="button" class="btn-user-refresh" onclick="app.fetchUsers(); Swal.fire({icon:'info', title:'กำลังรีเฟรชข้อมูล...', timer:700, showConfirmButton:false});">
+                                    <i class="fa-solid fa-arrows-rotate"></i> รีเฟรชข้อมูลผู้ใช้
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div class="content-header" style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                        <h2><i class="fa-solid fa-users"></i> รายชื่อผู้ใช้งานที่อนุมัติแล้ว</h2>
+                        <div class="responsive-table">
+                            <table class="modern-table" id="pending-users-table">
+                                <thead>
+                                    <tr>
+                                        <th>วันที่สมัคร</th>
+                                        <th>ชื่อ-นามสกุล</th>
+                                        <th>หน่วยงาน/สถานที่</th>
+                                        <th>บทบาท</th>
+                                        <th>สถานะ</th>
+                                        <th>การจัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Pending users will be rendered here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <!-- Role Filter Tabs (4 User Types) -->
-                    <div class="user-role-filter-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-                        <button type="button" class="btn-role-tab active" data-role="all" onclick="app.filterApprovedUsers('all')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #0284c7; background: #0284c7; color: white; cursor: pointer; transition: all 0.2s;">
-                            <i class="fa-solid fa-users"></i> ทั้งหมด <span class="badge" id="count-role-all" style="background: rgba(255,255,255,0.25); margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
-                        </button>
-                        <button type="button" class="btn-role-tab" data-role="collector" onclick="app.filterApprovedUsers('collector')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #64748b; cursor: pointer; transition: all 0.2s;">
-                            <i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง <span class="badge" id="count-role-collector" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
-                        </button>
-                        <button type="button" class="btn-role-tab" data-role="lab" onclick="app.filterApprovedUsers('lab')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #10b981; cursor: pointer; transition: all 0.2s;">
-                            <i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป <span class="badge" id="count-role-lab" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
-                        </button>
-                        <button type="button" class="btn-role-tab" data-role="certifier" onclick="app.filterApprovedUsers('certifier')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #8b5cf6; cursor: pointer; transition: all 0.2s;">
-                            <i class="fa-solid fa-stamp"></i> ผู้รับรอง <span class="badge" id="count-role-certifier" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
-                        </button>
-                        <button type="button" class="btn-role-tab" data-role="executive" onclick="app.filterApprovedUsers('executive')" style="padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1.5px solid #cbd5e1; background: transparent; color: #ea580c; cursor: pointer; transition: all 0.2s;">
-                            <i class="fa-solid fa-user-tie"></i> ผู้บริหาร <span class="badge" id="count-role-executive" style="background: #e2e8f0; color: #475569; margin-left: 4px; border-radius: 10px; padding: 2px 7px;">0</span>
-                        </button>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="responsive-table">
-                                <table class="modern-table" id="approved-users-table">
-                                    <thead>
-                                        <tr>
-                                            <th>ชื่อ-นามสกุล</th>
-                                            <th>Username</th>
-                                            <th>หน่วยงาน/สถานที่</th>
-                                            <th>บทบาท</th>
-                                            <th>สถานะ</th>
-                                            <th>การจัดการ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Approved users will be rendered here -->
-                                    </tbody>
-                                </table>
+                    <!-- Card 2: รายชื่อผู้ใช้งานที่อนุมัติแล้ว -->
+                    <div class="table-container user-manage-card">
+                        <div class="user-manage-header-bar">
+                            <div class="user-header-title-box">
+                                <span class="user-badge-approved"><i class="fa-solid fa-users"></i></span>
+                                <div>
+                                    <h3>รายชื่อผู้ใช้งานที่อนุมัติแล้ว</h3>
+                                    <p>จัดการข้อมูลผู้ใช้งานและปรับเปลี่ยนประเภทบทบาทในระบบ (4 ประเภท)</p>
+                                </div>
                             </div>
+                            <div class="user-search-wrapper">
+                                <i class="fa-solid fa-magnifying-glass user-search-icon"></i>
+                                <input type="text" id="searchApprovedUsers" placeholder="ค้นหาชื่อ, Username, หน่วยงาน..." oninput="app.renderManageUsers()">
+                            </div>
+                        </div>
+
+                        <!-- Role Filter Tabs (4 User Types) -->
+                        <div class="user-role-filter-tabs">
+                            <button type="button" class="btn-role-tab active" data-role="all" onclick="app.filterApprovedUsers('all')">
+                                <i class="fa-solid fa-users"></i> ทั้งหมด <span class="badge" id="count-role-all">0</span>
+                            </button>
+                            <button type="button" class="btn-role-tab" data-role="collector" onclick="app.filterApprovedUsers('collector')">
+                                <i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง <span class="badge" id="count-role-collector">0</span>
+                            </button>
+                            <button type="button" class="btn-role-tab" data-role="lab" onclick="app.filterApprovedUsers('lab')">
+                                <i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป <span class="badge" id="count-role-lab">0</span>
+                            </button>
+                            <button type="button" class="btn-role-tab" data-role="certifier" onclick="app.filterApprovedUsers('certifier')">
+                                <i class="fa-solid fa-stamp"></i> ผู้รับรอง <span class="badge" id="count-role-certifier">0</span>
+                            </button>
+                            <button type="button" class="btn-role-tab" data-role="executive" onclick="app.filterApprovedUsers('executive')">
+                                <i class="fa-solid fa-user-tie"></i> ผู้บริหาร <span class="badge" id="count-role-executive">0</span>
+                            </button>
+                        </div>
+
+                        <div class="responsive-table">
+                            <table class="modern-table" id="approved-users-table">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อ-นามสกุล</th>
+                                        <th>Username</th>
+                                        <th>หน่วยงาน/สถานที่</th>
+                                        <th>บทบาท</th>
+                                        <th>สถานะ</th>
+                                        <th>การจัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Approved users will be rendered here -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
@@ -3182,6 +3200,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793154800000"></script>
+    <script src="app_v85.js?v=1793156800000"></script>
 </body>
 </html>
