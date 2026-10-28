@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793175800000">
+    <link rel="stylesheet" href="enhancements.css?v=1793180000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1376,22 +1376,33 @@
 
                         <!-- TOP 3 Safety Ranking Section -->
                         <div class="chart-container large-chart" style="grid-column: 1 / -1; margin-top: 5px; padding: 22px;">
-                            <div class="outcrowd-explore-card" style="margin-bottom: 20px;">
-                                <div class="explore-header-row">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                    <span>สำรวจข้อมูลด่วนตามสารที่ตรวจ (Quick Filter):</span>
+                            <!-- Compact Header with Dropdown Filter (ลดพื้นที่แนวตั้ง) -->
+                            <div class="safety-ranking-header-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                    </div>
+                                    <div>
+                                        <h4 style="margin: 0; font-size: 16.5px; font-weight: 700; color: #0f172a; font-family: 'Prompt', sans-serif;">จัดอันดับความปลอดภัยทางห้องปฏิบัติการ (Safety Rankings)</h4>
+                                        <span style="font-size: 12.5px; color: #64748b; font-family: 'Prompt', sans-serif;">เปรียบเทียบร้อยละการตรวจผ่านและไม่ผ่านเกณฑ์มาตรฐาน</span>
+                                    </div>
                                 </div>
-                                <div class="explore-chips" id="substance-explore-chips">
-                                    <button type="button" class="explore-chip active" onclick="window.filterSubstanceQuick('all')">🧪 ทั้งหมด (9 รายการ)</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('pesticide')">🥬 ยาฆ่าแมลง</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('borax')">🥩 สารบอแรกซ์</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('formalin')">🐟 สารฟอร์มาลิน</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('bleach')">🥢 สารฟอกขาว</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('salicylic')">🥒 สารกันรา</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('agonist')">🥓 สารเร่งเนื้อแดง</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('polar')">🍳 สารโพลาร์</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('coliformWater')">💧 โคลิฟอร์มในน้ำ</button>
-                                    <button type="button" class="explore-chip" onclick="window.filterSubstanceQuick('coliformFood')">🍲 โคลิฟอร์มในอาหาร</button>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label for="rankingSubstanceQuickSelect" style="font-size: 13px; font-weight: 600; color: #475569; font-family: 'Prompt', sans-serif; white-space: nowrap;">
+                                        <i class="fa-solid fa-filter" style="color: #0284c7; margin-right: 4px;"></i> กรองตามสารที่ตรวจ:
+                                    </label>
+                                    <select id="rankingSubstanceQuickSelect" class="ranking-quick-select" onchange="window.filterSubstanceQuick(this.value)">
+                                        <option value="all">🧪 ทั้งหมด (9 รายการ)</option>
+                                        <option value="pesticide">🥬 ยาฆ่าแมลง</option>
+                                        <option value="borax">🥩 สารบอแรกซ์</option>
+                                        <option value="formalin">🐟 สารฟอร์มาลิน</option>
+                                        <option value="bleach">🥢 สารฟอกขาว</option>
+                                        <option value="salicylic">🥒 สารกันรา</option>
+                                        <option value="agonist">🥓 สารเร่งเนื้อแดง</option>
+                                        <option value="polar">🍳 สารโพลาร์ในน้ำมัน</option>
+                                        <option value="coliformWater">💧 โคลิฟอร์มในน้ำ</option>
+                                        <option value="coliformFood">🍲 โคลิฟอร์มในอาหาร</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="safety-ranking-grid">
@@ -3484,7 +3495,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793175800000"></script>
+    <script src="charts-dash.js?v=1793180000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
