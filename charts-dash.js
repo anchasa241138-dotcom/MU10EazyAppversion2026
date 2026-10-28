@@ -7,6 +7,16 @@ let provinceChartInstance = null;
 let resultRatioChartInstance = null;
 let formTypeChartInstance = null;
 
+// Reusable canvas vertical gradient helper
+function createBarGrad(ctx, c1, c2, h = 280) {
+    if (!ctx) return c1;
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, c1);
+    g.addColorStop(1, c2);
+    return g;
+}
+window.createChartGrad = createBarGrad;
+
 // Initialize Dashboard Charts
 function initDashboardCharts() {
     if (typeof Chart === 'undefined') {
@@ -25,21 +35,13 @@ function initDashboardCharts() {
         Chart.defaults.font.family = "'Kanit', sans-serif";
     }
 
-    // 1. Province Chart (Bar Chart) - Clean Blue Accents
-    function createBarGrad(ctx, c1, c2) {
-        const g = ctx.createLinearGradient(0, 0, 0, 280);
-        g.addColorStop(0, c1);
-        g.addColorStop(1, c2);
-        return g;
-    }
+    // 1. Province Chart (Bar Chart) - Vibrant Multi-tone Gradients with Dimensionality
+    const grad1 = createBarGrad(provinceCtx, '#38bdf8', '#1d4ed8'); // ศรีสะเกษ (Sky to Royal Blue)
+    const grad2 = createBarGrad(provinceCtx, '#22d3ee', '#0e7490'); // อุบลราชธานี (Cyan to Deep Teal)
+    const grad3 = createBarGrad(provinceCtx, '#818cf8', '#4338ca'); // อำนาจเจริญ (Indigo to Deep Violet)
+    const grad4 = createBarGrad(provinceCtx, '#a855f7', '#6d28d9'); // มุกดาหาร (Purple to Deep Plum)
+    const grad5 = createBarGrad(provinceCtx, '#34d399', '#047857'); // ยโสธร (Emerald to Forest)
 
-    const grad1 = createBarGrad(provinceCtx, '#38bdf8', '#2563eb');
-    const grad2 = createBarGrad(provinceCtx, '#60a5fa', '#1d4ed8');
-    const grad3 = createBarGrad(provinceCtx, '#22d3ee', '#0284c7');
-    const grad4 = createBarGrad(provinceCtx, '#818cf8', '#4338ca');
-    const grad5 = createBarGrad(provinceCtx, '#7dd3fc', '#0369a1');
-
-    // 1. Province Chart (Bar Chart) - Outcrowd Vertical Cobalt Gradients
     provinceChartInstance = new Chart(provinceCtx, {
         type: 'bar',
         data: {
@@ -48,7 +50,7 @@ function initDashboardCharts() {
                 label: 'จำนวนตัวอย่างที่ส่งตรวจ (รายจังหวัด)',
                 data: [0, 0, 0, 0, 0],
                 backgroundColor: [grad1, grad2, grad3, grad4, grad5],
-                borderColor: ['#38bdf8', '#60a5fa', '#22d3ee', '#818cf8', '#7dd3fc'],
+                borderColor: ['#38bdf8', '#22d3ee', '#818cf8', '#a855f7', '#34d399'],
                 borderWidth: 1.5,
                 borderRadius: 10,
                 barPercentage: 0.52
@@ -99,7 +101,11 @@ function initDashboardCharts() {
         }
     });
 
-    // 2. Result Ratio Chart (Doughnut Chart)
+    // 2. Result Ratio Chart (Doughnut Chart) - Luminous Gradient Slices
+    const passDonutGrad = createBarGrad(resultRatioCtx, '#34d399', '#059669', 240); // Emerald to Forest
+    const failDonutGrad = createBarGrad(resultRatioCtx, '#fb7185', '#e11d48', 240); // Rose to Ruby Crimson
+    const pendingDonutGrad = createBarGrad(resultRatioCtx, '#fde047', '#d97706', 240); // Gold to Amber
+
     resultRatioChartInstance = new Chart(resultRatioCtx, {
         type: 'doughnut',
         data: {
@@ -107,12 +113,15 @@ function initDashboardCharts() {
             datasets: [{
                 data: [0, 0, 0],
                 backgroundColor: [
-                    '#10b981',  /* Emerald - Pass */
-                    '#f43f5e',  /* Coral - Fail */
-                    '#f59e0b'   /* Amber - Pending */
+                    passDonutGrad,
+                    failDonutGrad,
+                    pendingDonutGrad
                 ],
                 borderWidth: 3,
-                borderColor: '#ffffff'
+                borderColor: '#ffffff',
+                hoverOffset: 6,
+                borderRadius: 6,
+                spacing: 3
             }]
         },
         options: {
@@ -142,7 +151,10 @@ function initDashboardCharts() {
         }
     });
 
-    // 3. Form Type Chart (Horizontal Bar Chart) - Electric Cyan / Coral
+    // 3. Form Type Chart (Horizontal/Stacked Bar Chart) - Electric Gradients with Depth
+    const formPassGrad = createBarGrad(formTypeCtx, '#38bdf8', '#0284c7', 280);
+    const formFailGrad = createBarGrad(formTypeCtx, '#fb7185', '#e11d48', 280);
+
     formTypeChartInstance = new Chart(formTypeCtx, {
         type: 'bar',
         data: {
@@ -161,17 +173,17 @@ function initDashboardCharts() {
                 {
                     label: 'ผ่านเกณฑ์',
                     data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    backgroundColor: 'rgba(56, 189, 248, 0.85)',
-                    borderColor: '#38bdf8',
-                    borderWidth: 1,
+                    backgroundColor: formPassGrad,
+                    borderColor: '#0284c7',
+                    borderWidth: 1.5,
                     borderRadius: 6
                 },
                 {
                     label: 'ไม่ผ่านเกณฑ์',
                     data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    backgroundColor: 'rgba(244, 63, 94, 0.85)',
-                    borderColor: '#f43f5e',
-                    borderWidth: 1,
+                    backgroundColor: formFailGrad,
+                    borderColor: '#e11d48',
+                    borderWidth: 1.5,
                     borderRadius: 6
                 }
             ]
@@ -465,9 +477,16 @@ function updateDashboardCharts(samples) {
         resultRatioChartInstance.data.datasets[0].data = [1];
         resultRatioChartInstance.data.datasets[0].backgroundColor = ['#e2e8f0'];
     } else {
+        const rCtx = resultRatioChartInstance.ctx;
+        const passGrad = createBarGrad(rCtx, '#34d399', '#059669', 240);
+        const failGrad = createBarGrad(rCtx, '#fb7185', '#e11d48', 240);
+        const pendingGrad = createBarGrad(rCtx, '#fde047', '#d97706', 240);
+
         resultRatioChartInstance.data.labels = ['ผ่านเกณฑ์มาตรฐาน', 'ไม่ผ่านเกณฑ์มาตรฐาน', 'รอการตรวจวิเคราะห์'];
         resultRatioChartInstance.data.datasets[0].data = [passed, failed, pending];
-        resultRatioChartInstance.data.datasets[0].backgroundColor = ['#10b981', '#f43f5e', '#f59e0b'];
+        resultRatioChartInstance.data.datasets[0].backgroundColor = [passGrad, failGrad, pendingGrad];
+        resultRatioChartInstance.data.datasets[0].borderRadius = 6;
+        resultRatioChartInstance.data.datasets[0].spacing = 3;
     }
     resultRatioChartInstance.update();
 
@@ -692,6 +711,11 @@ function updateSubstanceCharts(samples) {
         formTypeChartInstance.data.labels = Object.values(stats).map(s => s.label);
         formTypeChartInstance.data.datasets[0].data = passedCounts;
         formTypeChartInstance.data.datasets[1].data = failedCounts;
+        const fCtx = formTypeChartInstance.ctx;
+        formTypeChartInstance.data.datasets[0].backgroundColor = createBarGrad(fCtx, '#38bdf8', '#0284c7', 280);
+        formTypeChartInstance.data.datasets[0].borderColor = '#0284c7';
+        formTypeChartInstance.data.datasets[1].backgroundColor = createBarGrad(fCtx, '#fb7185', '#e11d48', 280);
+        formTypeChartInstance.data.datasets[1].borderColor = '#e11d48';
         formTypeChartInstance.update();
     }
 
@@ -1008,8 +1032,11 @@ window.openFailedSamplesModal = function(key, label) {
                                 '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', 
                                 '#d946ef', '#f43f5e', '#64748b'
                             ],
-                            borderWidth: 2,
-                            borderColor: '#ffffff'
+                            borderWidth: 2.5,
+                            borderColor: '#ffffff',
+                            borderRadius: 5,
+                            spacing: 2,
+                            hoverOffset: 4
                         }]
                     },
                     options: {
@@ -1298,17 +1325,40 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
     if (monthlyChartCanvas) {
         const ctx = monthlyChartCanvas.getContext('2d');
         
-        // Colors for 12 monthly pill bars (Image 2 Coast & Usage style)
-        const barPalette = [
-            '#38bdf8', '#0284c7', '#6366f1', '#8b5cf6', 
-            '#a855f7', '#ec4899', '#f43f5e', '#f97316', 
-            '#eab308', '#10b981', '#14b8a6', '#06b6d4'
+        // 12 Rich Multi-stop Gradients for Monthly Pill Bars
+        const monthGradients = [
+            createBarGrad(ctx, '#38bdf8', '#0284c7', 280), // ต.ค. (Sky -> Ocean)
+            createBarGrad(ctx, '#60a5fa', '#2563eb', 280), // พ.ย. (Blue -> Royal)
+            createBarGrad(ctx, '#818cf8', '#4f46e5', 280), // ธ.ค. (Indigo -> Deep)
+            createBarGrad(ctx, '#a78bfa', '#7c3aed', 280), // ม.ค. (Violet -> Purple)
+            createBarGrad(ctx, '#c084fc', '#9333ea', 280), // ก.พ. (Fuchsia -> Purple)
+            createBarGrad(ctx, '#f472b6', '#db2777', 280), // มี.ค. (Pink -> Rose)
+            createBarGrad(ctx, '#fb7185', '#e11d48', 280), // เม.ย. (Rose -> Crimson)
+            createBarGrad(ctx, '#fb923c', '#ea580c', 280), // พ.ค. (Orange -> Rust)
+            createBarGrad(ctx, '#facc15', '#d97706', 280), // มิ.ย. (Amber -> Gold)
+            createBarGrad(ctx, '#34d399', '#059669', 280), // ก.ค. (Emerald -> Forest)
+            createBarGrad(ctx, '#2dd4bf', '#0d9488', 280), // ส.ค. (Teal -> Jade)
+            createBarGrad(ctx, '#22d3ee', '#0891b2', 280)  // ก.ย. (Cyan -> Deep Cyan)
         ];
+        const monthBorders = [
+            '#0284c7', '#2563eb', '#4f46e5', '#7c3aed',
+            '#9333ea', '#db2777', '#e11d48', '#ea580c',
+            '#d97706', '#059669', '#0d9488', '#0891b2'
+        ];
+
+        // Luminous Spline Area Fill Gradient
+        const splineAreaGrad = ctx.createLinearGradient(0, 0, 0, 260);
+        splineAreaGrad.addColorStop(0, 'rgba(2, 132, 199, 0.28)');
+        splineAreaGrad.addColorStop(0.65, 'rgba(2, 132, 199, 0.08)');
+        splineAreaGrad.addColorStop(1, 'rgba(2, 132, 199, 0.00)');
 
         if (monthlySubstanceChartInstance) {
             monthlySubstanceChartInstance.data.labels = fiscalLabels;
             monthlySubstanceChartInstance.data.datasets[0].data = monthlyTotals;
+            monthlySubstanceChartInstance.data.datasets[0].backgroundColor = monthGradients;
+            monthlySubstanceChartInstance.data.datasets[0].borderColor = monthBorders;
             monthlySubstanceChartInstance.data.datasets[1].data = monthlyTotals;
+            monthlySubstanceChartInstance.data.datasets[1].backgroundColor = splineAreaGrad;
             monthlySubstanceChartInstance.update();
         } else {
             monthlySubstanceChartInstance = new Chart(ctx, {
@@ -1319,7 +1369,9 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                             type: 'bar',
                             label: 'จำนวนตัวอย่างที่ตรวจ',
                             data: monthlyTotals,
-                            backgroundColor: barPalette,
+                            backgroundColor: monthGradients,
+                            borderColor: monthBorders,
+                            borderWidth: 1.5,
                             borderRadius: 12,
                             borderSkipped: false,
                             barPercentage: 0.52,
@@ -1330,17 +1382,18 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                             label: 'เส้นแนวโน้มการตรวจ',
                             data: monthlyTotals,
                             borderColor: '#0284c7',
-                            borderWidth: 3,
+                            borderWidth: 3.5,
                             tension: 0.42,
-                            pointRadius: 5,
+                            pointRadius: 5.5,
                             pointBackgroundColor: '#ffffff',
                             pointBorderColor: '#0284c7',
                             pointBorderWidth: 3,
-                            pointHoverRadius: 8,
+                            pointHoverRadius: 8.5,
                             pointHoverBackgroundColor: '#0284c7',
                             pointHoverBorderColor: '#ffffff',
                             pointHoverBorderWidth: 3,
-                            fill: false,
+                            fill: true,
+                            backgroundColor: splineAreaGrad,
                             order: 1
                         }
                     ]
