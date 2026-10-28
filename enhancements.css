@@ -5215,13 +5215,7 @@ body.manage-users-view-active #currentViewTitle {
 
 /* Substance Quick Pills Bar */
 .substance-pills-bar {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 12px;
-  margin-bottom: 22px;
-  scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
+  display: none !important;
 }
 
 .substance-pills-bar::-webkit-scrollbar {
