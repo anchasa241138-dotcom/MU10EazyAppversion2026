@@ -88,6 +88,9 @@ const app = {
                     backgroundColor: 'rgba(255, 255, 255, 0)',
                     penColor: 'rgb(0, 0, 128)' // Dark blue pen
                 });
+                this.signaturePads[roleId].addEventListener('endStroke', () => {
+                    if (this._refreshSigSlot) this._refreshSigSlot(roleId.replace('-', '_'));
+                });
             }
             
             // Load existing signature if we have one for this sample
@@ -111,6 +114,7 @@ const app = {
     clearSignaturePad(roleId) {
         if (this.signaturePads && this.signaturePads[roleId]) {
             this.signaturePads[roleId].clear();
+            if (this._refreshSigSlot) this._refreshSigSlot(roleId.replace('-', '_'));
         }
     },
 
@@ -4114,36 +4118,34 @@ document.getElementById('formNameTitle').innerText = title;
                                 <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง: <strong style="font-family:monospace; font-size:14px; letter-spacing:0.5px;">${itemLabNo}</strong>
                             </span>
                         </div>
-                        <div class="form-grid">
-                            <div class="form-group" style="margin-bottom: 16px;">
-                                <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-                                    <span>
-                                        <i class="fa-solid fa-flask-vial" style="color: #0284c7; margin-right: 6px;"></i>
-                                        <strong>สารที่ตรวจวิเคราะห์</strong> <span class="required" style="color: #ef4444;">*</span>
-                                    </span>
-                                    <span style="font-size: 12px; font-weight: normal; color: #64748b; background: #f1f5f9; padding: 3px 10px; border-radius: 9999px;">
-                                        <i class="fa-solid fa-hand-pointer" style="font-size: 11px; color: #0284c7;"></i> ติ๊กเลือกได้มากกว่า 1 สาร
-                                    </span>
+                        <div class="form-group" style="margin-bottom: 16px; width: 100%;">
+                            <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                                <span>
+                                    <i class="fa-solid fa-flask-vial" style="color: #0284c7; margin-right: 6px;"></i>
+                                    <strong>สารที่ตรวจวิเคราะห์</strong> <span class="required" style="color: #ef4444;">*</span>
+                                </span>
+                                <span style="font-size: 12px; font-weight: normal; color: #64748b; background: #f1f5f9; padding: 3px 10px; border-radius: 9999px;">
+                                    <i class="fa-solid fa-hand-pointer" style="font-size: 11px; color: #0284c7;"></i> ติ๊กเลือกได้มากกว่า 1 สาร
+                                </span>
+                            </label>
+                            <div class="substance-pills-selector" id="substance-pills-${item.idx}">
+                                <label class="substance-pill-btn" id="pill-gt-${item.idx}">
+                                    <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="GT" onchange="app.handleSubstancePillChange(${item.idx})">
+                                    <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
+                                    <div class="pill-text-block">
+                                        <span class="pill-title">GT Kit</span>
+                                        <span class="pill-sub">ชุดทดสอบ จีที</span>
+                                    </div>
                                 </label>
-                                <div class="substance-pills-selector" id="substance-pills-${item.idx}">
-                                    <label class="substance-pill-btn" id="pill-gt-${item.idx}">
-                                        <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="GT" onchange="app.handleSubstancePillChange(${item.idx})">
-                                        <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
-                                        <div class="pill-text-block">
-                                            <span class="pill-title">GT Kit</span>
-                                            <span class="pill-sub">ชุดทดสอบ จีที</span>
-                                        </div>
-                                    </label>
-                                    <label class="substance-pill-btn" id="pill-tm2-${item.idx}">
-                                        <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="TM/2" onchange="app.handleSubstancePillChange(${item.idx})">
-                                        <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
-                                        <div class="pill-text-block">
-                                            <span class="pill-title">TM/2 Kit</span>
-                                            <span class="pill-sub">ชุดทดสอบ ทีเอ็ม/2</span>
-                                        </div>
-                                    </label>
-                                    <input type="hidden" id="analysis-substance-${item.idx}" name="analysis_substance_${item.idx}" value="">
-                                </div>
+                                <label class="substance-pill-btn" id="pill-tm2-${item.idx}">
+                                    <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="TM/2" onchange="app.handleSubstancePillChange(${item.idx})">
+                                    <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
+                                    <div class="pill-text-block">
+                                        <span class="pill-title">TM/2 Kit</span>
+                                        <span class="pill-sub">ชุดทดสอบ ทีเอ็ม/2</span>
+                                    </div>
+                                </label>
+                                <input type="hidden" id="analysis-substance-${item.idx}" name="analysis_substance_${item.idx}" value="">
                             </div>
                         </div>
                         <div class="form-grid">
@@ -5581,10 +5583,10 @@ document.getElementById('formNameTitle').innerText = title;
 
         
         
-        const renderSignatureSlot = (personKey, defaultRole, roleId) => {
+        const renderSignatureSlot = (personKey, defaultRole, roleId, isLivePreview = false) => {
             // Mallika is locked to E-Signature only
-
             const isMallika = (personKey === 'mallika');
+            const isAnalyst = roleId.startsWith('analyst');
             const mode = sample['mode_' + roleId] || 'system';
             const drawnSig = sample['sig_' + roleId];
             
@@ -5592,7 +5594,7 @@ document.getElementById('formNameTitle').innerText = title;
                 // If wet signature is selected and there's a person chosen, just print their name and blank space
                 const pName = PERSON_DATA[personKey]?.name || '';
                 return `
-                    <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
+                    <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
                         <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
                             <div style="padding-top:25px;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
@@ -5606,13 +5608,14 @@ document.getElementById('formNameTitle').innerText = title;
                                     </div>
                                 </div>
                             </div>
+                            <div style="padding-top:25px;">${defaultRole}</div>
                         </div>
                     </div>
                 `;
             }
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
-                    <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
+                    <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
                         <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
                             <div style="padding-top:25px;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
@@ -5656,13 +5659,16 @@ document.getElementById('formNameTitle').innerText = title;
                 extraStyle = 'max-height: 40px; margin-bottom: -5px; transform-origin: bottom center; margin-left: 0px;';
             }
 
+            // Approvers are only considered already signed once the document is approved or in viewOnly mode.
+            // When status is 'analyst_signed', only analysts have signed. Approvers are waiting to sign.
+            const isSigned = (viewOnly || sample.status === 'approved' || (isAnalyst && sample.status === 'analyst_signed') || isLivePreview);
             
-            const sigHtml = (viewOnly || sample.status === 'approved' || sample.status === 'analyst_signed') ? 
+            const sigHtml = isSigned ? 
                 `<img src="${imgSrc}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` :  
                 `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
             
             return `
-                <div class="cert-signature-area" style="margin-top: 5px; width: 100%; text-align: center;">
+                <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
                     <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
                         <div style="padding-top:35px;">ลงชื่อ</div>
                         <div style="display:flex; flex-direction:column; align-items:center;">
@@ -7035,22 +7041,24 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const defA2_2 = (sample.form_type === 'MU.10-006' || sample.form_type === 'MU.10-007') ? "sakulkan" : "surachai";
                     s1.value = sample.sel_analyst_1 || defA1_2;
                     s2.value = sample.sel_analyst_2 || defA2_2;
-                    s3.value = sample.sel_approver_1 || "thitiporn";
+                    s3.value = (sample.status === 'approved') ? (sample.sel_approver_1 || "thitiporn") : (sample.sel_approver_1 || "");
                     s4.value = sample.sel_approver_2 || "mallika";
                     
                     document.getElementById('mode-analyst-1').value = sample.mode_analyst_1 || 'system';
                     document.getElementById('mode-analyst-2').value = sample.mode_analyst_2 || 'system';
                     document.getElementById('mode-approver-1').value = sample.mode_approver_1 || 'system';
 
-
-                    s1.disabled = false; s2.disabled = false;
-                    s3.disabled = false; s4.disabled = true;
+                    const isApproveStep = (sample.status === 'analyst_signed' && !forceEdit);
+                    s1.disabled = isApproveStep; 
+                    s2.disabled = isApproveStep;
+                    s3.disabled = false; 
+                    s4.disabled = true;
                     
                     const m1 = document.getElementById('mode-analyst-1');
                     const m2 = document.getElementById('mode-analyst-2');
                     const m3 = document.getElementById('mode-approver-1');
-                    if(m1) m1.disabled = false;
-                    if(m2) m2.disabled = false;
+                    if(m1) m1.disabled = isApproveStep;
+                    if(m2) m2.disabled = isApproveStep;
                     if(m3) m3.disabled = false;
 
                     if (forceEdit) {
@@ -7080,6 +7088,57 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 // If there are existing drawn signatures, draw them onto the canvas!
                 // We let initSignaturePad handle loading the saved data to avoid race conditions!
             }
+
+            // Live signature slot updating when user changes selection/mode in the modal
+            const refreshSigSlot = (roleId) => {
+                const isAnalystRole = roleId.startsWith('analyst');
+                const selId = 'sel-' + roleId.replace('_', '-');
+                const modeId = 'mode-' + roleId.replace('_', '-');
+                const selEl = document.getElementById(selId);
+                const modeEl = document.getElementById(modeId);
+                const personKey = selEl ? selEl.value : (sample['sel_' + roleId] || '');
+                const curMode = modeEl ? modeEl.value : (sample['mode_' + roleId] || 'system');
+                
+                sample['sel_' + roleId] = personKey;
+                sample['mode_' + roleId] = curMode;
+                if (curMode === 'draw') {
+                    const canvas = document.getElementById('canvas-' + roleId.replace('_', '-'));
+                    if (canvas && this.signaturePads && this.signaturePads[roleId.replace('_', '-')] && !this.signaturePads[roleId.replace('_', '-')].isEmpty()) {
+                        sample['sig_' + roleId] = canvas.toDataURL();
+                    } else if (canvas && this.signaturePads && this.signaturePads[roleId.replace('_', '-')] && this.signaturePads[roleId.replace('_', '-')].isEmpty()) {
+                        sample['sig_' + roleId] = null;
+                    }
+                }
+                
+                const defaultRoleName = isAnalystRole ? 'ผู้ตรวจวิเคราะห์' : 'ผู้รับรอง';
+                const newSlotHtml = renderSignatureSlot(personKey, defaultRoleName, roleId);
+                const currentSlots = document.querySelectorAll(`[data-sig-slot="${roleId}"]`);
+                currentSlots.forEach(slotEl => {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = newSlotHtml.trim();
+                    const newElem = tempDiv.firstElementChild;
+                    if (newElem && slotEl.parentNode) {
+                        slotEl.parentNode.replaceChild(newElem, slotEl);
+                    }
+                });
+            };
+
+            this._refreshSigSlot = refreshSigSlot;
+
+            ['analyst-1', 'analyst-2', 'approver-1'].forEach(rId => {
+                const dbKey = rId.replace('-', '_');
+                const sEl = document.getElementById('sel-' + rId);
+                if (sEl) {
+                    sEl.onchange = () => refreshSigSlot(dbKey);
+                }
+                const mEl = document.getElementById('mode-' + rId);
+                if (mEl) {
+                    mEl.onchange = () => {
+                        this.toggleSignMode(rId);
+                        refreshSigSlot(dbKey);
+                    };
+                }
+            });
 
         }
 
