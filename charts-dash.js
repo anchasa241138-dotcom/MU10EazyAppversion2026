@@ -2222,13 +2222,38 @@ function updateCorrectiveActionGovernance(samples) {
     const pendEl = document.getElementById('action-pending-pct');
     const barEl = document.getElementById('action-closed-bar');
     const btnFailCount = document.getElementById('btn-action-fail-count');
+    const btnManage = document.querySelector('.btn-manage-actions');
+    const badgeAllPassed = document.getElementById('action-all-passed-badge');
+    const badgeAllPassedTxt = document.getElementById('action-all-passed-txt');
+    const btnActionLabelTxt = document.getElementById('btn-action-label-txt');
+
+    const filterEl = document.getElementById('dashProvinceFilter');
+    const activeProv = (filterEl && filterEl.value !== 'all') ? filterEl.value : '';
 
     if (failEl) failEl.innerText = totalFailed;
     if (closedEl) closedEl.innerText = `${closedPct}%`;
     if (pendEl) pendEl.innerText = `${pendingPct}%`;
-    if (btnFailCount) btnFailCount.innerText = totalFailed;
     if (barEl) {
         barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
+    }
+
+    if (totalFailed > 0) {
+        if (btnManage) btnManage.style.display = 'inline-flex';
+        if (badgeAllPassed) badgeAllPassed.style.display = 'none';
+        if (btnFailCount) btnFailCount.innerText = totalFailed;
+        if (btnActionLabelTxt) {
+            btnActionLabelTxt.innerText = activeProv ? `จัดการและบันทึกติดตามผล จ.${activeProv}` : 'จัดการและบันทึกติดตามผล';
+        }
+    } else {
+        if (btnManage) btnManage.style.display = 'none';
+        if (badgeAllPassed) {
+            badgeAllPassed.style.display = 'inline-flex';
+            if (badgeAllPassedTxt) {
+                badgeAllPassedTxt.innerText = activeProv 
+                    ? `ผลการตรวจ จ.${activeProv} ผ่านมาตรฐานครบทุกรายการ ไม่พบปัญหาที่ต้องติดตาม`
+                    : 'ผลการตรวจผ่านมาตรฐานครบทุกรายการ ไม่พบปัญหาที่ต้องติดตาม';
+            }
+        }
     }
 
     const cPend = document.getElementById('chip-pending-count');
@@ -2246,9 +2271,14 @@ function updateCorrectiveActionGovernance(samples) {
 window.updateCorrectiveActionGovernance = updateCorrectiveActionGovernance;
 
 // Follow-up Actions Modal & Form Handlers
-window.openAllFailedSamplesFollowupModal = function() {
+window.openAllFailedSamplesFollowupModal = function(provinceFilter) {
     window.currentFailedModalKey = 'all';
-    window.openFailedSamplesModal('all', 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐานทั้งหมด (Closed-Loop Follow-up)');
+    const filterEl = document.getElementById('dashProvinceFilter');
+    const selectedProv = provinceFilter || (filterEl && filterEl.value !== 'all' ? filterEl.value : null) || window.getCurrentUserProvince() || 'all';
+    const modalTitle = (selectedProv && selectedProv !== 'all')
+        ? `ตัวอย่างไม่ผ่านเกณฑ์มาตรฐาน จ.${selectedProv} (Closed-Loop Follow-up)`
+        : 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐานทั้งหมด (Closed-Loop Follow-up)';
+    window.openFailedSamplesModal('all', modalTitle, selectedProv);
 };
 
 window.openCorrectiveDetailModal = function(idKey, forceReadOnly) {
