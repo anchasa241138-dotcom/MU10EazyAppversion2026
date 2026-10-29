@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793250000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793255000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -3312,6 +3312,20 @@
                     </div>
                 </div>
 
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                    <div class="modal-province-tabs" id="failedModalProvinceTabs" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;">
+                        <button type="button" class="prov-tab-btn active" data-prov="all" onclick="window.filterFailedSamplesByProvince('all')">ทุกจังหวัด</button>
+                        <button type="button" class="prov-tab-btn" data-prov="ศรีสะเกษ" onclick="window.filterFailedSamplesByProvince('ศรีสะเกษ')">ศรีสะเกษ</button>
+                        <button type="button" class="prov-tab-btn" data-prov="อุบลราชธานี" onclick="window.filterFailedSamplesByProvince('อุบลราชธานี')">อุบลราชธานี</button>
+                        <button type="button" class="prov-tab-btn" data-prov="ยโสธร" onclick="window.filterFailedSamplesByProvince('ยโสธร')">ยโสธร</button>
+                        <button type="button" class="prov-tab-btn" data-prov="อำนาจเจริญ" onclick="window.filterFailedSamplesByProvince('อำนาจเจริญ')">อำนาจเจริญ</button>
+                        <button type="button" class="prov-tab-btn" data-prov="มุกดาหาร" onclick="window.filterFailedSamplesByProvince('มุกดาหาร')">มุกดาหาร</button>
+                    </div>
+                    <div style="font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 5px;" id="failedModalUserPermNote">
+                        <i class="fa-solid fa-shield-halved" style="color: #0284c7;"></i> <span id="cad-perm-badge-txt">สิทธิ์แก้ไขตามจังหวัด</span>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table style="width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
                         <thead style="background: #f1f5f9; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
@@ -3352,6 +3366,9 @@
                 <button class="close-modal-btn" onclick="window.closeCorrectiveActionDetailModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" style="padding: 20px 24px; max-height: 75vh; overflow-y: auto;">
+                <div id="cad-readonly-banner" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px;">
+                    <i class="fa-solid fa-lock"></i> <strong>โหมดดูข้อมูลอย่างเดียว:</strong> คุณไม่มีสิทธิ์แก้ไขข้อมูลของจังหวัดนี้ (สิทธิ์การบันทึกแก้ไขเฉพาะเจ้าหน้าที่ผู้รับผิดชอบประจำจังหวัด หรือ Admin เท่านั้น)
+                </div>
                 <!-- Target Sample Summary Card -->
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
@@ -3418,7 +3435,7 @@
 
                     <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
                         <button type="button" class="btn btn-secondary" onclick="window.closeCorrectiveActionDetailModal()" style="border-radius: 8px; padding: 9px 18px; font-family: 'Kanit'; font-weight: 600;">ยกเลิก</button>
-                        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; border-radius: 8px; padding: 9px 24px; font-family: 'Kanit'; font-weight: 700; color: #fff; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+                        <button type="submit" id="cad-btn-save" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; border-radius: 8px; padding: 9px 24px; font-family: 'Kanit'; font-weight: 700; color: #fff; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
                             <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
                         </button>
                     </div>
@@ -3589,7 +3606,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793250000000"></script>
+    <script src="charts-dash.js?v=1793255000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
