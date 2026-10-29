@@ -1789,6 +1789,22 @@ function updateTurnaroundTimeSLA(samples) {
     const slaRate = completedCount > 0 ? ((withinSLACount / completedCount) * 100).toFixed(1) + '%' : '100%';
     const overdueCount = window.currentOverdueSamples.length;
 
+    // Calculate Overdue Rate (% ค้างท่อ นับเป็นฉบับ)
+    const totalTrackedForms = (samples.filter(s => !!(s.lab_receive_date || s.lab_receive_timestamp || s.created_at)).length) || (completedCount + overdueCount);
+    let overduePct = '0.0%';
+    if (overdueCount > 0) {
+        const slaNum = completedCount > 0 ? (withinSLACount / completedCount) * 100 : 100;
+        const breachRate = Math.max(0, 100 - slaNum);
+        if (breachRate > 0) {
+            overduePct = breachRate.toFixed(1) + '%';
+        } else if (totalTrackedForms > 0) {
+            overduePct = ((overdueCount / totalTrackedForms) * 100).toFixed(1) + '%';
+        } else {
+            overduePct = '0.0%';
+        }
+    }
+    window.currentOverduePct = overduePct;
+
     const avgEl = document.getElementById('tat-avg-days');
     const rateEl = document.getElementById('tat-sla-rate');
     const overdueEl = document.getElementById('tat-overdue-count');
@@ -1799,22 +1815,30 @@ function updateTurnaroundTimeSLA(samples) {
         rateEl.innerText = slaRate;
         rateEl.style.color = parseFloat(slaRate) >= 90 ? '#10b981' : '#f59e0b';
     }
-    if (overdueEl) overdueEl.innerText = overdueCount;
+    if (overdueEl) {
+        if (overdueCount > 0) {
+            overdueEl.innerHTML = `<span>${overduePct}</span> <span class="unit-sub">(${overdueCount} ฉบับ)</span>`;
+            overdueEl.style.color = '#ef4444';
+        } else {
+            overdueEl.innerHTML = `<span>0.0%</span> <span class="unit-sub">(0 ฉบับ)</span>`;
+            overdueEl.style.color = '#10b981';
+        }
+    }
 
     if (alertContainer) {
         if (overdueCount > 0) {
             alertContainer.innerHTML = `
                 <div class="ops-alert-banner alert-danger">
-                    <span><i class="fa-solid fa-triangle-exclamation"></i> พบตัวอย่างที่รอนานเกิน 3 วัน (ค้างท่อ) จำนวน <strong>${overdueCount}</strong> รายการ</span>
+                    <span><i class="fa-solid fa-triangle-exclamation"></i> พบตัวอย่างที่รอนานเกิน 3 วัน (ค้างท่อ) จำนวน <strong>${overdueCount} ฉบับ</strong> (คิดเป็น <strong>${overduePct}</strong>)</span>
                     <button type="button" class="btn-view-overdue" onclick="window.openOverdueSamplesModal()">
-                        <i class="fa-solid fa-magnifying-glass"></i> ดูตัวอย่างค้างท่อ
+                        <i class="fa-solid fa-magnifying-glass"></i> ดูตัวอย่างค้างท่อ (${overdueCount} ฉบับ)
                     </button>
                 </div>
             `;
         } else {
             alertContainer.innerHTML = `
                 <div class="ops-alert-banner alert-success">
-                    <span><i class="fa-solid fa-circle-check"></i> ตัวอย่างทั้งหมดตรวจเสร็จทันตามเกณฑ์มาตรฐาน 3 วัน (ไม่พบค้างท่อ)</span>
+                    <span><i class="fa-solid fa-circle-check"></i> ตัวอย่างทั้งหมดตรวจเสร็จทันตามเกณฑ์มาตรฐาน 3 วัน (ไม่พบค้างท่อ 0.0%)</span>
                 </div>
             `;
         }
@@ -1828,6 +1852,10 @@ window.openOverdueSamplesModal = function() {
     if (!tbody) return;
     tbody.innerHTML = '';
     const list = window.currentOverdueSamples || [];
+    const modalSubtitle = document.getElementById('overdueModalSubtitle');
+    if (modalSubtitle) {
+        modalSubtitle.innerHTML = `รายการตัวอย่างที่รอนานเกิน 3 วัน (72 ชม.) จำนวน <strong>${list.length} ฉบับ</strong> (${window.currentOverduePct || '0.0%'})`;
+    }
     if (list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #10b981;"><i class="fa-solid fa-circle-check"></i> ไม่พบตัวอย่างค้างท่อเกินเกณฑ์มาตรฐาน 3 วัน</td></tr>';
     } else {
