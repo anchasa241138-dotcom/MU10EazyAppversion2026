@@ -1746,18 +1746,21 @@ function updateTurnaroundTimeSLA(samples) {
     window.currentOverdueSamples = [];
 
     samples.forEach(s => {
-        const rawRecDate = s.lab_receive_date || s.lab_receive_timestamp || s.created_at;
+        // วันที่รับตัวอย่างเข้าแลป (Lab Receive Date/Timestamp)
+        const rawRecDate = s.lab_receive_timestamp || s.lab_receive_date || s.created_at;
         if (!rawRecDate) return;
         const recDate = new Date(rawRecDate);
         if (isNaN(recDate.getTime())) return;
 
-        const isCompleted = s.status === 'approved' || s.status === 'completed' || s.status === 'analyzed' || !!s.analysis_date;
-        if (isCompleted) {
-            const rawAnaDate = s.analysis_date || s.analysis_timestamp || s.updated_at || s.created_at;
-            const anaDate = new Date(rawAnaDate);
+        // คำนวณจากวันที่รับตัวอย่างจนถึงผู้รับรองอนุมัติลงนาม (Approved)
+        const isApproved = s.status === 'approved' || !!s.approved_timestamp || !!s.approved_date;
+        if (isApproved) {
+            // วันที่ผู้รับรองอนุมัติลงนาม
+            const rawApproveDate = s.approved_timestamp || s.approved_date || s.analysis_timestamp || s.analysis_date || s.updated_at || s.created_at;
+            const approveDate = new Date(rawApproveDate);
             let diffDays = 0;
-            if (!isNaN(anaDate.getTime()) && anaDate >= recDate) {
-                diffDays = (anaDate.getTime() - recDate.getTime()) / (1000 * 60 * 60 * 24);
+            if (!isNaN(approveDate.getTime()) && approveDate >= recDate) {
+                diffDays = (approveDate.getTime() - recDate.getTime()) / (1000 * 60 * 60 * 24);
             } else {
                 diffDays = 1.0;
             }
@@ -1768,18 +1771,24 @@ function updateTurnaroundTimeSLA(samples) {
                 withinSLACount++;
             }
         } else {
-            // Sample still in progress
+            // ยังไม่อนุมัติลงนาม (อยู่ระหว่างรับตัวอย่าง/กำลังตรวจ/รอนักวิทย์ลงนาม/รอผู้รับรองอนุมัติ)
             const elapsedDays = (now.getTime() - recDate.getTime()) / (1000 * 60 * 60 * 24);
             if (elapsedDays > 3.0) {
+                let statusTh = 'รอรับตัวอย่าง';
+                if (s.status === 'accepted' || s.status === 'received') statusTh = 'รับตัวอย่างแล้ว (รอตรวจ)';
+                else if (s.status === 'analyzing') statusTh = 'กำลังตรวจวิเคราะห์';
+                else if (s.status === 'summarized') statusTh = 'สรุปผลแล้ว (รอนักวิทย์ลงนาม)';
+                else if (s.status === 'analyst_signed') statusTh = 'นักวิทย์ลงนามแล้ว (รอผู้รับรองอนุมัติ)';
+
                 window.currentOverdueSamples.push({
-                    code: s.lab_id || s.sample_id || s.ref_id || '-',
-                    name: s.sample_name || s.sample_name_1 || 'ตัวอย่างตรวจวิเคราะห์',
+                    code: s.lab_no || s.lab_id || s.sample_id || s.ref_id || '-',
+                    name: s.sample_name || s.sample_name_1 || 'คำขอตรวจวิเคราะห์',
                     receiveDate: recDate.toLocaleDateString('th-TH'),
                     elapsedDays: elapsedDays.toFixed(1),
                     elapsedHours: Math.round(elapsedDays * 24),
                     agency: s.agency || s.source || '-',
                     province: s.province || '-',
-                    status: s.status === 'received' ? 'รับตัวอย่างแล้ว (รอตรวจ)' : 'รอรับตัวอย่าง'
+                    status: statusTh
                 });
             }
         }
