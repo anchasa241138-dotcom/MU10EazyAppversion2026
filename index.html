@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793245000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793250000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1508,6 +1508,11 @@
                                     <span class="action-chip"><span style="color: #ea580c;">🟠 อายัด/ทำลาย:</span> <strong id="chip-seized-count">0</strong></span>
                                     <span class="action-chip"><span style="color: #dc2626;">🔴 ปรับ/คดี:</span> <strong id="chip-fined-count">0</strong></span>
                                     <span class="action-chip"><span style="color: #059669;">🟢 ตรวจซ้ำผ่าน:</span> <strong id="chip-retest-count">0</strong></span>
+                                </div>
+                                <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+                                    <button type="button" class="btn-manage-actions" onclick="window.openAllFailedSamplesFollowupModal()">
+                                        <i class="fa-solid fa-clipboard-check"></i> จัดการและบันทึกติดตามผล (<span id="btn-action-fail-count">0</span> รายการ)
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -3331,6 +3336,97 @@
         </div>
     </div>
 
+    <!-- Corrective Action Detail Form Modal (มิติที่ 5: บันทึกติดตามผลหลังพบปัญหา) -->
+    <div class="modal-overlay" id="correctiveActionDetailModal" style="z-index: 1100;">
+        <div class="modal-card" style="max-width: 640px; width: 95%; border-radius: 18px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; padding: 16px 20px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <h4 style="color:#fff; margin:0; font-size: 16px; font-weight: 700;">บันทึกการติดตามผลหลังพบปัญหา</h4>
+                        <div style="font-size: 12px; opacity: 0.9;" id="cad-sample-title">รหัสตัวอย่าง: -</div>
+                    </div>
+                </div>
+                <button class="close-modal-btn" onclick="window.closeCorrectiveActionDetailModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 20px 24px; max-height: 75vh; overflow-y: auto;">
+                <!-- Target Sample Summary Card -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                        <div><span style="color: #64748b;">ชื่อตัวอย่าง:</span> <strong id="cad-sample-name" style="color: #0f172a;">-</strong></div>
+                        <div><span style="color: #64748b;">สารที่ไม่ผ่าน:</span> <strong id="cad-substance-fail" style="color: #ef4444;">-</strong></div>
+                        <div><span style="color: #64748b;">สถานที่เก็บ:</span> <span id="cad-sample-location" style="color: #334155;">-</span></div>
+                        <div><span style="color: #64748b;">พื้นที่:</span> <span id="cad-sample-area" style="color: #334155;">-</span></div>
+                    </div>
+                </div>
+
+                <form id="correctiveActionForm" onsubmit="window.submitCorrectiveActionForm(event)">
+                    <input type="hidden" id="cad-target-id" value="">
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                            1. มาตรการที่ดำเนินการ (Action Taken) <span style="color: #ef4444;">*</span>
+                        </label>
+                        <select id="cad-action-status" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Kanit'; font-size: 14px;" required onchange="window.onCorrectiveStatusChange(this.value)">
+                            <option value="pending">🟡 อยู่ระหว่างติดตาม (Pending)</option>
+                            <option value="warned">🔵 ตักเตือน / แนะนำปรับปรุงมาตรฐาน</option>
+                            <option value="seized">🟠 สั่งอายัด / ทำลายสินค้าที่ไม่ปลอดภัย</option>
+                            <option value="fined">🔴 ดำเนินคดี / เปรียบเทียบปรับตามกฎหมาย</option>
+                            <option value="retested_passed">🟢 สุ่มตรวจซ้ำรอบที่ 2 ผ่านเกณฑ์มาตรฐาน</option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                                2. วันที่ลงพื้นที่ / ดำเนินการ <span style="color: #ef4444;">*</span>
+                            </label>
+                            <input type="date" id="cad-action-date" class="form-control" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Kanit'; font-size: 13.5px;" required>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                                3. ผู้รับผิดชอบ / ทีมลงพื้นที่ <span style="color: #ef4444;">*</span>
+                            </label>
+                            <input type="text" id="cad-action-officer" class="form-control" placeholder="เช่น กลุ่มงาน คบส. สสจ., สสอ." style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Kanit'; font-size: 13.5px;" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                            4. สรุปรายละเอียดผลการดำเนินงาน / คำสั่ง <span style="color: #64748b; font-weight: normal;">(บันทึกข้อเท็จจริง)</span>
+                        </label>
+                        <textarea id="cad-action-notes" rows="3" class="form-control" placeholder="ระบุผลการลงพื้นที่ เช่น ตรวจยึดทำลายลูกชิ้น 20 กก., สั่งหยุดจำหน่ายชั่วคราว..." style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'Kanit'; font-size: 13.5px; resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form-group" style="background: #f1f5f9; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px;">
+                        <label style="display: block; font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">
+                            5. สถานะการติดตามผล (Closed-Loop Status)
+                        </label>
+                        <div style="display: flex; gap: 20px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13.5px; color: #334155;">
+                                <input type="radio" name="cad_is_closed" value="false" id="cad-radio-pending" checked>
+                                <span>🟡 อยู่ระหว่างติดตาม (In Progress)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13.5px; color: #059669; font-weight: 600;">
+                                <input type="radio" name="cad_is_closed" value="true" id="cad-radio-closed">
+                                <span>🟢 แก้ไขแล้วเสร็จ (Closed Loop)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                        <button type="button" class="btn btn-secondary" onclick="window.closeCorrectiveActionDetailModal()" style="border-radius: 8px; padding: 9px 18px; font-family: 'Kanit'; font-weight: 600;">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: none; border-radius: 8px; padding: 9px 24px; font-family: 'Kanit'; font-weight: 700; color: #fff; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+                            <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Overdue Samples Modal (มิติที่ 2: TAT & SLA Monitor) -->
     <div class="modal-overlay" id="overdueSamplesModal">
         <div class="modal-card" style="max-width: 920px; width: 95%;">
@@ -3493,7 +3589,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793247000000"></script>
+    <script src="charts-dash.js?v=1793250000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
