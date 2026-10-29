@@ -994,12 +994,98 @@ function updateSafetyRankings(stats) {
     }
 }
 
+// Permission Helper: Check if user can edit samples for a given province
+window.canUserEditSample = function(sampleOrProvince) {
+    const prov = (typeof sampleOrProvince === 'object' ? (sampleOrProvince.province || '') : (sampleOrProvince || '')).trim();
+    let user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+    if (!user) {
+        try {
+            const sess = sessionStorage.getItem('sskmoph_session');
+            if (sess) user = JSON.parse(sess);
+        } catch(e){}
+    }
+    if (!user) return false;
+
+    // Admin & Regional Lab have oversight across all 5 provinces
+    if (user.role === 'admin' || user.role === 'lab') return true;
+
+    // Provincial officers (สสจ., รพ., สสอ.) can ONLY edit their own province
+    const uWp = (user.workplace || '').trim();
+    const uProv = (user.province || '').trim();
+
+    if (prov && uProv && uProv === prov) return true;
+    if (prov && uWp && uWp.includes(prov)) return true;
+    if (uWp.includes('เขต 10') || uWp.includes('ศวพ.10') || uWp.includes('ศูนย์วิทยาศาสตร์การแพทย์ที่ 10')) return true;
+
+    return false;
+};
+
+window.getCurrentUserProvince = function() {
+    let user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+    if (!user) {
+        try {
+            const sess = sessionStorage.getItem('sskmoph_session');
+            if (sess) user = JSON.parse(sess);
+        } catch(e){}
+    }
+    if (!user) return 'all';
+    if (user.role === 'admin' || user.role === 'lab') return 'all';
+    
+    const provs = ['ศรีสะเกษ', 'อุบลราชธานี', 'ยโสธร', 'อำนาจเจริญ', 'มุกดาหาร'];
+    const wp = (user.workplace || '') + ' ' + (user.province || '');
+    for (const p of provs) {
+        if (wp.includes(p)) return p;
+    }
+    return 'all';
+};
+
+window.filterFailedSamplesByProvince = function(prov) {
+    window.currentFailedModalProvince = prov;
+    const currentSubstanceLabel = document.getElementById('failedSubstanceName')?.innerText || 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐาน';
+    window.openFailedSamplesModal(window.currentFailedModalKey || 'all', currentSubstanceLabel, prov);
+};
+
 // Global functions for modal
-window.openFailedSamplesModal = function(key, label) {
+window.openFailedSamplesModal = function(key, label, provinceFilter) {
     window.currentFailedModalKey = key;
     document.getElementById('failedSubstanceName').innerText = label;
     const tbody = document.getElementById('failedSamplesTableBody');
     tbody.innerHTML = '';
+
+    // Determine target province filter
+    if (!provinceFilter) {
+        if (!window.currentFailedModalProvince) {
+            window.currentFailedModalProvince = window.getCurrentUserProvince();
+        }
+    } else {
+        window.currentFailedModalProvince = provinceFilter;
+    }
+    const activeProv = window.currentFailedModalProvince || 'all';
+
+    // Update Province Tabs in Modal
+    document.querySelectorAll('#failedModalProvinceTabs .prov-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-prov') === activeProv) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Update Permission Badge text in Modal
+    const user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+    const permNoteEl = document.getElementById('cad-perm-badge-txt');
+    if (permNoteEl) {
+        if (user && (user.role === 'admin' || user.role === 'lab')) {
+            permNoteEl.innerHTML = `<strong>สิทธิ์ผู้ดูแลระบบ (Admin)</strong>: จัดการได้ทุกจังหวัด`;
+        } else {
+            const uProv = window.getCurrentUserProvince();
+            if (uProv && uProv !== 'all') {
+                permNoteEl.innerHTML = `<strong>สิทธิ์ประจำ จ.${uProv}</strong>: แก้ไขได้เฉพาะ จ.${uProv} (จังหวัดอื่นอ่านอย่างเดียว)`;
+            } else {
+                permNoteEl.innerHTML = `ตรวจสิทธิ์ตามจังหวัดผู้ใช้งาน`;
+            }
+        }
+    }
     
     let samples = [];
     if (key === 'all') {
@@ -1029,9 +1115,15 @@ window.openFailedSamplesModal = function(key, label) {
             }
         });
 
+        // Filter by active province tab if not 'all'
+        let displaySamples = uniqueSamples;
+        if (activeProv !== 'all') {
+            displaySamples = uniqueSamples.filter(s => s.province === activeProv);
+        }
+
         // Aggregate counts for pie chart
         let nameCounts = {};
-        uniqueSamples.forEach(s => {
+        displaySamples.forEach(s => {
             let n = s.name || 'ไม่ระบุ';
             nameCounts[n] = (nameCounts[n] || 0) + 1;
         });
@@ -1088,64 +1180,89 @@ window.openFailedSamplesModal = function(key, label) {
             }
         }
 
-        uniqueSamples.forEach((s, idx) => {
-            let tr = document.createElement('tr');
-            const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
-            tr.style.backgroundColor = rowBg;
-            tr.style.borderBottom = '1px solid #e2e8f0';
-            tr.style.transition = 'background-color 0.2s';
-            tr.onmouseover = () => tr.style.backgroundColor = '#f1f5f9';
-            tr.onmouseout = () => tr.style.backgroundColor = rowBg;
+        if (displaySamples.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 25px; color: #64748b;">ไม่พบตัวอย่างไม่ผ่านเกณฑ์ใน จ.${activeProv}</td></tr>`;
+        } else {
+            const actionLabels = {
+                pending: '🟡 อยู่ระหว่างติดตาม',
+                warned: '🔵 ตักเตือน/แนะนำ',
+                seized: '🟠 อายัด/ทำลายสินค้า',
+                fined: '🔴 ดำเนินคดี/ปรับ',
+                retested_passed: '🟢 สุ่มตรวจซ้ำผ่าน'
+            };
 
-            const idKey = s.identifier || s.code || (s.name + s.date + s.province);
-            const curDetail = window.getSampleActionDetail ? window.getSampleActionDetail(idKey) : { status: 'pending' };
-            const curAction = curDetail.status || 'pending';
-            const hasDetail = Boolean(curDetail.notes || curDetail.actionDate || curDetail.officer);
+            displaySamples.forEach((s, idx) => {
+                let tr = document.createElement('tr');
+                const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+                tr.style.backgroundColor = rowBg;
+                tr.style.borderBottom = '1px solid #e2e8f0';
+                tr.style.transition = 'background-color 0.2s';
+                tr.onmouseover = () => tr.style.backgroundColor = '#f1f5f9';
+                tr.onmouseout = () => tr.style.backgroundColor = rowBg;
 
-            tr.innerHTML = `
-                <td style="padding: 12px 14px;">
-                    <div style="font-weight: 600; color: #0f172a;">${s.name || '-'}</div>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
-                </td>
-                <td style="padding: 12px 14px; color: #334155;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
-                <td style="padding: 12px 14px;">
-                    <div style="color: #0f172a; font-weight: 500;">${s.source || '-'}</div>
-                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
-                </td>
-                <td style="padding: 12px 14px;">
-                    <div style="color: #0f172a;">อ.${s.district || '-'}</div>
-                    <div style="font-size: 13px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
-                </td>
-                <td style="padding: 12px 14px;">
-                    <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; background-color: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 700; border: 1px solid #bae6fd; white-space: nowrap;">
-                        ${s.form_type || '-'}
-                    </span>
-                </td>
-                <td style="padding: 12px 14px;">
-                    <div style="display: flex; flex-direction: column; gap: 6px;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;" style="flex: 1;">
-                                <option value="pending" ${curAction === 'pending' ? 'selected' : ''}>🟡 อยู่ระหว่างติดตาม</option>
-                                <option value="warned" ${curAction === 'warned' ? 'selected' : ''}>🔵 ตักเตือน/แนะนำ</option>
-                                <option value="seized" ${curAction === 'seized' ? 'selected' : ''}>🟠 อายัด/ทำลายสินค้า</option>
-                                <option value="fined" ${curAction === 'fined' ? 'selected' : ''}>🔴 ดำเนินคดี/ปรับ</option>
-                                <option value="retested_passed" ${curAction === 'retested_passed' ? 'selected' : ''}>🟢 สุ่มตรวจซ้ำผ่าน</option>
-                            </select>
-                            <button type="button" class="btn-action-detail" title="บันทึกรายละเอียดการติดตามผล" onclick="window.openCorrectiveDetailModal('${idKey}')">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
+                const idKey = s.identifier || s.code || (s.name + s.date + s.province);
+                const curDetail = window.getSampleActionDetail ? window.getSampleActionDetail(idKey) : { status: 'pending' };
+                const curAction = curDetail.status || 'pending';
+                const hasDetail = Boolean(curDetail.notes || curDetail.actionDate || curDetail.officer);
+                const canEdit = window.canUserEditSample(s.province);
+
+                tr.innerHTML = `
+                    <td style="padding: 12px 14px;">
+                        <div style="font-weight: 600; color: #0f172a;">${s.name || '-'}</div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-barcode"></i> ${s.code || '-'}</div>
+                    </td>
+                    <td style="padding: 12px 14px; color: #334155;">${s.date ? new Date(s.date).toLocaleDateString('th-TH') : '-'}</td>
+                    <td style="padding: 12px 14px;">
+                        <div style="color: #0f172a; font-weight: 500;">${s.source || '-'}</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> ${s.location || '-'}</div>
+                    </td>
+                    <td style="padding: 12px 14px;">
+                        <div style="color: #0f172a;">อ.${s.district || '-'}</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
+                    </td>
+                    <td style="padding: 12px 14px;">
+                        <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; background-color: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 700; border: 1px solid #bae6fd; white-space: nowrap;">
+                            ${s.form_type || '-'}
+                        </span>
+                    </td>
+                    <td style="padding: 12px 14px;">
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            ${canEdit ? `
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;" style="flex: 1;">
+                                        <option value="pending" ${curAction === 'pending' ? 'selected' : ''}>🟡 อยู่ระหว่างติดตาม</option>
+                                        <option value="warned" ${curAction === 'warned' ? 'selected' : ''}>🔵 ตักเตือน/แนะนำ</option>
+                                        <option value="seized" ${curAction === 'seized' ? 'selected' : ''}>🟠 อายัด/ทำลายสินค้า</option>
+                                        <option value="fined" ${curAction === 'fined' ? 'selected' : ''}>🔴 ดำเนินคดี/ปรับ</option>
+                                        <option value="retested_passed" ${curAction === 'retested_passed' ? 'selected' : ''}>🟢 สุ่มตรวจซ้ำผ่าน</option>
+                                    </select>
+                                    <button type="button" class="btn-action-detail" title="บันทึกรายละเอียดการติดตามผล" onclick="window.openCorrectiveDetailModal('${idKey}', false)">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                </div>
+                            ` : `
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div class="action-status-badge status-${curAction} readonly" style="flex: 1; padding: 6px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'} หรือ Admin">
+                                        <span>${actionLabels[curAction] || curAction}</span>
+                                        <i class="fa-solid fa-lock" style="font-size: 10px; opacity: 0.65;" title="สิทธิ์การแก้ไขเฉพาะเจ้าหน้าที่ จ.${s.province || '-'}"></i>
+                                    </div>
+                                    <button type="button" class="btn-action-detail readonly-btn" title="ดูรายละเอียดบันทึกผล (โหมดอ่านอย่างเดียว)" onclick="window.openCorrectiveDetailModal('${idKey}', true)">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            `}
+                            ${hasDetail ? `
+                                <div style="font-size: 11.5px; color: #0369a1; background: #f0f9ff; border: 1px solid #bae6fd; padding: 4px 8px; border-radius: 6px; line-height: 1.4;">
+                                    <strong><i class="fa-solid fa-clipboard-check"></i> ${curDetail.actionDate ? new Date(curDetail.actionDate).toLocaleDateString('th-TH') : 'บันทึกแล้ว'}:</strong> 
+                                    ${curDetail.notes ? (curDetail.notes.length > 28 ? curDetail.notes.substring(0, 28) + '...' : curDetail.notes) : (curDetail.officer || 'มีการบันทึกข้อมูล')}
+                                </div>
+                            ` : ''}
                         </div>
-                        ${hasDetail ? `
-                            <div style="font-size: 11.5px; color: #0369a1; background: #f0f9ff; border: 1px solid #bae6fd; padding: 4px 8px; border-radius: 6px; line-height: 1.4;">
-                                <strong><i class="fa-solid fa-clipboard-check"></i> ${curDetail.actionDate ? new Date(curDetail.actionDate).toLocaleDateString('th-TH') : 'บันทึกแล้ว'}:</strong> 
-                                ${curDetail.notes ? (curDetail.notes.length > 30 ? curDetail.notes.substring(0, 30) + '...' : curDetail.notes) : (curDetail.officer || 'มีการบันทึกข้อมูล')}
-                            </div>
-                        ` : ''}
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     }
     
     document.getElementById('failedSamplesModal').classList.add('active');
@@ -1967,6 +2084,31 @@ window.getSampleAction = function(identifier) {
 };
 
 window.saveCorrectiveActionDetail = function(identifier, data) {
+    // Find target sample province
+    let targetProv = '';
+    for (const k in window.currentFailedSamples) {
+        if (Array.isArray(window.currentFailedSamples[k])) {
+            const match = window.currentFailedSamples[k].find(s => (s.identifier === identifier || s.code === identifier || (s.name + s.date + s.province) === identifier));
+            if (match) {
+                targetProv = match.province;
+                break;
+            }
+        }
+    }
+
+    if (targetProv && !window.canUserEditSample(targetProv)) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'ไม่มีสิทธิ์บันทึกข้อมูล',
+                text: `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัด หรือ Admin เท่านั้น)`
+            });
+        } else {
+            alert(`ไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv}`);
+        }
+        return false;
+    }
+
     try {
         const actions = window.getStoredCorrectiveActions();
         actions[identifier] = {
@@ -1997,6 +2139,31 @@ window.saveCorrectiveActionDetail = function(identifier, data) {
 };
 
 window.updateSampleAction = function(identifier, newStatus) {
+    // Find target sample province
+    let targetProv = '';
+    for (const k in window.currentFailedSamples) {
+        if (Array.isArray(window.currentFailedSamples[k])) {
+            const match = window.currentFailedSamples[k].find(s => (s.identifier === identifier || s.code === identifier || (s.name + s.date + s.province) === identifier));
+            if (match) {
+                targetProv = match.province;
+                break;
+            }
+        }
+    }
+
+    if (targetProv && !window.canUserEditSample(targetProv)) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'ไม่มีสิทธิ์แก้ไข',
+                text: `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัด หรือ Admin เท่านั้น)`
+            });
+        }
+        const currentSubstanceLabel = document.getElementById('failedSubstanceName')?.innerText || 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐาน';
+        window.openFailedSamplesModal(window.currentFailedModalKey || 'all', currentSubstanceLabel, window.currentFailedModalProvince || 'all');
+        return;
+    }
+
     try {
         const existing = window.getSampleActionDetail(identifier);
         window.saveCorrectiveActionDetail(identifier, {
@@ -2084,7 +2251,7 @@ window.openAllFailedSamplesFollowupModal = function() {
     window.openFailedSamplesModal('all', 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐานทั้งหมด (Closed-Loop Follow-up)');
 };
 
-window.openCorrectiveDetailModal = function(idKey) {
+window.openCorrectiveDetailModal = function(idKey, forceReadOnly) {
     let target = null;
     let foundSubstance = '';
     for (const k in window.currentFailedSamples) {
@@ -2099,6 +2266,9 @@ window.openCorrectiveDetailModal = function(idKey) {
     }
 
     const detail = window.getSampleActionDetail(idKey);
+    const targetProv = target ? (target.province || '') : '';
+    const canEdit = !forceReadOnly && window.canUserEditSample(targetProv);
+
     document.getElementById('cad-target-id').value = idKey;
     document.getElementById('cad-sample-title').innerText = `รหัสตัวอย่าง: ${target ? (target.code || target.identifier) : idKey}`;
     document.getElementById('cad-sample-name').innerText = target ? (target.name || '-') : '-';
@@ -2106,17 +2276,50 @@ window.openCorrectiveDetailModal = function(idKey) {
     document.getElementById('cad-sample-location').innerText = target ? (target.location || target.source || '-') : '-';
     document.getElementById('cad-sample-area').innerText = target ? `อ.${target.district || '-'} จ.${target.province || '-'}` : '-';
 
-    document.getElementById('cad-action-status').value = detail.status || 'pending';
-    document.getElementById('cad-action-date').value = detail.actionDate || new Date().toISOString().split('T')[0];
+    const statusEl = document.getElementById('cad-action-status');
+    const dateEl = document.getElementById('cad-action-date');
+    const officerEl = document.getElementById('cad-action-officer');
+    const notesEl = document.getElementById('cad-action-notes');
+    const radioPending = document.getElementById('cad-radio-pending');
+    const radioClosed = document.getElementById('cad-radio-closed');
+    const readonlyBanner = document.getElementById('cad-readonly-banner');
+    const btnSave = document.getElementById('cad-btn-save');
+
+    if (statusEl) statusEl.value = detail.status || 'pending';
+    if (dateEl) dateEl.value = detail.actionDate || new Date().toISOString().split('T')[0];
     
     const currentUserName = (window.app && window.app.currentUser) ? (window.app.currentUser.fullname || window.app.currentUser.workplace) : '';
-    document.getElementById('cad-action-officer').value = detail.officer || currentUserName || 'กลุ่มงาน คบส. สสจ.';
-    document.getElementById('cad-action-notes').value = detail.notes || '';
+    if (officerEl) officerEl.value = detail.officer || currentUserName || 'กลุ่มงาน คบส. สสจ.';
+    if (notesEl) notesEl.value = detail.notes || '';
 
     if (detail.isClosed) {
-        document.getElementById('cad-radio-closed').checked = true;
+        if (radioClosed) radioClosed.checked = true;
     } else {
-        document.getElementById('cad-radio-pending').checked = true;
+        if (radioPending) radioPending.checked = true;
+    }
+
+    // Toggle Read-Only vs Editable mode
+    if (!canEdit) {
+        if (readonlyBanner) {
+            readonlyBanner.style.display = 'block';
+            readonlyBanner.innerHTML = `<i class="fa-solid fa-lock"></i> <strong>โหมดดูข้อมูลอย่างเดียว:</strong> คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv || '-'} (สิทธิ์การบันทึกแก้ไขเฉพาะเจ้าหน้าที่ผู้รับผิดชอบ จ.${targetProv || '-'} หรือ Admin เท่านั้น)`;
+        }
+        if (btnSave) btnSave.style.display = 'none';
+        if (statusEl) statusEl.disabled = true;
+        if (dateEl) dateEl.disabled = true;
+        if (officerEl) officerEl.disabled = true;
+        if (notesEl) notesEl.disabled = true;
+        if (radioPending) radioPending.disabled = true;
+        if (radioClosed) radioClosed.disabled = true;
+    } else {
+        if (readonlyBanner) readonlyBanner.style.display = 'none';
+        if (btnSave) btnSave.style.display = 'inline-flex';
+        if (statusEl) statusEl.disabled = false;
+        if (dateEl) dateEl.disabled = false;
+        if (officerEl) officerEl.disabled = false;
+        if (notesEl) notesEl.disabled = false;
+        if (radioPending) radioPending.disabled = false;
+        if (radioClosed) radioClosed.disabled = false;
     }
 
     document.getElementById('correctiveActionDetailModal').classList.add('active');
