@@ -1509,10 +1509,14 @@
                                     <span class="action-chip"><span style="color: #dc2626;">🔴 ปรับ/คดี:</span> <strong id="chip-fined-count">0</strong></span>
                                     <span class="action-chip"><span style="color: #059669;">🟢 ตรวจซ้ำผ่าน:</span> <strong id="chip-retest-count">0</strong></span>
                                 </div>
-                                <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+                                <div style="margin-top: 14px; display: flex; justify-content: flex-end; align-items: center;">
                                     <button type="button" class="btn-manage-actions" onclick="window.openAllFailedSamplesFollowupModal()">
-                                        <i class="fa-solid fa-clipboard-check"></i> จัดการและบันทึกติดตามผล (<span id="btn-action-fail-count">0</span> รายการ)
+                                        <i class="fa-solid fa-clipboard-check"></i> <span id="btn-action-label-txt">จัดการและบันทึกติดตามผล</span> (<span id="btn-action-fail-count">0</span> รายการ)
                                     </button>
+                                    <div id="action-all-passed-badge" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #86efac; color: #166534; font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(22, 101, 52, 0.08);">
+                                        <i class="fa-solid fa-circle-check" style="color: #16a34a; font-size: 15px;"></i>
+                                        <span id="action-all-passed-txt">ผลการตรวจผ่านมาตรฐานครบทุกรายการ ไม่พบปัญหาที่ต้องติดตาม</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3606,7 +3610,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793255000000"></script>
+    <script src="charts-dash.js?v=1793268000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -3627,6 +3631,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793156800000"></script>
+    <script src="app_v85.js?v=1793268000000"></script>
 </body>
 </html>
