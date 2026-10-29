@@ -3188,10 +3188,12 @@
                         <span class="input-helper">ใช้สำหรับให้ผู้ยื่นเรื่องติดตามสถานะผ่าน E-Tracking</span>
                     </div>
                     <div class="form-group">
-                        <label for="accept-lab-no">รหัสตรวจวิเคราะห์ (Lab No.) <span class="required">*</span></label>
-                        <input type="text" id="accept-lab-no" required placeholder="เช่น 0001" class="gold-input">
-                        <span class="input-helper">รหัสอัตโนมัติ จะนำไปแสดงในใบรายงานผล และลำดับการตรวจวิเคราะห์</span>
+                        <label for="accept-lab-no">รหัสตรวจวิเคราะห์เริ่มต้น (Lab No.) <span class="required">*</span></label>
+                        <input type="text" id="accept-lab-no" required placeholder="เช่น 0001" class="gold-input" oninput="app.updateAcceptLabNoPreview()">
+                        <span class="input-helper">รหัสอัตโนมัติ จะนำไปแสดงในใบรายงานผล และลำดับการตรวจวิเคราะห์แต่ละรายการ</span>
                     </div>
+                    <!-- Itemized Lab No. Preview -->
+                    <div id="accept-items-labno-preview"></div>
                     <div class="form-group">
                         <label for="accept-receive-date">วันที่ห้องปฏิบัติการรับตัวอย่าง <span class="required">*</span></label>
                         <input type="date" id="accept-receive-date" required>
@@ -3295,8 +3297,8 @@
                             <input type="text" id="analysis-sample-name-display" readonly class="readonly-input">
                         </div>
                         <div class="form-group">
-                            <label>รหัสตัวอย่าง (Lab ID):</label>
-                            <input type="text" id="analysis-lab-id-display" readonly class="readonly-input">
+                            <label>รหัสตัวอย่าง (Lab No. / Lab ID):</label>
+                            <input type="text" id="analysis-lab-id-display" readonly class="readonly-input" style="font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1.5px solid #bae6fd; font-size: 13.5px;">
                         </div>
                     </div>
                     <div class="form-grid">
@@ -3793,6 +3795,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793295000000"></script>
+    <script src="app_v85.js?v=1793297000000"></script>
 </body>
 </html>
