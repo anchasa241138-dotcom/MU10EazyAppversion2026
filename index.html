@@ -1446,18 +1446,18 @@
                                             <i class="fa-solid fa-stopwatch-20" style="color: #0284c7;"></i>
                                             ประสิทธิภาพและระยะเวลาตรวจวิเคราะห์ (TAT & SLA)
                                         </h4>
-                                        <span class="ops-header-sub">เกณฑ์มาตรฐานห้องปฏิบัติการเฉลี่ย 3 วัน (72 ชั่วโมง) นับจากรับตัวอย่างเข้าแลป</span>
+                                        <span class="ops-header-sub">เกณฑ์มาตรฐานห้องปฏิบัติการเฉลี่ย 3 วัน (72 ชั่วโมง) คำนวณจากจำนวนฉบับ (นับจากรับเข้าแลป)</span>
                                     </div>
                                     <span class="pt-status-pill pill-success" style="font-size: 11px;">SLA 72 ชม.</span>
                                 </div>
                                 <div class="ops-stat-tiles">
                                     <div class="ops-tile">
                                         <span class="ops-tile-val" id="tat-avg-days">0.0 วัน</span>
-                                        <span class="ops-tile-lbl">ระยะเวลาเฉลี่ย (TAT)</span>
+                                        <span class="ops-tile-lbl">ระยะเวลาเฉลี่ย (TAT / ฉบับ)</span>
                                     </div>
                                     <div class="ops-tile">
                                         <span class="ops-tile-val" id="tat-sla-rate" style="color: #10b981;">100%</span>
-                                        <span class="ops-tile-lbl">ทันตามกำหนด (On-Time)</span>
+                                        <span class="ops-tile-lbl" id="tat-sla-label">ทันตามกำหนด (On-Time)</span>
                                     </div>
                                     <div class="ops-tile">
                                         <span class="ops-tile-val has-unit" id="tat-overdue-count" style="color: #ef4444;">0.0% <span style="font-size: 13px; font-weight: 600;">(0 ฉบับ)</span></span>
@@ -3336,8 +3336,8 @@
         <div class="modal-card" style="max-width: 920px; width: 95%;">
             <div class="modal-header" style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff;">
                 <div>
-                    <h4 style="color:#fff; margin:0;"><i class="fa-solid fa-clock-rotate-left"></i> ตัวอย่างที่ค้างท่อเกินเกณฑ์มาตรฐาน (> 3 วัน / 72 ชม.)</h4>
-                    <div id="overdueModalSubtitle" style="font-size: 13px; color: #fee2e2; margin-top: 3px;">รายงานตัวอย่างค้างท่อเกินเกณฑ์มาตรฐาน</div>
+                    <h4 style="color:#fff; margin:0;"><i class="fa-solid fa-clock-rotate-left"></i> คำขอตรวจที่ค้างท่อเกินเกณฑ์มาตรฐาน (> 3 วัน / 72 ชม.)</h4>
+                    <div id="overdueModalSubtitle" style="font-size: 13px; color: #fee2e2; margin-top: 3px;">รายงานคำขอตรวจค้างท่อเกินเกณฑ์มาตรฐาน</div>
                 </div>
                 <button class="close-modal-btn" onclick="closeOverdueSamplesModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -3346,7 +3346,7 @@
                     <table style="width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; text-align: left; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
                         <thead style="background: #f1f5f9; position: sticky; top: 0; z-index: 10;">
                             <tr>
-                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">รหัสตัวอย่าง / ชื่อตัวอย่าง</th>
+                                <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">รหัสคำขอ (ฉบับ) / รายการ</th>
                                 <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">วันที่รับเข้าแลป</th>
                                 <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">ระยะเวลาค้าง</th>
                                 <th style="padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 2px solid #cbd5e1;">หน่วยงานที่ส่ง / พื้นที่</th>
@@ -3493,7 +3493,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793245000000"></script>
+    <script src="charts-dash.js?v=1793246000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
