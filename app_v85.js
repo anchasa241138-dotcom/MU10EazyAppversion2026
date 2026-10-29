@@ -3538,26 +3538,87 @@ document.getElementById('formNameTitle').innerText = title;
 
     handleSubstanceChange(idx) {
         const subEl = document.getElementById('analysis-substance-' + idx);
+        const c1Interp = document.getElementById('interp-container-1-' + idx);
+        const c1Result = document.getElementById('result-container-1-' + idx);
         const c2Interp = document.getElementById('interp-container-2-' + idx);
         const c2Result = document.getElementById('result-container-2-' + idx);
         const l1Interp = document.getElementById('label-interp-1-' + idx);
         const l1Result = document.getElementById('label-result-1-' + idx);
         
         if (!subEl) return;
-        if (subEl.value === 'GT และ TM/2') {
+        const val = subEl.value;
+        if (val === 'GT และ TM/2') {
+            if (c1Interp) c1Interp.style.display = 'block';
+            if (c1Result) c1Result.style.display = 'block';
             if (c2Interp) c2Interp.style.display = 'block';
             if (c2Result) c2Result.style.display = 'block';
             if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT kit) <span class="required">*</span>';
             if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์ (GT kit)';
-        } else {
+        } else if (val === 'TM/2') {
+            if (c1Interp) c1Interp.style.display = 'block';
+            if (c1Result) c1Result.style.display = 'block';
             if (c2Interp) c2Interp.style.display = 'none';
             if (c2Result) c2Result.style.display = 'none';
-            if (l1Interp) l1Interp.innerHTML = 'การแปลผล <span class="required">*</span>';
-            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์';
+            if (l1Interp) l1Interp.innerHTML = 'การแปลผล (TM/2 kit) <span class="required">*</span>';
+            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์ (TM/2 kit)';
             const el2 = document.getElementById('analysis-interpretation-2-' + idx);
-            if (el2) { el2.value = ''; this.handleInterpretationChange(idx); }
+            if (el2) { el2.value = ''; }
+        } else if (val === 'GT') {
+            if (c1Interp) c1Interp.style.display = 'block';
+            if (c1Result) c1Result.style.display = 'block';
+            if (c2Interp) c2Interp.style.display = 'none';
+            if (c2Result) c2Result.style.display = 'none';
+            if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT kit) <span class="required">*</span>';
+            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์ (GT kit)';
+            const el2 = document.getElementById('analysis-interpretation-2-' + idx);
+            if (el2) { el2.value = ''; }
+        } else {
+            // Neither selected
+            if (c1Interp) c1Interp.style.display = 'none';
+            if (c1Result) c1Result.style.display = 'none';
+            if (c2Interp) c2Interp.style.display = 'none';
+            if (c2Result) c2Result.style.display = 'none';
+            const el1 = document.getElementById('analysis-interpretation-' + idx);
+            if (el1) el1.value = '';
+            const el2 = document.getElementById('analysis-interpretation-2-' + idx);
+            if (el2) el2.value = '';
         }
         this.handleInterpretationChange(idx);
+    },
+
+    handleSubstancePillChange(idx) {
+        const chkGT = document.querySelector(`.substance-pill-chk[data-idx="${idx}"][value="GT"]`);
+        const chkTM2 = document.querySelector(`.substance-pill-chk[data-idx="${idx}"][value="TM/2"]`);
+        const pillGT = document.getElementById(`pill-gt-${idx}`);
+        const pillTM2 = document.getElementById(`pill-tm2-${idx}`);
+        const hiddenSubEl = document.getElementById(`analysis-substance-${idx}`);
+
+        const isGT = chkGT ? chkGT.checked : false;
+        const isTM2 = chkTM2 ? chkTM2.checked : false;
+
+        if (pillGT) {
+            if (isGT) pillGT.classList.add('active');
+            else pillGT.classList.remove('active');
+        }
+        if (pillTM2) {
+            if (isTM2) pillTM2.classList.add('active');
+            else pillTM2.classList.remove('active');
+        }
+
+        let substanceVal = '';
+        if (isGT && isTM2) {
+            substanceVal = 'GT และ TM/2';
+        } else if (isGT) {
+            substanceVal = 'GT';
+        } else if (isTM2) {
+            substanceVal = 'TM/2';
+        }
+
+        if (hiddenSubEl) {
+            hiddenSubEl.value = substanceVal;
+        }
+
+        this.handleSubstanceChange(idx);
     },
 
     handleInterpretationChange(idx) {
@@ -3647,14 +3708,24 @@ document.getElementById('formNameTitle').innerText = title;
                     <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
                         <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ตัวอย่าง: ${item.name}</h5>
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label>สารที่ตรวจวิเคราะห์ <span class="required">*</span></label>
-                                <select id="analysis-substance-${item.idx}" required onchange="app.handleSubstanceChange(${item.idx})">
-                                    <option value="">-- เลือกสารที่ตรวจ --</option>
-                                    <option value="GT">GT</option>
-                                    <option value="TM/2">TM/2</option>
-                                    <option value="GT และ TM/2">GT และ TM/2</option>
-                                </select>
+                            <div class="form-group" style="margin-bottom: 14px;">
+                                <label style="font-weight: 600; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-vial-circle-check" style="color: #0284c7;"></i> สารที่ตรวจวิเคราะห์ <span class="required" style="color: #ef4444;">*</span>
+                                    <span style="font-size: 12px; font-weight: normal; color: #64748b;">(คลิกปุ่มเพื่อติ๊กเลือก ตรวจได้มากกว่า 1 สาร)</span>
+                                </label>
+                                <div class="substance-pills-selector" id="substance-pills-${item.idx}">
+                                    <label class="substance-pill-btn" id="pill-gt-${item.idx}">
+                                        <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="GT" onchange="app.handleSubstancePillChange(${item.idx})">
+                                        <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
+                                        <span class="pill-label-text"><strong>GT</strong></span>
+                                    </label>
+                                    <label class="substance-pill-btn" id="pill-tm2-${item.idx}">
+                                        <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="TM/2" onchange="app.handleSubstancePillChange(${item.idx})">
+                                        <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
+                                        <span class="pill-label-text"><strong>TM/2</strong></span>
+                                    </label>
+                                    <input type="hidden" id="analysis-substance-${item.idx}" name="analysis_substance_${item.idx}" value="">
+                                </div>
                             </div>
                         </div>
                         <div class="form-grid">
@@ -3713,8 +3784,24 @@ document.getElementById('formNameTitle').innerText = title;
             // Pre-fill saved values
             sampleNames.forEach(item => {
                 const sub = sample['analysis_substance_' + item.idx] || sample.analysis_substance;
-                if (sub) document.getElementById('analysis-substance-' + item.idx).value = sub;
-                
+                if (sub) {
+                    const hiddenSubEl = document.getElementById('analysis-substance-' + item.idx);
+                    if (hiddenSubEl) hiddenSubEl.value = sub;
+
+                    const chkGT = document.querySelector(`.substance-pill-chk[data-idx="${item.idx}"][value="GT"]`);
+                    const chkTM2 = document.querySelector(`.substance-pill-chk[data-idx="${item.idx}"][value="TM/2"]`);
+                    const pillGT = document.getElementById(`pill-gt-${item.idx}`);
+                    const pillTM2 = document.getElementById(`pill-tm2-${item.idx}`);
+
+                    if (sub.includes('GT') && chkGT) {
+                        chkGT.checked = true;
+                        if (pillGT) pillGT.classList.add('active');
+                    }
+                    if (sub.includes('TM/2') && chkTM2) {
+                        chkTM2.checked = true;
+                        if (pillTM2) pillTM2.classList.add('active');
+                    }
+                }
                 
                 app.handleSubstanceChange(item.idx);
                 
@@ -4493,6 +4580,34 @@ document.getElementById('formNameTitle').innerText = title;
             
             // Save MU.10-001 specific fields
             if (sample.form_type === 'MU.10-001') {
+                let missingSubName = null;
+                let vIdx = 1;
+                while (sample['sample_name_' + vIdx] !== undefined && vIdx <= 50) {
+                    if (sample['sample_name_' + vIdx] && sample['item_status_' + vIdx] !== 'rejected') {
+                        const val = document.getElementById('analysis-substance-' + vIdx)?.value;
+                        if (!val) {
+                            missingSubName = sample['sample_name_' + vIdx];
+                            break;
+                        }
+                    }
+                    vIdx++;
+                }
+                if (!missingSubName && sample.sample_name && !document.getElementById('analysis-substance-1')?.value) {
+                    missingSubName = sample.sample_name;
+                }
+                if (missingSubName) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'กรุณาติ๊กเลือกสารที่ตรวจวิเคราะห์',
+                            text: `โปรดคลิกติ๊กเลือกสารที่ตรวจ (GT หรือ TM/2) สำหรับ "${missingSubName}"`
+                        });
+                    } else {
+                        alert(`โปรดคลิกติ๊กเลือกสารที่ตรวจ (GT หรือ TM/2) สำหรับ "${missingSubName}"`);
+                    }
+                    return;
+                }
+
                 let passCount = 0;
                 let totalCount = 0;
                 let idx = 1;
