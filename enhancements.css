@@ -6138,6 +6138,20 @@ body.manage-users-view-active #currentViewTitle {
   margin-bottom: 2px;
 }
 
+.ops-tile-val.has-unit {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ops-tile-val.has-unit .unit-sub {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
 .ops-tile-lbl {
   font-size: 11.5px;
   color: #64748b;
