@@ -996,6 +996,7 @@ function updateSafetyRankings(stats) {
 
 // Global functions for modal
 window.openFailedSamplesModal = function(key, label) {
+    window.currentFailedModalKey = key;
     document.getElementById('failedSubstanceName').innerText = label;
     const tbody = document.getElementById('failedSamplesTableBody');
     tbody.innerHTML = '';
@@ -1097,7 +1098,9 @@ window.openFailedSamplesModal = function(key, label) {
             tr.onmouseout = () => tr.style.backgroundColor = rowBg;
 
             const idKey = s.identifier || s.code || (s.name + s.date + s.province);
-            const curAction = window.getSampleAction ? window.getSampleAction(idKey) : 'pending';
+            const curDetail = window.getSampleActionDetail ? window.getSampleActionDetail(idKey) : { status: 'pending' };
+            const curAction = curDetail.status || 'pending';
+            const hasDetail = Boolean(curDetail.notes || curDetail.actionDate || curDetail.officer);
 
             tr.innerHTML = `
                 <td style="padding: 12px 14px;">
@@ -1119,13 +1122,26 @@ window.openFailedSamplesModal = function(key, label) {
                     </span>
                 </td>
                 <td style="padding: 12px 14px;">
-                    <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;">
-                        <option value="pending" ${curAction === 'pending' ? 'selected' : ''}>🟡 อยู่ระหว่างติดตาม</option>
-                        <option value="warned" ${curAction === 'warned' ? 'selected' : ''}>🔵 ตักเตือน/แนะนำ</option>
-                        <option value="seized" ${curAction === 'seized' ? 'selected' : ''}>🟠 อายัด/ทำลายสินค้า</option>
-                        <option value="fined" ${curAction === 'fined' ? 'selected' : ''}>🔴 ดำเนินคดี/เปรียบเทียบปรับ</option>
-                        <option value="retested_passed" ${curAction === 'retested_passed' ? 'selected' : ''}>🟢 สุ่มตรวจซ้ำรอบ 2 ผ่าน</option>
-                    </select>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;" style="flex: 1;">
+                                <option value="pending" ${curAction === 'pending' ? 'selected' : ''}>🟡 อยู่ระหว่างติดตาม</option>
+                                <option value="warned" ${curAction === 'warned' ? 'selected' : ''}>🔵 ตักเตือน/แนะนำ</option>
+                                <option value="seized" ${curAction === 'seized' ? 'selected' : ''}>🟠 อายัด/ทำลายสินค้า</option>
+                                <option value="fined" ${curAction === 'fined' ? 'selected' : ''}>🔴 ดำเนินคดี/ปรับ</option>
+                                <option value="retested_passed" ${curAction === 'retested_passed' ? 'selected' : ''}>🟢 สุ่มตรวจซ้ำผ่าน</option>
+                            </select>
+                            <button type="button" class="btn-action-detail" title="บันทึกรายละเอียดการติดตามผล" onclick="window.openCorrectiveDetailModal('${idKey}')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </div>
+                        ${hasDetail ? `
+                            <div style="font-size: 11.5px; color: #0369a1; background: #f0f9ff; border: 1px solid #bae6fd; padding: 4px 8px; border-radius: 6px; line-height: 1.4;">
+                                <strong><i class="fa-solid fa-clipboard-check"></i> ${curDetail.actionDate ? new Date(curDetail.actionDate).toLocaleDateString('th-TH') : 'บันทึกแล้ว'}:</strong> 
+                                ${curDetail.notes ? (curDetail.notes.length > 30 ? curDetail.notes.substring(0, 30) + '...' : curDetail.notes) : (curDetail.officer || 'มีการบันทึกข้อมูล')}
+                            </div>
+                        ` : ''}
+                    </div>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -1919,19 +1935,77 @@ window.getStoredCorrectiveActions = function() {
     }
 };
 
-window.getSampleAction = function(identifier) {
+window.getSampleActionDetail = function(identifier) {
     const actions = window.getStoredCorrectiveActions();
-    return actions[identifier] || 'pending';
+    const item = actions[identifier];
+    if (!item) {
+        return {
+            status: 'pending',
+            actionDate: '',
+            officer: '',
+            notes: '',
+            isClosed: false,
+            updatedAt: null
+        };
+    }
+    if (typeof item === 'string') {
+        return {
+            status: item,
+            actionDate: '',
+            officer: '',
+            notes: '',
+            isClosed: item !== 'pending',
+            updatedAt: null
+        };
+    }
+    return item;
+};
+
+window.getSampleAction = function(identifier) {
+    const detail = window.getSampleActionDetail(identifier);
+    return detail.status || 'pending';
+};
+
+window.saveCorrectiveActionDetail = function(identifier, data) {
+    try {
+        const actions = window.getStoredCorrectiveActions();
+        actions[identifier] = {
+            status: data.status || 'pending',
+            actionDate: data.actionDate || new Date().toISOString().split('T')[0],
+            officer: data.officer || '',
+            notes: data.notes || '',
+            isClosed: Boolean(data.isClosed),
+            updatedAt: new Date().toISOString(),
+            updatedBy: (window.app && window.app.currentUser) ? window.app.currentUser.fullname : 'ผู้รับผิดชอบ'
+        };
+        localStorage.setItem('sskmoph_corrective_actions', JSON.stringify(actions));
+        // Sync with Firebase if available
+        if (typeof db !== 'undefined' && db.ref) {
+            try { 
+                const cleanKey = identifier.replace(/[.#$/[\]]/g, '_');
+                db.ref('corrective_actions/' + cleanKey).set(actions[identifier]); 
+            } catch(e){}
+        }
+        if (window.currentCachedSamples) {
+            updateCorrectiveActionGovernance(window.currentCachedSamples);
+        }
+        return true;
+    } catch(e) {
+        console.error('Error saving action detail:', e);
+        return false;
+    }
 };
 
 window.updateSampleAction = function(identifier, newStatus) {
     try {
-        const actions = window.getStoredCorrectiveActions();
-        actions[identifier] = newStatus;
-        localStorage.setItem('sskmoph_corrective_actions', JSON.stringify(actions));
-        if (window.currentCachedSamples) {
-            updateCorrectiveActionGovernance(window.currentCachedSamples);
-        }
+        const existing = window.getSampleActionDetail(identifier);
+        window.saveCorrectiveActionDetail(identifier, {
+            status: newStatus,
+            actionDate: existing.actionDate || new Date().toISOString().split('T')[0],
+            officer: existing.officer || ((window.app && window.app.currentUser) ? window.app.currentUser.fullname : ''),
+            notes: existing.notes || '',
+            isClosed: newStatus !== 'pending'
+        });
     } catch(e) {
         console.error('Error saving action status:', e);
     }
@@ -1961,7 +2035,13 @@ function updateCorrectiveActionGovernance(samples) {
     };
 
     allFailedIdentifiers.forEach(id => {
-        const st = actions[id] || 'pending';
+        const item = actions[id];
+        let st = 'pending';
+        if (typeof item === 'string') {
+            st = item;
+        } else if (item && typeof item === 'object') {
+            st = item.status || 'pending';
+        }
         if (counts[st] !== undefined) counts[st]++;
         else counts.pending++;
     });
@@ -1974,10 +2054,12 @@ function updateCorrectiveActionGovernance(samples) {
     const closedEl = document.getElementById('action-closed-pct');
     const pendEl = document.getElementById('action-pending-pct');
     const barEl = document.getElementById('action-closed-bar');
+    const btnFailCount = document.getElementById('btn-action-fail-count');
 
     if (failEl) failEl.innerText = totalFailed;
     if (closedEl) closedEl.innerText = `${closedPct}%`;
     if (pendEl) pendEl.innerText = `${pendingPct}%`;
+    if (btnFailCount) btnFailCount.innerText = totalFailed;
     if (barEl) {
         barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
     }
@@ -1995,6 +2077,100 @@ function updateCorrectiveActionGovernance(samples) {
     if (cRetest) cRetest.innerText = counts.retested_passed;
 }
 window.updateCorrectiveActionGovernance = updateCorrectiveActionGovernance;
+
+// Follow-up Actions Modal & Form Handlers
+window.openAllFailedSamplesFollowupModal = function() {
+    window.currentFailedModalKey = 'all';
+    window.openFailedSamplesModal('all', 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐานทั้งหมด (Closed-Loop Follow-up)');
+};
+
+window.openCorrectiveDetailModal = function(idKey) {
+    let target = null;
+    let foundSubstance = '';
+    for (const k in window.currentFailedSamples) {
+        if (Array.isArray(window.currentFailedSamples[k])) {
+            const match = window.currentFailedSamples[k].find(s => (s.identifier === idKey || s.code === idKey || (s.name + s.date + s.province) === idKey));
+            if (match) {
+                target = match;
+                foundSubstance = (window.substanceDictionary && window.substanceDictionary[k]) ? window.substanceDictionary[k].label : k;
+                break;
+            }
+        }
+    }
+
+    const detail = window.getSampleActionDetail(idKey);
+    document.getElementById('cad-target-id').value = idKey;
+    document.getElementById('cad-sample-title').innerText = `รหัสตัวอย่าง: ${target ? (target.code || target.identifier) : idKey}`;
+    document.getElementById('cad-sample-name').innerText = target ? (target.name || '-') : '-';
+    document.getElementById('cad-substance-fail').innerText = foundSubstance || 'ไม่ผ่านมาตรฐาน';
+    document.getElementById('cad-sample-location').innerText = target ? (target.location || target.source || '-') : '-';
+    document.getElementById('cad-sample-area').innerText = target ? `อ.${target.district || '-'} จ.${target.province || '-'}` : '-';
+
+    document.getElementById('cad-action-status').value = detail.status || 'pending';
+    document.getElementById('cad-action-date').value = detail.actionDate || new Date().toISOString().split('T')[0];
+    
+    const currentUserName = (window.app && window.app.currentUser) ? (window.app.currentUser.fullname || window.app.currentUser.workplace) : '';
+    document.getElementById('cad-action-officer').value = detail.officer || currentUserName || 'กลุ่มงาน คบส. สสจ.';
+    document.getElementById('cad-action-notes').value = detail.notes || '';
+
+    if (detail.isClosed) {
+        document.getElementById('cad-radio-closed').checked = true;
+    } else {
+        document.getElementById('cad-radio-pending').checked = true;
+    }
+
+    document.getElementById('correctiveActionDetailModal').classList.add('active');
+};
+
+window.closeCorrectiveActionDetailModal = function() {
+    document.getElementById('correctiveActionDetailModal').classList.remove('active');
+};
+
+window.onCorrectiveStatusChange = function(status) {
+    if (status !== 'pending') {
+        document.getElementById('cad-radio-closed').checked = true;
+    } else {
+        document.getElementById('cad-radio-pending').checked = true;
+    }
+};
+
+window.submitCorrectiveActionForm = function(e) {
+    e.preventDefault();
+    const idKey = document.getElementById('cad-target-id').value;
+    if (!idKey) return;
+
+    const status = document.getElementById('cad-action-status').value;
+    const actionDate = document.getElementById('cad-action-date').value;
+    const officer = document.getElementById('cad-action-officer').value;
+    const notes = document.getElementById('cad-action-notes').value;
+    const isClosed = document.querySelector('input[name="cad_is_closed"]:checked')?.value === 'true';
+
+    window.saveCorrectiveActionDetail(idKey, {
+        status: status,
+        actionDate: actionDate,
+        officer: officer,
+        notes: notes,
+        isClosed: isClosed
+    });
+
+    window.closeCorrectiveActionDetailModal();
+
+    // Re-render failed samples modal if open
+    const currentSubstanceLabel = document.getElementById('failedSubstanceName')?.innerText || '';
+    if (document.getElementById('failedSamplesModal').classList.contains('active')) {
+        window.openFailedSamplesModal(window.currentFailedModalKey || 'all', currentSubstanceLabel || 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐาน');
+    }
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'success',
+            title: 'บันทึกผลการติดตามสำเร็จ',
+            text: 'ข้อมูลการจัดการปัญหาถูกบันทึกและซิงค์กับแดชบอร์ดเรียบร้อยแล้ว',
+            timer: 1600,
+            showConfirmButton: false
+        });
+    }
+};
 
 
 // 4. LOCATION RISK & HIGH-RISK FOOD MATRIX (มิติที่ 4)
