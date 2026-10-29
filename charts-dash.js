@@ -2219,10 +2219,6 @@ function updateCorrectiveActionGovernance(samples) {
         else counts.pending++;
     });
 
-    const closedCount = counts.warned + counts.seized + counts.fined + counts.retested_passed;
-    const closedPct = totalFailed > 0 ? ((closedCount / totalFailed) * 100).toFixed(1) : '100.0';
-    const pendingPct = totalFailed > 0 ? ((counts.pending / totalFailed) * 100).toFixed(1) : '0.0';
-
     const failEl = document.getElementById('action-total-fail');
     const closedEl = document.getElementById('action-closed-pct');
     const pendEl = document.getElementById('action-pending-pct');
@@ -2236,14 +2232,18 @@ function updateCorrectiveActionGovernance(samples) {
     const filterEl = document.getElementById('dashProvinceFilter');
     const activeProv = (filterEl && filterEl.value !== 'all') ? filterEl.value : '';
 
-    if (failEl) failEl.innerText = totalFailed;
-    if (closedEl) closedEl.innerText = `${closedPct}%`;
-    if (pendEl) pendEl.innerText = `${pendingPct}%`;
-    if (barEl) {
-        barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
-    }
-
     if (totalFailed > 0) {
+        const closedCount = counts.warned + counts.seized + counts.fined + counts.retested_passed;
+        const closedPct = ((closedCount / totalFailed) * 100).toFixed(1);
+        const pendingPct = ((counts.pending / totalFailed) * 100).toFixed(1);
+
+        if (failEl) failEl.innerText = totalFailed;
+        if (closedEl) closedEl.innerText = `${closedPct}%`;
+        if (pendEl) pendEl.innerText = `${pendingPct}%`;
+        if (barEl) {
+            barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
+        }
+
         if (btnManage) btnManage.style.display = 'inline-flex';
         if (badgeAllPassed) badgeAllPassed.style.display = 'none';
         if (btnFailCount) btnFailCount.innerText = totalFailed;
@@ -2251,6 +2251,11 @@ function updateCorrectiveActionGovernance(samples) {
             btnActionLabelTxt.innerText = activeProv ? `จัดการและบันทึกติดตามผล จ.${activeProv}` : 'จัดการและบันทึกติดตามผล';
         }
     } else {
+        if (failEl) failEl.innerText = '0';
+        if (closedEl) closedEl.innerText = '-';
+        if (pendEl) pendEl.innerText = '-';
+        if (barEl) barEl.style.width = '0%';
+
         if (btnManage) btnManage.style.display = 'none';
         if (badgeAllPassed) {
             badgeAllPassed.style.display = 'inline-flex';
@@ -2734,21 +2739,29 @@ window.renderFollowupPageView = function(provinceFilter) {
         else counts.pending++;
     });
 
-    const closedCount = counts.warned + counts.seized + counts.fined + counts.retested_passed;
-    const closedPct = totalFailed > 0 ? ((closedCount / totalFailed) * 100).toFixed(1) : '100.0';
-    const pendingPct = totalFailed > 0 ? ((counts.pending / totalFailed) * 100).toFixed(1) : '0.0';
-
     const kpiTotal = document.getElementById('fp-kpi-total');
     const kpiClosed = document.getElementById('fp-kpi-closed-pct');
     const kpiPend = document.getElementById('fp-kpi-pending-pct');
     const progLbl = document.getElementById('fp-progress-lbl');
     const barEl = document.getElementById('fp-closed-bar');
 
-    if (kpiTotal) kpiTotal.innerText = totalFailed;
-    if (kpiClosed) kpiClosed.innerText = `${closedPct}%`;
-    if (kpiPend) kpiPend.innerText = `${pendingPct}%`;
-    if (progLbl) progLbl.innerText = `${closedPct}% เสร็จสิ้น (${closedCount}/${totalFailed} รายการ)`;
-    if (barEl) barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
+    if (totalFailed > 0) {
+        const closedCount = counts.warned + counts.seized + counts.fined + counts.retested_passed;
+        const closedPct = ((closedCount / totalFailed) * 100).toFixed(1);
+        const pendingPct = ((counts.pending / totalFailed) * 100).toFixed(1);
+
+        if (kpiTotal) kpiTotal.innerText = totalFailed;
+        if (kpiClosed) kpiClosed.innerText = `${closedPct}%`;
+        if (kpiPend) kpiPend.innerText = `${pendingPct}%`;
+        if (progLbl) progLbl.innerText = `${closedPct}% เสร็จสิ้น (${closedCount}/${totalFailed} รายการ)`;
+        if (barEl) barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
+    } else {
+        if (kpiTotal) kpiTotal.innerText = '0';
+        if (kpiClosed) kpiClosed.innerText = '-';
+        if (kpiPend) kpiPend.innerText = '-';
+        if (progLbl) progLbl.innerText = 'ผลการตรวจผ่านมาตรฐานครบ 100% (ไม่พบปัญหาที่ต้องติดตามแก้ไข)';
+        if (barEl) barEl.style.width = '0%';
+    }
 
     const cPend = document.getElementById('fp-chip-pending');
     const cWarn = document.getElementById('fp-chip-warned');
