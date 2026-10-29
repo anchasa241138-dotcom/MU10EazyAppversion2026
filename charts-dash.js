@@ -1815,6 +1815,12 @@ function updateTurnaroundTimeSLA(samples) {
         rateEl.innerText = slaRate;
         rateEl.style.color = parseFloat(slaRate) >= 90 ? '#10b981' : '#f59e0b';
     }
+    const slaLabelEl = document.getElementById('tat-sla-label');
+    if (slaLabelEl) {
+        slaLabelEl.innerHTML = completedCount > 0 
+            ? `ทันตามกำหนด <span style="font-size: 11px; opacity: 0.85;">(${withinSLACount}/${completedCount} ฉบับ)</span>`
+            : 'ทันตามกำหนด (On-Time)';
+    }
     if (overdueEl) {
         if (overdueCount > 0) {
             overdueEl.innerHTML = `<span>${overduePct}</span> <span class="unit-sub">(${overdueCount} ฉบับ)</span>`;
@@ -1829,16 +1835,16 @@ function updateTurnaroundTimeSLA(samples) {
         if (overdueCount > 0) {
             alertContainer.innerHTML = `
                 <div class="ops-alert-banner alert-danger">
-                    <span><i class="fa-solid fa-triangle-exclamation"></i> พบตัวอย่างที่รอนานเกิน 3 วัน (ค้างท่อ) จำนวน <strong>${overdueCount} ฉบับ</strong> (คิดเป็น <strong>${overduePct}</strong>)</span>
+                    <span><i class="fa-solid fa-triangle-exclamation"></i> พบคำขอตรวจที่รอนานเกิน 3 วัน (ค้างท่อ) จำนวน <strong>${overdueCount} ฉบับ</strong> (คิดเป็น <strong>${overduePct}</strong>)</span>
                     <button type="button" class="btn-view-overdue" onclick="window.openOverdueSamplesModal()">
-                        <i class="fa-solid fa-magnifying-glass"></i> ดูตัวอย่างค้างท่อ (${overdueCount} ฉบับ)
+                        <i class="fa-solid fa-magnifying-glass"></i> ดูคำขอค้างท่อ (${overdueCount} ฉบับ)
                     </button>
                 </div>
             `;
         } else {
             alertContainer.innerHTML = `
                 <div class="ops-alert-banner alert-success">
-                    <span><i class="fa-solid fa-circle-check"></i> ตัวอย่างทั้งหมดตรวจเสร็จทันตามเกณฑ์มาตรฐาน 3 วัน (ไม่พบค้างท่อ 0.0%)</span>
+                    <span><i class="fa-solid fa-circle-check"></i> คำขอตรวจทุกฉบับตรวจเสร็จทันตามเกณฑ์มาตรฐาน 3 วัน (ไม่พบค้างท่อ 0.0%)</span>
                 </div>
             `;
         }
@@ -1854,10 +1860,10 @@ window.openOverdueSamplesModal = function() {
     const list = window.currentOverdueSamples || [];
     const modalSubtitle = document.getElementById('overdueModalSubtitle');
     if (modalSubtitle) {
-        modalSubtitle.innerHTML = `รายการตัวอย่างที่รอนานเกิน 3 วัน (72 ชม.) จำนวน <strong>${list.length} ฉบับ</strong> (${window.currentOverduePct || '0.0%'})`;
+        modalSubtitle.innerHTML = `รายการคำขอตรวจที่รอนานเกิน 3 วัน (72 ชม.) จำนวน <strong>${list.length} ฉบับ</strong> (${window.currentOverduePct || '0.0%'})`;
     }
     if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #10b981;"><i class="fa-solid fa-circle-check"></i> ไม่พบตัวอย่างค้างท่อเกินเกณฑ์มาตรฐาน 3 วัน</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #10b981;"><i class="fa-solid fa-circle-check"></i> ไม่พบคำขอตรวจค้างท่อเกินเกณฑ์มาตรฐาน 3 วัน</td></tr>';
     } else {
         list.forEach((s, idx) => {
             const tr = document.createElement('tr');
