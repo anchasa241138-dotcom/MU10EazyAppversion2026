@@ -6705,35 +6705,37 @@ body.manage-users-view-active #currentViewTitle {
    Substance Pill Checkbox Buttons (MU.10-001 Analysis) - Modern Card Style
    ========================================================================== */
 .substance-pills-selector {
-  display: flex;
-  align-items: stretch;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-top: 6px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin-top: 4px !important;
+  width: 100% !important;
 }
 
 .substance-pill-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 22px;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 2px solid #e2e8f0;
-  color: #1e293b;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  min-width: 175px;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 7px 16px !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  user-select: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+  min-width: 135px !important;
 }
 
 .substance-pill-btn:hover {
-  border-color: #38bdf8;
-  background: #f8fafc;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.1);
+  border-color: #38bdf8 !important;
+  background: #f8fafc !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(2, 132, 199, 0.1) !important;
 }
 
 .substance-pill-chk {
@@ -6745,57 +6747,57 @@ body.manage-users-view-active #currentViewTitle {
 }
 
 .substance-pill-btn .pill-check-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 2px solid #cbd5e1;
-  background: #f8fafc;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 900;
-  color: transparent;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background: #f8fafc !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  color: transparent !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  flex-shrink: 0 !important;
 }
 
 .substance-pill-btn .pill-text-block {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.25;
+  display: flex !important;
+  flex-direction: column !important;
+  line-height: 1.2 !important;
 }
 
 .substance-pill-btn .pill-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: 0.3px;
-  transition: color 0.2s ease;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: 0.2px !important;
+  transition: color 0.2s ease !important;
 }
 
 .substance-pill-btn .pill-sub {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 500;
-  margin-top: 2px;
-  transition: color 0.2s ease;
+  font-size: 11px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+  margin-top: 1px !important;
+  transition: color 0.2s ease !important;
 }
 
 /* Active / Checked State */
 .substance-pill-btn.active {
-  border-color: #0284c7;
+  border-color: #0284c7 !important;
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28) !important;
+  transform: translateY(-1px) !important;
 }
 
 .substance-pill-btn.active .pill-check-icon {
   background: #ffffff !important;
   border-color: #ffffff !important;
   color: #0284c7 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
 }
 
 .substance-pill-btn.active .pill-title {
