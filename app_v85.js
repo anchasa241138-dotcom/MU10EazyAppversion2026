@@ -3708,21 +3708,32 @@ document.getElementById('formNameTitle').innerText = title;
                     <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
                         <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ตัวอย่าง: ${item.name}</h5>
                         <div class="form-grid">
-                            <div class="form-group" style="margin-bottom: 14px;">
-                                <label style="font-weight: 600; color: #1e293b; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                                    <i class="fa-solid fa-vial-circle-check" style="color: #0284c7;"></i> สารที่ตรวจวิเคราะห์ <span class="required" style="color: #ef4444;">*</span>
-                                    <span style="font-size: 12px; font-weight: normal; color: #64748b;">(คลิกปุ่มเพื่อติ๊กเลือก ตรวจได้มากกว่า 1 สาร)</span>
+                            <div class="form-group" style="margin-bottom: 16px;">
+                                <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                                    <span>
+                                        <i class="fa-solid fa-flask-vial" style="color: #0284c7; margin-right: 6px;"></i>
+                                        <strong>สารที่ตรวจวิเคราะห์</strong> <span class="required" style="color: #ef4444;">*</span>
+                                    </span>
+                                    <span style="font-size: 12px; font-weight: normal; color: #64748b; background: #f1f5f9; padding: 3px 10px; border-radius: 9999px;">
+                                        <i class="fa-solid fa-hand-pointer" style="font-size: 11px; color: #0284c7;"></i> ติ๊กเลือกได้มากกว่า 1 สาร
+                                    </span>
                                 </label>
                                 <div class="substance-pills-selector" id="substance-pills-${item.idx}">
                                     <label class="substance-pill-btn" id="pill-gt-${item.idx}">
                                         <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="GT" onchange="app.handleSubstancePillChange(${item.idx})">
                                         <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
-                                        <span class="pill-label-text"><strong>GT</strong></span>
+                                        <div class="pill-text-block">
+                                            <span class="pill-title">GT Kit</span>
+                                            <span class="pill-sub">ชุดทดสอบ จีที</span>
+                                        </div>
                                     </label>
                                     <label class="substance-pill-btn" id="pill-tm2-${item.idx}">
                                         <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="TM/2" onchange="app.handleSubstancePillChange(${item.idx})">
                                         <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
-                                        <span class="pill-label-text"><strong>TM/2</strong></span>
+                                        <div class="pill-text-block">
+                                            <span class="pill-title">TM/2 Kit</span>
+                                            <span class="pill-sub">ชุดทดสอบ ทีเอ็ม/2</span>
+                                        </div>
                                     </label>
                                     <input type="hidden" id="analysis-substance-${item.idx}" name="analysis_substance_${item.idx}" value="">
                                 </div>
