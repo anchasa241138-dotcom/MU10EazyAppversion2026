@@ -2131,6 +2131,12 @@ window.saveCorrectiveActionDetail = function(identifier, data) {
         if (window.currentCachedSamples) {
             updateCorrectiveActionGovernance(window.currentCachedSamples);
         }
+        if (typeof window.renderFollowupPageView === 'function') {
+            window.renderFollowupPageView();
+        }
+        if (window.app && typeof window.app.updateBadges === 'function') {
+            window.app.updateBadges();
+        }
         return true;
     } catch(e) {
         console.error('Error saving action detail:', e);
@@ -2554,3 +2560,342 @@ function updateLocationRiskAndFoodMatrix(samples) {
     }
 }
 window.updateLocationRiskAndFoodMatrix = updateLocationRiskAndFoodMatrix;
+
+// ==========================================================================
+// Dedicated Follow-up Tracking View Logic (Closed-Loop Governance)
+// ==========================================================================
+
+window.followupCurrentProvince = 'all';
+
+window.getCompiledFailedSamples = function() {
+    let allList = [];
+    const substanceLabels = {
+        'pesticide': 'ยาฆ่าแมลง',
+        'borax': 'สารบอแรกซ์',
+        'formalin': 'สารฟอร์มาลิน',
+        'bleach': 'สารฟอกขาว',
+        'salicylic': 'สารกันรา',
+        'agonist': 'สารเร่งเนื้อแดง',
+        'polar': 'สารโพลาร์ในน้ำมันทอด',
+        'coliformFood': 'โคลิฟอร์มในอาหาร',
+        'coliformWater': 'โคลิฟอร์มในน้ำ'
+    };
+
+    for (const subKey in window.currentFailedSamples) {
+        if (subKey !== 'all' && Array.isArray(window.currentFailedSamples[subKey])) {
+            window.currentFailedSamples[subKey].forEach(s => {
+                const identifier = s.identifier || s.code || (s.name + s.date + s.province);
+                let existing = allList.find(x => x.identifier === identifier);
+                const label = substanceLabels[subKey] || subKey;
+                if (!existing) {
+                    existing = {
+                        ...s,
+                        identifier: identifier,
+                        substances: [label],
+                        substanceKeys: [subKey]
+                    };
+                    allList.push(existing);
+                } else {
+                    if (!existing.substances.includes(label)) {
+                        existing.substances.push(label);
+                        existing.substanceKeys.push(subKey);
+                    }
+                }
+            });
+        }
+    }
+    return allList;
+};
+
+window.setFollowupProvince = function(prov) {
+    window.followupCurrentProvince = prov || 'all';
+    document.querySelectorAll('#followupProvinceTabs .prov-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-prov') === window.followupCurrentProvince) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    window.renderFollowupPageView(window.followupCurrentProvince);
+};
+
+window.handleFollowupFilterChange = function() {
+    window.renderFollowupTable();
+};
+
+window.navigateToFollowupPage = function(targetProv) {
+    const filterEl = document.getElementById('dashProvinceFilter');
+    const prov = targetProv || (filterEl && filterEl.value !== 'all' ? filterEl.value : null) || window.getCurrentUserProvince() || 'all';
+    if (window.app && typeof window.app.switchView === 'function') {
+        window.app.switchView('followup');
+    }
+    window.setFollowupProvince(prov);
+};
+
+window.openAllFailedSamplesFollowupModal = function(provinceFilter) {
+    window.navigateToFollowupPage(provinceFilter);
+};
+
+window.getPendingFollowupCount = function() {
+    const actions = window.getStoredCorrectiveActions();
+    let count = 0;
+    const all = window.getCompiledFailedSamples();
+    const uProv = window.getCurrentUserProvince();
+    all.forEach(s => {
+        if (uProv === 'all' || s.province === uProv) {
+            const item = actions[s.identifier];
+            let st = 'pending';
+            if (typeof item === 'string') st = item;
+            else if (item && typeof item === 'object') st = item.status || 'pending';
+            if (st === 'pending') count++;
+        }
+    });
+    return count;
+};
+
+window.renderFollowupPageView = function(provinceFilter) {
+    // Ensure failed samples are populated from dataset
+    const hasData = Object.keys(window.currentFailedSamples || {}).some(k => Array.isArray(window.currentFailedSamples[k]) && window.currentFailedSamples[k].length > 0);
+    if (!hasData && window.app && Array.isArray(window.app.samples) && window.app.samples.length > 0) {
+        if (typeof window.updateSubstanceCharts === 'function') {
+            window.updateSubstanceCharts(window.app.samples);
+        }
+    }
+
+    if (provinceFilter !== undefined && provinceFilter !== null) {
+        window.followupCurrentProvince = provinceFilter;
+    } else if (!window.followupCurrentProvince || window.followupCurrentProvince === 'all') {
+        const uProv = window.getCurrentUserProvince();
+        if (uProv && uProv !== 'all') {
+            window.followupCurrentProvince = uProv;
+        }
+    }
+    const activeProv = window.followupCurrentProvince || 'all';
+
+    // Update active tab UI
+    document.querySelectorAll('#followupProvinceTabs .prov-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-prov') === activeProv) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Update Permission Note Banner
+    const user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+    const permBannerTxt = document.getElementById('followup-perm-txt');
+    if (permBannerTxt) {
+        if (user && (user.role === 'admin' || user.role === 'lab')) {
+            permBannerTxt.innerHTML = `<strong>สิทธิ์ผู้ดูแลระบบ (Admin)</strong>: สามารถจัดการและบันทึกติดตามผลได้ทุกจังหวัด`;
+        } else {
+            const uProv = window.getCurrentUserProvince();
+            if (uProv && uProv !== 'all') {
+                permBannerTxt.innerHTML = `<strong>สิทธิ์ประจำ จ.${uProv}</strong>: สามารถบันทึกและแก้ไขข้อมูลได้เฉพาะ จ.${uProv} (จังหวัดอื่นอ่านอย่างเดียว)`;
+            } else {
+                permBannerTxt.innerHTML = `ตรวจสิทธิ์ตามพื้นที่ผู้ใช้งาน`;
+            }
+        }
+    }
+
+    const allSamples = window.getCompiledFailedSamples();
+    const actions = window.getStoredCorrectiveActions();
+
+    // Update tab count badges
+    const provCounts = { all: allSamples.length, 'อุบลราชธานี': 0, 'ศรีสะเกษ': 0, 'ยโสธร': 0, 'อำนาจเจริญ': 0, 'มุกดาหาร': 0 };
+    allSamples.forEach(s => {
+        if (provCounts[s.province] !== undefined) {
+            provCounts[s.province]++;
+        }
+    });
+    const tbAll = document.getElementById('fp-tab-count-all');
+    const tbUb = document.getElementById('fp-tab-count-ubon');
+    const tbSs = document.getElementById('fp-tab-count-sisaket');
+    const tbYs = document.getElementById('fp-tab-count-yasothon');
+    const tbAm = document.getElementById('fp-tab-count-amnat');
+    const tbMk = document.getElementById('fp-tab-count-mukdahan');
+    if (tbAll) tbAll.innerText = provCounts.all;
+    if (tbUb) tbUb.innerText = provCounts['อุบลราชธานี'];
+    if (tbSs) tbSs.innerText = provCounts['ศรีสะเกษ'];
+    if (tbYs) tbYs.innerText = provCounts['ยโสธร'];
+    if (tbAm) tbAm.innerText = provCounts['อำนาจเจริญ'];
+    if (tbMk) tbMk.innerText = provCounts['มุกดาหาร'];
+
+    // Filter samples for current active scope
+    const scopedSamples = activeProv === 'all' ? allSamples : allSamples.filter(s => s.province === activeProv);
+    const totalFailed = scopedSamples.length;
+
+    let counts = { pending: 0, warned: 0, seized: 0, fined: 0, retested_passed: 0 };
+    scopedSamples.forEach(s => {
+        const item = actions[s.identifier];
+        let st = 'pending';
+        if (typeof item === 'string') st = item;
+        else if (item && typeof item === 'object') st = item.status || 'pending';
+        if (counts[st] !== undefined) counts[st]++;
+        else counts.pending++;
+    });
+
+    const closedCount = counts.warned + counts.seized + counts.fined + counts.retested_passed;
+    const closedPct = totalFailed > 0 ? ((closedCount / totalFailed) * 100).toFixed(1) : '100.0';
+    const pendingPct = totalFailed > 0 ? ((counts.pending / totalFailed) * 100).toFixed(1) : '0.0';
+
+    const kpiTotal = document.getElementById('fp-kpi-total');
+    const kpiClosed = document.getElementById('fp-kpi-closed-pct');
+    const kpiPend = document.getElementById('fp-kpi-pending-pct');
+    const progLbl = document.getElementById('fp-progress-lbl');
+    const barEl = document.getElementById('fp-closed-bar');
+
+    if (kpiTotal) kpiTotal.innerText = totalFailed;
+    if (kpiClosed) kpiClosed.innerText = `${closedPct}%`;
+    if (kpiPend) kpiPend.innerText = `${pendingPct}%`;
+    if (progLbl) progLbl.innerText = `${closedPct}% เสร็จสิ้น (${closedCount}/${totalFailed} รายการ)`;
+    if (barEl) barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
+
+    const cPend = document.getElementById('fp-chip-pending');
+    const cWarn = document.getElementById('fp-chip-warned');
+    const cSeiz = document.getElementById('fp-chip-seized');
+    const cFine = document.getElementById('fp-chip-fined');
+    const cRetest = document.getElementById('fp-chip-retest');
+    if (cPend) cPend.innerText = counts.pending;
+    if (cWarn) cWarn.innerText = counts.warned;
+    if (cSeiz) cSeiz.innerText = counts.seized;
+    if (cFine) cFine.innerText = counts.fined;
+    if (cRetest) cRetest.innerText = counts.retested_passed;
+
+    window.renderFollowupTable(scopedSamples);
+};
+
+window.renderFollowupTable = function(sourceSamples) {
+    const tbody = document.getElementById('followupTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const activeProv = window.followupCurrentProvince || 'all';
+    let list = sourceSamples || window.getCompiledFailedSamples();
+    if (activeProv !== 'all') {
+        list = list.filter(s => s.province === activeProv);
+    }
+
+    // Status filter
+    const statusSelect = document.getElementById('fpStatusFilter');
+    const statusFilter = statusSelect ? statusSelect.value : 'all';
+
+    // Search filter
+    const searchInput = document.getElementById('fpSearchInput');
+    const q = (searchInput ? searchInput.value : '').trim().toLowerCase();
+
+    const actions = window.getStoredCorrectiveActions();
+
+    const actionLabels = {
+        'pending': '🟡 อยู่ระหว่างติดตาม',
+        'warned': '🔵 ตักเตือน/แนะนำ',
+        'seized': '🟠 อายัด/ทำลายสินค้า',
+        'fined': '🔴 ดำเนินคดี/ปรับ',
+        'retested_passed': '🟢 สุ่มตรวจซ้ำผ่าน'
+    };
+
+    let filtered = list.filter(s => {
+        const item = actions[s.identifier];
+        let st = 'pending';
+        if (typeof item === 'string') st = item;
+        else if (item && typeof item === 'object') st = item.status || 'pending';
+
+        if (statusFilter !== 'all' && st !== statusFilter) return false;
+
+        if (q) {
+            const combined = `${s.name || ''} ${s.code || ''} ${s.location || ''} ${s.district || ''} ${s.province || ''} ${(s.substances || []).join(' ')}`.toLowerCase();
+            if (!combined.includes(q)) return false;
+        }
+        return true;
+    });
+
+    const countEl = document.getElementById('fp-table-count');
+    if (countEl) countEl.innerText = filtered.length;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 36px 20px; color: #64748b;">
+                    <i class="fa-solid fa-clipboard-check" style="font-size: 38px; color: #10b981; margin-bottom: 12px; display: block;"></i>
+                    <strong style="font-size: 15px; color: #1e293b;">ไม่พบรายการที่ต้องติดตามผล</strong>
+                    <div style="font-size: 13px; color: #64748b; margin-top: 4px;">ตัวอย่างผ่านมาตรฐานครบถ้วน หรือไม่พบข้อมูลตามเงื่อนไขการค้นหาที่เลือก</div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    filtered.forEach((s, idx) => {
+        const idKey = s.identifier;
+        const curDetail = window.getSampleActionDetail(idKey);
+        const curAction = curDetail.status || 'pending';
+        const hasDetail = Boolean(curDetail.actionDate || curDetail.officer || curDetail.notes);
+        const canEdit = window.canUserEditSample(s.province);
+
+        const subBadges = (s.substances || []).map(sub => `<span class="badge-substance-fail"><i class="fa-solid fa-triangle-exclamation"></i> ${sub}</span>`).join('');
+
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #f1f5f9';
+        tr.innerHTML = `
+            <td style="text-align: center; padding: 12px 8px; font-weight: 600; color: #64748b;">${idx + 1}</td>
+            <td style="padding: 12px 14px;">
+                <div style="font-weight: 700; color: #0284c7; font-family: monospace; font-size: 13px;">${s.code || '-'}</div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 3px;"><i class="fa-regular fa-calendar"></i> ${s.date || '-'}</div>
+            </td>
+            <td style="padding: 12px 14px;">
+                <div style="font-weight: 700; color: #0f172a; font-size: 14px;">${s.name || '-'}</div>
+                <div style="font-size: 12.5px; color: #64748b; margin-top: 3px;">
+                    <i class="fa-solid fa-location-dot" style="color: #94a3b8; font-size: 11px;"></i> ${s.location || s.source || '-'}
+                </div>
+            </td>
+            <td style="padding: 12px 14px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                    ${subBadges || '<span class="badge-substance-fail">ไม่ผ่านเกณฑ์</span>'}
+                </div>
+            </td>
+            <td style="padding: 12px 14px;">
+                <div style="color: #0f172a; font-weight: 600;">อ.${s.district || '-'}</div>
+                <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
+            </td>
+            <td style="padding: 12px 14px;">
+                <span style="display: inline-block; padding: 3px 8px; border-radius: 6px; background-color: #e0f2fe; color: #0369a1; font-size: 11.5px; font-weight: 700; border: 1px solid #bae6fd; white-space: nowrap;">
+                    ${s.form_type || '-'}
+                </span>
+            </td>
+            <td style="padding: 12px 14px;">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    ${canEdit ? `
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;" style="flex: 1; min-width: 150px;">
+                                <option value="pending" ${curAction === 'pending' ? 'selected' : ''}>🟡 อยู่ระหว่างติดตาม</option>
+                                <option value="warned" ${curAction === 'warned' ? 'selected' : ''}>🔵 ตักเตือน/แนะนำ</option>
+                                <option value="seized" ${curAction === 'seized' ? 'selected' : ''}>🟠 อายัด/ทำลายสินค้า</option>
+                                <option value="fined" ${curAction === 'fined' ? 'selected' : ''}>🔴 ดำเนินคดี/ปรับ</option>
+                                <option value="retested_passed" ${curAction === 'retested_passed' ? 'selected' : ''}>🟢 สุ่มตรวจซ้ำผ่าน</option>
+                            </select>
+                            <button type="button" class="btn-open-fp-detail" title="บันทึกรายละเอียดการติดตามผล" onclick="window.openCorrectiveDetailModal('${idKey}', false)">
+                                <i class="fa-solid fa-pen-to-square"></i> บันทึกผล
+                            </button>
+                        </div>
+                    ` : `
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div class="action-status-badge status-${curAction} readonly" style="flex: 1; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'} หรือ Admin">
+                                <span>${actionLabels[curAction] || curAction}</span>
+                                <i class="fa-solid fa-lock" style="font-size: 10px; opacity: 0.65;" title="สิทธิ์การแก้ไขเฉพาะเจ้าหน้าที่ จ.${s.province || '-'}"></i>
+                            </div>
+                            <button type="button" class="btn-open-fp-detail readonly-btn" title="ดูรายละเอียดบันทึกผล (โหมดอ่านอย่างเดียว)" onclick="window.openCorrectiveDetailModal('${idKey}', true)">
+                                <i class="fa-solid fa-eye"></i> ดูข้อมูล
+                            </button>
+                        </div>
+                    `}
+                    ${hasDetail ? `
+                        <div class="fp-note-preview">
+                            <strong><i class="fa-solid fa-clipboard-check"></i> ${curDetail.actionDate ? new Date(curDetail.actionDate).toLocaleDateString('th-TH') : 'บันทึกแล้ว'}:</strong> 
+                            ${curDetail.notes ? (curDetail.notes.length > 32 ? curDetail.notes.substring(0, 32) + '...' : curDetail.notes) : (curDetail.officer || 'มีการบันทึกข้อมูล')}
+                        </div>
+                    ` : ''}
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+};
