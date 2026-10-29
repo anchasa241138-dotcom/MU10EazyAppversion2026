@@ -145,6 +145,7 @@ const app = {
             this.setupEventListeners();
             this.updateAuthUI();
             this.updateSidebarBadges();
+            this.initSlaCountdownTicker();
             
             const initialHash = window.location.hash || '';
             if (this.currentUser) {
@@ -2812,6 +2813,151 @@ document.getElementById('formNameTitle').innerText = title;
         return sample.ref_id ? `${sample.ref_id}-${idx}` : '-';
     },
 
+    // -------------------------------------------------------------
+    // SLA Countdown Timer (72 Hours = 3 Days from Receipt)
+    // -------------------------------------------------------------
+    parseSampleDate(dateVal) {
+        if (!dateVal) return null;
+        if (typeof dateVal === 'number') return dateVal;
+        const str = String(dateVal).trim();
+        if (!str || str === '-') return null;
+
+        // Try standard ISO or parseable date string
+        const t = new Date(str).getTime();
+        if (!isNaN(t)) {
+            const d = new Date(t);
+            // If year was entered in Buddhist era e.g. 2569
+            if (d.getFullYear() > 2400) {
+                d.setFullYear(d.getFullYear() - 543);
+                return d.getTime();
+            }
+            return t;
+        }
+
+        // Try Thai slash format: DD/MM/YYYY
+        const parts = str.split('/');
+        if (parts.length === 3) {
+            let day = parseInt(parts[0], 10);
+            let month = parseInt(parts[1], 10) - 1;
+            let year = parseInt(parts[2], 10);
+            if (year > 2400) year -= 543;
+            const d = new Date(year, month, day, 8, 30, 0);
+            if (!isNaN(d.getTime())) return d.getTime();
+        }
+
+        return null;
+    },
+
+    getSampleDeadline(sample) {
+        if (!sample) return Date.now();
+        let startTime = this.parseSampleDate(sample.lab_receive_timestamp) ||
+                        this.parseSampleDate(sample.lab_receive_date) ||
+                        this.parseSampleDate(sample.created_at);
+        if (!startTime) startTime = Date.now();
+        // 72 hours SLA (72 * 60 * 60 * 1000 ms)
+        return startTime + (72 * 60 * 60 * 1000);
+    },
+
+    getSlaCountdownData(deadline) {
+        const now = Date.now();
+        const diffMs = deadline - now;
+        const isOverdue = diffMs <= 0;
+        const absSec = Math.abs(Math.floor(diffMs / 1000));
+        const hours = Math.floor(absSec / 3600);
+        const mins = Math.floor((absSec % 3600) / 60);
+        const secs = absSec % 60;
+        const timeDigits = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        let theme = {
+            bg: '#f0f9ff',
+            color: '#0369a1',
+            border: '#bae6fd',
+            icon: 'fa-regular fa-clock',
+            pulse: false,
+            prefix: ''
+        };
+
+        if (isOverdue) {
+            theme = {
+                bg: '#fef2f2',
+                color: '#dc2626',
+                border: '#fecaca',
+                icon: 'fa-solid fa-triangle-exclamation',
+                pulse: false,
+                prefix: 'เกิน '
+            };
+        } else if (hours < 6) {
+            theme = {
+                bg: '#fff1f2',
+                color: '#e11d48',
+                border: '#fecdd3',
+                icon: 'fa-solid fa-fire-flame-curved',
+                pulse: true,
+                prefix: ''
+            };
+        } else if (hours < 24) {
+            theme = {
+                bg: '#fffbeb',
+                color: '#d97706',
+                border: '#fde68a',
+                icon: 'fa-solid fa-stopwatch',
+                pulse: false,
+                prefix: ''
+            };
+        } else {
+            theme = {
+                bg: '#f0fdf4',
+                color: '#16a34a',
+                border: '#bbf7d0',
+                icon: 'fa-regular fa-clock',
+                pulse: false,
+                prefix: ''
+            };
+        }
+
+        return { isOverdue, hours, timeDigits, theme };
+    },
+
+    getSlaCountdownHTML(sample) {
+        if (!sample || sample.status === 'approved') return '';
+        const deadline = this.getSampleDeadline(sample);
+        const { timeDigits, theme } = this.getSlaCountdownData(deadline);
+
+        return `
+            <div class="sla-countdown-badge ${theme.pulse ? 'sla-pulse' : ''}" 
+                 data-deadline="${deadline}" 
+                 title="ระยะเวลารายงานผลภายใน 3 วัน (72 ชั่วโมง) นับจากรับตัวอย่าง" 
+                 style="background:${theme.bg}; color:${theme.color}; border:1px solid ${theme.border};">
+                <i class="${theme.icon}"></i>
+                <span class="sla-timer-text">${theme.prefix}${timeDigits}</span>
+            </div>
+        `;
+    },
+
+    initSlaCountdownTicker() {
+        if (window._slaCountdownInterval) {
+            clearInterval(window._slaCountdownInterval);
+        }
+        window._slaCountdownInterval = setInterval(() => {
+            const badges = document.querySelectorAll('.sla-countdown-badge[data-deadline]');
+            if (!badges || badges.length === 0) return;
+            badges.forEach(badge => {
+                const deadline = parseInt(badge.getAttribute('data-deadline'), 10);
+                if (isNaN(deadline)) return;
+                const { timeDigits, theme } = app.getSlaCountdownData(deadline);
+                badge.style.background = theme.bg;
+                badge.style.color = theme.color;
+                badge.style.border = `1px solid ${theme.border}`;
+                if (theme.pulse) {
+                    badge.classList.add('sla-pulse');
+                } else {
+                    badge.classList.remove('sla-pulse');
+                }
+                badge.innerHTML = `<i class="${theme.icon}"></i> <span class="sla-timer-text">${theme.prefix}${timeDigits}</span>`;
+            });
+        }, 1000);
+    },
+
     getSampleItemsList(sample) {
         if (!sample) return [];
         
@@ -3368,7 +3514,12 @@ document.getElementById('formNameTitle').innerText = title;
                 <td>${s.agency || '-'}</td>
                   <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.lab_receive_date || s.created_at).toLocaleDateString('th-TH')}</td>
-                <td>${statusBadge}</td>
+                <td style="text-align: center;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+                        ${statusBadge}
+                        ${this.getSlaCountdownHTML(s)}
+                    </div>
+                </td>
                 <td>
                     <div style="display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center;">
                         <button class="btn btn-primary btn-text" onclick="app.openAnalysisInputModal('${s.ref_id}')" style="white-space: nowrap; padding: 6px 14px; font-size: 12.5px; width: 100%; max-width: 130px;">
@@ -5330,7 +5481,12 @@ document.getElementById('formNameTitle').innerText = title;
                 <td>${agencyVal}</td>
                 <td>${locDisplay}</td>
                 <td style="text-align:center; white-space:nowrap;">${dateDisplay}</td>
-                <td style="text-align:center;"><span class="status-badge ${statusClass}">${displayStatus}</span></td>
+                <td style="text-align:center;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
+                        <span class="status-badge ${statusClass}">${displayStatus}</span>
+                        ${this.getSlaCountdownHTML(s)}
+                    </div>
+                </td>
                 <td style="text-align:center;">
                     ${actionBtn}
                     ${underActionStatus}
