@@ -3345,9 +3345,12 @@ document.getElementById('formNameTitle').innerText = title;
             if (searchTerm && !`${s.lab_no || s.lab_id} ${s.sample_name}`.toLowerCase().includes(searchTerm)) return;
             
             const tr = document.createElement('tr');
-            const statusBadge = s.status === 'accepted' 
+            let statusBadge = s.status === 'accepted' 
                 ? '<span class="status-badge status-analyzing">กำลังวิเคราะห์</span>'
                 : '<span class="status-badge status-summarized">สรุปผลแล้ว</span>';
+            if (s.status === 'accepted' && s.return_reason) {
+                statusBadge = '<span class="status-badge" style="background:#ffedd5; color:#c2410c; border:1px solid #fdba74; font-weight:700;"><i class="fa-solid fa-rotate-left"></i> ตีกลับแก้ไข</span>';
+            }
             const labRange = this.getSampleLabNoRange(s);
                 
             tr.innerHTML = `
@@ -3392,6 +3395,34 @@ document.getElementById('formNameTitle').innerText = title;
         
         document.getElementById('analysisResultForm').reset();
         document.getElementById('analysis-sample-ref-id').value = sample.ref_id;
+        
+        // แสดงข้อความแจ้งเตือนกรณีถูกตีกลับแก้ไข
+        const bannerEl = document.getElementById('analysis-return-banner');
+        if (bannerEl) {
+            if (sample.return_reason) {
+                bannerEl.style.display = 'block';
+                bannerEl.innerHTML = `
+                    <div style="background: #fff7ed; border: 1.5px solid #fdba74; border-radius: 10px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 2px 6px rgba(234, 88, 12, 0.08);">
+                        <span style="background: #ea580c; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 1px;">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: #c2410c; font-size: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <span>รายการนี้ถูกตีกลับเพื่อแก้ไขผลการตรวจ</span>
+                                ${sample.return_by ? `<span style="font-size: 12px; font-weight: normal; color: #9a3412; background: #ffedd5; padding: 1px 8px; border-radius: 9999px;">โดย ${sample.return_by}</span>` : ''}
+                            </div>
+                            <div style="color: #7c2d12; font-size: 13.5px; margin-top: 4px; line-height: 1.5; font-weight: 500;">
+                                ${sample.return_reason}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                bannerEl.style.display = 'none';
+                bannerEl.innerHTML = '';
+            }
+        }
+
         const labRange = this.getSampleLabNoRange(sample);
         document.getElementById('analysis-lab-id-display').value = `${labRange}${sample.lab_id ? ' (' + sample.lab_id + ')' : ''}`;
         document.getElementById('analysis-form-type-display').value = sample.form_type || '-';
@@ -5214,6 +5245,11 @@ document.getElementById('formNameTitle').innerText = title;
                 sample.analysis_details = `ตรวจเชื้อโคลิฟอร์ม ${totalCount} รายการ (ผ่าน ${passCount}, ไม่ผ่าน ${totalCount - passCount})`;
             }
             
+            // ล้างข้อมูลการตีกลับเมื่อบันทึกผลใหม่
+            sample.return_reason = null;
+            sample.return_timestamp = null;
+            sample.return_by = null;
+
             this.saveSamples();
             Swal.fire('บันทึกผลสำเร็จ', 'ผลวิเคราะห์ถูกส่งไปยังหน้าอนุมัติรายงานแล้ว', 'success');
             this.closeAnalysisInputModal();
@@ -6751,22 +6787,27 @@ document.getElementById('formNameTitle').innerText = title;
             document.getElementById('certExportControls').classList.add('hidden');
             
             const btnApprove = document.getElementById('btnApproveAndSign');
-              const modalStatusText = document.getElementById('modal-status-text');
-              if (modalStatusText) {
-                  if (sample.status === 'summarized') {
-                      modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#eab308; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> รอผู้ตรวจวิเคราะห์และผู้รับรองลงนาม</span>';
-                  } else if (sample.status === 'analyst_signed') {
-                      modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</span>';
-                  } else if (sample.status === 'approved') {
-                      modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-check-circle"></i> อนุมัติเสร็จสมบูรณ์</span>';
-                  } else {
-                      modalStatusText.innerHTML = '';
-                  }
-              }
+            const btnReturn = document.getElementById('btnReturnAnalysis');
+            const modalStatusText = document.getElementById('modal-status-text');
+            if (modalStatusText) {
+                if (sample.status === 'summarized') {
+                    modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#eab308; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> รอผู้ตรวจวิเคราะห์และผู้รับรองลงนาม</span>';
+                } else if (sample.status === 'analyst_signed') {
+                    modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</span>';
+                } else if (sample.status === 'approved') {
+                    modalStatusText.innerHTML = 'สถานะปัจจุบัน: <span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-check-circle"></i> อนุมัติเสร็จสมบูรณ์</span>';
+                } else {
+                    modalStatusText.innerHTML = '';
+                }
+            }
             if (forceEdit) {
                 btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
+            } else if (sample.status === 'analyst_signed') {
+                btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงาน';
+            } else if (sample.status === 'summarized') {
+                btnApprove.innerHTML = '<i class="fa-solid fa-pen-nib"></i> บันทึกลายมือชื่อผู้ตรวจวิเคราะห์';
             } else {
-                btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> บันทึก';
+                btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงาน';
             }
             
             
@@ -6803,6 +6844,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                     s1.disabled = true; s2.disabled = true; s3.disabled = true; s4.disabled = true;
                     btnApprove.style.display = 'none';
+                    if (btnReturn) btnReturn.style.display = 'none';
                 } else if (sample.status === 'summarized') {
                     // Part 1: Analyst
 
@@ -6830,6 +6872,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                     btnApprove.innerHTML = '<i class="fa-solid fa-pen-nib"></i> บันทึกลายมือชื่อผู้ตรวจวิเคราะห์';
                     btnApprove.style.display = 'inline-block';
+                    if (btnReturn) btnReturn.style.display = 'inline-flex';
                 } else if (sample.status === 'analyst_signed' || (sample.status === 'approved' && forceEdit)) {
 
                     const defA1_2 = (sample.form_type === 'MU.10-006' || sample.form_type === 'MU.10-007') ? "naphaphon" : "anchasa";
@@ -6854,8 +6897,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     if(m2) m2.disabled = false;
                     if(m3) m3.disabled = false;
 
-                    btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
+                    if (forceEdit) {
+                        btnApprove.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง';
+                    } else {
+                        btnApprove.innerHTML = '<i class="fa-solid fa-stamp"></i> อนุมัติรายงาน';
+                    }
                     btnApprove.style.display = 'inline-block';
+                    if (btnReturn) btnReturn.style.display = 'inline-flex';
                 }
             } else {
                 document.getElementById('cert-standard-inputs').style.display = 'block';
@@ -6902,6 +6950,68 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     closeCertifyModal() {
         document.getElementById('certifyModal').classList.remove('active');
         this.updateEditApprovalButtonVisibility();
+    },
+
+    handleReturnToAnalysis() {
+        const refId = document.getElementById('btnApproveAndSign')?.dataset?.refId;
+        if (!refId) return;
+        const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
+        if (sampleIndex === -1) return;
+        const sample = this.samples[sampleIndex];
+
+        Swal.fire({
+            title: 'ตีกลับแก้ไขผลการตรวจ?',
+            html: `
+                <div style="text-align: left; font-size: 13.5px; color: #475569; line-height: 1.6;">
+                    <p style="margin-bottom: 10px;">ระบบจะส่งรายการรหัส <strong style="color: #0284c7;">${this.getSampleLabNoRange(sample)}</strong> กลับไปที่หน้า <b>"ตรวจวิเคราะห์ตัวอย่าง"</b> เพื่อให้ผู้ตรวจวิเคราะห์สามารถแก้ไขผลตรวจได้ทันที</p>
+                    <label style="font-weight: 600; color: #0f172a; display: block; margin-bottom: 6px;">ระบุเหตุผลหรือจุดที่ต้องการแก้ไข (ถ้ามี):</label>
+                    <textarea id="return-reason-input" class="swal2-textarea" placeholder="เช่น การแปลผลตัวอย่างที่ 1 ไม่ถูกต้อง หรือ ระบุสารที่ตรวจผิด..." style="margin: 0; width: 100%; box-sizing: border-box; font-size: 13.5px;"></textarea>
+                </div>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="fa-solid fa-rotate-left"></i> ใช่, ตีกลับแก้ไข',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const reasonEl = document.getElementById('return-reason-input');
+                const reason = reasonEl ? reasonEl.value.trim() : '';
+
+                // ปรับสถานะกลับไปเป็น accepted เพื่อให้ตรวจและบันทึกผลใหม่ได้
+                sample.status = 'accepted';
+                sample.return_reason = reason || 'ผู้ตรวจวิเคราะห์/ผู้รับรองขอแก้ไขผลการตรวจ';
+                sample.return_timestamp = new Date().toISOString();
+                sample.return_by = this.currentUser ? this.currentUser.fullname : 'ผู้ตรวจวิเคราะห์';
+                
+                // ล้างลายมือชื่อเดิม
+                sample.sel_analyst_1 = '';
+                sample.sel_analyst_2 = '';
+                sample.sel_approver_1 = '';
+                sample.sel_approver_2 = '';
+                sample.analyst_signed_timestamp = null;
+
+                this.saveSamples();
+                this.closeCertifyModal();
+                this.renderCertifyTable();
+                this.renderAnalysisTable();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ตีกลับรายการเรียบร้อย',
+                    text: 'กำลังเปิดหน้าต่างบันทึกผลตรวจวิเคราะห์เพื่อให้ท่านแก้ไข...',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                // สลับไปยังหน้าตรวจวิเคราะห์ตัวอย่างและเปิดหน้าต่างบันทึกผลทันที
+                this.switchView('lab-analysis');
+                setTimeout(() => {
+                    this.openAnalysisInputModal(refId);
+                }, 300);
+            }
+        });
     },
 
 
