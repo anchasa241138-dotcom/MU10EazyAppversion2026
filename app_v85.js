@@ -2811,6 +2811,115 @@ document.getElementById('formNameTitle').innerText = title;
         }
     },
 
+    getItemLabNo(sample, idx) {
+        if (!sample) return '-';
+        const baseNo = parseInt(sample.lab_no, 10);
+        if (!isNaN(baseNo) && baseNo > 0) {
+            return String(baseNo + idx - 1).padStart(4, '0');
+        }
+        if (sample.lab_no) return sample.lab_no;
+        if (sample.lab_id) return sample.lab_id + (idx > 1 ? `-${idx}` : '');
+        return sample.ref_id ? `${sample.ref_id}-${idx}` : '-';
+    },
+
+    getSampleLabNoRange(sample) {
+        if (!sample) return '-';
+        let count = 0;
+        let i = 1;
+        while (sample['sample_name_' + i] !== undefined && i <= 50) {
+            if (sample['sample_name_' + i] && sample['item_status_' + i] !== 'rejected') count++;
+            i++;
+        }
+        if (count === 0 && sample.sample_name) count = 1;
+        if (count === 0) count = 1;
+
+        const baseNo = parseInt(sample.lab_no, 10);
+        if (!isNaN(baseNo) && baseNo > 0) {
+            const startStr = String(baseNo).padStart(4, '0');
+            if (count > 1) {
+                const endStr = String(baseNo + count - 1).padStart(4, '0');
+                return `${startStr} - ${endStr}`;
+            }
+            return startStr;
+        }
+        return sample.lab_no || sample.lab_id || '-';
+    },
+
+    updateAcceptLabNoPreview(sample) {
+        const previewEl = document.getElementById('accept-items-labno-preview');
+        const inputEl = document.getElementById('accept-lab-no');
+        if (!previewEl || !inputEl) return;
+
+        const startNo = parseInt(inputEl.value, 10);
+        if (!sample) {
+            const refId = document.getElementById('accept-sample-ref-id').value;
+            sample = this.samples.find(s => s.ref_id === refId);
+        }
+        if (!sample) return;
+
+        const items = [];
+        let i = 1;
+        while (sample['sample_name_' + i] !== undefined && i <= 50) {
+            if (sample['sample_name_' + i] && sample['item_status_' + i] !== 'rejected') {
+                items.push({ name: sample['sample_name_' + i], idx: i });
+            }
+            i++;
+        }
+        if (items.length === 0 && sample.sample_name) {
+            items.push({ name: sample.sample_name, idx: 1 });
+        }
+
+        if (items.length === 0) {
+            previewEl.innerHTML = '';
+            return;
+        }
+
+        const validStart = !isNaN(startNo) && startNo > 0;
+        const rowsHtml = items.map((item, idx) => {
+            const itemNo = validStart ? String(startNo + idx).padStart(4, '0') : '-';
+            return `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding:6px 10px; text-align:center; color:#64748b; font-weight:600;">${idx + 1}</td>
+                    <td style="padding:6px 10px; font-weight:600; color:#0f172a;">${item.name}</td>
+                    <td style="padding:6px 10px; text-align:center;">
+                        <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 10px; border-radius:6px; font-weight:700; font-family:monospace; font-size:13px; display:inline-flex; align-items:center; gap:5px;">
+                            <i class="fa-solid fa-barcode"></i> ${itemNo}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        const endNoStr = validStart ? String(startNo + items.length - 1).padStart(4, '0') : '-';
+        const startNoStr = validStart ? String(startNo).padStart(4, '0') : '-';
+        const rangeText = items.length > 1 ? `${startNoStr} ถึง ${endNoStr}` : startNoStr;
+
+        previewEl.innerHTML = `
+            <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:10px; padding:12px 14px; margin-top:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+                    <span style="font-weight:700; color:#0369a1; font-size:13px;">
+                        <i class="fa-solid fa-list-check"></i> รหัสตรวจวิเคราะห์ที่จะได้รับ (${items.length} รายการ):
+                    </span>
+                    <span style="background:#0284c7; color:#fff; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:9999px;">
+                        Lab No: ${rangeText}
+                    </span>
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:12.5px; background:#fff; border-radius:6px; overflow:hidden; border:1px solid #e2e8f0;">
+                    <thead>
+                        <tr style="background:#f8fafc; color:#475569; font-size:11.5px;">
+                            <th style="padding:6px 10px; border:1px solid #e2e8f0; text-align:center; width:36px;">#</th>
+                            <th style="padding:6px 10px; border:1px solid #e2e8f0; text-align:left;">ชื่อตัวอย่าง</th>
+                            <th style="padding:6px 10px; border:1px solid #e2e8f0; text-align:center; width:140px;">รหัสตรวจ (Lab No.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    },
+
     // Sample Detail Preview (before Accept/Reject)
     openSampleDetailPreview(refId) {
         const sample = this.samples.find(s => s.ref_id === refId);
@@ -2849,16 +2958,28 @@ document.getElementById('formNameTitle').innerText = title;
                             <tr style="background:#f8fafc; color:#334155;">
                                 <th style="padding:10px 12px; border:1px solid #e2e8f0; text-align:center; width:36px; font-weight:700;">#</th>
                                 <th style="padding:10px 12px; border:1px solid #e2e8f0; font-weight:700;">ชื่อตัวอย่าง</th>
+                                <th style="padding:10px 12px; border:1px solid #e2e8f0; text-align:center; font-weight:700; width:135px;">รหัสตรวจ (Lab No.)</th>
                                 <th style="padding:10px 12px; border:1px solid #e2e8f0; text-align:center; font-weight:700;">น้ำหนัก</th>
                                 <th style="padding:10px 12px; border:1px solid #e2e8f0; font-weight:700;">แหล่งที่มา</th>
                                 <th style="padding:10px 12px; border:1px solid #e2e8f0; width:190px; text-align:center; font-weight:700;">สถานะการรับ</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${sampleItems.filter(i => i.name).map((item, i) => `
+                            ${sampleItems.filter(i => i.name).map((item, i) => {
+                                const itemLabNo = sample.lab_no ? this.getItemLabNo(sample, i+1) : null;
+                                return `
                                 <tr style="background:${i % 2 === 0 ? '#ffffff' : '#f8fafc'}; color:#1e293b;">
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; color:#64748b; font-weight:600;">${i+1}</td>
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0; font-weight:600; color:#0f172a;">${item.name} <div style="font-size:11.5px; color:#64748b; font-weight:400; margin-top:2px;">${item.distributor ? 'ผู้จำหน่าย: ' + item.distributor : '-'}</div></td>
+                                    <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center;">
+                                        ${itemLabNo ? `
+                                            <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 8px; border-radius:6px; font-weight:700; font-family:monospace; font-size:12.5px; display:inline-flex; align-items:center; gap:4px;">
+                                                <i class="fa-solid fa-barcode"></i> ${itemLabNo}
+                                            </span>
+                                        ` : `
+                                            <span style="color:#64748b; font-size:11.5px; font-style:italic;">รอรับเข้าระบบ</span>
+                                        `}
+                                    </td>
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; color:#334155;">${item.weight || '-'}</td>
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0; color:#334155;">${item.source || '-'}</td>
                                     <td style="padding:8px 10px; border:1px solid #e2e8f0;">
@@ -2877,7 +2998,8 @@ document.getElementById('formNameTitle').innerText = title;
                                         `}
                                     </td>
                                 </tr>
-                            `).join('')}
+                            `;
+                            }).join('')}
                         </tbody>
                     </table>
                 </div>`;
@@ -2888,9 +3010,24 @@ document.getElementById('formNameTitle').innerText = title;
 
         const detailHTML = `
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; font-size:13.5px; color:#1e293b;">
-                <div style="grid-column: span 2; background: linear-gradient(135deg, #f0f7ff, #e0f2fe); padding:14px 18px; border-radius:12px; border:1px solid #bae6fd; border-left:5px solid #2563eb; box-shadow:0 2px 8px rgba(37,99,235,0.06);">
-                    <div style="font-size:11px; color:#0369a1; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">รหัสอ้างอิง</div>
-                    <div style="font-size:19px; font-weight:800; color:#1e3a8a; margin-top:2px;">${sample.ref_id}</div>
+                <div style="grid-column: span 2; background: linear-gradient(135deg, #f0f7ff, #e0f2fe); padding:14px 18px; border-radius:12px; border:1px solid #bae6fd; border-left:5px solid #2563eb; box-shadow:0 2px 8px rgba(37,99,235,0.06); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <div style="font-size:11px; color:#0369a1; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">รหัสอ้างอิงชั่วคราว</div>
+                        <div style="font-size:19px; font-weight:800; color:#1e3a8a; margin-top:2px;">${sample.ref_id}</div>
+                    </div>
+                    ${(sample.lab_no || sample.lab_id) ? `
+                    <div style="text-align:right;">
+                        <div style="font-size:11px; color:#0369a1; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">รหัสตรวจวิเคราะห์ (Lab No.)</div>
+                        <div style="font-size:18px; font-weight:800; color:#0284c7; margin-top:2px;">
+                            ${this.getSampleLabNoRange(sample)}
+                            <span style="font-size:11.5px; color:#64748b; font-weight:600; display:block;">E-Tracking: ${sample.lab_id || '-'}</span>
+                        </div>
+                    </div>
+                    ` : `
+                    <div style="text-align:right;">
+                        <span class="status-badge status-registered" style="font-size:12.5px; padding:6px 12px;">รอรับตัวอย่างเข้าระบบ</span>
+                    </div>
+                    `}
                 </div>
                 
                 <div><span style="color:#64748b; font-size:12px; font-weight:500;">ประเภทแบบฟอร์ม</span><br><strong style="color:#0f172a; font-weight:700; font-size:14px;">${sample.form_type || '-'}</strong></div>
@@ -3042,6 +3179,9 @@ document.getElementById('formNameTitle').innerText = title;
         
         document.getElementById('accept-receive-date').valueAsDate = new Date();
         
+        // Render itemized preview of Lab No assignments
+        this.updateAcceptLabNoPreview(sample);
+
         document.getElementById('verifyAcceptModal').classList.add('active');
     },
 
@@ -3069,7 +3209,17 @@ document.getElementById('formNameTitle').innerText = title;
             this.samples[sampleIndex].lab_receive_timestamp = new Date().toISOString();
             this.saveSamples();
             
-            Swal.fire('สำเร็จ', `รับตัวอย่างเข้าระบบเรียบร้อย<br>รหัสแลป: ${labNo}`, 'success');
+            const rangeStr = this.getSampleLabNoRange(this.samples[sampleIndex]);
+            Swal.fire({
+                icon: 'success',
+                title: 'รับตัวอย่างเข้าระบบเรียบร้อย',
+                html: `
+                    <div style="font-size:14px; text-align:left; background:#f0f9ff; padding:14px 16px; border-radius:10px; border:1px solid #bae6fd; line-height:1.7;">
+                        <div><i class="fa-solid fa-barcode" style="color:#0284c7; margin-right:6px;"></i><b>รหัสตรวจวิเคราะห์ (Lab No.):</b> <span style="color:#0284c7; font-weight:800; font-size:16px;">${rangeStr}</span></div>
+                        <div style="margin-top:4px;"><i class="fa-solid fa-hashtag" style="color:#64748b; margin-right:6px;"></i><b>รหัส E-Tracking:</b> <span style="color:#0f172a; font-weight:700;">${labId}</span></div>
+                    </div>
+                `
+            });
             this.closeVerifyAcceptModal();
             this.renderVerifyTable();
         }
@@ -3127,9 +3277,13 @@ document.getElementById('formNameTitle').innerText = title;
             const statusBadge = s.status === 'accepted' 
                 ? '<span class="status-badge status-analyzing">กำลังวิเคราะห์</span>'
                 : '<span class="status-badge status-summarized">สรุปผลแล้ว</span>';
+            const labRange = this.getSampleLabNoRange(s);
                 
             tr.innerHTML = `
-                <td><strong>${s.lab_no || s.lab_id}</strong></td>
+                <td>
+                    <strong style="color:#0f172a; font-size:13.5px; display:block;">${labRange}</strong>
+                    ${s.lab_id ? `<div style="font-size:11px; color:#64748b; font-weight:500;">${s.lab_id}</div>` : ''}
+                </td>
                 <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                 <td>${(()=>{
     let n = s.sample_name || '';
@@ -3175,7 +3329,8 @@ document.getElementById('formNameTitle').innerText = title;
         
         document.getElementById('analysisResultForm').reset();
         document.getElementById('analysis-sample-ref-id').value = sample.ref_id;
-        document.getElementById('analysis-lab-id-display').value = sample.lab_no || sample.lab_id;
+        const labRange = this.getSampleLabNoRange(sample);
+        document.getElementById('analysis-lab-id-display').value = `${labRange}${sample.lab_id ? ' (' + sample.lab_id + ')' : ''}`;
         document.getElementById('analysis-form-type-display').value = sample.form_type || '-';
         
         // Auto-populate ชื่อตัวอย่าง จากข้อมูลแบบฟอร์ม
@@ -3704,9 +3859,18 @@ document.getElementById('formNameTitle').innerText = title;
             let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
 
             sampleNames.forEach(item => {
+                const itemLabNo = this.getItemLabNo(sample, item.idx);
                 html += `
                     <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
-                        <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ตัวอย่าง: ${item.name}</h5>
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #cbd5e1; padding-bottom:8px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                            <h5 style="margin:0; color:#0f172a; font-weight:bold; font-size:15px; display:inline-flex; align-items:center; gap:8px;">
+                                <span style="background:#2563eb; color:#fff; width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold;">${item.idx}</span>
+                                <span>ตัวอย่าง: ${item.name}</span>
+                            </h5>
+                            <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 12px; border-radius:9999px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 3px rgba(3,105,161,0.08);">
+                                <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง: <strong style="font-family:monospace; font-size:14px; letter-spacing:0.5px;">${itemLabNo}</strong>
+                            </span>
+                        </div>
                         <div class="form-grid">
                             <div class="form-group" style="margin-bottom: 16px;">
                                 <label style="font-weight: 600; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
@@ -3867,8 +4031,17 @@ document.getElementById('formNameTitle').innerText = title;
             let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
 
             sampleNames.forEach(item => {
+                const itemLabNo = item.labId || this.getItemLabNo(sample, item.idx);
                 html += `<div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
-                            <h5 style="margin-top:0; color:#0f172a; font-weight:bold; border-bottom:1px solid #cbd5e1; padding-bottom:8px; margin-bottom:12px;">ตัวอย่าง: ${item.name}</h5>`;
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #cbd5e1; padding-bottom:8px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                                <h5 style="margin:0; color:#0f172a; font-weight:bold; font-size:15px; display:inline-flex; align-items:center; gap:8px;">
+                                    <span style="background:#2563eb; color:#fff; width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold;">${item.idx}</span>
+                                    <span>ตัวอย่าง: ${item.name}</span>
+                                </h5>
+                                <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 12px; border-radius:9999px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 3px rgba(3,105,161,0.08);">
+                                    <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง: <strong style="font-family:monospace; font-size:14px; letter-spacing:0.5px;">${itemLabNo}</strong>
+                                </span>
+                            </div>`;
                 
                 item.tests.forEach(t => {
                     let interpOptions = '';
@@ -3950,6 +4123,7 @@ document.getElementById('formNameTitle').innerText = title;
             let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
 
             sampleNames.forEach(item => {
+                const itemLabNo = this.getItemLabNo(sample, item.idx);
                 const dateStr = item.date ? new Date(item.date).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric'}) : '-';
                 html += `
                     <div style="background:#ffffff; padding:16px 20px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -3958,8 +4132,13 @@ document.getElementById('formNameTitle').innerText = title;
                                 <i class="fa-solid fa-flask-vial" style="color: #0284c7; margin-right: 6px;"></i>
                                 ครั้งที่เก็บ: ${item.idx} | วันที่เก็บตัวอย่าง: ${dateStr}
                             </div>
-                            <div style="font-size: 13.5px; color: #475569; font-weight: 600;">
-                                ตัวอย่าง: <span style="color: #0284c7;">${item.name}</span>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <div style="font-size: 13.5px; color: #475569; font-weight: 600;">
+                                    ตัวอย่าง: <span style="color: #0284c7;">${item.name}</span>
+                                </div>
+                                <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 10px; border-radius:9999px; font-weight:700; font-size:12.5px; display:inline-flex; align-items:center; gap:5px;">
+                                    <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง: <strong style="font-family:monospace;">${itemLabNo}</strong>
+                                </span>
                             </div>
                         </div>
 
@@ -4109,6 +4288,9 @@ document.getElementById('formNameTitle').innerText = title;
                         <td style="padding: 8px; text-align: left; font-weight: 500;">
                             <div>${it.name}</div>
                             ${it.detail ? `<div style="font-size: 11.5px; color: #64748b;">${it.detail}</div>` : ''}
+                            <div style="font-size: 11px; color: #0284c7; font-weight: 700; margin-top: 2px;">
+                                <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง: ${this.getItemLabNo(sample, it.idx)}
+                            </div>
                         </td>
                         <td style="padding: 6px;">
                             <select id="analysis-cleanliness-${it.idx}" style="padding: 5px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; font-weight: bold; text-align: center; color: ${it.cleanliness === '+' ? '#dc2626' : '#16a34a'};" onchange="app.handleMu10007RowChange(${it.idx})">
@@ -4215,7 +4397,12 @@ document.getElementById('formNameTitle').innerText = title;
                 return `
                     <tr style="text-align:center; vertical-align:middle;">
                         <td style="padding:6px; border:1px solid #cbd5e1; font-weight:bold;">${m.idx}</td>
-                        <td style="padding:6px; border:1px solid #cbd5e1; text-align:left; font-weight:500;">${m.location}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1; text-align:left; font-weight:500;">
+                            <div>${m.location}</div>
+                            <div style="font-size: 11px; color: #0284c7; font-weight: 700; margin-top: 2px;">
+                                <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง: ${this.getItemLabNo(sample, m.idx)}
+                            </div>
+                        </td>
                         <!-- จุลชีววิทยา -->
                         <td style="padding:4px; border:1px solid #cbd5e1; background:#f8fafc;">
                             <input type="number" id="analysis-coliform-${m.idx}" value="${m.coliform}" placeholder="0" min="0" style="width:65px; text-align:center; padding:4px 6px; border:1px solid #cbd5e1; border-radius:4px;" oninput="app.calculateMu10006Row(${m.idx})">
@@ -4524,8 +4711,15 @@ document.getElementById('formNameTitle').innerText = title;
             htmlContent = fullHtmlResult;
         } else {
             // Generic form for other form types
+            const labRange = this.getSampleLabNoRange(sample);
             container.innerHTML = `<style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style>
                 <div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์</div>
+                <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:10px 14px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div style="font-weight:600; color:#0f172a;"><i class="fa-solid fa-vial" style="color:#0284c7; margin-right:6px;"></i>ตัวอย่าง: ${sample.sample_name || '-'}</div>
+                    <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 12px; border-radius:9999px; font-weight:700; font-size:12.5px; display:inline-flex; align-items:center; gap:5px;">
+                        <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง (Lab No.): <strong style="font-family:monospace;">${labRange}</strong>
+                    </span>
+                </div>
                 <div class="form-group">
                     <label for="analysis-interpretation">การแปลผล <span class="required">*</span></label>
                     <textarea id="analysis-interpretation" rows="2" required placeholder="อธิบายการแปลผลตรวจ เช่น สีที่ปรากฏ, ค่าที่อ่านได้, ขีดบนชุดทดสอบ ฯลฯ"></textarea>
