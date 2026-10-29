@@ -862,8 +862,12 @@ const app = {
             const actionBtn = `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-download"></i> ดาวน์โหลดรายงาน PDF</button>`;
             
             const tr = document.createElement('tr');
+            const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
-                <td><strong>${s.lab_no || s.lab_id || s.ref_id}</strong></td>
+                <td>
+                    <strong style="color:#0f172a; font-size:13.5px; display:block;">${labRange}</strong>
+                    ${s.lab_id ? `<div style="font-size:11px; color:#64748b; font-weight:500;">${s.lab_id}</div>` : ''}
+                </td>
                 <td><span class="badge form-type-badge">${s.form_type}</span></td>
                 <td>${agencyVal}</td>
                 <td>${locDisplay}</td>
@@ -2430,13 +2434,7 @@ document.getElementById('formNameTitle').innerText = title;
                 this.samples.forEach(s => {
                     let baseNo = parseInt(s.lab_no, 10);
                     if (!isNaN(baseNo) && baseNo > 0) {
-                        let itemCount = 0;
-                        let idx = 1;
-                        while(s['sample_name_'+idx] !== undefined && idx <= 50) {
-                            if (s['item_status_'+idx] !== 'rejected') itemCount++;
-                            idx++;
-                        }
-                        if (itemCount === 0) itemCount = 1; // Fallback
+                        let itemCount = this.getSampleItemCount(s);
                         if ((baseNo + itemCount - 1) > maxLabNo) {
                             maxLabNo = (baseNo + itemCount - 1);
                         }
@@ -2782,19 +2780,11 @@ document.getElementById('formNameTitle').innerText = title;
                 <td><strong>${s.ref_id}</strong></td>
                 <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                 <td>${(()=>{
-    let n = s.sample_name || '';
-    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
-        const arr = [];
-        let i = 1;
-        while(s['sample_name_'+i] !== undefined && i <= 50) {
-            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
-            i++;
-        }
-        if(arr.length > 0) n = arr.join(', ');
-    }
-    if(!n) n = '-';
-    return n.length > 30 ? n.substring(0,30) + '...' : n;
-})()}</td>
+                    const items = this.getSampleItemsList(s);
+                    let n = items.map(it => it.name).filter(Boolean).join(', ');
+                    if (!n) n = s.sample_name || '-';
+                    return n.length > 35 ? n.substring(0, 35) + '...' : n;
+                })()}</td>
                 <td>${s.agency || '-'}</td>
                   <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.created_at).toLocaleDateString('th-TH')}</td>
@@ -2822,17 +2812,109 @@ document.getElementById('formNameTitle').innerText = title;
         return sample.ref_id ? `${sample.ref_id}-${idx}` : '-';
     },
 
+    getSampleItemsList(sample) {
+        if (!sample) return [];
+        
+        // 1. Array of items if present
+        if (Array.isArray(sample.items) && sample.items.length > 0) {
+            return sample.items.filter(it => it && it.item_status !== 'rejected').map((it, i) => ({
+                idx: it.idx || (i + 1),
+                name: it.name || it.sample_name || `ตัวอย่างที่ ${i + 1}`
+            }));
+        }
+
+        const items = [];
+
+        // 2. Form MU.10-004 (น้ำมันทอดซ้ำ ติดตามผลสูงสุด 7 ครั้ง)
+        if (sample.form_type === 'MU.10-004') {
+            const defName = sample.sample_name_1 || sample.sample_name || sample.oil_type_1 || 'น้ำมันทอดซ้ำ';
+            for (let i = 1; i <= 7; i++) {
+                if (sample['item_sampling_date_' + i] !== undefined || 
+                    sample['polar_radio_' + i] !== undefined || 
+                    sample['analysis_interpretation_4_' + i] !== undefined ||
+                    sample['sample_name_' + i] !== undefined || 
+                    (i === 1 && defName)) {
+                    if (sample['item_status_' + i] !== 'rejected') {
+                        const dateStr = sample['item_sampling_date_' + i] ? ` (${new Date(sample['item_sampling_date_' + i]).toLocaleDateString('th-TH')})` : '';
+                        items.push({
+                            idx: i,
+                            name: (sample['sample_name_' + i] || defName) + dateStr
+                        });
+                    }
+                }
+            }
+            if (items.length > 0) return items;
+        }
+
+        // 3. General indexed items (1 ถึง 50) สำหรับทุกแบบฟอร์ม
+        for (let i = 1; i <= 50; i++) {
+            const sName = sample['sample_name_' + i];
+            const sCat = sample['sample_category_' + i];
+            const sDet = sample['sample_detail_' + i];
+            const dist = sample['distributor_' + i];
+            const foodName = sample['food_name_' + i];
+            const hasData = (sName !== undefined && String(sName).trim() !== '' && String(sName).trim() !== 'undefined') ||
+                            (sCat !== undefined && String(sCat).trim() !== '') ||
+                            (sDet !== undefined && String(sDet).trim() !== '') ||
+                            (dist !== undefined && String(dist).trim() !== '') ||
+                            (foodName !== undefined && String(foodName).trim() !== '') ||
+                            sample['item_sampling_date_' + i] !== undefined ||
+                            sample['analysis_interpretation_' + i] !== undefined ||
+                            sample['analysis_interpretation_4_' + i] !== undefined ||
+                            sample['analysis_summary_' + i] !== undefined;
+
+            if (hasData && sample['item_status_' + i] !== 'rejected') {
+                let displayName = sName || foodName || sDet || dist || (sCat ? `${sCat}` : '') || `ตัวอย่างที่ ${i}`;
+                if (sCat && sName && !sName.includes(sCat)) {
+                    displayName = `${sCat} - ${sName}`;
+                }
+                items.push({
+                    idx: i,
+                    name: String(displayName).trim()
+                });
+            }
+        }
+
+        if (items.length > 0) return items;
+
+        // 4. Fallback กรณีระบุเป็น sample_qty
+        const qty = parseInt(sample.sample_qty, 10);
+        if (!isNaN(qty) && qty > 1) {
+            for (let k = 1; k <= qty; k++) {
+                items.push({
+                    idx: k,
+                    name: (sample.sample_name || 'ตัวอย่าง') + ` #${k}`
+                });
+            }
+            return items;
+        }
+
+        // 5. Fallback 1 ตัวอย่าง
+        if (sample.sample_name || sample.lab_no || sample.lab_id || sample.ref_id) {
+            items.push({
+                idx: 1,
+                name: sample.sample_name || 'ตัวอย่างที่ 1'
+            });
+        }
+
+        return items;
+    },
+
+    getSampleItemCount(sample) {
+        if (!sample) return 0;
+        const list = this.getSampleItemsList(sample);
+        return list.length || 1;
+    },
+
     getSampleLabNoRange(sample) {
         if (!sample) return '-';
-        let count = 0;
-        let i = 1;
-        while (sample['sample_name_' + i] !== undefined && i <= 50) {
-            if (sample['sample_name_' + i] && sample['item_status_' + i] !== 'rejected') count++;
-            i++;
-        }
-        if (count === 0 && sample.sample_name) count = 1;
-        if (count === 0) count = 1;
 
+        // ถ้า lab_no ถูกบันทึกเป็นช่วงอยู่แล้ว เช่น "0008 - 0009"
+        if (typeof sample.lab_no === 'string' && /^\d{4}\s*-\s*\d{4}$/.test(sample.lab_no.trim())) {
+            return sample.lab_no.trim();
+        }
+
+        const count = this.getSampleItemCount(sample);
         const baseNo = parseInt(sample.lab_no, 10);
         if (!isNaN(baseNo) && baseNo > 0) {
             const startStr = String(baseNo).padStart(4, '0');
@@ -2842,7 +2924,12 @@ document.getElementById('formNameTitle').innerText = title;
             }
             return startStr;
         }
-        return sample.lab_no || sample.lab_id || '-';
+
+        if (sample.lab_id) {
+            return count > 1 ? `${sample.lab_id} (1-${count})` : sample.lab_id;
+        }
+
+        return sample.lab_no || sample.ref_id || '-';
     },
 
     updateAcceptLabNoPreview(sample) {
@@ -2857,17 +2944,7 @@ document.getElementById('formNameTitle').innerText = title;
         }
         if (!sample) return;
 
-        const items = [];
-        let i = 1;
-        while (sample['sample_name_' + i] !== undefined && i <= 50) {
-            if (sample['sample_name_' + i] && sample['item_status_' + i] !== 'rejected') {
-                items.push({ name: sample['sample_name_' + i], idx: i });
-            }
-            i++;
-        }
-        if (items.length === 0 && sample.sample_name) {
-            items.push({ name: sample.sample_name, idx: 1 });
-        }
+        const items = this.getSampleItemsList(sample);
 
         if (items.length === 0) {
             previewEl.innerHTML = '';
@@ -2892,7 +2969,7 @@ document.getElementById('formNameTitle').innerText = title;
 
         const endNoStr = validStart ? String(startNo + items.length - 1).padStart(4, '0') : '-';
         const startNoStr = validStart ? String(startNo).padStart(4, '0') : '-';
-        const rangeText = items.length > 1 ? `${startNoStr} ถึง ${endNoStr}` : startNoStr;
+        const rangeText = items.length > 1 ? `${startNoStr} - ${endNoStr}` : startNoStr;
 
         previewEl.innerHTML = `
             <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:10px; padding:12px 14px; margin-top:12px;">
@@ -3162,13 +3239,7 @@ document.getElementById('formNameTitle').innerText = title;
         this.samples.forEach(s => {
             let baseNo = parseInt(s.lab_no, 10);
             if (!isNaN(baseNo) && baseNo > 0) {
-                let itemCount = 0;
-                let i = 1;
-                while (s[`sample_name_${i}`] !== undefined && i <= 50) {
-                    if (s[`sample_name_${i}`]) itemCount++;
-                    i++;
-                }
-                if (itemCount === 0) itemCount = 1;
+                let itemCount = this.getSampleItemCount(s);
                 let maxForThisSample = baseNo + itemCount - 1;
                 if (maxForThisSample > maxLabNo) {
                     maxLabNo = maxForThisSample;
@@ -3286,19 +3357,11 @@ document.getElementById('formNameTitle').innerText = title;
                 </td>
                 <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                 <td>${(()=>{
-    let n = s.sample_name || '';
-    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-002') {
-        const arr = [];
-        let i = 1;
-        while(s['sample_name_'+i] !== undefined && i <= 50) {
-            if(s['sample_name_'+i]) arr.push(s['sample_name_'+i]);
-            i++;
-        }
-        if(arr.length > 0) n = arr.join(', ');
-    }
-    if(!n) n = '-';
-    return n.length > 30 ? n.substring(0,30) + '...' : n;
-})()}</td>
+                    const items = this.getSampleItemsList(s);
+                    let n = items.map(it => it.name).filter(Boolean).join(', ');
+                    if (!n) n = s.sample_name || '-';
+                    return n.length > 35 ? n.substring(0, 35) + '...' : n;
+                })()}</td>
                 <td>${s.agency || '-'}</td>
                   <td>${s.location_name} จ.${s.province}</td>
                 <td>${new Date(s.lab_receive_date || s.created_at).toLocaleDateString('th-TH')}</td>
@@ -5221,8 +5284,12 @@ document.getElementById('formNameTitle').innerText = title;
             }
 
             const tr = document.createElement('tr');
+            const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
-                <td><strong>${s.lab_no || s.lab_id || s.ref_id}</strong></td>
+                <td>
+                    <strong style="color:#0f172a; font-size:13.5px; display:block;">${labRange}</strong>
+                    ${s.lab_id ? `<div style="font-size:11px; color:#64748b; font-weight:500;">${s.lab_id}</div>` : ''}
+                </td>
                 <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
                 <td>${agencyVal}</td>
                 <td>${locDisplay}</td>
