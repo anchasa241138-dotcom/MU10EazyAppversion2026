@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793255000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793275000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -975,6 +975,10 @@
                 <a href="#" class="menu-item" data-view="download-results">
                     <i class="fa-solid fa-download"></i> <span>ดาวน์โหลดผลตรวจวิเคราะห์</span>
                 </a>
+                <a href="#" class="menu-item" data-view="followup" id="menu-followup">
+                    <i class="fa-solid fa-clipboard-check"></i> <span>ติดตามผลหลังพบปัญหา</span>
+                    <span class="badge notification-badge hidden" id="followup-notification-badge" style="background-color: #ea580c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: auto; display: inline-block;">0</span>
+                </a>
                 <a href="#" class="menu-item" data-view="e-tracking">
                     <i class="fa-solid fa-route"></i> <span>ตรวจสอบสถานะ (E-Tracking)</span>
                 </a>
@@ -1510,7 +1514,7 @@
                                     <span class="action-chip"><span style="color: #059669;">🟢 ตรวจซ้ำผ่าน:</span> <strong id="chip-retest-count">0</strong></span>
                                 </div>
                                 <div style="margin-top: 14px; display: flex; justify-content: flex-end; align-items: center;">
-                                    <button type="button" class="btn-manage-actions" onclick="window.openAllFailedSamplesFollowupModal()">
+                                    <button type="button" class="btn-manage-actions" onclick="window.navigateToFollowupPage()">
                                         <i class="fa-solid fa-clipboard-check"></i> <span id="btn-action-label-txt">จัดการและบันทึกติดตามผล</span> (<span id="btn-action-fail-count">0</span> รายการ)
                                     </button>
                                     <div id="action-all-passed-badge" style="display: none; align-items: center; gap: 8px; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #86efac; color: #166534; font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(22, 101, 52, 0.08);">
@@ -2388,6 +2392,164 @@
                                     </thead>
                                     <tbody id="downloadTableBody">
                                         <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- VIEW: FOLLOW-UP TRACKING (บันทึกติดตามผลหลังพบปัญหา Closed-Loop Governance) -->
+                <section class="content-view" id="view-followup">
+                    <div class="followup-view-container">
+                        <!-- Top Card: Header & KPI Summary -->
+                        <div class="table-container" style="margin-bottom: 20px; padding: 24px 28px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+                                        <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #ea580c, #c2410c); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.28);">
+                                            <i class="fa-solid fa-clipboard-check"></i>
+                                        </div>
+                                        <div>
+                                            <h3 style="margin: 0; font-size: 20px; font-weight: 700; color: #0f172a;">บันทึกและติดตามผลการดำเนินงานหลังพบปัญหา</h3>
+                                            <p style="margin: 2px 0 0 0; font-size: 13.5px; color: #64748b;">การจัดการตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานความปลอดภัยด้านอาหาร (Closed-Loop Governance) เขตสุขภาพที่ 10</p>
+                                        </div>
+                                    </div>
+                                    <div id="followup-perm-banner" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 6px 14px; border-radius: 9999px; background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; font-size: 12.5px; font-weight: 600;">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                        <span id="followup-perm-txt">ตรวจสิทธิ์ตามพื้นที่ผู้ใช้งาน</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <button type="button" class="btn btn-secondary" onclick="app.switchView('dashboard')" style="display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                        <i class="fa-solid fa-chart-line"></i> กลับสู่แดชบอร์ด
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- KPI Summary Cards Grid -->
+                            <div class="followup-kpi-grid">
+                                <div class="followup-kpi-card" style="background: #fef2f2; border: 1px solid #fecaca;">
+                                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; font-weight: 600; color: #991b1b;">ตัวอย่างไม่ผ่านเกณฑ์</div>
+                                        <div style="font-size: 24px; font-weight: 800; color: #b91c1c; line-height: 1.2;" id="fp-kpi-total">0</div>
+                                    </div>
+                                </div>
+
+                                <div class="followup-kpi-card" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+                                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; font-weight: 600; color: #166534;">แก้ไขแล้วเสร็จ (Closed)</div>
+                                        <div style="font-size: 24px; font-weight: 800; color: #15803d; line-height: 1.2;" id="fp-kpi-closed-pct">0.0%</div>
+                                    </div>
+                                </div>
+
+                                <div class="followup-kpi-card" style="background: #fffbeb; border: 1px solid #fde68a;">
+                                    <div style="width: 44px; height: 44px; border-radius: 10px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; font-weight: 600; color: #92400e;">อยู่ระหว่างติดตาม</div>
+                                        <div style="font-size: 24px; font-weight: 800; color: #b45309; line-height: 1.2;" id="fp-kpi-pending-pct">0.0%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Track -->
+                            <div style="margin-top: 18px;">
+                                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 6px;">
+                                    <span>ความครอบคลุมการติดตามแก้ไขปัญหา</span>
+                                    <span id="fp-progress-lbl">0.0% เสร็จสิ้น</span>
+                                </div>
+                                <div style="background: #e2e8f0; height: 10px; border-radius: 9999px; overflow: hidden;">
+                                    <div id="fp-closed-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 9999px; transition: width 0.4s ease;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Action Status Breakdown Pills -->
+                            <div class="action-pills-cluster" style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px;">
+                                <span class="action-chip"><span style="color: #d97706;">🟡 ติดตาม:</span> <strong id="fp-chip-pending">0</strong></span>
+                                <span class="action-chip"><span style="color: #0284c7;">🔵 ตักเตือน:</span> <strong id="fp-chip-warned">0</strong></span>
+                                <span class="action-chip"><span style="color: #ea580c;">🟠 อายัด/ทำลาย:</span> <strong id="fp-chip-seized">0</strong></span>
+                                <span class="action-chip"><span style="color: #dc2626;">🔴 ปรับ/คดี:</span> <strong id="fp-chip-fined">0</strong></span>
+                                <span class="action-chip"><span style="color: #059669;">🟢 ตรวจซ้ำผ่าน:</span> <strong id="fp-chip-retest">0</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Main Table Section -->
+                        <div class="table-container">
+                            <!-- Province Filter Tabs -->
+                            <div style="margin-bottom: 16px;">
+                                <div class="failed-modal-prov-tabs" id="followupProvinceTabs" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px;">
+                                    <button type="button" class="prov-tab-btn active" data-prov="all" onclick="window.setFollowupProvince('all')">
+                                        <i class="fa-solid fa-layer-group"></i> ทั้งหมด (5 จว.) <span class="tab-badge" id="fp-tab-count-all">0</span>
+                                    </button>
+                                    <button type="button" class="prov-tab-btn" data-prov="อุบลราชธานี" onclick="window.setFollowupProvince('อุบลราชธานี')">
+                                        อุบลราชธานี <span class="tab-badge" id="fp-tab-count-ubon">0</span>
+                                    </button>
+                                    <button type="button" class="prov-tab-btn" data-prov="ศรีสะเกษ" onclick="window.setFollowupProvince('ศรีสะเกษ')">
+                                        ศรีสะเกษ <span class="tab-badge" id="fp-tab-count-sisaket">0</span>
+                                    </button>
+                                    <button type="button" class="prov-tab-btn" data-prov="ยโสธร" onclick="window.setFollowupProvince('ยโสธร')">
+                                        ยโสธร <span class="tab-badge" id="fp-tab-count-yasothon">0</span>
+                                    </button>
+                                    <button type="button" class="prov-tab-btn" data-prov="อำนาจเจริญ" onclick="window.setFollowupProvince('อำนาจเจริญ')">
+                                        อำนาจเจริญ <span class="tab-badge" id="fp-tab-count-amnat">0</span>
+                                    </button>
+                                    <button type="button" class="prov-tab-btn" data-prov="มุกดาหาร" onclick="window.setFollowupProvince('มุกดาหาร')">
+                                        มุกดาหาร <span class="tab-badge" id="fp-tab-count-mukdahan">0</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Filter & Search Controls -->
+                            <div class="table-header-bar" style="gap: 12px; flex-wrap: wrap;">
+                                <div>
+                                    <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">
+                                        <i class="fa-solid fa-list-check" style="color: #ea580c; margin-right: 6px;"></i>
+                                        รายการตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐาน (<span id="fp-table-count">0</span> รายการ)
+                                    </h4>
+                                    <p style="margin: 2px 0 0 0; font-size: 12.5px; color: #64748b;">ระบุสถานะและบันทึกรายละเอียดผลการดำเนินงานแก้ไขปัญหาของแต่ละรายการ</p>
+                                </div>
+                                <div class="table-actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <!-- Status filter -->
+                                    <select id="fpStatusFilter" onchange="window.handleFollowupFilterChange()" style="padding: 7px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; background: #fff; color: #334155;">
+                                        <option value="all">สถานะติดตามผลทั้งหมด</option>
+                                        <option value="pending">🟡 อยู่ระหว่างติดตาม</option>
+                                        <option value="warned">🔵 ตักเตือน/แนะนำ</option>
+                                        <option value="seized">🟠 อายัด/ทำลายสินค้า</option>
+                                        <option value="fined">🔴 ดำเนินคดี/ปรับ</option>
+                                        <option value="retested_passed">🟢 สุ่มตรวจซ้ำผ่าน</option>
+                                    </select>
+                                    <!-- Search input -->
+                                    <div class="search-box-wrapper" style="position: relative;">
+                                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                                        <input type="text" id="fpSearchInput" class="search-input" placeholder="ค้นหา ตัวอย่าง, รหัส, สถานที่..." onkeyup="window.handleFollowupFilterChange()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Table -->
+                            <div class="responsive-table">
+                                <table class="modern-table" id="followupTable">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px; text-align: center;">ลำดับ</th>
+                                            <th style="width: 140px;">รหัส / วันที่เก็บ</th>
+                                            <th>ตัวอย่าง / สถานที่เก็บ</th>
+                                            <th>สารที่ตรวจไม่ผ่าน</th>
+                                            <th style="width: 130px;">พื้นที่ (อำเภอ/จว.)</th>
+                                            <th style="width: 100px;">ใบงาน</th>
+                                            <th style="width: 250px;">การติดตามผล & บันทึกมาตรการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="followupTableBody">
+                                        <!-- Dynamic rows -->
                                     </tbody>
                                 </table>
                             </div>
@@ -3610,7 +3772,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793268000000"></script>
+    <script src="charts-dash.js?v=1793275000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -3631,6 +3793,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793268000000"></script>
+    <script src="app_v85.js?v=1793275000000"></script>
 </body>
 </html>
