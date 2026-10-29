@@ -614,6 +614,22 @@ const app = {
 
         sessionStorage.removeItem('pending_route_hash');
 
+        if (hash.startsWith('#followup') || hash.startsWith('#corrective')) {
+            this.switchView('dashboard');
+            const urlParts = hash.split('?');
+            const urlParams = new URLSearchParams(urlParts.length > 1 ? urlParts[1] : '');
+            const prov = urlParams.get('prov') || '';
+            const tryOpenFollowup = (retries = 10) => {
+                if (typeof window.openAllFailedSamplesFollowupModal === 'function') {
+                    window.openAllFailedSamplesFollowupModal(prov);
+                } else if (retries > 0) {
+                    setTimeout(() => tryOpenFollowup(retries - 1), 300);
+                }
+            };
+            setTimeout(() => tryOpenFollowup(), 350);
+            return;
+        }
+
         if (hash.startsWith('#report-')) {
             const targetId = decodeURIComponent(hash.replace('#report-', '').trim());
             // 1. Switch to download results view immediately
@@ -9728,9 +9744,19 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         // Observation note
         let obsHtml = '';
         if (failSamples > 0) {
+            const followupLink = `${baseUrl}#followup?prov=${encodeURIComponent(selectedProv || '')}`;
             obsHtml = `
-                <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; line-height: 1.6;">
-                    <strong>ข้อสังเกต:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong>${failSamples} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาต่อไป
+                <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13.5px; color: #92400e; line-height: 1.6;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                        <div style="flex: 1; min-width: 260px;">
+                            <strong style="color: #b45309;">⚠️ ข้อสังเกตและแจ้งเตือน:</strong> มีตัวอย่างที่ไม่ผ่านเกณฑ์มาตรฐานจำนวน <strong style="color: #dc2626; font-size: 14px;">${failSamples} ตัวอย่าง</strong> (${failedHospitals.slice(0, 5).join(', ')}${failedHospitals.length > 5 ? ' และอื่นๆ' : ''}) ขอความอนุเคราะห์ประสานแจ้งโรงพยาบาล/หน่วยงานในพื้นที่เพื่อเฝ้าระวังแหล่งที่มาและบันทึกติดตามผลต่อไป
+                        </div>
+                        <div style="margin-top: 4px;">
+                            <a href="${followupLink}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff !important; text-decoration: none; font-weight: 700; font-size: 13px; padding: 8px 16px; border-radius: 6px; box-shadow: 0 2px 4px rgba(234, 88, 12, 0.25); white-space: nowrap;">
+                                📝 บันทึกผลการติดตามปัญหา (Closed-Loop Follow-up)${selectedProv && selectedProv !== 'ทุกจังหวัด' ? ` จ.${selectedProv}` : ''}
+                            </a>
+                        </div>
+                    </div>
                 </div>
             `;
         } else if (totalSamples > 0) {
