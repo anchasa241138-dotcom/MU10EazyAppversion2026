@@ -3693,51 +3693,67 @@ document.getElementById('formNameTitle').innerText = title;
 
     handleSubstanceChange(idx) {
         const subEl = document.getElementById('analysis-substance-' + idx);
-        const c1Interp = document.getElementById('interp-container-1-' + idx);
-        const c1Result = document.getElementById('result-container-1-' + idx);
-        const c2Interp = document.getElementById('interp-container-2-' + idx);
-        const c2Result = document.getElementById('result-container-2-' + idx);
         const l1Interp = document.getElementById('label-interp-1-' + idx);
         const l1Result = document.getElementById('label-result-1-' + idx);
+        const selectEl = document.getElementById('analysis-interpretation-' + idx);
         
-        if (!subEl) return;
+        if (!subEl || !selectEl) return;
         const val = subEl.value;
+        const prevValue = selectEl.value;
+        
+        // 3 ตัวเลือกในกรอบสีแดง สำหรับ GT kit
+        const gtOptions = [
+            { value: 'สีตัวอย่าง = สีควบคุม', text: 'สีตัวอย่าง = สีควบคุม' },
+            { value: 'สีควบคุม > สีตัวอย่าง < สีตัดสิน', text: 'สีควบคุม > สีตัวอย่าง < สีตัดสิน' },
+            { value: 'สีตัวอย่าง ≥ สีตัดสิน', text: 'สีตัวอย่าง ≥ สีตัดสิน' }
+        ];
+        
+        // 2 ตัวเลือกสุดท้าย สำหรับ TM/2 kit
+        const tm2Options = [
+            { value: 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', text: 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' },
+            { value: 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', text: 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' }
+        ];
+        
+        let availableOptions = [];
+        let placeholder = '-- เลือกการแปลผล --';
+        
         if (val === 'GT และ TM/2') {
-            if (c1Interp) c1Interp.style.display = 'block';
-            if (c1Result) c1Result.style.display = 'block';
-            if (c2Interp) c2Interp.style.display = 'block';
-            if (c2Result) c2Result.style.display = 'block';
-            if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT kit) <span class="required">*</span>';
-            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์ (GT kit)';
+            availableOptions = [...gtOptions, ...tm2Options];
+            if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT และ TM/2 kit) <span class="required">*</span>';
+            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์';
         } else if (val === 'TM/2') {
-            if (c1Interp) c1Interp.style.display = 'block';
-            if (c1Result) c1Result.style.display = 'block';
-            if (c2Interp) c2Interp.style.display = 'none';
-            if (c2Result) c2Result.style.display = 'none';
+            availableOptions = tm2Options;
             if (l1Interp) l1Interp.innerHTML = 'การแปลผล (TM/2 kit) <span class="required">*</span>';
             if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์ (TM/2 kit)';
-            const el2 = document.getElementById('analysis-interpretation-2-' + idx);
-            if (el2) { el2.value = ''; }
         } else if (val === 'GT') {
-            if (c1Interp) c1Interp.style.display = 'block';
-            if (c1Result) c1Result.style.display = 'block';
-            if (c2Interp) c2Interp.style.display = 'none';
-            if (c2Result) c2Result.style.display = 'none';
+            availableOptions = gtOptions;
             if (l1Interp) l1Interp.innerHTML = 'การแปลผล (GT kit) <span class="required">*</span>';
             if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์ (GT kit)';
-            const el2 = document.getElementById('analysis-interpretation-2-' + idx);
-            if (el2) { el2.value = ''; }
         } else {
-            // Neither selected
-            if (c1Interp) c1Interp.style.display = 'none';
-            if (c1Result) c1Result.style.display = 'none';
-            if (c2Interp) c2Interp.style.display = 'none';
-            if (c2Result) c2Result.style.display = 'none';
-            const el1 = document.getElementById('analysis-interpretation-' + idx);
-            if (el1) el1.value = '';
-            const el2 = document.getElementById('analysis-interpretation-2-' + idx);
-            if (el2) el2.value = '';
+            availableOptions = [];
+            placeholder = '-- กรุณาติ๊กเลือกสารที่ตรวจวิเคราะห์ก่อน --';
+            if (l1Interp) l1Interp.innerHTML = 'การแปลผล <span class="required">*</span>';
+            if (l1Result) l1Result.innerHTML = 'ผลการตรวจวิเคราะห์';
         }
+        
+        // อัปเดตรายการตัวเลือกใน dropdown ให้ตรงตามสารที่เลือก
+        selectEl.innerHTML = `<option value="">${placeholder}</option>` +
+            availableOptions.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('');
+            
+        // ถ้าค่าเดิมยังอยู่ในรายการตัวเลือกใหม่ ให้คงค่านั้นไว้
+        const normalize = str => (str || '').replace(/\s+/g, '');
+        const matched = availableOptions.find(opt => 
+            normalize(opt.value) === normalize(prevValue) ||
+            (normalize(prevValue).includes('สีควบคุม') && normalize(opt.value).includes('สีควบคุม')) ||
+            ((normalize(prevValue).includes('≥') || normalize(prevValue).includes('>=')) && normalize(opt.value).includes('≥'))
+        );
+        
+        if (matched) {
+            selectEl.value = matched.value;
+        } else {
+            selectEl.value = '';
+        }
+        
         this.handleInterpretationChange(idx);
     },
 
@@ -3779,65 +3795,47 @@ document.getElementById('formNameTitle').innerText = title;
     handleInterpretationChange(idx) {
         const interpretationMap = {
             'สีตัวอย่าง = สีควบคุม':              { result: 'ไม่พบ',      summary: 'ผ่าน' },
+            'สีควบคุม > สีตัวอย่าง < สีตัดสิน':  { result: 'พบปลอดภัย',  summary: 'ผ่าน' },
             'สีควบคุม>สีตัวอย่าง<สีตัดสิน':       { result: 'พบปลอดภัย',  summary: 'ผ่าน' },
             'สีตัวอย่าง ≥ สีตัดสิน':              { result: 'พบอันตราย',  summary: 'ไม่ผ่าน' },
+            'สีตัวอย่าง >= สีตัดสิน':             { result: 'พบอันตราย',  summary: 'ไม่ผ่าน' },
             'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ':    { result: 'พบ',         summary: 'ไม่ผ่าน' },
             'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': { result: 'ไม่พบ',      summary: 'ผ่าน' }
         };
         const el = document.getElementById('analysis-interpretation-' + idx);
         const resultInput = document.getElementById('analysis-detail-results-' + idx);
-        
-        const el2 = document.getElementById('analysis-interpretation-2-' + idx);
-        const resultInput2 = document.getElementById('analysis-detail-results-2-' + idx);
-        
         const summaryInput = document.getElementById('analysis-summary-outcome-' + idx);
-        const subEl = document.getElementById('analysis-substance-' + idx);
         
-        if(!el || !resultInput || !summaryInput) return;
+        if (!el || !resultInput || !summaryInput) return;
         
-        let overallPass = true;
-        let anyMapped = false;
+        const rawVal = el.value ? el.value.trim() : '';
+        const normVal = rawVal.replace(/\s+/g, '');
         
-        const mapped1 = interpretationMap[el.value];
-        if (mapped1) {
-            anyMapped = true;
-            resultInput.value = mapped1.result;
-            if (mapped1.summary !== 'ผ่าน') overallPass = false;
-            
-            if (mapped1.summary === 'ผ่าน') {
-                resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
-            } else {
-                resultInput.style.color = '#dc2626'; resultInput.style.background = '#fef2f2';
-            }
-        } else {
-            resultInput.value = ''; resultInput.style.color = ''; resultInput.style.background = '';
-        }
-        
-        if (subEl && subEl.value === 'GT และ TM/2' && el2 && resultInput2) {
-            const mapped2 = interpretationMap[el2.value];
-            if (mapped2) {
-                anyMapped = true;
-                resultInput2.value = mapped2.result;
-                if (mapped2.summary !== 'ผ่าน') overallPass = false;
-                
-                if (mapped2.summary === 'ผ่าน') {
-                    resultInput2.style.color = '#16a34a'; resultInput2.style.background = '#f0fdf4';
-                } else {
-                    resultInput2.style.color = '#dc2626'; resultInput2.style.background = '#fef2f2';
+        let mapped = interpretationMap[rawVal];
+        if (!mapped && rawVal) {
+            for (const [key, item] of Object.entries(interpretationMap)) {
+                if (key.replace(/\s+/g, '') === normVal ||
+                    (normVal.includes('สีควบคุม') && key.includes('สีควบคุม')) ||
+                    ((normVal.includes('≥') || normVal.includes('>=')) && key.includes('≥'))) {
+                    mapped = item;
+                    break;
                 }
-            } else {
-                resultInput2.value = ''; resultInput2.style.color = ''; resultInput2.style.background = '';
             }
         }
         
-        if (anyMapped) {
-            summaryInput.value = overallPass ? 'ผ่าน' : 'ไม่ผ่าน';
-            if (overallPass) {
+        if (mapped) {
+            resultInput.value = mapped.result;
+            summaryInput.value = mapped.summary;
+            
+            if (mapped.summary === 'ผ่าน') {
+                resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
                 summaryInput.style.color = '#16a34a'; summaryInput.style.background = '#f0fdf4';
             } else {
+                resultInput.style.color = '#dc2626'; resultInput.style.background = '#fef2f2';
                 summaryInput.style.color = '#dc2626'; summaryInput.style.background = '#fef2f2';
             }
         } else {
+            resultInput.value = ''; resultInput.style.color = ''; resultInput.style.background = '';
             summaryInput.value = ''; summaryInput.style.color = ''; summaryInput.style.background = '';
         }
     },
@@ -3907,33 +3905,12 @@ document.getElementById('formNameTitle').innerText = title;
                             <div class="form-group" id="interp-container-1-${item.idx}">
                                 <label id="label-interp-1-${item.idx}">การแปลผล <span class="required">*</span></label>
                                 <select id="analysis-interpretation-${item.idx}" required onchange="app.handleInterpretationChange(${item.idx})">
-                                    <option value="">-- เลือกการแปลผล --</option>
-                                    <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
-                                    <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
-                                    <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
-                                    <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
-                                    <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
+                                    <option value="">-- กรุณาติ๊กเลือกสารที่ตรวจวิเคราะห์ก่อน --</option>
                                 </select>
                             </div>
                             <div class="form-group" id="result-container-1-${item.idx}">
                                 <label id="label-result-1-${item.idx}">ผลการตรวจวิเคราะห์</label>
                                 <input type="text" id="analysis-detail-results-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
-                                <span class="input-helper">ออโต้</span>
-                            </div>
-                            <div class="form-group" id="interp-container-2-${item.idx}" style="display:none;">
-                                <label>การแปลผล (TM/2 kit) <span class="required">*</span></label>
-                                <select id="analysis-interpretation-2-${item.idx}" onchange="app.handleInterpretationChange(${item.idx})">
-                                    <option value="">-- เลือกการแปลผล --</option>
-                                    <option value="สีตัวอย่าง = สีควบคุม">สีตัวอย่าง = สีควบคุม</option>
-                                    <option value="สีควบคุม>สีตัวอย่าง<สีตัดสิน">สีควบคุม > สีตัวอย่าง < สีตัดสิน</option>
-                                    <option value="สีตัวอย่าง ≥ สีตัดสิน">สีตัวอย่าง ≥ สีตัดสิน</option>
-                                    <option value="พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
-                                    <option value="ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ">ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ</option>
-                                </select>
-                            </div>
-                            <div class="form-group" id="result-container-2-${item.idx}" style="display:none;">
-                                <label>ผลการตรวจวิเคราะห์ (TM/2 kit)</label>
-                                <input type="text" id="analysis-detail-results-2-${item.idx}" readonly class="readonly-input" style="font-weight:600;">
                                 <span class="input-helper">ออโต้</span>
                             </div>
                         </div>
@@ -3958,7 +3935,15 @@ document.getElementById('formNameTitle').innerText = title;
 
             // Pre-fill saved values
             sampleNames.forEach(item => {
-                const sub = sample['analysis_substance_' + item.idx] || sample.analysis_substance;
+                let sub = sample['analysis_substance_' + item.idx] || sample.analysis_substance;
+                if (!sub) {
+                    const hasGT = sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true || sample.test_gt_kit === 'true';
+                    const hasTM2 = sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true || sample.test_tm_kit === 'true';
+                    if (hasGT && hasTM2) sub = 'GT และ TM/2';
+                    else if (hasGT) sub = 'GT';
+                    else if (hasTM2) sub = 'TM/2';
+                }
+                
                 if (sub) {
                     const hiddenSubEl = document.getElementById('analysis-substance-' + item.idx);
                     if (hiddenSubEl) hiddenSubEl.value = sub;
@@ -3980,17 +3965,22 @@ document.getElementById('formNameTitle').innerText = title;
                 
                 app.handleSubstanceChange(item.idx);
                 
-                const interp = sample['analysis_interpretation_' + item.idx] || sample.analysis_interpretation;
+                const interp = sample['analysis_interpretation_' + item.idx] || sample['analysis_interpretation_2_' + item.idx] || sample.analysis_interpretation;
                 if (interp) {
                     const el = document.getElementById('analysis-interpretation-' + item.idx);
                     if (el) {
-                        el.value = interp;
+                        const normInterp = interp.replace(/\s+/g, '');
+                        for (let opt of el.options) {
+                            if (opt.value && (
+                                opt.value.replace(/\s+/g, '') === normInterp ||
+                                (normInterp.includes('สีควบคุม') && opt.value.includes('สีควบคุม')) ||
+                                ((normInterp.includes('≥') || normInterp.includes('>=')) && opt.value.includes('≥'))
+                            )) {
+                                el.value = opt.value;
+                                break;
+                            }
+                        }
                     }
-                }
-                const interp2 = sample['analysis_interpretation_2_' + item.idx];
-                if (interp2) {
-                    const el2 = document.getElementById('analysis-interpretation-2-' + item.idx);
-                    if (el2) el2.value = interp2;
                 }
                 app.handleInterpretationChange(item.idx);
 
@@ -7391,9 +7381,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const sub = showChecked ? (sample['analysis_substance_' + (item.idx || 1)] || '') : '';
                     const interp = showChecked ? (sample['analysis_interpretation_' + (item.idx || 1)] || '') : '';
                     const mapping1 = {
-                        'สีตัวอย่าง = สีควบคุม': 'พบปลอดภัย',
+                        'สีตัวอย่าง = สีควบคุม': 'ไม่พบ',
+                        'สีควบคุม > สีตัวอย่าง < สีตัดสิน': 'พบปลอดภัย',
                         'สีควบคุม>สีตัวอย่าง<สีตัดสิน': 'พบปลอดภัย',
-                        'สีตัวอย่าง ≥ สีตัดสิน': 'พบอันตราย'
+                        'สีตัวอย่าง ≥ สีตัดสิน': 'พบอันตราย',
+                        'สีตัวอย่าง >= สีตัดสิน': 'พบอันตราย'
                     };
                     const mapping2 = {
                         'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ': 'พบ',
