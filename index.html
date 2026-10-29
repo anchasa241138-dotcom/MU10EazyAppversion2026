@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793242000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793245000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -1460,7 +1460,7 @@
                                         <span class="ops-tile-lbl">ทันตามกำหนด (On-Time)</span>
                                     </div>
                                     <div class="ops-tile">
-                                        <span class="ops-tile-val" id="tat-overdue-count" style="color: #ef4444;">0</span>
+                                        <span class="ops-tile-val has-unit" id="tat-overdue-count" style="color: #ef4444;">0.0% <span style="font-size: 13px; font-weight: 600;">(0 ฉบับ)</span></span>
                                         <span class="ops-tile-lbl">ค้างท่อเกิน 3 วัน</span>
                                     </div>
                                 </div>
@@ -3335,7 +3335,10 @@
     <div class="modal-overlay" id="overdueSamplesModal">
         <div class="modal-card" style="max-width: 920px; width: 95%;">
             <div class="modal-header" style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff;">
-                <h4 style="color:#fff; margin:0;"><i class="fa-solid fa-clock-rotate-left"></i> ตัวอย่างที่ค้างท่อเกินเกณฑ์มาตรฐาน (> 3 วัน / 72 ชม.)</h4>
+                <div>
+                    <h4 style="color:#fff; margin:0;"><i class="fa-solid fa-clock-rotate-left"></i> ตัวอย่างที่ค้างท่อเกินเกณฑ์มาตรฐาน (> 3 วัน / 72 ชม.)</h4>
+                    <div id="overdueModalSubtitle" style="font-size: 13px; color: #fee2e2; margin-top: 3px;">รายงานตัวอย่างค้างท่อเกินเกณฑ์มาตรฐาน</div>
+                </div>
                 <button class="close-modal-btn" onclick="closeOverdueSamplesModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" style="padding: 20px; max-height: 65vh; overflow-y: auto;">
@@ -3490,7 +3493,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793242000000"></script>
+    <script src="charts-dash.js?v=1793245000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
