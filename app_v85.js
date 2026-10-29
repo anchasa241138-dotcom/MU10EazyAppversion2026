@@ -615,18 +615,18 @@ const app = {
         sessionStorage.removeItem('pending_route_hash');
 
         if (hash.startsWith('#followup') || hash.startsWith('#corrective')) {
-            this.switchView('dashboard');
+            this.switchView('followup');
             const urlParts = hash.split('?');
             const urlParams = new URLSearchParams(urlParts.length > 1 ? urlParts[1] : '');
             const prov = urlParams.get('prov') || '';
-            const tryOpenFollowup = (retries = 10) => {
-                if (typeof window.openAllFailedSamplesFollowupModal === 'function') {
-                    window.openAllFailedSamplesFollowupModal(prov);
+            const tryInitFollowup = (retries = 10) => {
+                if (typeof window.renderFollowupPageView === 'function') {
+                    window.renderFollowupPageView(prov);
                 } else if (retries > 0) {
-                    setTimeout(() => tryOpenFollowup(retries - 1), 300);
+                    setTimeout(() => tryInitFollowup(retries - 1), 300);
                 }
             };
-            setTimeout(() => tryOpenFollowup(), 350);
+            setTimeout(() => tryInitFollowup(), 200);
             return;
         }
 
@@ -692,7 +692,7 @@ const app = {
             document.documentElement.classList.remove('tracking-view-active');
         }
 
-        const labViews = ['lab-verify', 'lab-analysis', 'lab-certify', 'download-results', 'data-download', 'manage-users'];
+        const labViews = ['lab-verify', 'lab-analysis', 'lab-certify', 'download-results', 'data-download', 'manage-users', 'followup'];
         labViews.forEach(v => {
             if (viewId === v) {
                 document.body.classList.add(v + '-view-active');
@@ -713,6 +713,11 @@ const app = {
         // View-specific initialization / Access control
         try {
             switch(viewId) {
+                case 'followup':
+                    if (typeof window.renderFollowupPageView === 'function') {
+                        window.renderFollowupPageView();
+                    }
+                    break;
                 case 'manage-users':
                     if (this.currentUser && this.currentUser.role === 'admin') {
                         this.renderManageUsers();
@@ -973,6 +978,7 @@ const app = {
                 'verify-notification-badge': visible.filter(s => s.status === 'registered').length,
                 'analysis-notification-badge': visible.filter(s => s.status === 'accepted').length,
                 'certify-notification-badge': visible.filter(s => s.status === 'analyzing' || s.status === 'summarized' || s.status === 'analyst_signed').length,
+                'followup-notification-badge': (typeof window.getPendingFollowupCount === 'function') ? window.getPendingFollowupCount() : 0,
                 'user-approval-badge': (this.users || []).filter(u => u.status === 'pending').length
             };
 
