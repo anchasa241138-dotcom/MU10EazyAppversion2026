@@ -1920,6 +1920,7 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
 
 // 1. STRATEGIC TARGETS (มิติที่ 1: แผนยุทธศาสตร์และเป้าหมาย)
 window.STRATEGIC_TARGETS_2570 = {
+    fiscalYear: '2570',
     total: 5245,
     chemical: 4895,
     microbiology: 350,
@@ -1929,6 +1930,108 @@ window.STRATEGIC_TARGETS_2570 = {
         'มุกดาหาร': { chemical: 630, micro: 40, total: 670, id: 'muk' },
         'อำนาจเจริญ': { chemical: 630, micro: 40, total: 670, id: 'amnat' },
         'ยโสธร': { chemical: 575, micro: 40, total: 615, id: 'yasothon' }
+    },
+    // เป้าหมายรายสารแยกตามจังหวัด ปีงบประมาณ 2570 จากแผนจัดสรรทางการ
+    substances: {
+        'pesticide': {
+            label: 'ยาฆ่าแมลง',
+            total: 1735, // GT kit (1,500) + GT kit + TM/2 kit (235)
+            provinces: {
+                'อุบลราชธานี': 580,  // 510 + 70
+                'ศรีสะเกษ': 510,     // 410 + 100
+                'ยโสธร': 205,       // 180 + 25
+                'อำนาจเจริญ': 220,   // 200 + 20
+                'มุกดาหาร': 220      // 200 + 20
+            }
+        },
+        'borax': {
+            label: 'สารบอแรกซ์',
+            total: 109,
+            provinces: {
+                'อุบลราชธานี': 50,
+                'ศรีสะเกษ': 20,
+                'ยโสธร': 0,
+                'อำนาจเจริญ': 10,
+                'มุกดาหาร': 29
+            }
+        },
+        'formalin': {
+            label: 'สารฟอร์มาลิน',
+            total: 480,
+            provinces: {
+                'อุบลราชธานี': 180,
+                'ศรีสะเกษ': 200,
+                'ยโสธร': 20,
+                'อำนาจเจริญ': 40,
+                'มุกดาหาร': 40
+            }
+        },
+        'salicylic': {
+            label: 'สารกันรา',
+            total: 45,
+            provinces: {
+                'อุบลราชธานี': 0,
+                'ศรีสะเกษ': 20,
+                'ยโสธร': 10,
+                'อำนาจเจริญ': 10,
+                'มุกดาหาร': 5
+            }
+        },
+        'bleach': {
+            label: 'สารฟอกขาว',
+            total: 0,
+            provinces: {
+                'อุบลราชธานี': 0,
+                'ศรีสะเกษ': 0,
+                'ยโสธร': 0,
+                'อำนาจเจริญ': 0,
+                'มุกดาหาร': 0
+            }
+        },
+        'agonist': {
+            label: 'สารเร่งเนื้อแดง',
+            total: 240,
+            provinces: {
+                'อุบลราชธานี': 80,
+                'ศรีสะเกษ': 100,
+                'ยโสธร': 20,
+                'อำนาจเจริญ': 20,
+                'มุกดาหาร': 20
+            }
+        },
+        'polar': {
+            label: 'สารโพลาร์ในน้ำมันทอดอาหาร',
+            total: 170,
+            provinces: {
+                'อุบลราชธานี': 40,
+                'ศรีสะเกษ': 80,
+                'ยโสธร': 20,
+                'อำนาจเจริญ': 15,
+                'มุกดาหาร': 15
+            }
+        },
+        'coliformFood': {
+            label: 'โคลิฟอร์มในอาหาร',
+            total: 175,
+            provinces: {
+                'อุบลราชธานี': 60,
+                'ศรีสะเกษ': 55,
+                'ยโสธร': 20,
+                'อำนาจเจริญ': 20,
+                'มุกดาหาร': 20
+            }
+        },
+        'coliformWater': {
+            label: 'โคลิฟอร์มในน้ำ',
+            total: 175,
+            provinces: {
+                'อุบลราชธานี': 60,
+                'ศรีสะเกษ': 55,
+                'ยโสธร': 20,
+                'อำนาจเจริญ': 20,
+                'มุกดาหาร': 20
+            }
+        }
     }
 };
 
@@ -1954,17 +2057,58 @@ function updateStrategicKPITargets(allSamples, curProv = 'all', targetSubstance 
         return count;
     };
 
+    const subTargetObj = (targetSubstance !== 'all' && targetConfig.substances && targetConfig.substances[targetSubstance]) 
+        ? targetConfig.substances[targetSubstance] 
+        : null;
+
     // Determine target and actual count for header
-    let totalTarget = targetConfig.total; // Default 5,245 for region 10
+    let totalTarget = 0;
     let titleHtml = '<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริงภาพรวมเขต 10:';
-    
-    if (curProv !== 'all' && targetConfig.provinces[curProv]) {
-        totalTarget = targetConfig.provinces[curProv].total;
-        titleHtml = `<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริง จ.${curProv}:`;
+    let badgeHtml = '';
+
+    if (subTargetObj) {
+        if (curProv !== 'all' && subTargetObj.provinces && subTargetObj.provinces[curProv] !== undefined) {
+            totalTarget = subTargetObj.provinces[curProv];
+            titleHtml = `<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริง จ.${curProv} (${subTargetObj.label}):`;
+            badgeHtml = `
+                <span class="lbl">เป้าหมาย${subTargetObj.label} จ.${curProv}:</span>
+                <span class="val">${totalTarget.toLocaleString()} ตัวอย่าง</span>
+                <span class="sub">(เป้าหมายเฉพาะสารตามแผนปี 2570)</span>
+            `;
+        } else {
+            totalTarget = subTargetObj.total;
+            titleHtml = `<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริงภาพรวมเขต 10 (${subTargetObj.label}):`;
+            badgeHtml = `
+                <span class="lbl">เป้าหมาย${subTargetObj.label} รวมเขต 10:</span>
+                <span class="val">${totalTarget.toLocaleString()} ตัวอย่าง</span>
+                <span class="sub">(เป้าหมายรวม 5 จังหวัดตามแผนปี 2570)</span>
+            `;
+        }
+    } else {
+        if (curProv !== 'all' && targetConfig.provinces[curProv]) {
+            totalTarget = targetConfig.provinces[curProv].total;
+            titleHtml = `<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริง จ.${curProv}:`;
+            badgeHtml = `
+                <span class="lbl">เป้าหมาย จ.${curProv}:</span>
+                <span class="val">${totalTarget.toLocaleString()} ตัวอย่าง</span>
+                <span class="sub">(เคมี ${targetConfig.provinces[curProv].chemical.toLocaleString()} + จุลินทรีย์ ${targetConfig.provinces[curProv].micro.toLocaleString()})</span>
+            `;
+        } else {
+            totalTarget = targetConfig.total;
+            titleHtml = `<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริงภาพรวมเขต 10:`;
+            badgeHtml = `
+                <span class="lbl">เป้าหมายรวมเขต 10:</span>
+                <span class="val">5,245 ตัวอย่าง</span>
+                <span class="sub">(เคมี 4,895 + จุลินทรีย์ 350)</span>
+            `;
+        }
     }
 
+    const badgeEl = document.querySelector('.strategic-kpi-badge');
+    if (badgeEl && badgeHtml) badgeEl.innerHTML = badgeHtml;
+
     const totalActual = countTestItems(allSamples);
-    const totalPct = totalTarget > 0 ? ((totalActual / totalTarget) * 100).toFixed(1) : '0.0';
+    const totalPct = totalTarget > 0 ? ((totalActual / totalTarget) * 100).toFixed(1) : (totalActual > 0 ? '100.0' : '0.0');
 
     const titleEl = document.querySelector('.overall-title');
     if (titleEl) titleEl.innerHTML = titleHtml;
@@ -1991,22 +2135,44 @@ function updateStrategicKPITargets(allSamples, curProv = 'all', targetSubstance 
         const pInfo = targetConfig.provinces[provName];
         const pSamples = allSamples.filter(s => s.province === provName || (s.agency && s.agency.includes(provName)));
         const actualCount = countTestItems(pSamples);
-        const target = pInfo.total;
-        const pct = target > 0 ? ((actualCount / target) * 100).toFixed(1) : '0.0';
+
+        let pTarget = 0;
+        let breakdownText = '';
+
+        if (subTargetObj) {
+            pTarget = (subTargetObj.provinces && subTargetObj.provinces[provName] !== undefined)
+                ? subTargetObj.provinces[provName]
+                : 0;
+            breakdownText = `เป้าหมาย${subTargetObj.label}: ${pTarget.toLocaleString()} ตัวอย่าง`;
+        } else {
+            pTarget = pInfo.total;
+            breakdownText = `เคมี ${pInfo.chemical.toLocaleString()} | จุลินทรีย์ ${pInfo.micro.toLocaleString()}`;
+        }
+
+        const pct = pTarget > 0 ? ((actualCount / pTarget) * 100).toFixed(1) : (actualCount > 0 ? '100.0' : '0.0');
 
         const actualEl = document.getElementById(`pt-actual-${pInfo.id}`);
         const pctEl = document.getElementById(`pt-pct-${pInfo.id}`);
         const fillEl = document.getElementById(`pt-fill-${pInfo.id}`);
         const statusEl = document.getElementById(`pt-status-${pInfo.id}`);
+        const cardEl = document.getElementById(`ptarget-${pInfo.id}`);
+        const targetEl = cardEl ? cardEl.querySelector('.pt-target') : null;
+        const breakdownEl = cardEl ? cardEl.querySelector('.pt-breakdown') : null;
 
         if (actualEl) actualEl.innerText = actualCount.toLocaleString();
+        if (targetEl) targetEl.innerText = pTarget.toLocaleString();
+        if (breakdownEl) breakdownEl.innerText = breakdownText;
         if (pctEl) pctEl.innerText = `${pct}%`;
+
         if (fillEl) {
             fillEl.style.width = `${Math.min(parseFloat(pct), 100)}%`;
             fillEl.className = 'pt-fill ' + (parseFloat(pct) >= 80 ? 'fill-success' : (parseFloat(pct) >= 50 ? 'fill-warning' : 'fill-danger'));
         }
         if (statusEl) {
-            if (parseFloat(pct) >= 80) {
+            if (pTarget === 0 && actualCount === 0) {
+                statusEl.className = 'pt-status-pill pill-secondary';
+                statusEl.innerText = 'ไม่มีเป้าหมาย';
+            } else if (parseFloat(pct) >= 80) {
                 statusEl.className = 'pt-status-pill pill-success';
                 statusEl.innerText = 'ตามเป้าหมาย';
             } else if (parseFloat(pct) >= 50) {
@@ -2019,7 +2185,6 @@ function updateStrategicKPITargets(allSamples, curProv = 'all', targetSubstance 
         }
 
         // Highlight selected province card, dim unselected cards
-        const cardEl = document.getElementById(`ptarget-${pInfo.id}`);
         if (cardEl) {
             if (curProv === 'all') {
                 cardEl.style.opacity = '1';
