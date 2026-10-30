@@ -572,7 +572,7 @@ function updateDashboardCharts(samples) {
 let substanceChartInstances = {};
 window.currentFailedSamples = {};
 
-function updateSubstanceCharts(samples) {
+function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
     const stats = {
         'pesticide': { label: 'ยาฆ่าแมลง', total: 0, pass: 0, fail: 0 },
         'borax': { label: 'สารบอแรกซ์', total: 0, pass: 0, fail: 0 },
@@ -781,9 +781,13 @@ function updateSubstanceCharts(samples) {
     if (!grid) return;
 
     const subFilterEl = document.getElementById('dashSubstanceFilter');
-    const targetSubstance = targetSubstanceParam || (subFilterEl ? subFilterEl.value : 'all');
+    const targetSubstance = (typeof targetSubstanceParam !== 'undefined' && targetSubstanceParam) 
+        ? targetSubstanceParam 
+        : (subFilterEl ? subFilterEl.value : (window.currentActiveSubstance || 'all'));
     const provFilterEl = document.getElementById('dashProvinceFilter');
-    const curProv = curProvParam || (provFilterEl ? provFilterEl.value : 'all');
+    const curProv = (typeof curProvParam !== 'undefined' && curProvParam) 
+        ? curProvParam 
+        : (provFilterEl ? provFilterEl.value : 'all');
     
     if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
         let keysToDisplay = Object.keys(stats);
