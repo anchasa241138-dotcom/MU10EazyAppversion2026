@@ -201,7 +201,7 @@ const app = {
     getVisibleSamples() {
         if (!this.currentUser) return [];
         if (this.currentUser.role === 'admin' || this.currentUser.role === 'lab' || this.currentUser.role === 'certifier' || this.currentUser.role === 'executive') {
-            return this.samples;
+            return (this.samples || []).filter(s => s && s.ref_id !== 'MU001-691030001');
         }
         
         const workplace = (this.currentUser.workplace || '').trim();
@@ -250,7 +250,7 @@ const app = {
                     });
                     let hasMigration = false;
                     const initialCount = this.samples.length;
-                    this.samples = this.samples.filter(s => s && s.ref_id && !s.ref_id.startsWith('TEMP-'));
+                    this.samples = this.samples.filter(s => s && s.ref_id && !s.ref_id.startsWith('TEMP-') && s.ref_id !== 'MU001-691030001');
                     if (this.samples.length !== initialCount) {
                         hasMigration = true;
                     }
@@ -280,6 +280,9 @@ const app = {
                 } else {
                     this.resetDefaultSamples();
                     db.ref('samples').set(this.samples);
+                }
+                if (typeof this.updateDashboardStats === 'function') {
+                    try { this.updateDashboardStats(); } catch (e) { console.warn(e); }
                 }
                 if (window.updateDashboardCharts) {
                     try { updateDashboardCharts(this.getVisibleSamples()); } catch (e) { console.warn(e); }
