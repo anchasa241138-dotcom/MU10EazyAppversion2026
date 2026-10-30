@@ -4174,16 +4174,12 @@ document.getElementById('formNameTitle').innerText = title;
                                 <label class="substance-pill-btn" id="pill-gt-${item.idx}">
                                     <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="GT" onchange="app.handleSubstancePillChange(${item.idx})">
                                     <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
-                                    <div class="pill-text-block">
-                                        <span class="pill-title">GT Kit</span>
-                                    </div>
+                                    <span class="pill-title">GT Kit</span>
                                 </label>
                                 <label class="substance-pill-btn" id="pill-tm2-${item.idx}">
                                     <input type="checkbox" class="substance-pill-chk" data-idx="${item.idx}" value="TM/2" onchange="app.handleSubstancePillChange(${item.idx})">
                                     <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
-                                    <div class="pill-text-block">
-                                        <span class="pill-title">TM/2 Kit</span>
-                                    </div>
+                                    <span class="pill-title">TM/2 Kit</span>
                                 </label>
                                 <input type="hidden" id="analysis-substance-${item.idx}" name="analysis_substance_${item.idx}" value="">
                             </div>
