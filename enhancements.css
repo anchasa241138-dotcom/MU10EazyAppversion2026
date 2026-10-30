@@ -7055,9 +7055,10 @@ body.role-admin .btn-manage-actions {
   position: relative !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 7px 16px !important;
-  border-radius: 12px !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
   background: #ffffff !important;
   border: 1.5px solid #cbd5e1 !important;
   color: #1e293b !important;
@@ -7065,7 +7066,9 @@ body.role-admin .btn-manage-actions {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   user-select: none !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
-  min-width: 135px !important;
+  min-width: 105px !important;
+  width: auto !important;
+  box-sizing: border-box !important;
 }
 
 .substance-pill-btn:hover {
@@ -7084,15 +7087,15 @@ body.role-admin .btn-manage-actions {
 }
 
 .substance-pill-btn .pill-check-icon {
-  width: 20px !important;
-  height: 20px !important;
+  width: 18px !important;
+  height: 18px !important;
   border-radius: 50% !important;
   border: 1.5px solid #cbd5e1 !important;
   background: #f8fafc !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 900 !important;
   color: transparent !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -7100,25 +7103,26 @@ body.role-admin .btn-manage-actions {
 }
 
 .substance-pill-btn .pill-text-block {
-  display: flex !important;
-  flex-direction: column !important;
-  line-height: 1.2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  line-height: 1 !important;
 }
 
 .substance-pill-btn .pill-title {
+  display: inline-block !important;
   font-size: 13.5px !important;
   font-weight: 700 !important;
   color: #0f172a !important;
   letter-spacing: 0.2px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
   transition: color 0.2s ease !important;
 }
 
 .substance-pill-btn .pill-sub {
-  font-size: 11px !important;
-  color: #64748b !important;
-  font-weight: 500 !important;
-  margin-top: 1px !important;
-  transition: color 0.2s ease !important;
+  display: none !important;
 }
 
 /* Active / Checked State */
