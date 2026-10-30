@@ -1016,7 +1016,11 @@ const app = {
         const role = this.currentUser ? this.currentUser.role : '';
         const canAccessLab = Boolean(this.currentUser && ['lab', 'admin', 'certifier'].includes(role));
         const canAccessCertify = Boolean(this.currentUser && ['lab', 'admin', 'certifier'].includes(role));
-        const isAdmin = Boolean(this.currentUser && role === 'admin');
+        const isAdmin = Boolean(this.currentUser && (role === 'admin' || this.currentUser.username === 'admin'));
+
+        if (typeof document !== 'undefined' && document.body) {
+            document.body.classList.toggle('role-admin', isAdmin);
+        }
 
         if (this.currentUser) {
             authButtons.innerHTML = `<button class="btn btn-secondary" onclick="app.logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>`;
@@ -1045,6 +1049,18 @@ const app = {
         // Enforce role-based visibility for Provincial Email Dispatch and Edit Approval buttons
         this.updateProvEmailButtonVisibility();
         this.updateEditApprovalButtonVisibility();
+
+        // Enforce hiding of follow-up action button on dashboard for admin
+        const btnManageAction = document.querySelector('.btn-manage-actions');
+        if (btnManageAction) {
+            if (isAdmin) {
+                btnManageAction.style.setProperty('display', 'none', 'important');
+            } else if (!btnManageAction.style.display || btnManageAction.style.display === 'none') {
+                if (typeof window.updateCorrectiveActionGovernance === 'function' && window.currentCachedSamples) {
+                    window.updateCorrectiveActionGovernance(window.currentCachedSamples);
+                }
+            }
+        }
         
         // Re-evaluate current view: ensure unauthorized users are redirected to dashboard
         const activeView = document.querySelector('.content-view.active');
