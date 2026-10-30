@@ -370,6 +370,10 @@ function updateDashboardCharts(samples) {
         }
     }
 
+    if (window.app && typeof window.app.updateDashboardStats === 'function') {
+        try { window.app.updateDashboardStats(); } catch (e) {}
+    }
+
     const filterEl = document.getElementById('dashProvinceFilter');
     if (filterEl && filterEl.value !== 'all') {
         samples = samples.filter(s => s.province === filterEl.value);
