@@ -4213,7 +4213,8 @@ body.require-login-mode::before {
 #view-lab-certify,
 #view-download-results,
 #view-data-download,
-#view-manage-users {
+#view-manage-users,
+#view-followup {
   background: #eceef2 !important;
   border-radius: 28px !important;
   padding: 30px !important;
@@ -4235,6 +4236,14 @@ body.require-login-mode::before {
 #view-data-download *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #view-manage-users,
 #view-manage-users *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#view-followup,
+#view-followup *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#correctiveActionDetailModal,
+#correctiveActionDetailModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#menu-followup,
+#menu-followup *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.app-sidebar .menu-item[data-view="followup"],
+.app-sidebar .menu-item[data-view="followup"] *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #userDetailsModal,
 #userDetailsModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #sampleDetailPreviewModal,
@@ -4255,12 +4264,14 @@ body:has(#view-lab-certify.active) #currentViewTitle,
 body:has(#view-download-results.active) #currentViewTitle,
 body:has(#view-data-download.active) #currentViewTitle,
 body:has(#view-manage-users.active) #currentViewTitle,
+body:has(#view-followup.active) #currentViewTitle,
 body.lab-verify-view-active #currentViewTitle,
 body.lab-analysis-view-active #currentViewTitle,
 body.lab-certify-view-active #currentViewTitle,
 body.download-results-view-active #currentViewTitle,
 body.data-download-view-active #currentViewTitle,
-body.manage-users-view-active #currentViewTitle {
+body.manage-users-view-active #currentViewTitle,
+body.followup-view-active #currentViewTitle {
   font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
@@ -4271,6 +4282,9 @@ body.manage-users-view-active #currentViewTitle {
 #view-download-results i, #view-download-results .fa, #view-download-results .fas, #view-download-results .fa-solid, #view-download-results .fa-regular,
 #view-data-download i, #view-data-download .fa, #view-data-download .fas, #view-data-download .fa-solid, #view-data-download .fa-regular,
 #view-manage-users i, #view-manage-users .fa, #view-manage-users .fas, #view-manage-users .fa-solid, #view-manage-users .fa-regular,
+#view-followup i, #view-followup .fa, #view-followup .fas, #view-followup .fa-solid, #view-followup .fa-regular,
+#correctiveActionDetailModal i, #correctiveActionDetailModal .fa, #correctiveActionDetailModal .fas, #correctiveActionDetailModal .fa-solid, #correctiveActionDetailModal .fa-regular,
+#menu-followup i, #menu-followup .fa, #menu-followup .fas, #menu-followup .fa-solid, #menu-followup .fa-regular,
 #userDetailsModal i, #userDetailsModal .fa, #userDetailsModal .fas, #userDetailsModal .fa-solid, #userDetailsModal .fa-regular,
 #sampleDetailPreviewModal i, #sampleDetailPreviewModal .fa, #sampleDetailPreviewModal .fas, #sampleDetailPreviewModal .fa-solid, #sampleDetailPreviewModal .fa-regular,
 #verifyAcceptModal i, #verifyAcceptModal .fa, #verifyAcceptModal .fas, #verifyAcceptModal .fa-solid, #verifyAcceptModal .fa-regular,
@@ -6602,8 +6616,21 @@ body.role-admin .btn-manage-actions {
 }
 
 /* ==========================================================================
-   Follow-up Tracking Page (Closed-Loop Governance View)
+   Follow-up Tracking Page (Closed-Loop Governance View) - Font Prompt Enforced
    ========================================================================== */
+.followup-view-container,
+.followup-view-container *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#followupTable,
+#followupTable *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#followupProvinceTabs,
+#followupProvinceTabs *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.prov-tab-btn,
+.prov-tab-btn *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.followup-kpi-card,
+.followup-kpi-card *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular) {
+  font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
 .followup-view-container {
   max-width: 1380px;
   margin: 0 auto;
