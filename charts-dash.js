@@ -233,8 +233,10 @@ function initDashboardCharts() {
 
 // Substance dictionary and helper matching functions
 window.substanceDictionary = {
-    'all': { label: 'สารที่ตรวจวิเคราะห์ทั้งหมด (9 รายการ)', icon: 'fa-flask' },
-    'pesticide': { label: 'ยาฆ่าแมลง', form: 'MU.10-001', icon: 'fa-leaf' },
+    'all': { label: 'สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
+    'pesticide_gt': { label: 'ยาฆ่าแมลง (GT kit)', form: 'MU.10-001', icon: 'fa-leaf' },
+    'pesticide_tm2': { label: 'ยาฆ่าแมลง (GT + TM/2 kit)', form: 'MU.10-001', icon: 'fa-vial' },
+    'pesticide': { label: 'ยาฆ่าแมลง (รวมทุก Kit)', form: 'MU.10-001', icon: 'fa-layer-group' },
     'borax': { label: 'สารบอแรกซ์', form: 'MU.10-002', icon: 'fa-drumstick-bite' },
     'formalin': { label: 'สารฟอร์มาลิน', form: 'MU.10-002', icon: 'fa-fish' },
     'bleach': { label: 'สารฟอกขาว', form: 'MU.10-002', icon: 'fa-wand-magic-sparkles' },
@@ -248,7 +250,19 @@ window.substanceDictionary = {
 window.itemMatchesSubstance = function(s, idx, targetSubstance) {
     if (s.form_type === 'MU.10-008') return false; // Exclude foodLabel from dashboard entirely
     if (!targetSubstance || targetSubstance === 'all') return true;
-    if (targetSubstance === 'pesticide') return s.form_type === 'MU.10-001';
+
+    if (s.form_type === 'MU.10-001') {
+        if (targetSubstance === 'pesticide') return true;
+        const sub = (idx ? s['analysis_substance_' + idx] : '') || s.analysis_substance || '';
+        const isTM2 = sub.includes('TM/2') || sub.includes('TM2') || sub.includes('TM-2');
+        if (targetSubstance === 'pesticide_tm2') return isTM2;
+        if (targetSubstance === 'pesticide_gt') return !isTM2;
+        return false;
+    }
+    if (targetSubstance === 'pesticide' || targetSubstance === 'pesticide_gt' || targetSubstance === 'pesticide_tm2') {
+        return false;
+    }
+
     if (targetSubstance === 'polar') return s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004';
     if (targetSubstance === 'coliformWater') return s.form_type === 'MU.10-006';
     if (targetSubstance === 'coliformFood') return s.form_type === 'MU.10-007';
@@ -319,7 +333,23 @@ window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
         return sum;
     }
 
-    if (s.form_type === 'MU.10-001' || s.form_type === 'MU.10-007') {
+    if (s.form_type === 'MU.10-001') {
+        if (targetSubstance === 'pesticide_tm2') {
+            const sum2 = (idx ? (s['analysis_interpretation_2_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_interpretation_2 || s.analysis_summary_outcome || s.analysis_summary || '';
+            if (sum2.includes('ไม่ผ่าน') || sum2.includes('พบ')) return 'ไม่ผ่าน';
+            if (sum2.includes('ผ่าน') || sum2.includes('ไม่พบ') || sum2.includes('ปลอดภัย') || sum2.includes('ใช้ได้')) return 'ผ่าน';
+            return sum2;
+        }
+        if (targetSubstance === 'pesticide_gt') {
+            const sum1 = (idx ? (s['analysis_interpretation_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_interpretation || s.analysis_summary_outcome || s.analysis_summary || '';
+            if (sum1.includes('ไม่ผ่าน') || sum1.includes('พบ')) return 'ไม่ผ่าน';
+            if (sum1.includes('ผ่าน') || sum1.includes('ไม่พบ') || sum1.includes('ปลอดภัย') || sum1.includes('ใช้ได้')) return 'ผ่าน';
+            return sum1;
+        }
+        return (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
+    }
+
+    if (s.form_type === 'MU.10-007') {
         return (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
     }
 
@@ -574,7 +604,8 @@ window.currentFailedSamples = {};
 
 function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
     const stats = {
-        'pesticide': { label: 'ยาฆ่าแมลง', total: 0, pass: 0, fail: 0 },
+        'pesticide_gt': { label: 'ยาฆ่าแมลง (GT kit)', total: 0, pass: 0, fail: 0 },
+        'pesticide_tm2': { label: 'ยาฆ่าแมลง (TM/2 kit)', total: 0, pass: 0, fail: 0 },
         'borax': { label: 'สารบอแรกซ์', total: 0, pass: 0, fail: 0 },
         'formalin': { label: 'สารฟอร์มาลิน', total: 0, pass: 0, fail: 0 },
         'bleach': { label: 'สารฟอกขาว', total: 0, pass: 0, fail: 0 },
@@ -691,7 +722,13 @@ function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
         };
 
         if (s.form_type === 'MU.10-001') {
-            inc('pesticide', getSingleSummary());
+            const sub = (idx ? s['analysis_substance_' + idx] : '') || s.analysis_substance || '';
+            const isTM2 = sub.includes('TM/2') || sub.includes('TM2') || sub.includes('TM-2');
+            if (isTM2) {
+                inc('pesticide_tm2', getSingleSummary());
+            } else {
+                inc('pesticide_gt', getSingleSummary());
+            }
         } else if (s.form_type === 'MU.10-002') {
             let matchedTest = false;
             ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
@@ -791,7 +828,9 @@ function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
     
     if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
         let keysToDisplay = Object.keys(stats);
-        if (targetSubstance !== 'all' && stats[targetSubstance]) {
+        if (targetSubstance === 'pesticide') {
+            keysToDisplay = ['pesticide_gt', 'pesticide_tm2'];
+        } else if (targetSubstance !== 'all' && stats[targetSubstance]) {
             keysToDisplay = [targetSubstance];
         }
         const passedCounts = keysToDisplay.map(k => stats[k].pass);
@@ -1426,8 +1465,10 @@ function renderSubstancePillsBar() {
     if (!pillsBar) return;
     
     const subList = [
-        { key: 'all', label: 'ทั้งหมด (9 รายการ)', icon: 'fa-flask' },
-        { key: 'pesticide', label: 'ยาฆ่าแมลง', icon: 'fa-leaf' },
+        { key: 'all', label: 'ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
+        { key: 'pesticide_gt', label: 'ยาฆ่าแมลง (GT)', icon: 'fa-leaf' },
+        { key: 'pesticide_tm2', label: 'ยาฆ่าแมลง (TM/2)', icon: 'fa-vial' },
+        { key: 'pesticide', label: 'ยาฆ่าแมลง (รวม)', icon: 'fa-layer-group' },
         { key: 'borax', label: 'สารบอแรกซ์', icon: 'fa-drumstick-bite' },
         { key: 'formalin', label: 'สารฟอร์มาลิน', icon: 'fa-fish' },
         { key: 'bleach', label: 'สารฟอกขาว', icon: 'fa-wand-magic-sparkles' },
@@ -1934,7 +1975,7 @@ window.STRATEGIC_TARGETS_2570 = {
     // เป้าหมายรายสารแยกตามจังหวัด ปีงบประมาณ 2570 จากแผนจัดสรรทางการ
     substances: {
         'pesticide': {
-            label: 'ยาฆ่าแมลง',
+            label: 'ยาฆ่าแมลง (รวมทุก Kit)',
             total: 1735, // GT kit (1,500) + GT kit + TM/2 kit (235)
             provinces: {
                 'อุบลราชธานี': 580,  // 510 + 70
@@ -1942,6 +1983,28 @@ window.STRATEGIC_TARGETS_2570 = {
                 'ยโสธร': 205,       // 180 + 25
                 'อำนาจเจริญ': 220,   // 200 + 20
                 'มุกดาหาร': 220      // 200 + 20
+            }
+        },
+        'pesticide_gt': {
+            label: 'ยาฆ่าแมลง (GT kit)',
+            total: 1500,
+            provinces: {
+                'อุบลราชธานี': 510,
+                'ศรีสะเกษ': 410,
+                'ยโสธร': 180,
+                'อำนาจเจริญ': 200,
+                'มุกดาหาร': 200
+            }
+        },
+        'pesticide_tm2': {
+            label: 'ยาฆ่าแมลง (GT + TM/2 kit)',
+            total: 235,
+            provinces: {
+                'อุบลราชธานี': 70,
+                'ศรีสะเกษ': 100,
+                'ยโสธร': 25,
+                'อำนาจเจริญ': 20,
+                'มุกดาหาร': 20
             }
         },
         'borax': {
@@ -3023,7 +3086,9 @@ window.followupCurrentProvince = 'all';
 window.getCompiledFailedSamples = function() {
     let allList = [];
     const substanceLabels = {
-        'pesticide': 'ยาฆ่าแมลง',
+        'pesticide': 'ยาฆ่าแมลง (รวมทุก Kit)',
+        'pesticide_gt': 'ยาฆ่าแมลง (GT kit)',
+        'pesticide_tm2': 'ยาฆ่าแมลง (GT + TM/2 kit)',
         'borax': 'สารบอแรกซ์',
         'formalin': 'สารฟอร์มาลิน',
         'bleach': 'สารฟอกขาว',
