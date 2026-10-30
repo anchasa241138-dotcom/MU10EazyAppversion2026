@@ -6247,6 +6247,12 @@ body.manage-users-view-active #currentViewTitle {
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.38);
 }
 
+/* Hide Follow-up Action Button on Dashboard for Admin Users */
+body.role-admin #view-dashboard .btn-manage-actions,
+body.role-admin .btn-manage-actions {
+  display: none !important;
+}
+
 .btn-action-detail {
   background: #f1f5f9;
   color: #0284c7;
