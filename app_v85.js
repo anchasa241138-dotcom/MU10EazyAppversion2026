@@ -5519,7 +5519,7 @@ document.getElementById('formNameTitle').innerText = title;
     },
 
     openCertifyModal(refId, viewOnly = false, forceEdit = false) {
-        const sample = this.samples.find(s => s.ref_id === refId);
+        const sample = this.samples.find(s => s.ref_id === refId || s.lab_id === refId || s.lab_no === refId || s.sample_id === refId);
         if(!sample) return;
 
         // Security check: only admin, lab, and certifier roles can edit or certify
