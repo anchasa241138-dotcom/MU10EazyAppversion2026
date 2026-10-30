@@ -632,7 +632,10 @@ function updateSubstanceCharts(samples) {
                     district: s.amphoe || s.district || '-',
                     source: s.agency || s.source || '-',
                     location: s.collection_place || s.collection_location || s.location_name || '-',
-                    form_type: s.form_type || '-'
+                    form_type: s.form_type || '-',
+                    ref_id: s.ref_id || s.id || null,
+                    lab_id: s.lab_id || null,
+                    rawSample: s
                 });
             } else if (s.status === 'approved') {
                 stats[type].pass++;
@@ -710,7 +713,10 @@ function updateSubstanceCharts(samples) {
                          district: s.amphoe || s.district || '-',
                          source: s.agency || s.source || '-',
                          location: s.collection_place || s.collection_location || s.location_name || '-',
-                         form_type: s.form_type || '-'
+                         form_type: s.form_type || '-',
+                         ref_id: s.ref_id || s.id || null,
+                         lab_id: s.lab_id || null,
+                         rawSample: s
                      });
                  }
             } else {
@@ -2347,7 +2353,7 @@ window.openCorrectiveDetailModal = function(idKey, forceReadOnly) {
         headerTitleEl.innerText = canEdit ? 'บันทึกการติดตามผลหลังพบปัญหา' : 'รายละเอียดการติดตามผลหลังพบปัญหา';
     }
 
-    document.getElementById('cad-target-id').value = idKey;
+    document.getElementById('cad-target-id').value = (target && target.ref_id) ? target.ref_id : (target && target.code ? target.code : idKey);
     document.getElementById('cad-sample-title').innerText = `รหัสตัวอย่าง: ${target ? (target.code || target.identifier) : idKey}`;
     document.getElementById('cad-sample-name').innerText = target ? (target.name || '-') : '-';
     document.getElementById('cad-substance-fail').innerText = foundSubstance || 'ไม่ผ่านมาตรฐาน';
@@ -2417,6 +2423,50 @@ window.openCorrectiveDetailModal = function(idKey, forceReadOnly) {
 
 window.closeCorrectiveActionDetailModal = function() {
     document.getElementById('correctiveActionDetailModal').classList.remove('active');
+};
+
+window.viewFailedSampleReport = function(identifierOrRefId) {
+    if (!identifierOrRefId) return;
+    let targetRefId = null;
+    
+    // 1. Check in window.app.samples
+    if (window.app && Array.isArray(window.app.samples)) {
+        const found = window.app.samples.find(s => 
+            s.ref_id === identifierOrRefId || 
+            s.lab_id === identifierOrRefId || 
+            s.lab_no === identifierOrRefId || 
+            s.sample_id === identifierOrRefId ||
+            (s.name + s.date + s.province) === identifierOrRefId
+        );
+        if (found) targetRefId = found.ref_id;
+    }
+    
+    // 2. Check in window.currentFailedSamples
+    if (!targetRefId && window.currentFailedSamples) {
+        for (const k in window.currentFailedSamples) {
+            if (Array.isArray(window.currentFailedSamples[k])) {
+                const match = window.currentFailedSamples[k].find(s => 
+                    s.identifier === identifierOrRefId || 
+                    s.code === identifierOrRefId || 
+                    s.ref_id === identifierOrRefId || 
+                    s.lab_id === identifierOrRefId ||
+                    (s.name + s.date + s.province) === identifierOrRefId
+                );
+                if (match) {
+                    targetRefId = match.ref_id || (match.rawSample && match.rawSample.ref_id) || match.code;
+                    break;
+                }
+            }
+        }
+    }
+
+    targetRefId = targetRefId || identifierOrRefId;
+
+    if (window.app && typeof window.app.openCertifyModal === 'function') {
+        window.app.openCertifyModal(targetRefId, true);
+    } else {
+        window.location.hash = `#report-${encodeURIComponent(targetRefId)}`;
+    }
 };
 
 window.onCorrectiveStatusChange = function(status) {
@@ -2921,9 +2971,14 @@ window.renderFollowupTable = function(sourceSamples) {
                 <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;">จ.${s.province || '-'}</div>
             </td>
             <td style="padding: 12px 14px;">
-                <span style="display: inline-block; padding: 3px 8px; border-radius: 6px; background-color: #e0f2fe; color: #0369a1; font-size: 11.5px; font-weight: 700; border: 1px solid #bae6fd; white-space: nowrap;">
-                    ${s.form_type || '-'}
-                </span>
+                <div style="display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
+                    <span style="display: inline-block; padding: 3px 8px; border-radius: 6px; background-color: #e0f2fe; color: #0369a1; font-size: 11.5px; font-weight: 700; border: 1px solid #bae6fd; white-space: nowrap;">
+                        ${s.form_type || '-'}
+                    </span>
+                    <button type="button" class="btn-table-evidence-link" title="เปิดดูรายงานผลตรวจวิเคราะห์ฉบับนี้เพื่อเป็นหลักฐาน" onclick="window.viewFailedSampleReport('${s.ref_id || s.code || s.identifier}')">
+                        <i class="fa-solid fa-file-lines"></i> ดูรายงาน
+                    </button>
+                </div>
             </td>
             <td style="padding: 12px 14px; min-width: 295px;">
                 <div style="display: flex; flex-direction: column; gap: 6px;">
