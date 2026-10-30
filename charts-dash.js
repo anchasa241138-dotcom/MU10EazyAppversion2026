@@ -2925,11 +2925,11 @@ window.renderFollowupTable = function(sourceSamples) {
                     ${s.form_type || '-'}
                 </span>
             </td>
-            <td style="padding: 12px 14px;">
+            <td style="padding: 12px 14px; min-width: 295px;">
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     ${canEdit ? `
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;" style="flex: 1; min-width: 150px;">
+                        <div class="fp-action-cell-row">
+                            <select class="action-status-select status-${curAction}" onchange="window.updateSampleAction('${idKey}', this.value); this.className='action-status-select status-'+this.value;">
                                 <option value="pending" ${curAction === 'pending' ? 'selected' : ''}>🟡 อยู่ระหว่างติดตาม</option>
                                 <option value="warned" ${curAction === 'warned' ? 'selected' : ''}>🔵 ตักเตือน/แนะนำ</option>
                                 <option value="seized" ${curAction === 'seized' ? 'selected' : ''}>🟠 อายัด/ทำลายสินค้า</option>
@@ -2941,10 +2941,10 @@ window.renderFollowupTable = function(sourceSamples) {
                             </button>
                         </div>
                     ` : `
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <div class="action-status-badge status-${curAction} readonly" style="flex: 1; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'}">
+                        <div class="fp-action-cell-row">
+                            <div class="action-status-badge status-${curAction} readonly" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'}">
                                 <span>${actionLabels[curAction] || curAction}</span>
-                                <i class="fa-solid fa-lock" style="font-size: 10px; opacity: 0.65;" title="สิทธิ์การแก้ไขเฉพาะเจ้าหน้าที่ จ.${s.province || '-'}"></i>
+                                <i class="fa-solid fa-lock" style="font-size: 10px; opacity: 0.65; margin-left: 6px;" title="สิทธิ์การแก้ไขเฉพาะเจ้าหน้าที่ จ.${s.province || '-'}"></i>
                             </div>
                             <button type="button" class="btn-open-fp-detail readonly-btn" title="ดูรายละเอียดผลการดำเนินงาน" onclick="window.openCorrectiveDetailModal('${idKey}', true)">
                                 <i class="fa-solid fa-eye"></i> ดูรายละเอียด
