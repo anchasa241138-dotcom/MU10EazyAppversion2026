@@ -250,7 +250,7 @@ const app = {
                     });
                     let hasMigration = false;
                     const initialCount = this.samples.length;
-                    this.samples = this.samples.filter(s => s && s.ref_id !== 'TEMP-10001');
+                    this.samples = this.samples.filter(s => s && s.ref_id && !s.ref_id.startsWith('TEMP-'));
                     if (this.samples.length !== initialCount) {
                         hasMigration = true;
                     }
@@ -368,44 +368,7 @@ const app = {
     },
 
     resetDefaultSamples() {
-        this.samples = [
-            {
-                ref_id: 'TEMP-10002', lab_id: 'UBN-2026-0002', form_type: 'MU.10-002',
-                agency: 'รพ.อุบลราชธานี', location_type: 'ร้านอาหาร', location_name: 'ร้านข้าวมันไก่เฮียชัย',
-                province: 'อุบลราชธานี', amphoe: 'เมือง', tambon: 'ในเมือง',
-                collector_name: 'นางสาวสุดสวย ใจดี', collector_position: 'พยาบาลวิชาชีพ', sampling_date: '2026-06-21',
-                sample_name: 'ลูกชิ้นหมู', sample_qty: 2, distributor: 'เฮียชัย', source: 'ผลิตเอง',
-                status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-22',
-                analysis_details: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
-                analysis_summary: 'ไม่ผ่าน', approver_name: 'Admin Mobile Unit 10',
-                tests: ['บอแรกซ์'],
-                test_borax: true,
-                test_borax_1: true,
-                analysis_substance: 'บอแรกซ์',
-                analysis_substance_1: 'บอแรกซ์',
-                analysis_summary_borax: 'ไม่ผ่าน',
-                analysis_summary_1_borax: 'ไม่ผ่าน',
-                analysis_details_borax: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
-                analysis_details_1_borax: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
-                created_at: new Date(Date.now() - 86400000).toISOString()
-            },
-            {
-                ref_id: 'TEMP-10003', lab_id: '', form_type: 'MU.10-006',
-                agency: 'สสอ.เมือง', location_type: 'โรงงาน/สถานที่ผลิตอาหาร', location_name: 'โรงงานน้ำดื่มตราสิงห์',
-                province: 'ยโสธร', amphoe: 'เมือง', tambon: 'ในเมือง',
-                collector_name: 'นายมานะ อดทน', collector_position: 'เจ้าหน้าที่สาธารณสุข', sampling_date: '2026-06-22',
-                sample_name: 'น้ำดื่มบรรจุขวด', sample_qty: 5, distributor: 'โรงงานน้ำดื่ม', source: 'ผลิตเอง',
-                status: 'registered', created_at: new Date().toISOString()
-            },
-             {
-                ref_id: 'TEMP-10004', lab_id: 'AMN-2026-0004', form_type: 'MU.10-003',
-                agency: 'สสจ.อำนาจเจริญ', location_type: 'ตลาดนัด', location_name: 'ตลาดนัดวันศุกร์',
-                province: 'อำนาจเจริญ', amphoe: 'เมือง', tambon: 'บุ่ง',
-                collector_name: 'นางสมศรี ใจสู้', collector_position: 'ผู้ประกอบการ', sampling_date: '2026-06-21',
-                sample_name: 'น้ำมันทอดไก่', sample_qty: 1, distributor: 'ร้านไก่ทอดป้าแจ๋ว', source: 'ซื้อจากห้าง',
-                status: 'accepted', created_at: new Date(Date.now() - 86400000).toISOString()
-            }
-        ];
+        this.samples = [];
         this.saveSamples();
     },
 
