@@ -249,6 +249,11 @@ const app = {
                         }
                     });
                     let hasMigration = false;
+                    const initialCount = this.samples.length;
+                    this.samples = this.samples.filter(s => s && s.ref_id !== 'TEMP-10001');
+                    if (this.samples.length !== initialCount) {
+                        hasMigration = true;
+                    }
                     this.samples.forEach(s => {
                         if (s.form_type === 'MU.10-008' && (s.status === 'pending' || s.status === 'registered' || s.status === 'accepted' || s.status === 'analyzed')) {
                             s.status = 'summarized';
@@ -364,17 +369,6 @@ const app = {
 
     resetDefaultSamples() {
         this.samples = [
-            {
-                ref_id: 'TEMP-10001', lab_id: 'SSK-2026-0001', form_type: 'MU.10-001',
-                agency: 'สสจ.ศรีสะเกษ', location_type: 'ตลาดสด', location_name: 'ตลาดสดเทศบาล',
-                province: 'ศรีสะเกษ', amphoe: 'เมือง', tambon: 'เมืองเหนือ',
-                collector_name: 'นายสมคิด สุขใจ', collector_position: 'เจ้าหน้าที่สาธารณสุข', sampling_date: '2026-06-20',
-                sample_name: 'ผักคะน้า', sample_qty: 1, distributor: 'แผงผัก ป้าแดง', source: 'ตลาดไท',
-                status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-21',
-                analysis_details: 'ไม่พบการตกค้างของยาฆ่าแมลงกลุ่มออร์กาโนฟอสเฟต',
-                analysis_summary: 'ผ่าน', approver_name: 'Admin Mobile Unit 10',
-                created_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
-            },
             {
                 ref_id: 'TEMP-10002', lab_id: 'UBN-2026-0002', form_type: 'MU.10-002',
                 agency: 'รพ.อุบลราชธานี', location_type: 'ร้านอาหาร', location_name: 'ร้านข้าวมันไก่เฮียชัย',
