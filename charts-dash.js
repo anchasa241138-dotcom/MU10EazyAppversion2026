@@ -1449,6 +1449,7 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
     const monthlyTotals = new Array(12).fill(0);
     const monthlyPass = new Array(12).fill(0);
     const monthlyFail = new Array(12).fill(0);
+    const monthlyPending = new Array(12).fill(0);
 
     (samples || []).forEach(s => {
         const rawDate = s.collection_date || s.sampling_date || (s.created_at ? s.created_at.split('T')[0] : '');
@@ -1469,6 +1470,8 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                 monthlyPass[mIdx]++;
             } else if (s.status === 'approved') {
                 monthlyPass[mIdx]++;
+            } else {
+                monthlyPending[mIdx]++;
             }
         };
 
@@ -1509,7 +1512,7 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
     if (monthlyChartCanvas) {
         const ctx = monthlyChartCanvas.getContext('2d');
         
-        // Gradients for Stacked Bar: Pass (Emerald) and Fail (Rose/Red)
+        // Gradients for Stacked Bar: Pass (Emerald), Fail (Rose/Red), Pending (Amber)
         const passGrad = ctx.createLinearGradient(0, 0, 0, 280);
         passGrad.addColorStop(0, '#10b981');
         passGrad.addColorStop(1, '#059669');
@@ -1517,6 +1520,10 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
         const failGrad = ctx.createLinearGradient(0, 0, 0, 280);
         failGrad.addColorStop(0, '#f43f5e');
         failGrad.addColorStop(1, '#e11d48');
+
+        const pendingGrad = ctx.createLinearGradient(0, 0, 0, 280);
+        pendingGrad.addColorStop(0, '#fbbf24');
+        pendingGrad.addColorStop(1, '#d97706');
 
         // Luminous Spline Area Fill Gradient for Trend Line
         const splineAreaGrad = ctx.createLinearGradient(0, 0, 0, 260);
@@ -1530,19 +1537,26 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
             const chart = context.chart;
             const passArr = chart.data?.datasets?.[0]?.data || [];
             const failArr = chart.data?.datasets?.[1]?.data || [];
-            const totalArr = chart.data?.datasets?.[2]?.data || [];
+            const pendArr = chart.data?.datasets?.[2]?.data || [];
+            const totalArr = chart.data?.datasets?.[3]?.data || [];
 
             const p = Number(passArr[idx]) || 0;
             const f = Number(failArr[idx]) || 0;
-            const t = Number(totalArr[idx]) || (p + f);
+            const pend = Number(pendArr[idx]) || 0;
+            const t = Number(totalArr[idx]) || (p + f + pend);
             const pPct = t > 0 ? ((p / t) * 100).toFixed(1) : '0.0';
             const fPct = t > 0 ? ((f / t) * 100).toFixed(1) : '0.0';
+            const pendPct = t > 0 ? ((pend / t) * 100).toFixed(1) : '0.0';
 
-            return [
+            const lines = [
                 ' 📊 ตรวจสะสม: ' + t + ' ตัวอย่าง',
                 ' 🟢 ผ่านเกณฑ์: ' + p + ' ตัวอย่าง (' + pPct + '%)',
                 ' 🔴 ไม่ผ่านเกณฑ์: ' + f + ' ตัวอย่าง (' + fPct + '%)'
             ];
+            if (pend > 0) {
+                lines.push(' ⏳ รอตรวจวิเคราะห์: ' + pend + ' ตัวอย่าง (' + pendPct + '%)');
+            }
+            return lines;
         };
 
         if (monthlySubstanceChartInstance) {
@@ -1551,8 +1565,10 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
             monthlySubstanceChartInstance.data.datasets[0].backgroundColor = passGrad;
             monthlySubstanceChartInstance.data.datasets[1].data = monthlyFail;
             monthlySubstanceChartInstance.data.datasets[1].backgroundColor = failGrad;
-            monthlySubstanceChartInstance.data.datasets[2].data = monthlyTotals;
-            monthlySubstanceChartInstance.data.datasets[2].backgroundColor = splineAreaGrad;
+            monthlySubstanceChartInstance.data.datasets[2].data = monthlyPending;
+            monthlySubstanceChartInstance.data.datasets[2].backgroundColor = pendingGrad;
+            monthlySubstanceChartInstance.data.datasets[3].data = monthlyTotals;
+            monthlySubstanceChartInstance.data.datasets[3].backgroundColor = splineAreaGrad;
             if (monthlySubstanceChartInstance.options?.plugins?.tooltip) {
                 monthlySubstanceChartInstance.options.plugins.tooltip.mode = 'index';
                 monthlySubstanceChartInstance.options.plugins.tooltip.intersect = false;
@@ -1573,11 +1589,11 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                             backgroundColor: passGrad,
                             borderColor: '#059669',
                             borderWidth: 1.5,
-                            borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 8, bottomRight: 8 },
+                            borderRadius: 4,
                             borderSkipped: false,
                             barPercentage: 0.52,
                             stack: 'monthlyStack',
-                            order: 3
+                            order: 4
                         },
                         {
                             type: 'bar',
@@ -1586,7 +1602,20 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                             backgroundColor: failGrad,
                             borderColor: '#e11d48',
                             borderWidth: 1.5,
-                            borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 0, bottomRight: 0 },
+                            borderRadius: 4,
+                            borderSkipped: false,
+                            barPercentage: 0.52,
+                            stack: 'monthlyStack',
+                            order: 3
+                        },
+                        {
+                            type: 'bar',
+                            label: 'รอตรวจวิเคราะห์',
+                            data: monthlyPending,
+                            backgroundColor: pendingGrad,
+                            borderColor: '#d97706',
+                            borderWidth: 1.5,
+                            borderRadius: 4,
                             borderSkipped: false,
                             barPercentage: 0.52,
                             stack: 'monthlyStack',
