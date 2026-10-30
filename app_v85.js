@@ -4176,7 +4176,6 @@ document.getElementById('formNameTitle').innerText = title;
                                     <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
                                     <div class="pill-text-block">
                                         <span class="pill-title">GT Kit</span>
-                                        <span class="pill-sub">ชุดทดสอบ จีที</span>
                                     </div>
                                 </label>
                                 <label class="substance-pill-btn" id="pill-tm2-${item.idx}">
@@ -4184,7 +4183,6 @@ document.getElementById('formNameTitle').innerText = title;
                                     <span class="pill-check-icon"><i class="fa-solid fa-check"></i></span>
                                     <div class="pill-text-block">
                                         <span class="pill-title">TM/2 Kit</span>
-                                        <span class="pill-sub">ชุดทดสอบ ทีเอ็ม/2</span>
                                     </div>
                                 </label>
                                 <input type="hidden" id="analysis-substance-${item.idx}" name="analysis_substance_${item.idx}" value="">
