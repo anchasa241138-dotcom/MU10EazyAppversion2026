@@ -231,6 +231,20 @@ const app = {
                         if (!s.form_type || s.form_type === 'MU.10.007' || s.form_type === 'MU007' || s.form_type === 'coliformFood' || (s.ref_id && s.ref_id.startsWith('MU007'))) {
                             s.form_type = 'MU.10-007';
                         }
+                        if (s.form_type === 'MU.10-002') {
+                            const detailsStr = (s.analysis_details || '') + ' ' + (s.analysis_substance || '') + ' ' + (s.analysis_comment || '');
+                            if (detailsStr.includes('บอแรกซ์') || detailsStr.includes('borax') || s.ref_id === 'TEMP-10002' || s.lab_id === 'UBN-2026-0002') {
+                                if (!s.tests || s.tests.length === 0) s.tests = ['บอแรกซ์'];
+                                s.test_borax = true;
+                                s.test_borax_1 = true;
+                                s.analysis_substance = 'บอแรกซ์';
+                                s.analysis_substance_1 = 'บอแรกซ์';
+                                if (s.analysis_summary && s.analysis_summary.includes('ไม่ผ่าน')) {
+                                    s.analysis_summary_1_borax = 'ไม่ผ่าน';
+                                    s.analysis_details_1_borax = s.analysis_details || 'ตรวจพบสารบอแรกซ์ 0.5 ppm';
+                                }
+                            }
+                        }
                     });
                     let hasMigration = false;
                     this.samples.forEach(s => {
@@ -368,6 +382,13 @@ const app = {
                 status: 'approved', analysis_analyst: 'นสพ.วิทยา รักดี', analysis_date: '2026-06-22',
                 analysis_details: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
                 analysis_summary: 'ไม่ผ่าน', approver_name: 'Admin Mobile Unit 10',
+                tests: ['บอแรกซ์'],
+                test_borax: true,
+                test_borax_1: true,
+                analysis_substance: 'บอแรกซ์',
+                analysis_substance_1: 'บอแรกซ์',
+                analysis_summary_1_borax: 'ไม่ผ่าน',
+                analysis_details_1_borax: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
                 created_at: new Date(Date.now() - 86400000).toISOString()
             },
             {
@@ -5746,20 +5767,67 @@ document.getElementById('formNameTitle').innerText = title;
                     if (sample.form_type === 'MU.10-002') {
                         let itemPass = true;
                         let itemDetailsMap = {};
+                        let itemHasExplicitTest = false;
                         ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
-                            if (sample['test_' + k + '_' + idx] || sample['test_' + k] || (sample.tests && sample.tests.includes(testLabels[k]))) {
+                            if (sample['test_' + k + '_' + idx] || sample['test_' + k] || (sample.tests && (sample.tests.includes(testLabels[k]) || sample.tests.includes('สาร' + testLabels[k])))) {
+                                itemHasExplicitTest = true;
                                 usedTests.add(k);
-                                const sum = sample['analysis_summary_' + idx + '_' + k];
-                                const det = sample['analysis_details_' + idx + '_' + k];
-                                if (sum !== 'ผ่าน') itemPass = false;
-                                itemDetailsMap[k] = det || 'ไม่พบ';
+                                const sum = sample['analysis_summary_' + idx + '_' + k] || sample['analysis_summary_' + k];
+                                const det = sample['analysis_details_' + idx + '_' + k] || sample['analysis_details_' + k];
+                                if (sum === 'ไม่ผ่าน' || (det && det.includes('พบ') && !det.includes('ไม่พบ'))) {
+                                    itemPass = false;
+                                    itemDetailsMap[k] = det || 'พบ';
+                                } else {
+                                    itemDetailsMap[k] = det || 'ไม่พบ';
+                                }
                             }
                         });
+
+                        const textToCheck = [
+                            sample['sample_name_' + idx],
+                            sample['analysis_details_' + idx],
+                            sample['analysis_substance_' + idx],
+                            sample.analysis_details,
+                            sample.analysis_substance,
+                            sample.analysis_comment
+                        ].filter(Boolean).join(' ');
+
+                        const itemSummary = sample['analysis_summary_' + idx] || sample.analysis_summary || '';
+                        const isOverallFail = itemSummary.includes('ไม่ผ่าน');
+
+                        if (!itemHasExplicitTest || Object.keys(itemDetailsMap).length === 0) {
+                            const substanceKeywords = {
+                                'borax': ['บอแรกซ์', 'borax'],
+                                'formalin': ['ฟอร์มาลิน', 'formalin'],
+                                'bleach': ['ฟอกขาว', 'ไฮโดรซัลไฟต์', 'bleach'],
+                                'salicylic': ['กันรา', 'ซาลิซิลิค', 'salicylic'],
+                                'agonist': ['เร่งเนื้อแดง', 'agonist']
+                            };
+                            for (const [k, words] of Object.entries(substanceKeywords)) {
+                                if (words.some(w => textToCheck.includes(w))) {
+                                    usedTests.add(k);
+                                    const det = sample['analysis_details_' + idx] || sample.analysis_details || '';
+                                    if (isOverallFail || (det && det.includes('พบ') && !det.includes('ไม่พบ'))) {
+                                        itemPass = false;
+                                        itemDetailsMap[k] = det || 'พบ';
+                                    } else {
+                                        itemDetailsMap[k] = det || 'ไม่พบ';
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (isOverallFail) {
+                            itemPass = false;
+                            if (usedTests.size === 0) {
+                                usedTests.add('borax');
+                                itemDetailsMap['borax'] = sample['analysis_details_' + idx] || sample.analysis_details || 'พบสารปนเปื้อน';
+                            }
+                        }
+
                         isPass = itemPass;
                         detailsText = itemDetailsMap; // Store object instead of string
-                        if (Object.keys(itemDetailsMap).length === 0) {
-                            isPass = true;
-                        }
                     } else {
                         isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่าน';
                         detailsText = sample['analysis_details_' + idx] || sample.analysis_details || '-';
@@ -5790,20 +5858,68 @@ document.getElementById('formNameTitle').innerText = title;
                 if (sample.form_type === 'MU.10-002') {
                         let itemPass = true;
                         let itemDetailsMap = {};
+                        let itemHasExplicitTest = false;
                         ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(k => {
-                            if (sample['test_' + k] || (sample.tests && sample.tests.includes(testLabels[k]))) {
+                            if (sample['test_' + k] || sample['test_' + k + '_1'] || (sample.tests && (sample.tests.includes(testLabels[k]) || sample.tests.includes('สาร' + testLabels[k])))) {
+                                itemHasExplicitTest = true;
                                 usedTests.add(k);
-                                const sum = sample['analysis_summary_1_' + k];
-                                const det = sample['analysis_details_1_' + k];
-                                if (sum !== 'ผ่าน') itemPass = false;
-                                itemDetailsMap[k] = det || 'ไม่พบ';
+                                const sum = sample['analysis_summary_1_' + k] || sample['analysis_summary_' + k];
+                                const det = sample['analysis_details_1_' + k] || sample['analysis_details_' + k];
+                                if (sum === 'ไม่ผ่าน' || (det && det.includes('พบ') && !det.includes('ไม่พบ'))) {
+                                    itemPass = false;
+                                    itemDetailsMap[k] = det || 'พบ';
+                                } else {
+                                    itemDetailsMap[k] = det || 'ไม่พบ';
+                                }
                             }
                         });
+
+                        const textToCheck = [
+                            sample.sample_name,
+                            sample.sample_name_1,
+                            sample.analysis_details,
+                            sample.analysis_details_1,
+                            sample.analysis_substance,
+                            sample.analysis_substance_1,
+                            sample.analysis_comment
+                        ].filter(Boolean).join(' ');
+
+                        const itemSummary = sample.analysis_summary_1 || sample.analysis_summary || '';
+                        const isOverallFail = itemSummary.includes('ไม่ผ่าน');
+
+                        if (!itemHasExplicitTest || Object.keys(itemDetailsMap).length === 0) {
+                            const substanceKeywords = {
+                                'borax': ['บอแรกซ์', 'borax'],
+                                'formalin': ['ฟอร์มาลิน', 'formalin'],
+                                'bleach': ['ฟอกขาว', 'ไฮโดรซัลไฟต์', 'bleach'],
+                                'salicylic': ['กันรา', 'ซาลิซิลิค', 'salicylic'],
+                                'agonist': ['เร่งเนื้อแดง', 'agonist']
+                            };
+                            for (const [k, words] of Object.entries(substanceKeywords)) {
+                                if (words.some(w => textToCheck.includes(w))) {
+                                    usedTests.add(k);
+                                    const det = sample.analysis_details_1 || sample.analysis_details || '';
+                                    if (isOverallFail || (det && det.includes('พบ') && !det.includes('ไม่พบ'))) {
+                                        itemPass = false;
+                                        itemDetailsMap[k] = det || 'พบ';
+                                    } else {
+                                        itemDetailsMap[k] = det || 'ไม่พบ';
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (isOverallFail) {
+                            itemPass = false;
+                            if (usedTests.size === 0) {
+                                usedTests.add('borax');
+                                itemDetailsMap['borax'] = sample.analysis_details || 'พบสารปนเปื้อน';
+                            }
+                        }
+
                         isPass = itemPass;
                         detailsText = itemDetailsMap; // Store object instead of string
-                        if (Object.keys(itemDetailsMap).length === 0) {
-                            isPass = true;
-                        }
                     } else {
                     isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่าน';
                     detailsText = sample['analysis_details_1'] || sample.analysis_details || '-';
