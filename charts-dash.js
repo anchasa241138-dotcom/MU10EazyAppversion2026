@@ -288,6 +288,22 @@ window.itemMatchesSubstance = function(s, idx, targetSubstance) {
     return false;
 };
 
+window.sampleMatchesSubstance = function(s, targetSubstance) {
+    if (!targetSubstance || targetSubstance === 'all') return true;
+    if (s.form_type === 'MU.10-008') return false;
+    let idx = 1;
+    let hasItems = false;
+    while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+        hasItems = true;
+        if (window.itemMatchesSubstance(s, idx, targetSubstance)) return true;
+        idx++;
+    }
+    if (!hasItems && s.sample_name) {
+        return window.itemMatchesSubstance(s, null, targetSubstance);
+    }
+    return window.itemMatchesSubstance(s, null, targetSubstance);
+};
+
 window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
     if (!targetSubstance || targetSubstance === 'all') {
         let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_coliform_summary_' + idx] || s['label_summary_' + idx]) : '')
@@ -375,15 +391,23 @@ function updateDashboardCharts(samples) {
     }
 
     const filterEl = document.getElementById('dashProvinceFilter');
-    if (filterEl && filterEl.value !== 'all') {
-        samples = samples.filter(s => s.province === filterEl.value);
-    }
+    const curProv = filterEl ? filterEl.value : 'all';
 
     const subFilterEl = document.getElementById('dashSubstanceFilter');
     const targetSubstance = subFilterEl ? subFilterEl.value : 'all';
     
+    // Synchronize window.currentActiveSubstance and dependent controls
+    window.currentActiveSubstance = targetSubstance;
+    const selectEl = document.getElementById('substanceAnalyticsSelect');
+    if (selectEl && selectEl.value !== targetSubstance) {
+        selectEl.value = targetSubstance;
+    }
+    const rankSelect = document.getElementById('rankingSubstanceQuickSelect');
+    if (rankSelect && rankSelect.value !== targetSubstance) {
+        rankSelect.value = targetSubstance;
+    }
+
     // Sync active style on Province Quick Filter chips
-    const curProv = filterEl ? filterEl.value : 'all';
     document.querySelectorAll('.outcrowd-explore-card:not(#substance-explore-chips) .explore-chips:not(#substance-explore-chips) .explore-chip').forEach(chip => {
         if ((curProv === 'all' && chip.innerText.includes('ทั้งหมด')) || (curProv !== 'all' && chip.innerText.includes(curProv))) {
             chip.classList.add('active');
@@ -393,19 +417,20 @@ function updateDashboardCharts(samples) {
     });
 
     // Sync active style on Substance Quick Filter (dropdown & chips)
-    const curSub = subFilterEl ? subFilterEl.value : 'all';
-    const rankSelect = document.getElementById('rankingSubstanceQuickSelect');
-    if (rankSelect && rankSelect.value !== curSub) {
-        rankSelect.value = curSub;
-    }
     document.querySelectorAll('#substance-explore-chips .explore-chip').forEach(chip => {
-        if ((curSub === 'all' && chip.innerText.includes('ทั้งหมด')) || (curSub !== 'all' && chip.getAttribute('onclick') && chip.getAttribute('onclick').includes(curSub))) {
+        if ((targetSubstance === 'all' && chip.innerText.includes('ทั้งหมด')) || (targetSubstance !== 'all' && chip.getAttribute('onclick') && chip.getAttribute('onclick').includes(targetSubstance))) {
             chip.classList.add('active');
         } else {
             chip.classList.remove('active');
         }
     });
 
+    // 1. Filter by Province
+    if (curProv !== 'all') {
+        samples = samples.filter(s => s.province === curProv || (s.agency && s.agency.includes(curProv)));
+    }
+
+    // 2. Filter by Date range
     const startDateEl = document.getElementById('dashStartDate');
     const endDateEl = document.getElementById('dashEndDate');
     if (startDateEl && startDateEl.value) {
@@ -421,7 +446,10 @@ function updateDashboardCharts(samples) {
         });
     }
 
-// Substance Filter (initialized above)
+    // 3. Filter by Substance
+    if (targetSubstance !== 'all') {
+        samples = samples.filter(s => window.sampleMatchesSubstance(s, targetSubstance));
+    }
 
     // 1. Calculate Province distribution (Count by items matching targetSubstance)
     const provinces = ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'];
@@ -520,12 +548,12 @@ function updateDashboardCharts(samples) {
     }
     // Call Substance Charts Update
     if (typeof updateSubstanceCharts === 'function') {
-        updateSubstanceCharts(samples);
+        updateSubstanceCharts(samples, targetSubstance, curProv);
     }
 
     // Call Strategic Modules (4 Dimensions)
     if (typeof updateStrategicKPITargets === 'function') {
-        updateStrategicKPITargets(window.allUnfilteredDatabaseSamples || samples);
+        updateStrategicKPITargets(samples, curProv, targetSubstance);
     }
     if (typeof updateTurnaroundTimeSLA === 'function') {
         updateTurnaroundTimeSLA(samples);
@@ -753,12 +781,18 @@ function updateSubstanceCharts(samples) {
     if (!grid) return;
 
     const subFilterEl = document.getElementById('dashSubstanceFilter');
-    const targetSubstance = subFilterEl ? subFilterEl.value : 'all';
+    const targetSubstance = targetSubstanceParam || (subFilterEl ? subFilterEl.value : 'all');
+    const provFilterEl = document.getElementById('dashProvinceFilter');
+    const curProv = curProvParam || (provFilterEl ? provFilterEl.value : 'all');
     
     if (typeof formTypeChartInstance !== 'undefined' && formTypeChartInstance) {
-        const passedCounts = Object.values(stats).map(s => s.pass);
-        const failedCounts = Object.values(stats).map(s => s.fail);
-        formTypeChartInstance.data.labels = Object.values(stats).map(s => s.label);
+        let keysToDisplay = Object.keys(stats);
+        if (targetSubstance !== 'all' && stats[targetSubstance]) {
+            keysToDisplay = [targetSubstance];
+        }
+        const passedCounts = keysToDisplay.map(k => stats[k].pass);
+        const failedCounts = keysToDisplay.map(k => stats[k].fail);
+        formTypeChartInstance.data.labels = keysToDisplay.map(k => stats[k].label);
         formTypeChartInstance.data.datasets[0].data = passedCounts;
         formTypeChartInstance.data.datasets[1].data = failedCounts;
         const fCtx = formTypeChartInstance.ctx;
@@ -778,37 +812,180 @@ function updateSubstanceCharts(samples) {
 
     // Call update safety rankings
     if (typeof updateSafetyRankings === 'function') {
-        updateSafetyRankings(stats);
+        updateSafetyRankings(stats, samples, targetSubstance, curProv);
     }
 }
 
 // Update TOP 3 Safest & TOP 3 Least Safe Rankings
-function updateSafetyRankings(stats) {
+function updateSafetyRankings(stats, samples, targetSubstance, curProv) {
     const safeContainer = document.getElementById('top-safe-list');
     const dangerContainer = document.getElementById('top-danger-list');
     if (!safeContainer || !dangerContainer) return;
 
-    const subFilterEl = document.getElementById('dashSubstanceFilter');
-    const targetSubstance = subFilterEl ? subFilterEl.value : 'all';
+    if (!targetSubstance) {
+        const subFilterEl = document.getElementById('dashSubstanceFilter');
+        targetSubstance = subFilterEl ? subFilterEl.value : 'all';
+    }
+    if (!curProv) {
+        const provFilterEl = document.getElementById('dashProvinceFilter');
+        curProv = provFilterEl ? provFilterEl.value : 'all';
+    }
+    if (!samples) {
+        samples = window.currentCachedSamples || (window.app && window.app.samples) || [];
+    }
 
-    // If a specific substance is selected, show Province-level safety ranking for that substance!
+    const safeTitle = document.querySelector('.safe-panel .ranking-title');
+    const safeSubtitle = document.querySelector('.safe-panel .ranking-subtitle');
+    const dangerTitle = document.querySelector('.danger-panel .ranking-title');
+    const dangerSubtitle = document.querySelector('.danger-panel .ranking-subtitle');
+
+    const medalColors = [
+        { bg: 'linear-gradient(135deg, #10b981, #059669)', text: '#ffffff' },
+        { bg: 'linear-gradient(135deg, #06b6d4, #0891b2)', text: '#ffffff' },
+        { bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', text: '#ffffff' }
+    ];
+
+    const dangerColors = [
+        { bg: 'linear-gradient(135deg, #ef4444, #dc2626)', text: '#ffffff' },
+        { bg: 'linear-gradient(135deg, #f97316, #ea580c)', text: '#ffffff' },
+        { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', text: '#ffffff' }
+    ];
+
+    function renderRankingItem(item, idx, type) {
+        const isSafe = type === 'safe';
+        const m = (isSafe ? medalColors : dangerColors)[idx] || medalColors[2];
+        const pct = isSafe ? item.passRate.toFixed(1) : item.failRate.toFixed(1);
+        const hasFail = item.fail > 0;
+
+        return `
+            <div class="ranking-item ${isSafe ? 'safe-item' : 'danger-item'}">
+                <div class="ranking-badge" style="background: ${m.bg}; color: ${m.text};">${idx + 1}</div>
+                <div class="ranking-info">
+                    <div class="ranking-item-top">
+                        <span class="ranking-item-name">${item.label}</span>
+                        <span class="ranking-item-pct ${isSafe ? 'safe-pct' : (hasFail ? 'danger-pct' : 'neutral-pct')}">
+                            ${isSafe ? `${pct}% ผ่าน` : (hasFail ? `${pct}% ไม่ผ่าน` : '0% ไม่ผ่าน (ปลอดภัย)')}
+                        </span>
+                    </div>
+                    <div class="ranking-bar-track">
+                        <div class="ranking-bar-fill ${isSafe ? 'safe-fill' : (hasFail ? 'danger-fill' : 'neutral-fill')}" 
+                             style="width: ${isSafe ? pct : (hasFail ? pct : 0)}%;"></div>
+                    </div>
+                    <div class="ranking-item-sub">
+                        <span>
+                            ${isSafe 
+                                ? `<i class="fa-solid fa-check" style="color: #059669; margin-right: 4px;"></i>ผ่าน ${item.pass} จาก ${item.total} ตัวอย่าง`
+                                : (hasFail 
+                                    ? `<i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; margin-right: 4px;"></i>ไม่ผ่าน ${item.fail} จาก ${item.total} ตัวอย่าง` 
+                                    : `<i class="fa-solid fa-shield-check" style="color: #10b981; margin-right: 4px;"></i>ผ่านครบทุกตัวอย่าง (100%)`)}
+                        </span>
+                        ${(!isSafe && hasFail && item.key) ? `
+                            <button type="button" class="ranking-view-btn" onclick="openFailedSamplesModal('${item.key}', '${item.label}')">
+                                <i class="fa-solid fa-magnifying-glass"></i> ดูตัวอย่าง
+                            </button>
+                        ` : `<span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>`}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // CASE 1: Specific Province selected (curProv !== 'all')
+    if (curProv !== 'all') {
+        const subInfo = (targetSubstance !== 'all' && window.substanceDictionary[targetSubstance]) 
+            ? window.substanceDictionary[targetSubstance] 
+            : null;
+
+        if (subInfo) {
+            // Case 1A: Specific Province AND Specific Substance -> Rank Districts/Places in that Province
+            if (safeTitle) safeTitle.innerText = `TOP พื้นที่ปลอดภัยใน จ.${curProv} (${subInfo.label})`;
+            if (safeSubtitle) safeSubtitle.innerText = `ร้อยละการตรวจผ่านเกณฑ์มาตรฐานของ ${subInfo.label}`;
+            if (dangerTitle) dangerTitle.innerText = `TOP พื้นที่เฝ้าระวังใน จ.${curProv} (${subInfo.label})`;
+            if (dangerSubtitle) dangerSubtitle.innerText = `ร้อยละการตรวจไม่ผ่านเกณฑ์ของ ${subInfo.label}`;
+
+            const locMap = {};
+            samples.forEach(s => {
+                let loc = (s.amphoe || s.district || s.location_name || s.collection_place || s.agency || 'ในพื้นที่').trim();
+                if (loc.startsWith('อ.') || loc.startsWith('อำเภอ')) loc = loc.replace(/^อำเภอ|^อ\./, 'อ.');
+                else if (!loc.startsWith('อ.') && (s.amphoe || s.district)) loc = 'อ.' + loc;
+
+                if (!locMap[loc]) locMap[loc] = { label: loc, total: 0, pass: 0, fail: 0 };
+
+                let idx = 1;
+                let hasItems = false;
+                const checkItem = (index) => {
+                    if (!window.itemMatchesSubstance(s, index, targetSubstance)) return;
+                    hasItems = true;
+                    locMap[loc].total++;
+                    if (s.status === 'approved') {
+                        let sum = window.getItemSubstanceSummary(s, index, targetSubstance);
+                        if (sum.includes('ไม่ผ่าน')) locMap[loc].fail++;
+                        else locMap[loc].pass++;
+                    }
+                };
+                while (s['sample_name_' + idx] !== undefined && idx <= 50) { checkItem(idx); idx++; }
+                if (!hasItems && s.sample_name) checkItem(null);
+            });
+
+            const locStats = Object.values(locMap).filter(l => l.total > 0).map(l => ({
+                ...l,
+                passRate: l.total > 0 ? (l.pass / l.total) * 100 : 0,
+                failRate: l.total > 0 ? (l.fail / l.total) * 100 : 0
+            }));
+
+            const topSafe = [...locStats].sort((a,b) => b.passRate - a.passRate || b.pass - a.pass || b.total - a.total).slice(0, 3);
+            const topDanger = [...locStats].filter(l => l.fail > 0).sort((a,b) => b.failRate - a.failRate || b.fail - a.fail || b.total - a.total).slice(0, 3);
+
+            safeContainer.innerHTML = topSafe.length === 0 
+                ? '<div class="ranking-empty-state"><i class="fa-solid fa-circle-info"></i> ไม่พบตัวอย่างในพื้นที่นี้</div>'
+                : topSafe.map((item, idx) => renderRankingItem(item, idx, 'safe')).join('');
+
+            dangerContainer.innerHTML = topDanger.length === 0 
+                ? '<div class="ranking-empty-state" style="background:#ecfdf5; color:#065f46; border:1.5px dashed #a7f3d0;"><i class="fa-solid fa-shield-check" style="color:#10b981; font-size:22px; margin-bottom:6px;"></i><div style="font-weight:700;">ปลอดภัย 100%</div>ผ่านครบทุกตัวอย่าง ไม่พบความเสี่ยงในพื้นที่</div>'
+                : topDanger.map((item, idx) => renderRankingItem(item, idx, 'danger')).join('');
+
+            return;
+        } else {
+            // Case 1B: Specific Province AND All Substances -> Rank Substances in that Province
+            if (safeTitle) safeTitle.innerText = `TOP 3 สารที่ปลอดภัยที่สุดใน จ.${curProv}`;
+            if (safeSubtitle) safeSubtitle.innerText = 'ร้อยละการตรวจผ่านเกณฑ์มาตรฐานสูงสุดในพื้นที่';
+            if (dangerTitle) dangerTitle.innerText = `TOP 3 สารที่ต้องเฝ้าระวังใน จ.${curProv}`;
+            if (dangerSubtitle) dangerSubtitle.innerText = 'ร้อยละการตรวจไม่ผ่านเกณฑ์ / พบความเสี่ยงสูงสุด';
+
+            const active = Object.keys(stats).map(k => ({ key: k, ...stats[k] })).filter(item => item.total > 0);
+            active.forEach(item => {
+                item.passRate = item.total > 0 ? (item.pass / item.total) * 100 : 0;
+                item.failRate = item.total > 0 ? (item.fail / item.total) * 100 : 0;
+            });
+
+            const topSafe = [...active].sort((a, b) => b.passRate - a.passRate || b.pass - a.pass || b.total - a.total).slice(0, 3);
+            const topDanger = [...active].filter(a => a.fail > 0).sort((a, b) => b.failRate - a.failRate || b.fail - a.fail || b.total - a.total).slice(0, 3);
+
+            safeContainer.innerHTML = topSafe.length === 0 
+                ? '<div class="ranking-empty-state"><i class="fa-solid fa-circle-info"></i> ยังไม่มีข้อมูลตัวอย่างในพื้นที่นี้</div>'
+                : topSafe.map((item, idx) => renderRankingItem(item, idx, 'safe')).join('');
+
+            dangerContainer.innerHTML = topDanger.length === 0 
+                ? '<div class="ranking-empty-state" style="background:#ecfdf5; color:#065f46; border:1.5px dashed #a7f3d0;"><i class="fa-solid fa-shield-check" style="color:#10b981; font-size:22px; margin-bottom:6px;"></i><div style="font-weight:700;">ปลอดภัย 100%</div>ผ่านครบทุกตัวอย่าง ไม่พบสารปนเปื้อนในพื้นที่</div>'
+                : topDanger.map((item, idx) => renderRankingItem(item, idx, 'danger')).join('');
+
+            return;
+        }
+    }
+
+    // CASE 2: All Provinces (curProv === 'all')
     if (targetSubstance !== 'all') {
+        // Case 2A: All Provinces AND Specific Substance -> Rank Provinces for that substance
         const subInfo = window.substanceDictionary[targetSubstance] || { label: targetSubstance };
-        const safeTitle = document.querySelector('.safe-panel .ranking-title');
-        const safeSubtitle = document.querySelector('.safe-panel .ranking-subtitle');
-        const dangerTitle = document.querySelector('.danger-panel .ranking-title');
-        const dangerSubtitle = document.querySelector('.danger-panel .ranking-subtitle');
+        if (safeTitle) safeTitle.innerText = `TOP 3 จังหวัดปลอดภัยสูงสุด (${subInfo.label})`;
+        if (safeSubtitle) safeSubtitle.innerText = `ร้อยละการตรวจผ่านเกณฑ์มาตรฐานของ ${subInfo.label}`;
+        if (dangerTitle) dangerTitle.innerText = `TOP 3 จังหวัดที่ต้องเฝ้าระวัง (${subInfo.label})`;
+        if (dangerSubtitle) dangerSubtitle.innerText = `ร้อยละการตรวจไม่ผ่านเกณฑ์ของ ${subInfo.label}`;
 
-        if (safeTitle) safeTitle.innerText = 'TOP 3 จังหวัดปลอดภัยสูงสุด (' + subInfo.label + ')';
-        if (safeSubtitle) safeSubtitle.innerText = 'ร้อยละการตรวจผ่านเกณฑ์มาตรฐานของ ' + subInfo.label;
-        if (dangerTitle) dangerTitle.innerText = 'TOP 3 จังหวัดที่ต้องเฝ้าระวัง (' + subInfo.label + ')';
-        if (dangerSubtitle) dangerSubtitle.innerText = 'ร้อยละการตรวจไม่ผ่านเกณฑ์ของ ' + subInfo.label;
-
-        // Calculate province stats for this substance
         const provinces = ['ศรีสะเกษ', 'อุบลราชธานี', 'อำนาจเจริญ', 'มุกดาหาร', 'ยโสธร'];
         const provStats = provinces.map(p => {
             let total = 0, pass = 0, fail = 0;
-            (app.samples || []).filter(s => s.province === p).forEach(s => {
+            samples.filter(s => s.province === p || (s.agency && s.agency.includes(p))).forEach(s => {
                 let idx = 1, hasItems = false;
                 const checkProvItem = (index) => {
                     if (!window.itemMatchesSubstance(s, index, targetSubstance)) return;
@@ -828,196 +1005,42 @@ function updateSafetyRankings(stats) {
             return { label: p, total, pass, fail, passRate, failRate };
         }).filter(p => p.total > 0);
 
-        const topSafeProv = [...provStats].sort((a,b) => b.passRate - a.passRate || b.pass - a.pass).slice(0,3);
-        const topDangerProv = [...provStats].sort((a,b) => b.failRate - a.failRate || b.fail - a.fail).slice(0,3);
-
-        const medalColors = [
-            { bg: 'linear-gradient(135deg, #10b981, #059669)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #06b6d4, #0891b2)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', text: '#ffffff' }
-        ];
+        const topSafeProv = [...provStats].sort((a,b) => b.passRate - a.passRate || b.pass - a.pass || b.total - a.total).slice(0, 3);
+        const topDangerProv = [...provStats].filter(p => p.fail > 0).sort((a,b) => b.failRate - a.failRate || b.fail - a.fail || b.total - a.total).slice(0, 3);
 
         safeContainer.innerHTML = topSafeProv.length === 0 
             ? '<div class="ranking-empty-state"><i class="fa-solid fa-circle-info"></i> ไม่พบตัวอย่างสารนี้ในพื้นที่</div>'
-            : topSafeProv.map((item, idx) => {
-                const m = medalColors[idx] || medalColors[2];
-                const pPct = item.passRate.toFixed(1);
-                return `
-                    <div class="ranking-item safe-item">
-                        <div class="ranking-badge" style="background: ${m.bg}; color: ${m.text};">${idx + 1}</div>
-                        <div class="ranking-info">
-                            <div class="ranking-item-top">
-                                <span class="ranking-item-name">${item.label}</span>
-                                <span class="ranking-item-pct safe-pct">${pPct}% ผ่าน</span>
-                            </div>
-                            <div class="ranking-bar-track">
-                                <div class="ranking-bar-fill safe-fill" style="width: ${pPct}%;"></div>
-                            </div>
-                            <div class="ranking-item-sub">
-                                <span><i class="fa-solid fa-check" style="color: #059669; margin-right: 4px;"></i>ผ่าน ${item.pass} จาก ${item.total} ตัวอย่าง</span>
-                                <span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-        const dangerColors = [
-            { bg: 'linear-gradient(135deg, #ef4444, #dc2626)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #f97316, #ea580c)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', text: '#ffffff' }
-        ];
+            : topSafeProv.map((item, idx) => renderRankingItem(item, idx, 'safe')).join('');
 
         dangerContainer.innerHTML = topDangerProv.length === 0
-            ? '<div class="ranking-empty-state"><i class="fa-solid fa-circle-info"></i> ไม่พบตัวอย่างสารนี้ในพื้นที่</div>'
-            : topDangerProv.map((item, idx) => {
-                const d = dangerColors[idx] || dangerColors[2];
-                const fPct = item.failRate.toFixed(1);
-                const hasFail = item.fail > 0;
-                return `
-                    <div class="ranking-item danger-item">
-                        <div class="ranking-badge" style="background: ${d.bg}; color: ${d.text};">${idx + 1}</div>
-                        <div class="ranking-info">
-                            <div class="ranking-item-top">
-                                <span class="ranking-item-name">${item.label}</span>
-                                <span class="ranking-item-pct ${hasFail ? 'danger-pct' : 'neutral-pct'}">
-                                    ${hasFail ? fPct + '% ไม่ผ่าน' : '0% ไม่ผ่าน (ปลอดภัย)'}
-                                </span>
-                            </div>
-                            <div class="ranking-bar-track">
-                                <div class="ranking-bar-fill ${hasFail ? 'danger-fill' : 'neutral-fill'}" style="width: ${hasFail ? fPct : 0}%;"></div>
-                            </div>
-                            <div class="ranking-item-sub">
-                                <span>
-                                    ${hasFail 
-                                        ? '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right: 4px;"></i>ไม่ผ่าน ' + item.fail + ' จาก ' + item.total + ' ตัวอย่าง' 
-                                        : '<i class="fa-solid fa-shield-check" style="color:#10b981; margin-right: 4px;"></i>ผ่านครบทุกตัวอย่าง (100%)'}
-                                </span>
-                                <span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            ? '<div class="ranking-empty-state" style="background:#ecfdf5; color:#065f46; border:1.5px dashed #a7f3d0;"><i class="fa-solid fa-shield-check" style="color:#10b981; font-size:22px; margin-bottom:6px;"></i><div style="font-weight:700;">ปลอดภัย 100%</div>ทุกจังหวัดตรวจผ่านเกณฑ์ ไม่พบความเสี่ยง</div>'
+            : topDangerProv.map((item, idx) => renderRankingItem(item, idx, 'danger')).join('');
+
         return;
     }
 
-    // Reset default headers when viewing all substances
-    const safeTitle = document.querySelector('.safe-panel .ranking-title');
-    const safeSubtitle = document.querySelector('.safe-panel .ranking-subtitle');
-    const dangerTitle = document.querySelector('.danger-panel .ranking-title');
-    const dangerSubtitle = document.querySelector('.danger-panel .ranking-subtitle');
+    // Case 2B: All Provinces AND All Substances -> Rank all 9 substances across region 10
     if (safeTitle) safeTitle.innerText = 'TOP 3 สารที่ปลอดภัยที่สุด';
     if (safeSubtitle) safeSubtitle.innerText = 'ร้อยละการตรวจผ่านเกณฑ์มาตรฐานสูงสุด';
     if (dangerTitle) dangerTitle.innerText = 'TOP 3 สารที่ปลอดภัยน้อยที่สุด';
     if (dangerSubtitle) dangerSubtitle.innerText = 'ร้อยละการตรวจไม่ผ่านเกณฑ์ / พบความเสี่ยงสูงสุด';
 
-    
-
-    // Filter active substances that have tested samples
     const active = Object.keys(stats).map(k => ({ key: k, ...stats[k] })).filter(item => item.total > 0);
-
     active.forEach(item => {
         item.passRate = item.total > 0 ? (item.pass / item.total) * 100 : 0;
         item.failRate = item.total > 0 ? (item.fail / item.total) * 100 : 0;
     });
 
-    // 1. TOP 3 Safest: Highest passRate desc, then higher pass count, then total
     const topSafe = [...active].sort((a, b) => b.passRate - a.passRate || b.pass - a.pass || b.total - a.total).slice(0, 3);
+    const topDanger = [...active].filter(a => a.fail > 0).sort((a, b) => b.failRate - a.failRate || b.fail - a.fail || b.total - a.total).slice(0, 3);
 
-    // 2. TOP 3 Least Safe: Highest failRate desc, then higher fail count, then total
-    const topDanger = [...active].sort((a, b) => b.failRate - a.failRate || b.fail - a.fail || b.total - a.total).slice(0, 3);
+    safeContainer.innerHTML = topSafe.length === 0 
+        ? '<div class="ranking-empty-state"><i class="fa-solid fa-circle-info"></i> ยังไม่มีข้อมูลตัวอย่างที่ตรวจวิเคราะห์</div>'
+        : topSafe.map((item, idx) => renderRankingItem(item, idx, 'safe')).join('');
 
-    // Render Safe List
-    if (topSafe.length === 0) {
-        safeContainer.innerHTML = `
-            <div class="ranking-empty-state">
-                <i class="fa-solid fa-circle-info"></i> ยังไม่มีข้อมูลตัวอย่างที่ตรวจวิเคราะห์
-            </div>
-        `;
-    } else {
-        const medalColors = [
-            { bg: 'linear-gradient(135deg, #10b981, #059669)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #06b6d4, #0891b2)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', text: '#ffffff' }
-        ];
-
-        safeContainer.innerHTML = topSafe.map((item, idx) => {
-            const m = medalColors[idx] || medalColors[2];
-            const pPct = item.passRate.toFixed(1);
-            return `
-                <div class="ranking-item safe-item">
-                    <div class="ranking-badge" style="background: ${m.bg}; color: ${m.text};">
-                        ${idx + 1}
-                    </div>
-                    <div class="ranking-info">
-                        <div class="ranking-item-top">
-                            <span class="ranking-item-name">${item.label}</span>
-                            <span class="ranking-item-pct safe-pct">${pPct}% ผ่าน</span>
-                        </div>
-                        <div class="ranking-bar-track">
-                            <div class="ranking-bar-fill safe-fill" style="width: ${pPct}%;"></div>
-                        </div>
-                        <div class="ranking-item-sub">
-                            <span><i class="fa-solid fa-check" style="color: #059669; margin-right: 4px;"></i>ผ่าน ${item.pass} จาก ${item.total} ตัวอย่าง</span>
-                            <span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // Render Danger List
-    if (topDanger.length === 0) {
-        dangerContainer.innerHTML = `
-            <div class="ranking-empty-state">
-                <i class="fa-solid fa-circle-info"></i> ยังไม่มีข้อมูลตัวอย่างที่ตรวจวิเคราะห์
-            </div>
-        `;
-    } else {
-        const dangerColors = [
-            { bg: 'linear-gradient(135deg, #ef4444, #dc2626)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #f97316, #ea580c)', text: '#ffffff' },
-            { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', text: '#ffffff' }
-        ];
-
-        dangerContainer.innerHTML = topDanger.map((item, idx) => {
-            const d = dangerColors[idx] || dangerColors[2];
-            const fPct = item.failRate.toFixed(1);
-            const hasFail = item.fail > 0;
-            return `
-                <div class="ranking-item danger-item">
-                    <div class="ranking-badge" style="background: ${d.bg}; color: ${d.text};">
-                        ${idx + 1}
-                    </div>
-                    <div class="ranking-info">
-                        <div class="ranking-item-top">
-                            <span class="ranking-item-name">${item.label}</span>
-                            <span class="ranking-item-pct ${hasFail ? 'danger-pct' : 'neutral-pct'}">
-                                ${hasFail ? `${fPct}% ไม่ผ่าน` : '0% ไม่ผ่าน (ปลอดภัย)'}
-                            </span>
-                        </div>
-                        <div class="ranking-bar-track">
-                            <div class="ranking-bar-fill ${hasFail ? 'danger-fill' : 'neutral-fill'}" style="width: ${hasFail ? fPct : 0}%;"></div>
-                        </div>
-                        <div class="ranking-item-sub">
-                            <span>
-                                ${hasFail 
-                                    ? `<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right: 4px;"></i>ไม่ผ่าน ${item.fail} จาก ${item.total} ตัวอย่าง` 
-                                    : `<i class="fa-solid fa-shield-check" style="color:#10b981; margin-right: 4px;"></i>ผ่านครบทุกตัวอย่าง (100%)`}
-                            </span>
-                            ${hasFail ? `
-                                <button type="button" class="ranking-view-btn" onclick="openFailedSamplesModal('${item.key}', '${item.label}')">
-                                    <i class="fa-solid fa-magnifying-glass"></i> ดูตัวอย่าง
-                                </button>
-                            ` : `<span class="ranking-total-badge">ตรวจ ${item.total} รายการ</span>`}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
+    dangerContainer.innerHTML = topDanger.length === 0 
+        ? '<div class="ranking-empty-state" style="background:#ecfdf5; color:#065f46; border:1.5px dashed #a7f3d0;"><i class="fa-solid fa-shield-check" style="color:#10b981; font-size:22px; margin-bottom:6px;"></i><div style="font-weight:700;">ปลอดภัย 100%</div>ผ่านครบทุกตัวอย่าง ไม่พบสารปนเปื้อนที่มีความเสี่ยง</div>'
+        : topDanger.map((item, idx) => renderRankingItem(item, idx, 'danger')).join('');
 }
 
 // Permission Helper: Check if user can edit samples for a given province
@@ -1305,7 +1328,6 @@ window.filterProvinceQuick = function(province) {
     const filterEl = document.getElementById('dashProvinceFilter');
     if (filterEl) {
         filterEl.value = province;
-        filterEl.dispatchEvent(new Event('change'));
     }
     document.querySelectorAll('.explore-chip').forEach(chip => {
         if ((province === 'all' && chip.innerText.includes('ทั้งหมด')) || (province !== 'all' && chip.innerText.includes(province))) {
@@ -1314,18 +1336,32 @@ window.filterProvinceQuick = function(province) {
             chip.classList.remove('active');
         }
     });
+    if (window.app && typeof window.app.updateDashboardStats === 'function') {
+        window.app.updateDashboardStats();
+    }
+    if (typeof window.updateDashboardCharts === 'function') {
+        const visible = (window.app && typeof window.app.getVisibleSamples === 'function') ? window.app.getVisibleSamples() : [];
+        window.updateDashboardCharts(visible);
+    }
 };
 
 // Outcrowd Substance Quick Filter Helper
 window.filterSubstanceQuick = function(substanceKey) {
     const filterEl = document.getElementById('dashSubstanceFilter');
-    if (filterEl) {
+    if (filterEl && filterEl.value !== substanceKey) {
         filterEl.value = substanceKey;
-        filterEl.dispatchEvent(new Event('change'));
     }
     const rankSelect = document.getElementById('rankingSubstanceQuickSelect');
     if (rankSelect && rankSelect.value !== substanceKey) {
         rankSelect.value = substanceKey;
+    }
+    const selectEl = document.getElementById('substanceAnalyticsSelect');
+    if (selectEl && selectEl.value !== substanceKey) {
+        selectEl.value = substanceKey;
+    }
+    window.currentActiveSubstance = substanceKey;
+    if (typeof renderSubstancePillsBar === 'function') {
+        renderSubstancePillsBar();
     }
     document.querySelectorAll('#substance-explore-chips .explore-chip').forEach(chip => {
         if ((substanceKey === 'all' && chip.innerText.includes('ทั้งหมด')) || (substanceKey !== 'all' && chip.getAttribute('onclick') && chip.getAttribute('onclick').includes(substanceKey))) {
@@ -1334,6 +1370,13 @@ window.filterSubstanceQuick = function(substanceKey) {
             chip.classList.remove('active');
         }
     });
+    if (window.app && typeof window.app.updateDashboardStats === 'function') {
+        window.app.updateDashboardStats();
+    }
+    if (typeof window.updateDashboardCharts === 'function') {
+        const visible = (window.app && typeof window.app.getVisibleSamples === 'function') ? window.app.getVisibleSamples() : [];
+        window.updateDashboardCharts(visible);
+    }
 };
 
 
@@ -1416,20 +1459,8 @@ function renderSubstancePillsBar() {
 
 // User Action: Select substance to view
 window.selectSubstanceAnalytics = function(subKey) {
-    window.currentActiveSubstance = subKey || 'all';
-    
-    // Sync dropdown
-    const selectEl = document.getElementById('substanceAnalyticsSelect');
-    if (selectEl && selectEl.value !== window.currentActiveSubstance) {
-        selectEl.value = window.currentActiveSubstance;
-    }
-    
-    // Sync pills
-    renderSubstancePillsBar();
-    
-    // Re-render views
-    if (window.currentCachedSamples && window.currentCachedStats) {
-        updateModernSubstanceAnalyticsView(window.currentCachedSamples, window.currentCachedStats);
+    if (typeof window.filterSubstanceQuick === 'function') {
+        window.filterSubstanceQuick(subKey || 'all');
     }
 };
 
@@ -1454,18 +1485,26 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
     const selectedKey = window.currentActiveSubstance || 'all';
     const subInfo = window.substanceDictionary[selectedKey] || { label: 'สารที่ตรวจทั้งหมด (9 รายการ)' };
     
+    const provFilterEl = document.getElementById('dashProvinceFilter');
+    const curProv = provFilterEl ? provFilterEl.value : 'all';
+
     // Update badge in Business Stat
     const subBadge = document.getElementById('businessStatSubstanceBadge');
     if (subBadge) {
-        subBadge.innerText = subInfo.label;
+        subBadge.innerText = curProv !== 'all' ? `${subInfo.label} (จ.${curProv})` : subInfo.label;
     }
 
     // Update monthly chart subtitle
     const monthlySubEl = document.getElementById('monthlyChartSubtitle');
     if (monthlySubEl) {
-        monthlySubEl.innerText = selectedKey === 'all' 
-            ? 'สารที่ตรวจทั้งหมด (9 รายการ) ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)' 
-            : subInfo.label + ' ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)';
+        let titleText = selectedKey === 'all' 
+            ? 'สารที่ตรวจทั้งหมด (9 รายการ)' 
+            : subInfo.label;
+        if (curProv !== 'all') {
+            titleText += ` - จ.${curProv}`;
+        }
+        titleText += ' ปีงบประมาณ 2570 (ต.ค. 69 - ก.ย. 70)';
+        monthlySubEl.innerText = titleText;
     }
 
     // =========================================================================
@@ -1889,14 +1928,42 @@ window.STRATEGIC_TARGETS_2570 = {
     }
 };
 
-function updateStrategicKPITargets(allSamples) {
+function updateStrategicKPITargets(allSamples, curProv = 'all', targetSubstance = 'all') {
     if (!Array.isArray(allSamples)) return;
     const targetConfig = window.STRATEGIC_TARGETS_2570;
 
-    // Total Region 10
-    const totalActual = allSamples.length;
-    const totalTarget = targetConfig.total;
+    // Helper to count individual test items matching targetSubstance
+    const countTestItems = (sampleList) => {
+        let count = 0;
+        (sampleList || []).forEach(s => {
+            let idx = 1;
+            let hasItems = false;
+            while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+                hasItems = true;
+                if (window.itemMatchesSubstance(s, idx, targetSubstance)) count++;
+                idx++;
+            }
+            if (!hasItems && s.sample_name) {
+                if (window.itemMatchesSubstance(s, null, targetSubstance)) count++;
+            }
+        });
+        return count;
+    };
+
+    // Determine target and actual count for header
+    let totalTarget = targetConfig.total; // Default 5,245 for region 10
+    let titleHtml = '<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริงภาพรวมเขต 10:';
+    
+    if (curProv !== 'all' && targetConfig.provinces[curProv]) {
+        totalTarget = targetConfig.provinces[curProv].total;
+        titleHtml = `<i class="fa-solid fa-chart-line"></i> ผลงานตรวจจริง จ.${curProv}:`;
+    }
+
+    const totalActual = countTestItems(allSamples);
     const totalPct = totalTarget > 0 ? ((totalActual / totalTarget) * 100).toFixed(1) : '0.0';
+
+    const titleEl = document.querySelector('.overall-title');
+    if (titleEl) titleEl.innerHTML = titleHtml;
 
     const totalCountEl = document.getElementById('kpi-total-actual-count');
     const totalPctEl = document.getElementById('kpi-total-actual-pct');
@@ -1915,11 +1982,11 @@ function updateStrategicKPITargets(allSamples) {
         }
     }
 
-    // 5 Provinces
+    // 5 Provinces Cards
     for (const provName in targetConfig.provinces) {
         const pInfo = targetConfig.provinces[provName];
         const pSamples = allSamples.filter(s => s.province === provName || (s.agency && s.agency.includes(provName)));
-        const actualCount = pSamples.length;
+        const actualCount = countTestItems(pSamples);
         const target = pInfo.total;
         const pct = target > 0 ? ((actualCount / target) * 100).toFixed(1) : '0.0';
 
@@ -1944,6 +2011,27 @@ function updateStrategicKPITargets(allSamples) {
             } else {
                 statusEl.className = 'pt-status-pill pill-danger';
                 statusEl.innerText = 'ต้องเร่งรัด';
+            }
+        }
+
+        // Highlight selected province card, dim unselected cards
+        const cardEl = document.getElementById(`ptarget-${pInfo.id}`);
+        if (cardEl) {
+            if (curProv === 'all') {
+                cardEl.style.opacity = '1';
+                cardEl.style.borderColor = '#e2e8f0';
+                cardEl.style.boxShadow = 'none';
+                cardEl.style.transform = 'none';
+            } else if (curProv === provName) {
+                cardEl.style.opacity = '1';
+                cardEl.style.borderColor = '#0284c7';
+                cardEl.style.boxShadow = '0 6px 20px rgba(2, 132, 199, 0.2)';
+                cardEl.style.transform = 'translateY(-2px)';
+            } else {
+                cardEl.style.opacity = '0.35';
+                cardEl.style.borderColor = '#f1f5f9';
+                cardEl.style.boxShadow = 'none';
+                cardEl.style.transform = 'none';
             }
         }
     }
