@@ -1343,9 +1343,9 @@ window.filterSubstanceQuick = function(substanceKey) {
 let monthlySubstanceChartInstance = null;
 window.currentActiveSubstance = 'all';
 
-// Fiscal Month Index Calculator (ต.ค. 69 = 0, ..., ก.ย. 70 = 11)
+// Fiscal Month Index Calculator (ต.ค. 69 = 0, ..., ก.ย. 70 = 11) สำหรับปีงบประมาณ 2570
 function getFiscalMonthIndex(rawDate) {
-    if (!rawDate) return 0;
+    if (!rawDate) return -1;
     let y = 0, m = 0;
     if (typeof rawDate === 'string' && rawDate.includes('-')) {
         const parts = rawDate.split('T')[0].split('-');
@@ -1358,10 +1358,19 @@ function getFiscalMonthIndex(rawDate) {
             m = dt.getMonth() + 1;
         }
     }
-    if (!m) return 0;
+    if (!y || !m) return -1;
     if (y > 2500) y -= 543;
-    if (m >= 10) return m - 10;
-    return m + 2;
+
+    // ปีงบประมาณ 2570: ต.ค. 69 (2026-10) ถึง ก.ย. 70 (2027-09)
+    if (y === 2026 && m >= 10 && m <= 12) {
+        return m - 10; // ต.ค. 69 = 0, พ.ย. 69 = 1, ธ.ค. 69 = 2
+    }
+    if (y === 2027 && m >= 1 && m <= 9) {
+        return m + 2;  // ม.ค. 70 = 3, ..., ก.ย. 70 = 11
+    }
+
+    // ตัวอย่างที่อยู่นอกปีงบประมาณ 2570 (เช่น ข้อมูลเก่าเดือน ส.ค. 69, ก.ย. 69) จะไม่นำมาแสดงในกราฟปีงบ 2570
+    return -1;
 }
 
 // Render or Update Substance Pills
