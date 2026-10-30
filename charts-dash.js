@@ -1524,6 +1524,27 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
         splineAreaGrad.addColorStop(0.65, 'rgba(2, 132, 199, 0.08)');
         splineAreaGrad.addColorStop(1, 'rgba(2, 132, 199, 0.00)');
 
+        const formatMonthlyTooltip = function(context) {
+            if (context.datasetIndex !== 0) return null;
+            const idx = context.dataIndex;
+            const chart = context.chart;
+            const passArr = chart.data?.datasets?.[0]?.data || [];
+            const failArr = chart.data?.datasets?.[1]?.data || [];
+            const totalArr = chart.data?.datasets?.[2]?.data || [];
+
+            const p = Number(passArr[idx]) || 0;
+            const f = Number(failArr[idx]) || 0;
+            const t = Number(totalArr[idx]) || (p + f);
+            const pPct = t > 0 ? ((p / t) * 100).toFixed(1) : '0.0';
+            const fPct = t > 0 ? ((f / t) * 100).toFixed(1) : '0.0';
+
+            return [
+                ' 📊 ตรวจสะสม: ' + t + ' ตัวอย่าง',
+                ' 🟢 ผ่านเกณฑ์: ' + p + ' ตัวอย่าง (' + pPct + '%)',
+                ' 🔴 ไม่ผ่านเกณฑ์: ' + f + ' ตัวอย่าง (' + fPct + '%)'
+            ];
+        };
+
         if (monthlySubstanceChartInstance) {
             monthlySubstanceChartInstance.data.labels = fiscalLabels;
             monthlySubstanceChartInstance.data.datasets[0].data = monthlyPass;
@@ -1532,6 +1553,13 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
             monthlySubstanceChartInstance.data.datasets[1].backgroundColor = failGrad;
             monthlySubstanceChartInstance.data.datasets[2].data = monthlyTotals;
             monthlySubstanceChartInstance.data.datasets[2].backgroundColor = splineAreaGrad;
+            if (monthlySubstanceChartInstance.options?.plugins?.tooltip) {
+                monthlySubstanceChartInstance.options.plugins.tooltip.mode = 'index';
+                monthlySubstanceChartInstance.options.plugins.tooltip.intersect = false;
+                if (monthlySubstanceChartInstance.options.plugins.tooltip.callbacks) {
+                    monthlySubstanceChartInstance.options.plugins.tooltip.callbacks.label = formatMonthlyTooltip;
+                }
+            }
             monthlySubstanceChartInstance.update();
         } else {
             monthlySubstanceChartInstance = new Chart(ctx, {
@@ -1588,12 +1616,18 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     layout: {
                         padding: { top: 15, bottom: 5, left: 5, right: 5 }
                     },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            mode: 'index',
+                            intersect: false,
                             backgroundColor: '#0f172a',
                             titleColor: '#f8fafc',
                             bodyColor: '#e2e8f0',
@@ -1605,25 +1639,9 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                             bodyFont: { family: "'Prompt', sans-serif", size: 12 },
                             callbacks: {
                                 title: function(items) {
-                                    return 'ประจำเดือน ' + items[0].label;
+                                    return items && items.length > 0 ? ('ประจำเดือน ' + items[0].label) : '';
                                 },
-                                label: function(context) {
-                                    const idx = context.dataIndex;
-                                    const t = monthlyTotals[idx] || 0;
-                                    const p = monthlyPass[idx] || 0;
-                                    const f = monthlyFail[idx] || 0;
-                                    const pPct = t > 0 ? ((p / t) * 100).toFixed(1) : '0.0';
-                                    const fPct = t > 0 ? ((f / t) * 100).toFixed(1) : '0.0';
-
-                                    if (context.datasetIndex === 0) {
-                                        return [
-                                            ' 📊 ตรวจสะสม: ' + t + ' ตัวอย่าง',
-                                            ' 🟢 ผ่านเกณฑ์: ' + p + ' ตัวอย่าง (' + pPct + '%)',
-                                            ' 🔴 ไม่ผ่านเกณฑ์: ' + f + ' ตัวอย่าง (' + fPct + '%)'
-                                        ];
-                                    }
-                                    return null;
-                                }
+                                label: formatMonthlyTooltip
                             }
                         }
                     },
