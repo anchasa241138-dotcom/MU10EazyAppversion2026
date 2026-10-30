@@ -2427,11 +2427,20 @@ window.closeCorrectiveActionDetailModal = function() {
 
 window.viewFailedSampleReport = function(identifierOrRefId) {
     if (!identifierOrRefId) return;
+
+    // Clear any lingering #report- hash so URL routing doesn't navigate away from followup page
+    if (window.location.hash && window.location.hash.startsWith('#report-')) {
+        try {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+        } catch(e) {}
+    }
+
+    const appObj = (typeof window.app !== 'undefined' && window.app) ? window.app : (typeof app !== 'undefined' ? app : null);
     let targetRefId = null;
     
-    // 1. Check in window.app.samples
-    if (window.app && Array.isArray(window.app.samples)) {
-        const found = window.app.samples.find(s => 
+    // 1. Check in appObj.samples
+    if (appObj && Array.isArray(appObj.samples)) {
+        const found = appObj.samples.find(s => 
             s.ref_id === identifierOrRefId || 
             s.lab_id === identifierOrRefId || 
             s.lab_no === identifierOrRefId || 
@@ -2462,10 +2471,16 @@ window.viewFailedSampleReport = function(identifierOrRefId) {
 
     targetRefId = targetRefId || identifierOrRefId;
 
-    if (window.app && typeof window.app.openCertifyModal === 'function') {
-        window.app.openCertifyModal(targetRefId, true);
+    if (appObj && typeof appObj.openCertifyModal === 'function') {
+        appObj.openCertifyModal(targetRefId, true);
     } else {
-        window.location.hash = `#report-${encodeURIComponent(targetRefId)}`;
+        // Fallback retry without changing hash or switching views
+        setTimeout(() => {
+            const retryApp = (typeof window.app !== 'undefined' && window.app) ? window.app : (typeof app !== 'undefined' ? app : null);
+            if (retryApp && typeof retryApp.openCertifyModal === 'function') {
+                retryApp.openCertifyModal(targetRefId, true);
+            }
+        }, 150);
     }
 };
 
