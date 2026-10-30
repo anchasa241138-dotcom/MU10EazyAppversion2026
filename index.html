@@ -1119,7 +1119,7 @@
                                 <select id="dashSubstanceFilter" class="dashboard-filter-select" onchange="app.updateDashboardStats(); if(window.updateDashboardCharts) window.updateDashboardCharts(app.getVisibleSamples());">
                                     <option value="all">🧪 สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)</option>
                                     <option value="pesticide_gt">🥬 ยาฆ่าแมลง - GT kit (MU.10-001)</option>
-                                    <option value="pesticide_tm2">🥬 ยาฆ่าแมลง - TM/2 kit (MU.10-001)</option>
+                                    <option value="pesticide_tm2">🥬 ยาฆ่าแมลง - GT & TM/2 kit (MU.10-001)</option>
                                     <option value="pesticide">🥬 ยาฆ่าแมลง - รวมทุก Kit (MU.10-001)</option>
                                     <option value="borax">🥩 สารบอแรกซ์ (MU.10-002)</option>
                                     <option value="formalin">🐟 สารฟอร์มาลิน (MU.10-002)</option>
@@ -1428,7 +1428,7 @@
                                     <select id="rankingSubstanceQuickSelect" class="ranking-quick-select" onchange="window.filterSubstanceQuick(this.value)">
                                         <option value="all">🧪 ทุกสาร (10 รายการ)</option>
                                         <option value="pesticide_gt">🥬 ยาฆ่าแมลง (GT kit)</option>
-                                        <option value="pesticide_tm2">🥬 ยาฆ่าแมลง (TM/2 kit)</option>
+                                        <option value="pesticide_tm2">🥬 ยาฆ่าแมลง (GT & TM/2 kit)</option>
                                         <option value="pesticide">🥬 ยาฆ่าแมลง (รวมทุก Kit)</option>
                                         <option value="borax">🥩 สารบอแรกซ์</option>
                                         <option value="formalin">🐟 สารฟอร์มาลิน</option>
@@ -1581,7 +1581,7 @@
                                         <select id="substanceAnalyticsSelect" class="dashboard-filter-select substance-custom-dropdown" onchange="window.selectSubstanceAnalytics(this.value)">
                                             <option value="all">🧪 สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)</option>
                                             <option value="pesticide_gt">🥬 ยาฆ่าแมลง - GT kit (MU.10-001)</option>
-                                            <option value="pesticide_tm2">🥬 ยาฆ่าแมลง - TM/2 kit (MU.10-001)</option>
+                                            <option value="pesticide_tm2">🥬 ยาฆ่าแมลง - GT & TM/2 kit (MU.10-001)</option>
                                             <option value="pesticide">🥬 ยาฆ่าแมลง - รวมทุก Kit (MU.10-001)</option>
                                             <option value="borax">🥩 สารบอแรกซ์ (MU.10-002)</option>
                                             <option value="formalin">🐟 สารฟอร์มาลิน (MU.10-002)</option>
@@ -3867,7 +3867,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793351728404"></script>
+    <script src="charts-dash.js?v=1793352234998"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
