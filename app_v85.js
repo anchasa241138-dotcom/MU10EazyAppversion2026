@@ -138,6 +138,7 @@ const app = {
     },
 
     init() {
+        window.app = this;
         try {
             if (typeof document !== 'undefined' && document.fonts) {
                 document.fonts.load('10px SarabunPDF');
@@ -7181,6 +7182,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     closeCertifyModal() {
         document.getElementById('certifyModal').classList.remove('active');
         this.updateEditApprovalButtonVisibility();
+        if (window.location.hash && window.location.hash.startsWith('#report-')) {
+            try {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+            } catch(e) {}
+        }
     },
 
     handleReturnToAnalysis() {
@@ -10894,6 +10900,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     },
 
 };
+window.app = app;
 
 // Start the app when DOM loads
 document.addEventListener('DOMContentLoaded', () => {
