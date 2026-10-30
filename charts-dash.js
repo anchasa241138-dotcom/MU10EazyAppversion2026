@@ -235,7 +235,7 @@ function initDashboardCharts() {
 window.substanceDictionary = {
     'all': { label: 'สารที่ตรวจวิเคราะห์ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
     'pesticide_gt': { label: 'ยาฆ่าแมลง (GT kit)', form: 'MU.10-001', icon: 'fa-leaf' },
-    'pesticide_tm2': { label: 'ยาฆ่าแมลง (GT + TM/2 kit)', form: 'MU.10-001', icon: 'fa-vial' },
+    'pesticide_tm2': { label: 'ยาฆ่าแมลง (GT & TM/2 kit)', form: 'MU.10-001', icon: 'fa-vial' },
     'pesticide': { label: 'ยาฆ่าแมลง (รวมทุก Kit)', form: 'MU.10-001', icon: 'fa-layer-group' },
     'borax': { label: 'สารบอแรกซ์', form: 'MU.10-002', icon: 'fa-drumstick-bite' },
     'formalin': { label: 'สารฟอร์มาลิน', form: 'MU.10-002', icon: 'fa-fish' },
@@ -335,15 +335,18 @@ window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
 
     if (s.form_type === 'MU.10-001') {
         if (targetSubstance === 'pesticide_tm2') {
-            const sum2 = (idx ? (s['analysis_interpretation_2_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_interpretation_2 || s.analysis_summary_outcome || s.analysis_summary || '';
-            if (sum2.includes('ไม่ผ่าน') || sum2.includes('พบ')) return 'ไม่ผ่าน';
-            if (sum2.includes('ผ่าน') || sum2.includes('ไม่พบ') || sum2.includes('ปลอดภัย') || sum2.includes('ใช้ได้')) return 'ผ่าน';
-            return sum2;
+            const sumOutcome = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
+            const sum1 = (idx ? s['analysis_interpretation_' + idx] : '') || s.analysis_interpretation || '';
+            const sum2 = (idx ? s['analysis_interpretation_2_' + idx] : '') || s.analysis_interpretation_2 || '';
+            const combined = `${sumOutcome} ${sum1} ${sum2}`;
+            if (combined.includes('ไม่ผ่าน') || combined.includes('ไม่ปลอดภัย') || combined.includes('พบ')) return 'ไม่ผ่าน';
+            if (combined.includes('ผ่าน') || combined.includes('ปลอดภัย') || combined.includes('ไม่พบ') || combined.includes('ใช้ได้')) return 'ผ่าน';
+            return sumOutcome || sum2 || sum1;
         }
         if (targetSubstance === 'pesticide_gt') {
             const sum1 = (idx ? (s['analysis_interpretation_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_interpretation || s.analysis_summary_outcome || s.analysis_summary || '';
-            if (sum1.includes('ไม่ผ่าน') || sum1.includes('พบ')) return 'ไม่ผ่าน';
-            if (sum1.includes('ผ่าน') || sum1.includes('ไม่พบ') || sum1.includes('ปลอดภัย') || sum1.includes('ใช้ได้')) return 'ผ่าน';
+            if (sum1.includes('ไม่ผ่าน') || sum1.includes('ไม่ปลอดภัย') || sum1.includes('พบ')) return 'ไม่ผ่าน';
+            if (sum1.includes('ผ่าน') || sum1.includes('ปลอดภัย') || sum1.includes('ไม่พบ') || sum1.includes('ใช้ได้')) return 'ผ่าน';
             return sum1;
         }
         return (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
@@ -605,7 +608,7 @@ window.currentFailedSamples = {};
 function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
     const stats = {
         'pesticide_gt': { label: 'ยาฆ่าแมลง (GT kit)', total: 0, pass: 0, fail: 0 },
-        'pesticide_tm2': { label: 'ยาฆ่าแมลง (TM/2 kit)', total: 0, pass: 0, fail: 0 },
+        'pesticide_tm2': { label: 'ยาฆ่าแมลง (GT & TM/2 kit)', total: 0, pass: 0, fail: 0 },
         'borax': { label: 'สารบอแรกซ์', total: 0, pass: 0, fail: 0 },
         'formalin': { label: 'สารฟอร์มาลิน', total: 0, pass: 0, fail: 0 },
         'bleach': { label: 'สารฟอกขาว', total: 0, pass: 0, fail: 0 },
@@ -1467,7 +1470,7 @@ function renderSubstancePillsBar() {
     const subList = [
         { key: 'all', label: 'ทั้งหมด (10 รายการ)', icon: 'fa-flask' },
         { key: 'pesticide_gt', label: 'ยาฆ่าแมลง (GT)', icon: 'fa-leaf' },
-        { key: 'pesticide_tm2', label: 'ยาฆ่าแมลง (TM/2)', icon: 'fa-vial' },
+        { key: 'pesticide_tm2', label: 'ยาฆ่าแมลง (GT & TM/2)', icon: 'fa-vial' },
         { key: 'pesticide', label: 'ยาฆ่าแมลง (รวม)', icon: 'fa-layer-group' },
         { key: 'borax', label: 'สารบอแรกซ์', icon: 'fa-drumstick-bite' },
         { key: 'formalin', label: 'สารฟอร์มาลิน', icon: 'fa-fish' },
@@ -1997,7 +2000,7 @@ window.STRATEGIC_TARGETS_2570 = {
             }
         },
         'pesticide_tm2': {
-            label: 'ยาฆ่าแมลง (GT + TM/2 kit)',
+            label: 'ยาฆ่าแมลง (GT & TM/2 kit)',
             total: 235,
             provinces: {
                 'อุบลราชธานี': 70,
