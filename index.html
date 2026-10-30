@@ -422,7 +422,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793350000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793355000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -3615,12 +3615,21 @@
                     <i class="fa-solid fa-lock"></i> <strong>โหมดดูข้อมูลอย่างเดียว:</strong> คุณไม่มีสิทธิ์แก้ไขข้อมูลของจังหวัดนี้ (สิทธิ์การบันทึกแก้ไขเฉพาะเจ้าหน้าที่ผู้รับผิดชอบประจำจังหวัดเท่านั้น)
                 </div>
                 <!-- Target Sample Summary Card -->
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13.5px;">
                         <div><span style="color: #64748b;">ชื่อตัวอย่าง:</span> <strong id="cad-sample-name" style="color: #0f172a;">-</strong></div>
                         <div><span style="color: #64748b;">สารที่ไม่ผ่าน:</span> <strong id="cad-substance-fail" style="color: #ef4444;">-</strong></div>
                         <div><span style="color: #64748b;">สถานที่เก็บ:</span> <span id="cad-sample-location" style="color: #334155;">-</span></div>
                         <div><span style="color: #64748b;">พื้นที่:</span> <span id="cad-sample-area" style="color: #334155;">-</span></div>
+                    </div>
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div style="font-size: 12.5px; color: #475569; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-file-circle-exclamation" style="color: #dc2626; font-size: 15px;"></i>
+                            <span>หลักฐานผลตรวจวิเคราะห์ที่ไม่ผ่านเกณฑ์มาตรฐาน</span>
+                        </div>
+                        <button type="button" class="btn-evidence-report" id="btn-cad-view-report" onclick="window.viewFailedSampleReport(document.getElementById('cad-target-id').value)">
+                            <i class="fa-solid fa-file-lines"></i> ดูรายงานผลตรวจวิเคราะห์ (หลักฐาน)
+                        </button>
                     </div>
                 </div>
 
@@ -3851,7 +3860,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793350000000"></script>
+    <script src="charts-dash.js?v=1793355000000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -3872,6 +3881,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793335000000"></script>
+    <script src="app_v85.js?v=1793355000000"></script>
 </body>
 </html>
