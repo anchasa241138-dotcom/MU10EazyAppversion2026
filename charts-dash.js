@@ -1006,8 +1006,9 @@ window.canUserEditSample = function(sampleOrProvince) {
     }
     if (!user) return false;
 
-    // Admin & Regional Lab have oversight across all 5 provinces
-    if (user.role === 'admin' || user.role === 'lab') return true;
+    // Admin has oversight across all 5 provinces, can view details, but CANNOT record on behalf of provincial officers:
+    // "ต้องการให้แอดมินติดตามผลการดำเนินงานหลังพบปัญหาทั้ง 5 จังหวัดได้ ดูรายละเอียดได้ แต่ไม่สามารถไปบันทึกแทนได้"
+    if (user.role === 'admin' || user.username === 'admin') return false;
 
     // Provincial officers (สสจ., รพ., สสอ.) can ONLY edit their own province
     const uWp = (user.workplace || '').trim();
@@ -1242,7 +1243,7 @@ window.openFailedSamplesModal = function(key, label, provinceFilter) {
                                 </div>
                             ` : `
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <div class="action-status-badge status-${curAction} readonly" style="flex: 1; padding: 6px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'} หรือ Admin">
+                                    <div class="action-status-badge status-${curAction} readonly" style="flex: 1; padding: 6px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'}">
                                         <span>${actionLabels[curAction] || curAction}</span>
                                         <i class="fa-solid fa-lock" style="font-size: 10px; opacity: 0.65;" title="สิทธิ์การแก้ไขเฉพาะเจ้าหน้าที่ จ.${s.province || '-'}"></i>
                                     </div>
@@ -2097,14 +2098,25 @@ window.saveCorrectiveActionDetail = function(identifier, data) {
     }
 
     if (targetProv && !window.canUserEditSample(targetProv)) {
+        let user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+        if (!user) {
+            try {
+                const sess = sessionStorage.getItem('sskmoph_session');
+                if (sess) user = JSON.parse(sess);
+            } catch(e){}
+        }
+        const isAdmin = user && (user.role === 'admin' || user.username === 'admin');
+        const warnMsg = isAdmin 
+            ? `สิทธิ์ผู้ดูแลระบบ (Admin) สามารถติดตามดูข้อมูลได้เท่านั้น ไม่สามารถบันทึกหรือแก้ไขข้อมูลแทนเจ้าหน้าที่ประจำจังหวัดได้`
+            : `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัดเท่านั้น)`;
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'warning',
                 title: 'ไม่มีสิทธิ์บันทึกข้อมูล',
-                text: `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัด หรือ Admin เท่านั้น)`
+                text: warnMsg
             });
         } else {
-            alert(`ไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv}`);
+            alert(warnMsg);
         }
         return false;
     }
@@ -2158,11 +2170,22 @@ window.updateSampleAction = function(identifier, newStatus) {
     }
 
     if (targetProv && !window.canUserEditSample(targetProv)) {
+        let user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+        if (!user) {
+            try {
+                const sess = sessionStorage.getItem('sskmoph_session');
+                if (sess) user = JSON.parse(sess);
+            } catch(e){}
+        }
+        const isAdmin = user && (user.role === 'admin' || user.username === 'admin');
+        const warnMsg = isAdmin 
+            ? `สิทธิ์ผู้ดูแลระบบ (Admin) สามารถติดตามดูข้อมูลได้เท่านั้น ไม่สามารถบันทึกหรือแก้ไขข้อมูลแทนเจ้าหน้าที่ประจำจังหวัดได้`
+            : `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัดเท่านั้น)`;
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'warning',
                 title: 'ไม่มีสิทธิ์แก้ไข',
-                text: `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัด หรือ Admin เท่านั้น)`
+                text: warnMsg
             });
         }
         const currentSubstanceLabel = document.getElementById('failedSubstanceName')?.innerText || 'ตัวอย่างไม่ผ่านเกณฑ์มาตรฐาน';
@@ -2319,6 +2342,11 @@ window.openCorrectiveDetailModal = function(idKey, forceReadOnly) {
     const targetProv = target ? (target.province || '') : '';
     const canEdit = !forceReadOnly && window.canUserEditSample(targetProv);
 
+    const headerTitleEl = document.getElementById('cad-modal-header-title');
+    if (headerTitleEl) {
+        headerTitleEl.innerText = canEdit ? 'บันทึกการติดตามผลหลังพบปัญหา' : 'รายละเอียดการติดตามผลหลังพบปัญหา';
+    }
+
     document.getElementById('cad-target-id').value = idKey;
     document.getElementById('cad-sample-title').innerText = `รหัสตัวอย่าง: ${target ? (target.code || target.identifier) : idKey}`;
     document.getElementById('cad-sample-name').innerText = target ? (target.name || '-') : '-';
@@ -2352,7 +2380,19 @@ window.openCorrectiveDetailModal = function(idKey, forceReadOnly) {
     if (!canEdit) {
         if (readonlyBanner) {
             readonlyBanner.style.display = 'block';
-            readonlyBanner.innerHTML = `<i class="fa-solid fa-lock"></i> <strong>โหมดดูข้อมูลอย่างเดียว:</strong> คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv || '-'} (สิทธิ์การบันทึกแก้ไขเฉพาะเจ้าหน้าที่ผู้รับผิดชอบ จ.${targetProv || '-'} หรือ Admin เท่านั้น)`;
+            let user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+            if (!user) {
+                try {
+                    const sess = sessionStorage.getItem('sskmoph_session');
+                    if (sess) user = JSON.parse(sess);
+                } catch(e){}
+            }
+            const isAdmin = user && (user.role === 'admin' || user.username === 'admin');
+            if (isAdmin) {
+                readonlyBanner.innerHTML = `<i class="fa-solid fa-eye"></i> <strong>โหมดดูรายละเอียด (Admin):</strong> สามารถดูรายละเอียดผลการดำเนินงานของ จ.${targetProv || '-'} ได้ (ไม่อนุญาตให้บันทึกหรือแก้ไขแทนเจ้าหน้าที่ประจำจังหวัด)`;
+            } else {
+                readonlyBanner.innerHTML = `<i class="fa-solid fa-lock"></i> <strong>โหมดดูข้อมูลอย่างเดียว:</strong> คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv || '-'} (สิทธิ์การบันทึกแก้ไขเฉพาะเจ้าหน้าที่ผู้รับผิดชอบ จ.${targetProv || '-'} เท่านั้น)`;
+            }
         }
         if (btnSave) btnSave.style.display = 'none';
         if (statusEl) statusEl.disabled = true;
@@ -2699,8 +2739,10 @@ window.renderFollowupPageView = function(provinceFilter) {
     const user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
     const permBannerTxt = document.getElementById('followup-perm-txt');
     if (permBannerTxt) {
-        if (user && (user.role === 'admin' || user.role === 'lab')) {
-            permBannerTxt.innerHTML = `<strong>สิทธิ์ผู้ดูแลระบบ (Admin)</strong>: สามารถจัดการและบันทึกติดตามผลได้ทุกจังหวัด`;
+        if (user && (user.role === 'admin' || user.username === 'admin')) {
+            permBannerTxt.innerHTML = `<strong>สิทธิ์ผู้ดูแลระบบ (Admin)</strong>: ติดตามผลการดำเนินงานได้ทั้ง 5 จังหวัด (โหมดดูรายละเอียด / ไม่อนุญาตให้บันทึกแทน)`;
+        } else if (user && user.role === 'lab') {
+            permBannerTxt.innerHTML = `<strong>สิทธิ์ศูนย์วิทยาศาสตร์การแพทย์ที่ 10</strong>: ติดตามผลการดำเนินงานด้านอาหารปลอดภัย เขตสุขภาพที่ 10`;
         } else {
             const uProv = window.getCurrentUserProvince();
             if (uProv && uProv !== 'all') {
@@ -2900,12 +2942,12 @@ window.renderFollowupTable = function(sourceSamples) {
                         </div>
                     ` : `
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            <div class="action-status-badge status-${curAction} readonly" style="flex: 1; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'} หรือ Admin">
+                            <div class="action-status-badge status-${curAction} readonly" style="flex: 1; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;" title="เฉพาะผู้รับผิดชอบ จ.${s.province || '-'}">
                                 <span>${actionLabels[curAction] || curAction}</span>
                                 <i class="fa-solid fa-lock" style="font-size: 10px; opacity: 0.65;" title="สิทธิ์การแก้ไขเฉพาะเจ้าหน้าที่ จ.${s.province || '-'}"></i>
                             </div>
-                            <button type="button" class="btn-open-fp-detail readonly-btn" title="ดูรายละเอียดบันทึกผล (โหมดอ่านอย่างเดียว)" onclick="window.openCorrectiveDetailModal('${idKey}', true)">
-                                <i class="fa-solid fa-eye"></i> ดูข้อมูล
+                            <button type="button" class="btn-open-fp-detail readonly-btn" title="ดูรายละเอียดผลการดำเนินงาน" onclick="window.openCorrectiveDetailModal('${idKey}', true)">
+                                <i class="fa-solid fa-eye"></i> ดูรายละเอียด
                             </button>
                         </div>
                     `}
