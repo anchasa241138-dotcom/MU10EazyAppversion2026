@@ -4391,7 +4391,8 @@ body.followup-view-active #currentViewTitle {
 #view-lab-certify .responsive-table,
 #view-download-results .responsive-table,
 #view-data-download .responsive-table,
-#view-manage-users .responsive-table {
+#view-manage-users .responsive-table,
+#view-followup .responsive-table {
   width: 100% !important;
   overflow-x: auto !important;
   border-radius: 16px !important;
@@ -4406,7 +4407,8 @@ body.followup-view-active #currentViewTitle {
 #view-download-results #downloadTable,
 #view-data-download #exportTable,
 #view-manage-users #pending-users-table,
-#view-manage-users #approved-users-table {
+#view-manage-users #approved-users-table,
+#view-followup #followupTable {
   width: 100% !important;
   min-width: 100% !important;
   table-layout: auto !important;
@@ -4423,7 +4425,8 @@ body.followup-view-active #currentViewTitle {
 #view-download-results #downloadTable thead tr,
 #view-data-download #exportTable thead tr,
 #view-manage-users #pending-users-table thead tr,
-#view-manage-users #approved-users-table thead tr {
+#view-manage-users #approved-users-table thead tr,
+#view-followup #followupTable thead tr {
   background: #0f274e !important;
   color: #ffffff !important;
   border-bottom: 2px solid rgba(56, 189, 248, 0.35) !important;
@@ -4435,7 +4438,8 @@ body.followup-view-active #currentViewTitle {
 #view-download-results #downloadTable thead th,
 #view-data-download #exportTable thead th,
 #view-manage-users #pending-users-table thead th,
-#view-manage-users #approved-users-table thead th {
+#view-manage-users #approved-users-table thead th,
+#view-followup #followupTable thead th {
   background: #0f274e !important;
   color: #ffffff !important;
   font-weight: 700 !important;
@@ -4448,6 +4452,28 @@ body.followup-view-active #currentViewTitle {
   vertical-align: middle !important;
 }
 
+#view-download-results #downloadTable thead th:first-child,
+#view-lab-verify #verifyTable thead th:first-child,
+#view-lab-analysis #analysisTable thead th:first-child,
+#view-lab-certify #certifyTable thead th:first-child,
+#view-data-download #exportTable thead th:first-child,
+#view-manage-users #pending-users-table thead th:first-child,
+#view-manage-users #approved-users-table thead th:first-child,
+#view-followup #followupTable thead th:first-child {
+  border-top-left-radius: 14px !important;
+}
+
+#view-download-results #downloadTable thead th:last-child,
+#view-lab-verify #verifyTable thead th:last-child,
+#view-lab-analysis #analysisTable thead th:last-child,
+#view-lab-certify #certifyTable thead th:last-child,
+#view-data-download #exportTable thead th:last-child,
+#view-manage-users #pending-users-table thead th:last-child,
+#view-manage-users #approved-users-table thead th:last-child,
+#view-followup #followupTable thead th:last-child {
+  border-top-right-radius: 14px !important;
+}
+
 /* 7. Table Rows (Alternating White / Subtle Off-White) */
 #view-lab-verify #verifyTable tbody tr,
 #view-lab-analysis #analysisTable tbody tr,
@@ -4455,7 +4481,8 @@ body.followup-view-active #currentViewTitle {
 #view-download-results #downloadTable tbody tr,
 #view-data-download #exportTable tbody tr,
 #view-manage-users #pending-users-table tbody tr,
-#view-manage-users #approved-users-table tbody tr {
+#view-manage-users #approved-users-table tbody tr,
+#view-followup #followupTable tbody tr {
   background: #ffffff !important;
   color: #334155 !important;
   border-bottom: 1px solid #f1f5f9 !important;
@@ -4468,7 +4495,8 @@ body.followup-view-active #currentViewTitle {
 #view-download-results #downloadTable tbody tr:nth-child(even),
 #view-data-download #exportTable tbody tr:nth-child(even),
 #view-manage-users #pending-users-table tbody tr:nth-child(even),
-#view-manage-users #approved-users-table tbody tr:nth-child(even) {
+#view-manage-users #approved-users-table tbody tr:nth-child(even),
+#view-followup #followupTable tbody tr:nth-child(even) {
   background: #f8fafc !important;
 }
 
@@ -4478,7 +4506,8 @@ body.followup-view-active #currentViewTitle {
 #view-download-results #downloadTable tbody tr:hover,
 #view-data-download #exportTable tbody tr:hover,
 #view-manage-users #pending-users-table tbody tr:hover,
-#view-manage-users #approved-users-table tbody tr:hover {
+#view-manage-users #approved-users-table tbody tr:hover,
+#view-followup #followupTable tbody tr:hover {
   background: #eff6ff !important;
 }
 
@@ -4488,7 +4517,8 @@ body.followup-view-active #currentViewTitle {
 #view-download-results #downloadTable tbody td,
 #view-data-download #exportTable tbody td,
 #view-manage-users #pending-users-table tbody td,
-#view-manage-users #approved-users-table tbody td {
+#view-manage-users #approved-users-table tbody td,
+#view-followup #followupTable tbody td {
   padding: 14px 16px !important;
   border-bottom: 1px solid #f1f5f9 !important;
   color: #334155 !important;
