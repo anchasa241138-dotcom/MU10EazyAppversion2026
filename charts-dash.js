@@ -577,12 +577,15 @@ function updateSubstanceCharts(samples) {
         const getVal = (key) => idx ? (s[key + '_' + idx] !== undefined ? s[key + '_' + idx] : s[key]) : s[key];
         
         const getSummary = (key) => {
-            const val = (idx ? s['analysis_summary_' + idx + '_' + key] : '') || s['analysis_summary_' + key];
+            const val = (idx ? (s['analysis_summary_' + idx + '_' + key] || s['analysis_summary_' + idx]) : (s['analysis_summary_' + key] || s['analysis_summary_1_' + key] || s.analysis_summary_1 || s.analysis_summary));
             if (val && val.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
             if (val && val.includes('ผ่าน')) return 'ผ่าน';
-            const det = (idx ? s['analysis_detail_results_' + idx + '_' + key] : '') || s['analysis_detail_results_' + key] || (idx ? s['analysis_details_' + idx + '_' + key] : '') || s['analysis_details_' + key];
+            const det = (idx ? (s['analysis_detail_results_' + idx + '_' + key] || s['analysis_details_' + idx + '_' + key] || s['analysis_details_' + idx]) : (s['analysis_detail_results_' + key] || s['analysis_details_' + key] || s['analysis_details_1_' + key] || s['analysis_detail_results_1_' + key] || s.analysis_details_1 || s.analysis_details));
             if (det && det.includes('ไม่พบ')) return 'ผ่าน';
             if (det && det.includes('พบ')) return 'ไม่ผ่าน';
+            const generalSum = (idx ? s['analysis_summary_' + idx] : '') || s.analysis_summary || s.analysis_summary_outcome || '';
+            if (generalSum && generalSum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+            if (generalSum && generalSum.includes('ผ่าน')) return 'ผ่าน';
             return null;
         };
 
