@@ -2232,6 +2232,15 @@ function updateCorrectiveActionGovernance(samples) {
     const filterEl = document.getElementById('dashProvinceFilter');
     const activeProv = (filterEl && filterEl.value !== 'all') ? filterEl.value : '';
 
+    let user = (window.app && window.app.currentUser) ? window.app.currentUser : null;
+    if (!user) {
+        try {
+            const sess = sessionStorage.getItem('sskmoph_session');
+            if (sess) user = JSON.parse(sess);
+        } catch(e){}
+    }
+    const isAdmin = Boolean(user && (user.role === 'admin' || user.username === 'admin'));
+
     if (totalFailed > 0) {
         const closedCount = counts.warned + counts.seized + counts.fined + counts.retested_passed;
         const closedPct = ((closedCount / totalFailed) * 100).toFixed(1);
@@ -2244,7 +2253,7 @@ function updateCorrectiveActionGovernance(samples) {
             barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
         }
 
-        if (btnManage) btnManage.style.display = 'inline-flex';
+        if (btnManage) btnManage.style.display = isAdmin ? 'none' : 'inline-flex';
         if (badgeAllPassed) badgeAllPassed.style.display = 'none';
         if (btnFailCount) btnFailCount.innerText = totalFailed;
         if (btnActionLabelTxt) {
