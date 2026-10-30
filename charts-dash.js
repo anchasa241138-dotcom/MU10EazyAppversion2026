@@ -1509,28 +1509,16 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
     if (monthlyChartCanvas) {
         const ctx = monthlyChartCanvas.getContext('2d');
         
-        // 12 Rich Multi-stop Gradients for Monthly Pill Bars
-        const monthGradients = [
-            createBarGrad(ctx, '#38bdf8', '#0284c7', 280), // ต.ค. (Sky -> Ocean)
-            createBarGrad(ctx, '#60a5fa', '#2563eb', 280), // พ.ย. (Blue -> Royal)
-            createBarGrad(ctx, '#818cf8', '#4f46e5', 280), // ธ.ค. (Indigo -> Deep)
-            createBarGrad(ctx, '#a78bfa', '#7c3aed', 280), // ม.ค. (Violet -> Purple)
-            createBarGrad(ctx, '#c084fc', '#9333ea', 280), // ก.พ. (Fuchsia -> Purple)
-            createBarGrad(ctx, '#f472b6', '#db2777', 280), // มี.ค. (Pink -> Rose)
-            createBarGrad(ctx, '#fb7185', '#e11d48', 280), // เม.ย. (Rose -> Crimson)
-            createBarGrad(ctx, '#fb923c', '#ea580c', 280), // พ.ค. (Orange -> Rust)
-            createBarGrad(ctx, '#facc15', '#d97706', 280), // มิ.ย. (Amber -> Gold)
-            createBarGrad(ctx, '#34d399', '#059669', 280), // ก.ค. (Emerald -> Forest)
-            createBarGrad(ctx, '#2dd4bf', '#0d9488', 280), // ส.ค. (Teal -> Jade)
-            createBarGrad(ctx, '#22d3ee', '#0891b2', 280)  // ก.ย. (Cyan -> Deep Cyan)
-        ];
-        const monthBorders = [
-            '#0284c7', '#2563eb', '#4f46e5', '#7c3aed',
-            '#9333ea', '#db2777', '#e11d48', '#ea580c',
-            '#d97706', '#059669', '#0d9488', '#0891b2'
-        ];
+        // Gradients for Stacked Bar: Pass (Emerald) and Fail (Rose/Red)
+        const passGrad = ctx.createLinearGradient(0, 0, 0, 280);
+        passGrad.addColorStop(0, '#10b981');
+        passGrad.addColorStop(1, '#059669');
 
-        // Luminous Spline Area Fill Gradient
+        const failGrad = ctx.createLinearGradient(0, 0, 0, 280);
+        failGrad.addColorStop(0, '#f43f5e');
+        failGrad.addColorStop(1, '#e11d48');
+
+        // Luminous Spline Area Fill Gradient for Trend Line
         const splineAreaGrad = ctx.createLinearGradient(0, 0, 0, 260);
         splineAreaGrad.addColorStop(0, 'rgba(2, 132, 199, 0.28)');
         splineAreaGrad.addColorStop(0.65, 'rgba(2, 132, 199, 0.08)');
@@ -1538,11 +1526,12 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
 
         if (monthlySubstanceChartInstance) {
             monthlySubstanceChartInstance.data.labels = fiscalLabels;
-            monthlySubstanceChartInstance.data.datasets[0].data = monthlyTotals;
-            monthlySubstanceChartInstance.data.datasets[0].backgroundColor = monthGradients;
-            monthlySubstanceChartInstance.data.datasets[0].borderColor = monthBorders;
-            monthlySubstanceChartInstance.data.datasets[1].data = monthlyTotals;
-            monthlySubstanceChartInstance.data.datasets[1].backgroundColor = splineAreaGrad;
+            monthlySubstanceChartInstance.data.datasets[0].data = monthlyPass;
+            monthlySubstanceChartInstance.data.datasets[0].backgroundColor = passGrad;
+            monthlySubstanceChartInstance.data.datasets[1].data = monthlyFail;
+            monthlySubstanceChartInstance.data.datasets[1].backgroundColor = failGrad;
+            monthlySubstanceChartInstance.data.datasets[2].data = monthlyTotals;
+            monthlySubstanceChartInstance.data.datasets[2].backgroundColor = splineAreaGrad;
             monthlySubstanceChartInstance.update();
         } else {
             monthlySubstanceChartInstance = new Chart(ctx, {
@@ -1551,19 +1540,33 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                     datasets: [
                         {
                             type: 'bar',
-                            label: 'จำนวนตัวอย่างที่ตรวจ',
-                            data: monthlyTotals,
-                            backgroundColor: monthGradients,
-                            borderColor: monthBorders,
+                            label: 'ผ่านเกณฑ์',
+                            data: monthlyPass,
+                            backgroundColor: passGrad,
+                            borderColor: '#059669',
                             borderWidth: 1.5,
-                            borderRadius: 12,
+                            borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 8, bottomRight: 8 },
                             borderSkipped: false,
                             barPercentage: 0.52,
+                            stack: 'monthlyStack',
+                            order: 3
+                        },
+                        {
+                            type: 'bar',
+                            label: 'ไม่ผ่านเกณฑ์',
+                            data: monthlyFail,
+                            backgroundColor: failGrad,
+                            borderColor: '#e11d48',
+                            borderWidth: 1.5,
+                            borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 0, bottomRight: 0 },
+                            borderSkipped: false,
+                            barPercentage: 0.52,
+                            stack: 'monthlyStack',
                             order: 2
                         },
                         {
                             type: 'line',
-                            label: 'เส้นแนวโน้มการตรวจ',
+                            label: 'เส้นแนวโน้มตรวจสะสม',
                             data: monthlyTotals,
                             borderColor: '#0284c7',
                             borderWidth: 3.5,
@@ -1609,11 +1612,14 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                                     const t = monthlyTotals[idx] || 0;
                                     const p = monthlyPass[idx] || 0;
                                     const f = monthlyFail[idx] || 0;
+                                    const pPct = t > 0 ? ((p / t) * 100).toFixed(1) : '0.0';
+                                    const fPct = t > 0 ? ((f / t) * 100).toFixed(1) : '0.0';
+
                                     if (context.datasetIndex === 0) {
                                         return [
-                                            ' ตรวจสะสม: ' + t + ' ตัวอย่าง',
-                                            ' ผ่านเกณฑ์: ' + p + ' ตัวอย่าง',
-                                            ' ไม่ผ่านเกณฑ์: ' + f + ' ตัวอย่าง'
+                                            ' 📊 ตรวจสะสม: ' + t + ' ตัวอย่าง',
+                                            ' 🟢 ผ่านเกณฑ์: ' + p + ' ตัวอย่าง (' + pPct + '%)',
+                                            ' 🔴 ไม่ผ่านเกณฑ์: ' + f + ' ตัวอย่าง (' + fPct + '%)'
                                         ];
                                     }
                                     return null;
@@ -1623,6 +1629,7 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                     },
                     scales: {
                         x: {
+                            stacked: true,
                             grid: { display: false },
                             ticks: {
                                 font: { family: "'Prompt', sans-serif", size: 11.5, weight: '500' },
@@ -1630,6 +1637,7 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
                             }
                         },
                         y: {
+                            stacked: true,
                             beginAtZero: true,
                             suggestedMax: 10,
                             grid: {
