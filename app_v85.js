@@ -240,7 +240,9 @@ const app = {
                                 s.analysis_substance = 'บอแรกซ์';
                                 s.analysis_substance_1 = 'บอแรกซ์';
                                 if (s.analysis_summary && s.analysis_summary.includes('ไม่ผ่าน')) {
+                                    s.analysis_summary_borax = 'ไม่ผ่าน';
                                     s.analysis_summary_1_borax = 'ไม่ผ่าน';
+                                    s.analysis_details_borax = s.analysis_details || 'ตรวจพบสารบอแรกซ์ 0.5 ppm';
                                     s.analysis_details_1_borax = s.analysis_details || 'ตรวจพบสารบอแรกซ์ 0.5 ppm';
                                 }
                             }
@@ -387,7 +389,9 @@ const app = {
                 test_borax_1: true,
                 analysis_substance: 'บอแรกซ์',
                 analysis_substance_1: 'บอแรกซ์',
+                analysis_summary_borax: 'ไม่ผ่าน',
                 analysis_summary_1_borax: 'ไม่ผ่าน',
+                analysis_details_borax: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
                 analysis_details_1_borax: 'ตรวจพบสารบอแรกซ์ 0.5 ppm',
                 created_at: new Date(Date.now() - 86400000).toISOString()
             },
