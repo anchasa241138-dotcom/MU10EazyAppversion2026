@@ -5374,7 +5374,7 @@ body.followup-view-active #currentViewTitle {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #0284c7;
+  color: #334155;
   font-weight: 600;
 }
 
@@ -5383,6 +5383,14 @@ body.followup-view-active #currentViewTitle {
   height: 10px;
   border-radius: 3px;
   background: #0284c7;
+}
+
+.legend-dot-bar.legend-dot-pass {
+  background: #10b981;
+}
+
+.legend-dot-bar.legend-dot-fail {
+  background: #f43f5e;
 }
 
 .legend-line {
