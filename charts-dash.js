@@ -621,10 +621,25 @@ function updateSubstanceCharts(samples) {
         };
 
         const inc = (type, summaryVal) => {
-            stats[type].total++;
+            let isPass = false;
+            let isFail = false;
             if (summaryVal && summaryVal.includes('ผ่าน') && !summaryVal.includes('ไม่ผ่าน')) {
-                stats[type].pass++;
+                isPass = true;
             } else if (summaryVal && summaryVal.includes('ไม่ผ่าน')) {
+                isFail = true;
+            } else if (s.status === 'approved') {
+                isPass = true;
+            }
+
+            // นับเฉพาะตัวอย่างที่ตรวจวิเคราะห์แล้วเท่านั้น (ไม่นับตัวอย่างที่อยู่ระหว่างรอตรวจ)
+            if (!isPass && !isFail) {
+                return;
+            }
+
+            stats[type].total++;
+            if (isPass) {
+                stats[type].pass++;
+            } else if (isFail) {
                 stats[type].fail++;
                 let subName = idx ? s['sample_name_'+idx] : s.sample_name;
                 window.currentFailedSamples[type].push({
@@ -640,8 +655,6 @@ function updateSubstanceCharts(samples) {
                     lab_id: s.lab_id || null,
                     rawSample: s
                 });
-            } else if (s.status === 'approved') {
-                stats[type].pass++;
             }
         };
 
@@ -1702,14 +1715,14 @@ function updateModernSubstanceAnalyticsView(samples, stats) {
     let bTotal = 0, bPass = 0, bFail = 0;
     if (selectedKey === 'all') {
         Object.values(stats).forEach(s => {
-            bTotal += s.total;
             bPass += s.pass;
             bFail += s.fail;
         });
+        bTotal = bPass + bFail;
     } else if (stats[selectedKey]) {
-        bTotal = stats[selectedKey].total;
         bPass = stats[selectedKey].pass;
         bFail = stats[selectedKey].fail;
+        bTotal = bPass + bFail;
     }
 
     const passPctVal = bTotal > 0 ? ((bPass / bTotal) * 100).toFixed(1) : '100.0';
