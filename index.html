@@ -287,6 +287,19 @@
             transform: translateY(-2px);
             box-shadow: 0 12px 28px rgba(29, 40, 90, 0.42) !important;
         }
+        .auth-btn-pill-secondary {
+            background: #ffffff !important;
+            border: 1.5px solid #1d285a !important;
+            color: #1d285a !important;
+            box-shadow: 0 4px 12px rgba(29, 40, 90, 0.08) !important;
+            margin-top: 10px !important;
+        }
+        .auth-btn-pill-secondary:hover {
+            background: #f1f5f9 !important;
+            color: #1d285a !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(29, 40, 90, 0.16) !important;
+        }
 
         /* Meta Row */
         .auth-meta-row {
@@ -3352,6 +3365,7 @@
                         </div>
 
                         <button type="submit" class="auth-btn-pill">เข้าสู่ระบบ</button>
+                        <button type="button" class="auth-btn-pill auth-btn-pill-secondary" onclick="app.switchAuthTab('register')">สมัครสมาชิก</button>
 
                         <div class="auth-meta-row">
                             <label class="auth-remember-checkbox">
@@ -3576,12 +3590,9 @@
                 <!-- Right Content Overlay -->
                 <div class="auth-right-content-wrapper">
                     <div class="auth-top-nav-bar">
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'เกี่ยวกับระบบ', text:'Mobi SmartLab 2027: ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี', confirmButtonColor:'#1d285a'})">เกี่ยวกับเรา</a>
+                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'เกี่ยวกับระบบ', text:'Mobi SmartLab 2027: ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10', confirmButtonColor:'#1d285a'})">เกี่ยวกับเรา</a>
                         <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'คู่มือการใช้งาน', text:'ระบบบันทึกตัวอย่าง ตรวจวิเคราะห์ และเฝ้าระวังความปลอดภัยด้านอาหาร', confirmButtonColor:'#1d285a'})">คู่มือการใช้งาน</a>
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'ติดต่อสอบถาม', text:'ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี กรมวิทยาศาสตร์การแพทย์ โทร. 045-210456', confirmButtonColor:'#1d285a'})">ติดต่อเรา</a>
-                        <button class="auth-top-action-btn" id="authTopToggleBtn" type="button" onclick="if(window.app && app.toggleAuthMode) app.toggleAuthMode();">
-                            <span id="authTopToggleText">สมัครสมาชิก</span>
-                        </button>
+                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'ติดต่อสอบถาม', text:'หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10 ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี กรมวิทยาศาสตร์การแพทย์ โทร. 045-210456', confirmButtonColor:'#1d285a'})">ติดต่อเรา</a>
                     </div>
 
                     <div class="auth-hero-content">
@@ -3590,7 +3601,7 @@
                             ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร
                         </p>
                         <p class="auth-hero-agency">
-                            Mobi SmartLab 2027 • ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี
+                            Mobi SmartLab 2027 • หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10
                         </p>
                         <div class="auth-hero-prompt-line" id="authHeroFooterPrompt">
                             <span>ยังไม่มีบัญชีผู้ใช้งาน?</span>
@@ -4291,6 +4302,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793604522905"></script>
+    <script src="app_v85.js?v=1793605330000"></script>
 </body>
 </html>
