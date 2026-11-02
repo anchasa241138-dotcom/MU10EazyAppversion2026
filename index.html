@@ -147,11 +147,11 @@
             letter-spacing: 0.5px;
         }
 
-        /* Dynamic Animated App Logo & HUD Target */
+        /* Dynamic Animated App Logo */
         .auth-dynamic-logo-container {
             position: relative;
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             height: 250px;
             margin: 10px auto;
             display: flex;
@@ -159,22 +159,9 @@
             justify-content: center;
         }
         #authModal .modal-card.register-mode .auth-dynamic-logo-container {
-            max-width: 230px;
+            max-width: 240px;
             height: 180px;
         }
-        .tech-hud-bracket {
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            border: 2px solid #0284c7 !important;
-            pointer-events: none;
-            opacity: 0.85;
-            filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.35)) !important;
-        }
-        .hud-tl { top: 4px; left: 4px; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
-        .hud-tr { top: 4px; right: 4px; border-left: none; border-bottom: none; border-radius: 0 4px 0 0; }
-        .hud-bl { bottom: 4px; left: 4px; border-right: none; border-top: none; border-radius: 0 0 0 4px; }
-        .hud-br { bottom: 4px; right: 4px; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
 
         .logo-ambient-glow {
             position: absolute;
@@ -228,28 +215,26 @@
             box-shadow: none !important;
         }
         .auth-dynamic-app-logo {
-            max-width: 260px;
-            max-height: 145px;
-            width: auto;
+            max-width: 325px;
+            max-height: 180px;
+            width: 100%;
             height: auto;
             object-fit: contain;
             display: block;
-            filter: drop-shadow(0 14px 28px rgba(15, 23, 42, 0.16)) drop-shadow(0 4px 10px rgba(2, 132, 199, 0.18)) !important;
+            filter: none !important;
             transition: transform 0.3s ease;
         }
         #authModal .modal-card.register-mode .auth-dynamic-app-logo {
-            max-width: 175px;
-            max-height: 95px;
+            max-width: 230px;
+            max-height: 125px;
         }
 
         @keyframes logoFloat {
             0%, 100% {
                 transform: translateY(0px) rotate(0deg);
-                filter: drop-shadow(0 12px 24px rgba(15, 23, 42, 0.14)) drop-shadow(0 4px 8px rgba(2, 132, 199, 0.2));
             }
             50% {
-                transform: translateY(-9px) rotate(0.6deg);
-                filter: drop-shadow(0 20px 34px rgba(15, 23, 42, 0.22)) drop-shadow(0 6px 14px rgba(2, 132, 199, 0.3));
+                transform: translateY(-8px) rotate(0.6deg);
             }
         }
         @keyframes logoAuraPulse {
@@ -3591,11 +3576,6 @@
 
                 <!-- Center Dynamic App Logo Display -->
                 <div class="auth-dynamic-logo-container">
-                    <div class="tech-hud-bracket hud-tl"></div>
-                    <div class="tech-hud-bracket hud-tr"></div>
-                    <div class="tech-hud-bracket hud-bl"></div>
-                    <div class="tech-hud-bracket hud-br"></div>
-                    
                     <div class="logo-ambient-glow"></div>
                     <div class="logo-orbit-ring orbit-ring-outer"></div>
                     <div class="logo-orbit-ring orbit-ring-inner"></div>
@@ -4534,6 +4514,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793611100000"></script>
+    <script src="app_v85.js?v=1793611600000"></script>
 </body>
 </html>
