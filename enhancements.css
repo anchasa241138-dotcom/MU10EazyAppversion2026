@@ -2892,56 +2892,59 @@ body:has(#view-e-tracking.active) #currentViewTitle {
   box-shadow: 0 12px 28px rgba(16, 185, 129, 0.45) !important;
 }
 
-/* 16. Login & Register Mode - Modern Futuristic Tech Blue & Translucent Glass Theme */
+/* 16. Login & Register Mode - BornToDev Style Ribbed Slats & Frosted Glassmorphism Theme */
 body.require-login-mode {
-  background: radial-gradient(circle at 50% 25%, #1d4ed8 0%, #1e3a8a 32%, #0f255c 68%, #0a173e 100%) !important;
+  background: 
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0px, rgba(255, 255, 255, 0.03) 6px, transparent 12px, rgba(0, 0, 0, 0.18) 20px, rgba(0, 0, 0, 0.38) 28px),
+    radial-gradient(ellipse 70% 60% at 80% 48%, rgba(0, 140, 255, 0.45) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 70% at 15% 55%, rgba(2, 18, 55, 0.8) 0%, transparent 65%),
+    linear-gradient(95deg, #020c22 0%, #051a4a 32%, #004ca8 68%, #0074ed 100%) !important;
   min-height: 100vh !important;
+  background-attachment: fixed !important;
 }
 
 body.require-login-mode::before {
-  content: '' !important;
-  position: fixed !important;
-  inset: 0 !important;
-  background: 
-    radial-gradient(circle at 18% 22%, rgba(56, 189, 248, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 82% 78%, rgba(37, 99, 235, 0.38) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(30, 64, 175, 0.28) 0%, transparent 65%) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  pointer-events: none !important;
-  z-index: 0 !important;
+  display: none !important;
 }
 
 #authModal,
 #authModal.modal-overlay {
-  background: rgba(10, 25, 65, 0.52) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  background: 
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0px, rgba(255, 255, 255, 0.03) 6px, transparent 12px, rgba(0, 0, 0, 0.18) 20px, rgba(0, 0, 0, 0.38) 28px),
+    radial-gradient(ellipse 70% 60% at 80% 48%, rgba(0, 140, 255, 0.45) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 70% at 15% 55%, rgba(2, 18, 55, 0.8) 0%, transparent 65%),
+    linear-gradient(95deg, #020c22 0%, #051a4a 32%, #004ca8 68%, #0074ed 100%) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 #authModal .modal-card,
 #authModal .modal-card.auth-split-card {
-  background: rgba(13, 27, 68, 0.65) !important;
-  backdrop-filter: blur(28px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-  border: 1.5px solid rgba(56, 189, 248, 0.32) !important;
-  box-shadow: 0 30px 90px rgba(3, 10, 30, 0.55), 0 0 50px rgba(56, 189, 248, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+  background: rgba(10, 25, 65, 0.28) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.26) !important;
+  box-shadow: 0 30px 90px rgba(0, 5, 20, 0.55), 0 0 50px rgba(0, 140, 255, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
   color: #ffffff !important;
   overflow: hidden !important;
 }
 
 #authModal .modal-card.auth-split-card .auth-panel-hero {
-  background: linear-gradient(to top, #7dd3fc 0%, #bae6fd 25%, #e0f2fe 55%, #ffffff 95%) !important;
-  border-right: 1.5px solid rgba(186, 230, 253, 0.7) !important;
-  box-shadow: 10px 0 35px rgba(2, 6, 23, 0.12) !important;
+  background: linear-gradient(to top, rgba(125, 211, 252, 0.48) 0%, rgba(186, 230, 253, 0.38) 28%, rgba(240, 249, 255, 0.6) 65%, rgba(255, 255, 255, 0.78) 100%) !important;
+  backdrop-filter: blur(18px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 10px 0 35px rgba(2, 6, 23, 0.1) !important;
 }
 
 #authModal .modal-card.auth-split-card .auth-panel-form {
-  background: linear-gradient(165deg, rgba(16, 32, 78, 0.58) 0%, rgba(10, 20, 52, 0.72) 100%) !important;
+  background: linear-gradient(165deg, rgba(8, 20, 55, 0.35) 0%, rgba(4, 12, 35, 0.48) 100%) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
 }
 
 #authModal .modal-card.auth-split-card.register-mode .auth-panel-form {
-  background: #ffffff !important;
+  background: rgba(255, 255, 255, 0.94) !important;
 }
 
 #authModal .modal-header {
