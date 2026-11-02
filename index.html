@@ -67,10 +67,12 @@
         #authModal .modal-card.auth-split-card {
             display: flex !important;
             flex-direction: row !important;
-            background: #0d173b !important;
+            background: rgba(13, 27, 68, 0.65) !important;
+            backdrop-filter: blur(28px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
             border-radius: 28px !important;
-            border: 1px solid rgba(56, 189, 248, 0.22) !important;
-            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7), 0 0 45px rgba(14, 165, 233, 0.16) !important;
+            border: 1.5px solid rgba(56, 189, 248, 0.32) !important;
+            box-shadow: 0 30px 90px rgba(3, 10, 30, 0.55), 0 0 50px rgba(56, 189, 248, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
             width: 100% !important;
             max-width: 1060px !important;
             height: 640px !important;
@@ -97,14 +99,14 @@
         .auth-panel-hero {
             flex: 0 0 460px;
             width: 460px;
-            background: linear-gradient(160deg, #102154 0%, #0d193d 55%, #070e24 100%) !important;
+            background: linear-gradient(160deg, rgba(20, 42, 102, 0.55) 0%, rgba(13, 26, 66, 0.68) 60%, rgba(8, 17, 46, 0.75) 100%) !important;
             padding: 34px 38px 24px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
             position: relative !important;
             z-index: 2 !important;
-            border-right: 1px solid rgba(56, 189, 248, 0.16) !important;
+            border-right: 1px solid rgba(56, 189, 248, 0.2) !important;
             box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
             transition: flex 0.35s ease, width 0.35s ease;
             box-sizing: border-box;
@@ -121,12 +123,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-        .auth-hero-logo-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
         }
         .auth-hero-brand-info {
             display: flex;
@@ -151,24 +147,141 @@
             letter-spacing: 0.5px;
         }
 
-        /* 3D Cubes Illustration */
-        .auth-cubes-illustration-wrap {
+        /* Dynamic Animated App Logo & HUD Target */
+        .auth-dynamic-logo-container {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            height: 250px;
+            margin: 10px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 8px 0;
+        }
+        #authModal .modal-card.register-mode .auth-dynamic-logo-container {
+            max-width: 230px;
+            height: 180px;
+        }
+        .tech-hud-bracket {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border: 2px solid #38bdf8;
+            pointer-events: none;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 6px #38bdf8);
+        }
+        .hud-tl { top: 4px; left: 4px; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
+        .hud-tr { top: 4px; right: 4px; border-left: none; border-bottom: none; border-radius: 0 4px 0 0; }
+        .hud-bl { bottom: 4px; left: 4px; border-right: none; border-top: none; border-radius: 0 0 0 4px; }
+        .hud-br { bottom: 4px; right: 4px; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
+
+        .logo-ambient-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(37, 99, 235, 0.28) 45%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: logoAuraPulse 4s ease-in-out infinite;
+            z-index: 1;
+        }
+        .logo-orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .orbit-ring-outer {
+            width: 225px;
+            height: 225px;
+            border: 1.5px dashed rgba(56, 189, 248, 0.38);
+            animation: techRingSpin 22s linear infinite;
+            z-index: 1;
+        }
+        .orbit-ring-inner {
+            width: 190px;
+            height: 190px;
+            border: 1px dotted rgba(147, 197, 253, 0.45);
+            animation: techRingReverse 16s linear infinite;
+            z-index: 1;
+        }
+        .auth-dynamic-logo-card {
             position: relative;
+            z-index: 3;
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1.5px solid rgba(56, 189, 248, 0.65);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45), 0 0 35px rgba(56, 189, 248, 0.35);
+            animation: logoFloat 4.5s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        .auth-cubes-svg {
-            width: 100%;
-            max-width: 310px;
+        #authModal .modal-card.register-mode .auth-dynamic-logo-card {
+            padding: 12px 16px;
+            border-radius: 16px;
+        }
+        .auth-dynamic-app-logo {
+            max-width: 200px;
+            max-height: 105px;
+            width: auto;
             height: auto;
-            max-height: 245px;
-            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.45));
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
         }
-        #authModal .modal-card.register-mode .auth-cubes-svg {
-            max-width: 220px;
-            max-height: 180px;
+        #authModal .modal-card.register-mode .auth-dynamic-app-logo {
+            max-width: 150px;
+            max-height: 80px;
+        }
+        .logo-shimmer-sweep {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+            pointer-events: none;
+            animation: shimmerSweep 5s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 25px rgba(56, 189, 248, 0.45));
+            }
+            50% {
+                transform: translateY(-9px) rotate(0.6deg);
+                filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 38px rgba(56, 189, 248, 0.7));
+            }
+        }
+        @keyframes logoAuraPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(0.92);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.85;
+            }
+        }
+        @keyframes techRingSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes techRingReverse {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        @keyframes shimmerSweep {
+            0% { transform: translateX(-150%) skewX(-20deg); }
+            35%, 100% { transform: translateX(250%) skewX(-20deg); }
         }
 
         /* Hero Typography */
@@ -207,7 +320,7 @@
         /* Form Panel (Right on Desktop) */
         .auth-panel-form {
             flex: 1;
-            background: linear-gradient(165deg, #111f49 0%, #0c1638 100%) !important;
+            background: linear-gradient(165deg, rgba(16, 32, 78, 0.58) 0%, rgba(10, 20, 52, 0.72) 100%) !important;
             padding: 30px 42px 24px !important;
             display: flex !important;
             flex-direction: column !important;
@@ -237,11 +350,17 @@
             color: #38bdf8;
         }
 
-        /* Forms Scroll Area */
+        /* Forms Scroll Area - Vertically Centered for Login */
         .auth-forms-container {
             flex: 1;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
             overflow-y: auto;
             padding-right: 6px;
+        }
+        #authModal .modal-card.register-mode .auth-forms-container {
+            justify-content: flex-start !important;
         }
         .auth-forms-container::-webkit-scrollbar {
             width: 5px;
@@ -256,6 +375,17 @@
         }
         .auth-subform.active {
             display: block !important;
+        }
+        #loginForm {
+            width: 100%;
+            margin: auto 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+        }
+        #registerForm {
+            width: 100%;
+            margin: 0 !important;
         }
 
         /* Form Headers */
@@ -850,7 +980,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793608300000">
+    <link rel="stylesheet" href="enhancements.css?v=1793609300000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -3459,108 +3589,32 @@
             <div class="auth-panel-hero auth-panel-left">
                 <!-- Top Brand Header -->
                 <div class="auth-hero-brand">
-                    <div class="auth-hero-logo-icon">
-                        <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
-                            <path d="M18 3L4 10.5V25.5L18 33L32 25.5V10.5L18 3Z" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round" fill="rgba(56, 189, 248, 0.15)"/>
-                            <path d="M18 3V18M18 18L4 10.5M18 18L32 10.5M18 18V33" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round"/>
-                            <circle cx="18" cy="18" r="3" fill="#38bdf8"/>
-                        </svg>
-                    </div>
                     <div class="auth-hero-brand-info">
                         <span class="auth-brand-name">MOBI SMARTLAB</span>
                         <span class="auth-brand-tag">2027</span>
                     </div>
                 </div>
 
-                <!-- Center 3D Isometric Glowing Cubes Illustration -->
-                <div class="auth-cubes-illustration-wrap">
-                    <svg viewBox="0 0 420 340" preserveAspectRatio="xMidYMid meet" class="auth-cubes-svg">
-                        <defs>
-                            <linearGradient id="cubeTopGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#93c5fd" />
-                                <stop offset="45%" stop-color="#38bdf8" />
-                                <stop offset="100%" stop-color="#0284c7" />
-                            </linearGradient>
-                            <linearGradient id="cubeTopGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#38bdf8" />
-                                <stop offset="60%" stop-color="#2563eb" />
-                                <stop offset="100%" stop-color="#1d4ed8" />
-                            </linearGradient>
-                            <linearGradient id="cubeTopGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#2563eb" />
-                                <stop offset="70%" stop-color="#1e40af" />
-                                <stop offset="100%" stop-color="#172554" />
-                            </linearGradient>
+                <!-- Center Dynamic App Logo Display -->
+                <div class="auth-dynamic-logo-container">
+                    <div class="tech-hud-bracket hud-tl"></div>
+                    <div class="tech-hud-bracket hud-tr"></div>
+                    <div class="tech-hud-bracket hud-bl"></div>
+                    <div class="tech-hud-bracket hud-br"></div>
+                    
+                    <div class="logo-ambient-glow"></div>
+                    <div class="logo-orbit-ring orbit-ring-outer"></div>
+                    <div class="logo-orbit-ring orbit-ring-inner"></div>
 
-                            <linearGradient id="cubeLeftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.95" />
-                                <stop offset="100%" stop-color="#0a122e" stop-opacity="0.98" />
-                            </linearGradient>
-
-                            <linearGradient id="cubeRightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.9" />
-                                <stop offset="100%" stop-color="#0f245c" stop-opacity="0.96" />
-                            </linearGradient>
-
-                            <radialGradient id="cubeAuraGlow" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45" />
-                                <stop offset="45%" stop-color="#1d4ed8" stop-opacity="0.2" />
-                                <stop offset="100%" stop-color="#070e24" stop-opacity="0" />
-                            </radialGradient>
-
-                            <filter id="softAuraBlur" x="-30%" y="-30%" width="160%" height="160%">
-                                <feGaussianBlur stdDeviation="28" />
-                            </filter>
-                        </defs>
-
-                        <!-- Ambient Glow Sphere behind cubes -->
-                        <ellipse cx="210" cy="170" rx="135" ry="120" fill="url(#cubeAuraGlow)" filter="url(#softAuraBlur)" />
-
-                        <!-- Tech Target Corner Brackets -->
-                        <path d="M 95,50 L 70,50 L 70,75" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
-                        <path d="M 325,50 L 350,50 L 350,75" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
-                        <path d="M 95,290 L 70,290 L 70,265" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
-                        <path d="M 325,290 L 350,290 L 350,265" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
-
-                        <!-- Tech Crosshairs / Dots -->
-                        <circle cx="70" cy="170" r="2.5" fill="#38bdf8" opacity="0.7" />
-                        <circle cx="350" cy="170" r="2.5" fill="#38bdf8" opacity="0.7" />
-                        <path d="M 205,30 L 215,30 M 210,25 L 210,35" stroke="#38bdf8" stroke-width="1.5" opacity="0.7" />
-
-                        <!-- Floating Upward Triple Arrow / Lab Tech Icon -->
-                        <g transform="translate(192, 10)">
-                            <path d="M18 2L9 11H14V22H22V11H27L18 2Z" fill="#38bdf8" opacity="0.9"/>
-                            <path d="M6 14L2 18L6 22V19H12V17H6V14Z" fill="#38bdf8" opacity="0.7"/>
-                            <path d="M30 14L34 18L30 22V19H24V17H30V14Z" fill="#38bdf8" opacity="0.7"/>
-                        </g>
-
-                        <!-- CUBE 3 (BOTTOM) -->
-                        <g id="cube-bottom">
-                            <polygon points="145,244 210,280 210,314 145,278" fill="url(#cubeLeftGrad)" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.2" />
-                            <polygon points="210,280 275,244 275,278 210,314" fill="url(#cubeRightGrad)" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.2" />
-                            <polygon points="210,208 275,244 210,280 145,244" fill="url(#cubeTopGrad3)" stroke="rgba(186, 230, 253, 0.55)" stroke-width="1.5" />
-                        </g>
-
-                        <!-- CUBE 2 (MIDDLE) -->
-                        <g id="cube-middle">
-                            <polygon points="145,176 210,212 210,246 145,210" fill="url(#cubeLeftGrad)" stroke="rgba(56, 189, 248, 0.45)" stroke-width="1.2" />
-                            <polygon points="210,212 275,176 275,210 210,246" fill="url(#cubeRightGrad)" stroke="rgba(56, 189, 248, 0.45)" stroke-width="1.2" />
-                            <polygon points="210,140 275,176 210,212 145,176" fill="url(#cubeTopGrad2)" stroke="rgba(186, 230, 253, 0.75)" stroke-width="1.5" />
-                        </g>
-
-                        <!-- CUBE 1 (TOP) -->
-                        <g id="cube-top">
-                            <polygon points="145,108 210,144 210,178 145,142" fill="url(#cubeLeftGrad)" stroke="rgba(56, 189, 248, 0.5)" stroke-width="1.2" />
-                            <polygon points="210,144 275,108 275,142 210,178" fill="url(#cubeRightGrad)" stroke="rgba(56, 189, 248, 0.5)" stroke-width="1.2" />
-                            <polygon points="210,72 275,108 210,144 145,108" fill="url(#cubeTopGrad1)" stroke="#f0f9ff" stroke-width="2" />
-                            <circle cx="210" cy="108" r="4.5" fill="#ffffff" filter="drop-shadow(0 0 6px #38bdf8)" />
-                        </g>
-                    </svg>
+                    <div class="auth-dynamic-logo-card">
+                        <img src="logo_mobi_smartlab.png" alt="Mobi SmartLab 10 Logo" class="auth-dynamic-app-logo">
+                        <div class="logo-shimmer-sweep"></div>
+                    </div>
                 </div>
 
                 <!-- Hero Typography -->
                 <div class="auth-hero-text-block">
-                    <h1 class="auth-hero-title">Welcome :)</h1>
+                    <h1 class="auth-hero-title">Welcome</h1>
                     <p class="auth-hero-system-desc">ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร</p>
                     <p class="auth-hero-agency-desc">หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</p>
                 </div>
@@ -4488,6 +4542,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793608400000"></script>
+    <script src="app_v85.js?v=1793609300000"></script>
 </body>
 </html>
