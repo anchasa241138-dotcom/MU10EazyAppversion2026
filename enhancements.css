@@ -2892,28 +2892,55 @@ body:has(#view-e-tracking.active) #currentViewTitle {
   box-shadow: 0 12px 28px rgba(16, 185, 129, 0.45) !important;
 }
 
-/* 16. Login & Register Mode - Conceptzilla AI Agent Website Design Aesthetic */
+/* 16. Login & Register Mode - Modern Futuristic Tech Blue & Translucent Glass Theme */
 body.require-login-mode {
-  background: #030712 !important;
+  background: radial-gradient(circle at 50% 25%, #1d4ed8 0%, #1e3a8a 32%, #0f255c 68%, #0a173e 100%) !important;
+  min-height: 100vh !important;
 }
 
 body.require-login-mode::before {
-  background: radial-gradient(circle at 50% 28%, rgba(14, 165, 233, 0.32) 0%, rgba(37, 99, 235, 0.22) 28%, rgba(3, 7, 18, 0.96) 72%) !important;
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background: 
+    radial-gradient(circle at 18% 22%, rgba(56, 189, 248, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 82% 78%, rgba(37, 99, 235, 0.38) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(30, 64, 175, 0.28) 0%, transparent 65%) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+#authModal,
+#authModal.modal-overlay {
+  background: rgba(10, 25, 65, 0.52) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
 }
 
-#authModal {
-  background: transparent !important;
-}
-
-#authModal .modal-card {
-  background: linear-gradient(180deg, rgba(11, 23, 48, 0.94) 0%, rgba(6, 13, 28, 0.98) 100%) !important;
-  border: 1px solid rgba(56, 189, 248, 0.28) !important;
-  border-radius: 28px !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(56, 189, 248, 0.16), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+#authModal .modal-card,
+#authModal .modal-card.auth-split-card {
+  background: rgba(13, 27, 68, 0.65) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.32) !important;
+  box-shadow: 0 30px 90px rgba(3, 10, 30, 0.55), 0 0 50px rgba(56, 189, 248, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
   overflow: hidden !important;
+}
+
+#authModal .modal-card.auth-split-card .auth-panel-hero {
+  background: linear-gradient(160deg, rgba(20, 42, 102, 0.55) 0%, rgba(13, 26, 66, 0.68) 60%, rgba(8, 17, 46, 0.75) 100%) !important;
+  border-right: 1px solid rgba(56, 189, 248, 0.2) !important;
+}
+
+#authModal .modal-card.auth-split-card .auth-panel-form {
+  background: linear-gradient(165deg, rgba(16, 32, 78, 0.58) 0%, rgba(10, 20, 52, 0.72) 100%) !important;
+}
+
+#authModal .modal-card.auth-split-card.register-mode .auth-panel-form {
+  background: #ffffff !important;
 }
 
 #authModal .modal-header {
