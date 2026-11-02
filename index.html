@@ -513,7 +513,7 @@
         .input-inner-wrap select {
             width: 100% !important;
             height: 38px !important;
-            background: #f8fafc !important;
+            background: #ffffff !important;
             border: 1.5px solid #cbd5e1 !important;
             border-radius: 9px !important;
             padding-left: 36px !important;
@@ -541,14 +541,21 @@
             left: 12px !important;
             top: 50% !important;
             transform: translateY(-50%) !important;
-            color: #94a3b8 !important;
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #1d4ed8 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            color: #2563eb !important;
+            display: inline-block !important;
             font-size: 13.5px !important;
             pointer-events: none !important;
             z-index: 2 !important;
+            transition: all 0.25s ease !important;
         }
         .input-inner-wrap input:focus ~ i,
         .input-inner-wrap select:focus ~ i {
-            color: #2563eb !important;
+            background: linear-gradient(135deg, #38bdf8 0%, #2563eb 50%, #1d4ed8 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
         }
         .input-inner-wrap .toggle-password {
             position: absolute !important;
@@ -637,19 +644,20 @@
 
         /* Note Block */
         .reg-note-block {
-            background: #fffbeb !important;
-            border: 1.5px solid #fde68a !important;
+            background: #f0f7ff !important;
+            border: 1.5px solid #bfdbfe !important;
             border-radius: 12px !important;
             padding: 10px 14px !important;
-            color: #92400e !important;
+            color: #1e3a8a !important;
             font-size: 11px !important;
             line-height: 1.5 !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.04) !important;
         }
         .reg-note-block h5 {
-            color: #b45309 !important;
+            color: #1d4ed8 !important;
             font-size: 12px !important;
             font-weight: 700 !important;
             margin: 0 0 4px 0 !important;
@@ -662,6 +670,7 @@
             margin: 0 !important;
         }
         .reg-note-block li {
+            color: #334155 !important;
             margin-bottom: 3px !important;
         }
         .reg-note-block li:last-child {
@@ -841,7 +850,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793400000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793608300000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -4467,6 +4476,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793607600000"></script>
+    <script src="app_v85.js?v=1793608300000"></script>
 </body>
 </html>
