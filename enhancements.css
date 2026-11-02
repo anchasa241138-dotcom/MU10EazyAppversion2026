@@ -2931,7 +2931,7 @@ body.require-login-mode::before {
 }
 
 #authModal .modal-card.auth-split-card .auth-panel-hero {
-  background: linear-gradient(165deg, #ffffff 0%, #f0f7ff 60%, #e0f2fe 100%) !important;
+  background: linear-gradient(to top, #7dd3fc 0%, #bae6fd 25%, #e0f2fe 55%, #ffffff 95%) !important;
   border-right: 1.5px solid rgba(186, 230, 253, 0.7) !important;
   box-shadow: 10px 0 35px rgba(2, 6, 23, 0.12) !important;
 }
