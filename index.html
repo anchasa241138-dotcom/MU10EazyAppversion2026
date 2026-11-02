@@ -34,7 +34,7 @@
         }
         
         #authModal {
-            background: #1a2656 !important;
+            background: radial-gradient(circle at 35% 35%, #102454 0%, #080f24 60%, #040814 100%) !important;
             z-index: 1001 !important;
             display: flex !important;
             align-items: center !important;
@@ -67,126 +67,185 @@
         #authModal .modal-card.auth-split-card {
             display: flex !important;
             flex-direction: row !important;
-            background: #ffffff !important;
-            border-radius: 36px !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            box-shadow: 0 35px 85px rgba(10, 16, 45, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+            background: #0d173b !important;
+            border-radius: 28px !important;
+            border: 1px solid rgba(56, 189, 248, 0.22) !important;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7), 0 0 45px rgba(14, 165, 233, 0.16) !important;
             width: 100% !important;
             max-width: 1060px !important;
             height: 640px !important;
-            max-height: calc(100vh - 48px) !important;
+            max-height: calc(100vh - 40px) !important;
             padding: 0 !important;
             overflow: hidden !important;
-            color: #1d285a !important;
+            color: #ffffff !important;
             position: relative !important;
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         #authModal .modal-card.auth-split-card.register-mode {
             max-width: 1140px !important;
-            height: 680px !important;
+            height: 700px !important;
         }
 
         #authModal .close-modal-btn {
             display: none !important;
         }
 
-        /* Left Panel */
-        .auth-panel-left {
-            flex: 0 0 400px;
-            width: 400px;
-            background: #ffffff !important;
-            padding: 34px 40px 24px !important;
+        /* Hero Panel (Left on Desktop, Top on Mobile) */
+        .auth-panel-hero {
+            flex: 0 0 460px;
+            width: 460px;
+            background: linear-gradient(160deg, #102154 0%, #0d193d 55%, #070e24 100%) !important;
+            padding: 34px 38px 24px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
             position: relative !important;
             z-index: 2 !important;
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.04);
+            border-right: 1px solid rgba(56, 189, 248, 0.16) !important;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
             transition: flex 0.35s ease, width 0.35s ease;
+            box-sizing: border-box;
         }
 
-        #authModal .modal-card.register-mode .auth-panel-left {
-            flex: 0 0 540px;
-            width: 540px;
+        #authModal .modal-card.register-mode .auth-panel-hero {
+            flex: 0 0 360px;
+            width: 360px;
+            padding: 28px 26px 20px !important;
         }
 
-        /* Brand Row */
-        .auth-brand-badge {
+        /* Hero Brand */
+        .auth-hero-brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 8px;
         }
-        .auth-brand-tiles {
-            width: 36px;
-            height: 36px;
-            position: relative;
-        }
-        .auth-brand-tiles .tile-1 {
-            width: 20px;
-            height: 20px;
-            background: #1d285a;
-            border-radius: 6px;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-        }
-        .auth-brand-tiles .tile-2 {
-            width: 20px;
-            height: 20px;
-            background: #395ea3;
-            border-radius: 6px;
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            opacity: 0.85;
-        }
-        .auth-brand-text {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.15;
-        }
-        .auth-brand-text .title {
-            color: #1d285a;
-            font-size: 14.5px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
-        .auth-brand-text .sub {
-            color: #64748b;
-            font-size: 11.5px;
-            font-weight: 500;
-        }
-
-        /* Avatar Circle */
-        .auth-user-circle {
-            width: 82px;
-            height: 82px;
-            background: #1d285a;
-            border-radius: 50%;
+        .auth-hero-logo-icon {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 18px auto 26px;
-            box-shadow: 0 8px 24px rgba(29, 40, 90, 0.25);
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
         }
-        .auth-user-circle i {
-            color: #ffffff !important;
-            font-size: 36px;
+        .auth-hero-brand-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .auth-brand-name {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .auth-brand-tag {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #38bdf8;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            letter-spacing: 0.5px;
         }
 
-        /* Forms Wrapper */
+        /* 3D Cubes Illustration */
+        .auth-cubes-illustration-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px 0;
+            position: relative;
+        }
+        .auth-cubes-svg {
+            width: 100%;
+            max-width: 310px;
+            height: auto;
+            max-height: 245px;
+            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.45));
+        }
+        #authModal .modal-card.register-mode .auth-cubes-svg {
+            max-width: 220px;
+            max-height: 180px;
+        }
+
+        /* Hero Typography */
+        .auth-hero-text-block {
+            margin-bottom: 6px;
+        }
+        .auth-hero-title {
+            font-family: 'Prompt', 'Outfit', sans-serif !important;
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+        .auth-hero-system-desc {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #38bdf8;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+        .auth-hero-agency-desc {
+            font-size: 12.5px;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .auth-hero-copyright {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        /* Form Panel (Right on Desktop) */
+        .auth-panel-form {
+            flex: 1;
+            background: linear-gradient(165deg, #111f49 0%, #0c1638 100%) !important;
+            padding: 30px 42px 24px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            overflow: hidden;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Top Nav Bar inside Form Panel */
+        .auth-top-nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-bottom: 14px;
+        }
+        .auth-top-nav-bar a {
+            color: #94a3b8;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .auth-top-nav-bar a:hover {
+            color: #38bdf8;
+        }
+
+        /* Forms Scroll Area */
         .auth-forms-container {
             flex: 1;
             overflow-y: auto;
-            padding-right: 4px;
+            padding-right: 6px;
         }
         .auth-forms-container::-webkit-scrollbar {
             width: 5px;
         }
         .auth-forms-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #1e3a8a;
             border-radius: 10px;
         }
 
@@ -197,42 +256,63 @@
             display: block !important;
         }
 
-        /* Pill Input */
+        /* Form Headers */
+        .auth-form-header {
+            margin-bottom: 20px;
+        }
+        .auth-form-title {
+            color: #38bdf8 !important;
+            font-size: 22px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.3px;
+            margin: 0 0 6px 0 !important;
+            line-height: 1.25;
+        }
+        .auth-form-subtitle {
+            color: #94a3b8 !important;
+            font-size: 12.5px !important;
+            margin: 0 !important;
+            line-height: 1.4;
+        }
+
+        /* Inputs (Crisp White Boxes matching reference image) */
         .auth-pill-group {
             position: relative;
             margin-bottom: 16px;
         }
-        .auth-pill-group input, .auth-pill-group select {
+        .auth-pill-group input, 
+        .auth-pill-group select {
             width: 100%;
             height: 50px;
-            border-radius: 9999px !important;
-            border: 1.5px solid #1d285a !important;
+            border-radius: 14px !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
             padding-left: 54px !important;
             padding-right: 48px !important;
             padding-top: 0 !important;
             padding-bottom: 0 !important;
             font-size: 14px !important;
             font-family: 'Prompt', sans-serif !important;
-            color: #1d285a !important;
+            color: #0f172a !important;
             background: #ffffff !important;
             outline: none;
             transition: all 0.2s ease;
             box-sizing: border-box;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16) !important;
         }
         .auth-pill-group input::placeholder {
-            color: #64748b !important;
+            color: #94a3b8 !important;
             font-size: 13px;
-            letter-spacing: 0.3px;
-            font-weight: 500;
+            font-weight: 400;
         }
-        .auth-pill-group input:focus, .auth-pill-group select:focus {
-            border-color: #2563eb !important;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        .auth-pill-group input:focus, 
+        .auth-pill-group select:focus {
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 0 3.5px rgba(56, 189, 248, 0.32) !important;
         }
         .auth-pill-group input:-webkit-autofill,
         .auth-pill-group input:-webkit-autofill:hover, 
         .auth-pill-group input:-webkit-autofill:focus {
-            -webkit-text-fill-color: #1d285a !important;
+            -webkit-text-fill-color: #0f172a !important;
             -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
             box-shadow: 0 0 0 1000px #ffffff inset !important;
             transition: background-color 5000s ease-in-out 0s;
@@ -244,7 +324,7 @@
             left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: #1d285a !important;
+            color: #475569 !important;
             font-size: 16px;
             pointer-events: none;
             z-index: 5;
@@ -254,51 +334,56 @@
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8 !important;
+            color: #64748b !important;
             font-size: 16px;
             cursor: pointer;
             transition: color 0.2s;
             z-index: 5;
         }
         .auth-pill-group .pill-icon-eye:hover {
-            color: #1d285a !important;
+            color: #0284c7 !important;
         }
 
-        /* Pill Button */
+        /* Buttons */
         .auth-btn-pill {
             width: 100%;
             height: 48px;
-            border-radius: 9999px !important;
-            background: #1d285a !important;
-            border: none !important;
-            color: #ffffff !important;
-            font-size: 14.5px !important;
+            border-radius: 14px !important;
+            font-size: 15px !important;
             font-weight: 700 !important;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-family: 'Prompt', sans-serif !important;
             cursor: pointer;
-            box-shadow: 0 8px 22px rgba(29, 40, 90, 0.32) !important;
             transition: all 0.25s ease !important;
-            margin-top: 6px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .auth-btn-pill:hover {
-            background: #27387a !important;
+        .auth-btn-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 55%, #1d4ed8 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45) !important;
+            margin-top: 8px;
+        }
+        .auth-btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(29, 40, 90, 0.42) !important;
+            box-shadow: 0 12px 30px rgba(2, 132, 199, 0.6) !important;
         }
-        .auth-btn-pill-secondary {
-            background: #ffffff !important;
-            border: 1.5px solid #1d285a !important;
-            color: #1d285a !important;
-            box-shadow: 0 4px 12px rgba(29, 40, 90, 0.08) !important;
+        .auth-btn-secondary {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1.5px solid rgba(56, 189, 248, 0.45) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
             margin-top: 10px !important;
         }
-        .auth-btn-pill-secondary:hover {
-            background: #f1f5f9 !important;
-            color: #1d285a !important;
+        .auth-btn-secondary:hover {
+            background: rgba(56, 189, 248, 0.15) !important;
+            border-color: #38bdf8 !important;
+            color: #38bdf8 !important;
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(29, 40, 90, 0.16) !important;
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25) !important;
         }
 
         /* Meta Row */
@@ -307,242 +392,139 @@
             align-items: center;
             justify-content: space-between;
             margin-top: 15px;
-            font-size: 12px;
-            color: #64748b;
+            font-size: 12.5px;
+            color: #94a3b8;
         }
         .auth-remember-checkbox {
             display: flex;
             align-items: center;
-            gap: 7px;
+            gap: 8px;
             cursor: pointer;
             user-select: none;
-            color: #64748b;
-            font-size: 12px;
+            color: #94a3b8;
+            font-size: 12.5px;
         }
         .auth-remember-checkbox input[type="checkbox"] {
-            accent-color: #1d285a;
-            width: 15px;
-            height: 15px;
+            accent-color: #0284c7;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
         }
         .auth-forgot-link {
-            color: #64748b;
+            color: #38bdf8;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 500;
             transition: color 0.2s;
         }
         .auth-forgot-link:hover {
-            color: #1d285a;
+            color: #7dd3fc;
             text-decoration: underline;
         }
 
-        /* Bottom Dots */
-        .auth-dots-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-top: 14px;
+        /* Bottom Switch Prompt */
+        .auth-bottom-switch {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #94a3b8;
         }
-        .auth-dots-indicator span {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #cbd5e1;
-        }
-        .auth-dots-indicator span.active {
-            width: 8px;
-            height: 8px;
-            background: #1d285a;
-        }
-
-        /* Right Panel */
-        .auth-panel-right {
-            flex: 1;
-            position: relative;
-            background: #14224e !important;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 38px 48px;
-            color: #ffffff;
-        }
-
-        .auth-fluid-wave-bg {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .auth-fluid-wave-bg svg {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .auth-right-content-wrapper {
-            position: relative;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-        }
-
-        /* Top Nav */
-        .auth-top-nav-bar {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 22px;
-        }
-        .auth-top-nav-bar a {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.8px;
+        .auth-bottom-switch a {
+            color: #38bdf8;
+            font-weight: 700;
             text-decoration: none;
-            text-transform: uppercase;
-            transition: color 0.2s;
-        }
-        .auth-top-nav-bar a:hover {
-            color: #ffffff;
-        }
-        .auth-top-action-btn {
-            background: #1d285a;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-            border-radius: 9999px;
-            padding: 6px 18px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            margin-left: 5px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .auth-top-action-btn:hover {
-            background: #27387a;
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Hero Text */
-        .auth-hero-content {
-            margin-bottom: 24px;
-            max-width: 500px;
-        }
-        .auth-hero-welcome {
-            font-family: 'Outfit', sans-serif;
-            font-size: 56px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: #ffffff;
-            line-height: 1.05;
-            margin-bottom: 14px;
-        }
-        .auth-hero-system {
-            font-size: 15px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 6px;
-            line-height: 1.4;
-        }
-        .auth-hero-agency {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-        .auth-hero-prompt-line {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.85);
-        }
-        .auth-hero-prompt-line a {
-            color: #ffffff;
-            font-weight: 700;
+        .auth-bottom-switch a:hover {
             text-decoration: underline;
-            margin-left: 4px;
-            cursor: pointer;
+            color: #7dd3fc;
         }
 
-        /* Register Form internal overrides for white background */
-        .auth-panel-left .input-icon-wrapper label {
-            color: #1d285a !important;
+        /* Register & Forgot Forms inside dark panel */
+        .auth-panel-form .input-icon-wrapper label {
+            color: #e2e8f0 !important;
             font-size: 13px !important;
             font-weight: 600 !important;
             margin-bottom: 5px !important;
         }
-        .auth-panel-left .input-icon-wrapper input,
-        .auth-panel-left .input-icon-wrapper select {
-            background: #f8fafc !important;
-            color: #1d285a !important;
-            border: 1.5px solid #cbd5e1 !important;
-            border-radius: 12px !important;
-            height: 44px !important;
+        .auth-panel-form .input-icon-wrapper label .required {
+            color: #38bdf8 !important;
         }
-        .auth-panel-left .input-icon-wrapper input:focus,
-        .auth-panel-left .input-icon-wrapper select:focus {
+        .auth-panel-form .input-icon-wrapper input,
+        .auth-panel-form .input-icon-wrapper select {
             background: #ffffff !important;
-            border-color: #2563eb !important;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+            color: #0f172a !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+            border-radius: 12px !important;
+            height: 46px !important;
+            padding-left: 42px !important;
+            font-size: 13.5px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
         }
-        .auth-panel-left .input-icon-wrapper i {
-            color: #64748b !important;
+        .auth-panel-form .input-icon-wrapper input:focus,
+        .auth-panel-form .input-icon-wrapper select:focus {
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3) !important;
         }
-        .auth-panel-left .input-icon-wrapper input:focus ~ i,
-        .auth-panel-left .input-icon-wrapper select:focus ~ i {
-            color: #1d285a !important;
-        }
-        .auth-panel-left .reg-note-block {
-            background: #f1f5f9 !important;
-            border-radius: 12px;
-            padding: 12px 14px;
+        .auth-panel-form .input-icon-wrapper i {
             color: #475569 !important;
-            font-size: 12px;
-            margin-top: 12px;
-            border: 1px solid #e2e8f0 !important;
         }
-        .auth-panel-left .reg-note-block h5 {
-            color: #1d285a !important;
+        .auth-panel-form .reg-note-block {
+            background: rgba(15, 23, 42, 0.7) !important;
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #94a3b8 !important;
+            font-size: 12px;
+            margin-top: 14px;
+            border: 1px solid rgba(56, 189, 248, 0.22) !important;
+        }
+        .auth-panel-form .reg-note-block h5 {
+            color: #38bdf8 !important;
             font-weight: 700;
             margin-bottom: 6px;
         }
-        .auth-panel-left .reg-auth-block {
-            background: #f8fafc !important;
-            border: 1px solid #e2e8f0 !important;
+        .auth-panel-form .reg-auth-block {
+            background: rgba(15, 23, 42, 0.6) !important;
+            border: 1px solid rgba(56, 189, 248, 0.2) !important;
             border-radius: 14px !important;
-            color: #1d285a !important;
             padding: 16px;
         }
-        .auth-panel-left .reg-auth-block .light-label label {
-            color: #1d285a !important;
+        .auth-panel-form .password-meter .meter-step span {
+            color: #94a3b8 !important;
         }
-        .auth-panel-left .password-meter .meter-step span {
-            color: #64748b !important;
-        }
-        .auth-panel-left .light-label small {
-            color: #64748b !important;
+        .auth-panel-form .light-label small {
+            color: #94a3b8 !important;
         }
 
-        /* Responsive */
+        /* Responsive Breakpoint */
         @media (max-width: 900px) {
             #authModal .modal-card.auth-split-card {
                 flex-direction: column !important;
                 height: auto !important;
                 max-height: 94vh !important;
-                max-width: 480px !important;
+                max-width: 500px !important;
                 overflow-y: auto !important;
             }
-            .auth-panel-left {
+            .auth-panel-hero {
                 flex: none !important;
                 width: 100% !important;
-                padding: 30px 24px !important;
+                padding: 24px 22px 14px !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(56, 189, 248, 0.16) !important;
             }
-            .auth-panel-right {
-                display: none !important;
+            .auth-cubes-svg {
+                max-width: 180px !important;
+                max-height: 140px !important;
+            }
+            .auth-hero-title {
+                font-size: 26px !important;
+                margin-bottom: 6px !important;
+            }
+            .auth-panel-form {
+                flex: none !important;
+                width: 100% !important;
+                padding: 20px 22px 24px !important;
             }
         }
 
@@ -3325,18 +3307,129 @@
         <div class="modal-card auth-split-card" id="authModalCard">
             <button class="close-modal-btn" onclick="app.closeAuthModal()" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
 
-            <!-- Left Panel: Form Side -->
-            <div class="auth-panel-left">
-                <!-- Brand Header -->
-                <div class="auth-brand-badge">
-                    <div class="auth-brand-tiles">
-                        <div class="tile-1"></div>
-                        <div class="tile-2"></div>
+            <!-- Hero Panel (Left on Desktop, Top on Mobile) -->
+            <div class="auth-panel-hero auth-panel-left">
+                <!-- Top Brand Header -->
+                <div class="auth-hero-brand">
+                    <div class="auth-hero-logo-icon">
+                        <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
+                            <path d="M18 3L4 10.5V25.5L18 33L32 25.5V10.5L18 3Z" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round" fill="rgba(56, 189, 248, 0.15)"/>
+                            <path d="M18 3V18M18 18L4 10.5M18 18L32 10.5M18 18V33" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="18" cy="18" r="3" fill="#38bdf8"/>
+                        </svg>
                     </div>
-                    <div class="auth-brand-text">
-                        <span class="title">Mobi SmartLab</span>
-                        <span class="sub">2027</span>
+                    <div class="auth-hero-brand-info">
+                        <span class="auth-brand-name">MOBI SMARTLAB</span>
+                        <span class="auth-brand-tag">2027</span>
                     </div>
+                </div>
+
+                <!-- Center 3D Isometric Glowing Cubes Illustration -->
+                <div class="auth-cubes-illustration-wrap">
+                    <svg viewBox="0 0 420 340" preserveAspectRatio="xMidYMid meet" class="auth-cubes-svg">
+                        <defs>
+                            <linearGradient id="cubeTopGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#93c5fd" />
+                                <stop offset="45%" stop-color="#38bdf8" />
+                                <stop offset="100%" stop-color="#0284c7" />
+                            </linearGradient>
+                            <linearGradient id="cubeTopGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#38bdf8" />
+                                <stop offset="60%" stop-color="#2563eb" />
+                                <stop offset="100%" stop-color="#1d4ed8" />
+                            </linearGradient>
+                            <linearGradient id="cubeTopGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#2563eb" />
+                                <stop offset="70%" stop-color="#1e40af" />
+                                <stop offset="100%" stop-color="#172554" />
+                            </linearGradient>
+
+                            <linearGradient id="cubeLeftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.95" />
+                                <stop offset="100%" stop-color="#0a122e" stop-opacity="0.98" />
+                            </linearGradient>
+
+                            <linearGradient id="cubeRightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.9" />
+                                <stop offset="100%" stop-color="#0f245c" stop-opacity="0.96" />
+                            </linearGradient>
+
+                            <radialGradient id="cubeAuraGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45" />
+                                <stop offset="45%" stop-color="#1d4ed8" stop-opacity="0.2" />
+                                <stop offset="100%" stop-color="#070e24" stop-opacity="0" />
+                            </radialGradient>
+
+                            <filter id="softAuraBlur" x="-30%" y="-30%" width="160%" height="160%">
+                                <feGaussianBlur stdDeviation="28" />
+                            </filter>
+                        </defs>
+
+                        <!-- Ambient Glow Sphere behind cubes -->
+                        <ellipse cx="210" cy="170" rx="135" ry="120" fill="url(#cubeAuraGlow)" filter="url(#softAuraBlur)" />
+
+                        <!-- Tech Target Corner Brackets -->
+                        <path d="M 95,50 L 70,50 L 70,75" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
+                        <path d="M 325,50 L 350,50 L 350,75" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
+                        <path d="M 95,290 L 70,290 L 70,265" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
+                        <path d="M 325,290 L 350,290 L 350,265" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
+
+                        <!-- Tech Crosshairs / Dots -->
+                        <circle cx="70" cy="170" r="2.5" fill="#38bdf8" opacity="0.7" />
+                        <circle cx="350" cy="170" r="2.5" fill="#38bdf8" opacity="0.7" />
+                        <path d="M 205,30 L 215,30 M 210,25 L 210,35" stroke="#38bdf8" stroke-width="1.5" opacity="0.7" />
+
+                        <!-- Floating Upward Triple Arrow / Lab Tech Icon -->
+                        <g transform="translate(192, 10)">
+                            <path d="M18 2L9 11H14V22H22V11H27L18 2Z" fill="#38bdf8" opacity="0.9"/>
+                            <path d="M6 14L2 18L6 22V19H12V17H6V14Z" fill="#38bdf8" opacity="0.7"/>
+                            <path d="M30 14L34 18L30 22V19H24V17H30V14Z" fill="#38bdf8" opacity="0.7"/>
+                        </g>
+
+                        <!-- CUBE 3 (BOTTOM) -->
+                        <g id="cube-bottom">
+                            <polygon points="145,244 210,280 210,314 145,278" fill="url(#cubeLeftGrad)" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.2" />
+                            <polygon points="210,280 275,244 275,278 210,314" fill="url(#cubeRightGrad)" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.2" />
+                            <polygon points="210,208 275,244 210,280 145,244" fill="url(#cubeTopGrad3)" stroke="rgba(186, 230, 253, 0.55)" stroke-width="1.5" />
+                        </g>
+
+                        <!-- CUBE 2 (MIDDLE) -->
+                        <g id="cube-middle">
+                            <polygon points="145,176 210,212 210,246 145,210" fill="url(#cubeLeftGrad)" stroke="rgba(56, 189, 248, 0.45)" stroke-width="1.2" />
+                            <polygon points="210,212 275,176 275,210 210,246" fill="url(#cubeRightGrad)" stroke="rgba(56, 189, 248, 0.45)" stroke-width="1.2" />
+                            <polygon points="210,140 275,176 210,212 145,176" fill="url(#cubeTopGrad2)" stroke="rgba(186, 230, 253, 0.75)" stroke-width="1.5" />
+                        </g>
+
+                        <!-- CUBE 1 (TOP) -->
+                        <g id="cube-top">
+                            <polygon points="145,108 210,144 210,178 145,142" fill="url(#cubeLeftGrad)" stroke="rgba(56, 189, 248, 0.5)" stroke-width="1.2" />
+                            <polygon points="210,144 275,108 275,142 210,178" fill="url(#cubeRightGrad)" stroke="rgba(56, 189, 248, 0.5)" stroke-width="1.2" />
+                            <polygon points="210,72 275,108 210,144 145,108" fill="url(#cubeTopGrad1)" stroke="#f0f9ff" stroke-width="2" />
+                            <circle cx="210" cy="108" r="4.5" fill="#ffffff" filter="drop-shadow(0 0 6px #38bdf8)" />
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Hero Typography -->
+                <div class="auth-hero-text-block">
+                    <h1 class="auth-hero-title">Welcome :)</h1>
+                    <p class="auth-hero-system-desc">ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร</p>
+                    <p class="auth-hero-agency-desc">หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</p>
+                </div>
+
+                <!-- Bottom Copyright -->
+                <div class="auth-hero-copyright">
+                    © 2027 Mobi SmartLab • เขตสุขภาพที่ 10
+                </div>
+            </div>
+
+            <!-- Form Panel (Right on Desktop, Bottom on Mobile) -->
+            <div class="auth-panel-form auth-panel-right">
+                <!-- Top Nav Bar -->
+                <div class="auth-top-nav-bar">
+                    <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'เกี่ยวกับระบบ', text:'Mobi SmartLab 2027: ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10', confirmButtonColor:'#0284c7'})">เกี่ยวกับเรา</a>
+                    <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'คู่มือการใช้งาน', text:'ระบบบันทึกตัวอย่าง ตรวจวิเคราะห์ และเฝ้าระวังความปลอดภัยด้านอาหาร', confirmButtonColor:'#0284c7'})">คู่มือการใช้งาน</a>
+                    <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'ติดต่อสอบถาม', text:'หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10 ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี กรมวิทยาศาสตร์การแพทย์ โทร. 045-210456', confirmButtonColor:'#0284c7'})">ติดต่อเรา</a>
                 </div>
 
                 <!-- Forms Scroll Area -->
@@ -3349,23 +3442,24 @@
 
                     <!-- Form: Login -->
                     <form id="loginForm" class="auth-subform active">
-                        <div class="auth-user-circle">
-                            <i class="fa-solid fa-user"></i>
+                        <div class="auth-form-header">
+                            <h3 class="auth-form-title">เข้าสู่ระบบเพื่อใช้งาน</h3>
+                            <p class="auth-form-subtitle">กรุณากรอกข้อมูลบัญชีเพื่อเข้าสู่ระบบงานตรวจวิเคราะห์</p>
                         </div>
 
                         <div class="auth-pill-group">
                             <i class="fa-solid fa-user pill-icon-left"></i>
-                            <input type="text" id="login-username" required placeholder="ชื่อผู้ใช้งาน" autocomplete="username">
+                            <input type="text" id="login-username" required placeholder="ชื่อผู้ใช้งาน (Username)" autocomplete="username">
                         </div>
 
                         <div class="auth-pill-group">
                             <i class="fa-solid fa-lock pill-icon-left"></i>
-                            <input type="password" id="login-password" required placeholder="รหัสผ่าน" autocomplete="current-password">
+                            <input type="password" id="login-password" required placeholder="รหัสผ่าน (Password)" autocomplete="current-password">
                             <i class="fa-solid fa-eye pill-icon-eye" onclick="app.togglePasswordVisibility('login-password', this)"></i>
                         </div>
 
-                        <button type="submit" class="auth-btn-pill">เข้าสู่ระบบ</button>
-                        <button type="button" class="auth-btn-pill auth-btn-pill-secondary" onclick="app.switchAuthTab('register')">สมัครสมาชิก</button>
+                        <button type="submit" class="auth-btn-pill auth-btn-primary">เข้าสู่ระบบ</button>
+                        <button type="button" class="auth-btn-pill auth-btn-secondary" onclick="app.switchAuthTab('register')">สมัครสมาชิก</button>
 
                         <div class="auth-meta-row">
                             <label class="auth-remember-checkbox">
@@ -3374,11 +3468,19 @@
                             </label>
                             <a href="#" class="auth-forgot-link" onclick="app.switchAuthTab('forgot'); return false;">ลืมรหัสผ่านใช่หรือไม่?</a>
                         </div>
+
+                        <div class="auth-bottom-switch" id="authHeroFooterPrompt">
+                            <span>ยังไม่มีบัญชีผู้ใช้งาน? </span>
+                            <a href="#" onclick="app.switchAuthTab('register'); return false;">สมัครสมาชิกที่นี่</a>
+                        </div>
                     </form>
 
                     <!-- Form: Register -->
                     <form id="registerForm" class="auth-subform">
-                        <h4 style="color:#1d285a; font-weight:700; font-size:16px; margin-bottom:14px; text-align:center;"><i class="fa-solid fa-user-plus" style="margin-right:6px;"></i> ลงทะเบียนสมัครสมาชิก</h4>
+                        <div class="auth-form-header">
+                            <h3 class="auth-form-title">ลงทะเบียนสมัครสมาชิก</h3>
+                            <p class="auth-form-subtitle">กรุณากรอกข้อมูลเพื่อขอสิทธิ์เข้าใช้งานระบบ</p>
+                        </div>
                         <div class="reg-grid">
                             <div class="input-icon-wrapper">
                                 <label for="reg-title">คำนำหน้า <span class="required">*</span></label>
@@ -3416,29 +3518,20 @@
                                     <option value="ยโสธร">ยโสธร</option>
                                     <option value="อำนาจเจริญ">อำนาจเจริญ</option>
                                     <option value="มุกดาหาร">มุกดาหาร</option>
+                                    <option value="อื่นๆ">อื่นๆ</option>
                                 </select>
                                 <i class="fa-solid fa-map-location-dot"></i>
                             </div>
 
                             <div class="input-icon-wrapper">
-                                <label for="reg-district">อำเภอ <span class="required">*</span></label>
-                                <input type="text" id="reg-district" required placeholder="-เลือกอำเภอ-">
-                                <i class="fa-solid fa-map"></i>
+                                <label for="reg-phone">เบอร์โทรศัพท์ <span class="required">*</span></label>
+                                <input type="tel" id="reg-phone" required placeholder="08XXXXXXXX" maxlength="10">
+                                <i class="fa-solid fa-phone"></i>
                             </div>
-                            <div class="input-icon-wrapper">
-                                <label for="reg-subdistrict">ตำบล <span class="required">*</span></label>
-                                <input type="text" id="reg-subdistrict" required placeholder="-เลือกตำบล-">
-                                <i class="fa-solid fa-map-pin"></i>
-                            </div>
-                            <div class="input-icon-wrapper">
-                                <label for="reg-role">ประเภทบัญชี <span class="required">*</span></label>
-                                <select id="reg-role" required>
-                                    <option value="collector">ผู้เก็บตัวอย่าง</option>
-                                    <option value="lab">เจ้าหน้าที่แลป</option>
-                                    <option value="certifier">ผู้รับรอง</option>
-                                    <option value="executive">ผู้บริหาร</option>
-                                </select>
-                                <i class="fa-solid fa-user-shield"></i>
+                            <div class="input-icon-wrapper reg-span-2">
+                                <label for="reg-email">อีเมล (ถ้ามี)</label>
+                                <input type="email" id="reg-email" placeholder="example@mail.com">
+                                <i class="fa-solid fa-envelope"></i>
                             </div>
                         </div>
 
@@ -3451,7 +3544,7 @@
                                 </div>
                                 <div class="input-icon-wrapper light-label">
                                     <label for="reg-password">รหัสผ่าน <span class="required">*</span></label>
-                                    <small style="display:block; color:#64748b; font-size:11.5px; margin-bottom:5px;">รหัสผ่านอย่างน้อย 8 ตัว มีพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข อักขระพิเศษ</small>
+                                    <small style="display:block; color:#94a3b8; font-size:11.5px; margin-bottom:5px;">รหัสผ่านอย่างน้อย 8 ตัว มีพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข อักขระพิเศษ</small>
                                     <input type="password" id="reg-password" required placeholder="รหัสผ่าน" style="padding-right: 40px;">
                                     <i class="fa-solid fa-key" style="top: 72px !important; bottom: auto !important;"></i>
                                     <i class="fa-solid fa-eye toggle-password" style="left: auto !important; right: 16px; top: 72px !important; bottom: auto !important; cursor: pointer; pointer-events: auto; color: #94a3b8;" onclick="const input = document.getElementById('reg-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash');} else {input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye');}"></i>
@@ -3483,15 +3576,18 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="auth-btn-pill" style="margin-top: 16px;">ลงทะเบียนสมัครสมาชิก</button>
-                        <div style="text-align: center; margin-top: 12px;">
-                            <a href="#" onclick="app.switchAuthTab('login'); return false;" style="color: #64748b; font-size: 13px; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
+                        <button type="submit" class="auth-btn-pill auth-btn-primary" style="margin-top: 16px;">ลงทะเบียนสมัครสมาชิก</button>
+                        <div style="text-align: center; margin-top: 14px;">
+                            <a href="#" onclick="app.switchAuthTab('login'); return false;" style="color: #38bdf8; font-size: 13px; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
                         </div>
                     </form>
 
                     <!-- Form: Forgot Password -->
                     <form id="forgotForm" class="auth-subform">
-                        <h4 style="color:#1d285a; font-weight:700; font-size:16px; margin-bottom:14px; text-align:center;"><i class="fa-solid fa-key" style="margin-right:6px;"></i> ลืมรหัสผ่าน</h4>
+                        <div class="auth-form-header">
+                            <h3 class="auth-form-title">ลืมรหัสผ่าน</h3>
+                            <p class="auth-form-subtitle">กรุณากรอกข้อมูลเพื่อขอรีเซ็ตรหัสผ่านใหม่</p>
+                        </div>
                         <div class="input-icon-wrapper">
                             <label for="forgot-username">ชื่อผู้ใช้งาน (Username)</label>
                             <input type="text" id="forgot-username" required placeholder="Username ที่ลงทะเบียนไว้">
@@ -3512,102 +3608,11 @@
                             <input type="password" id="forgot-confirm-password" required placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" style="padding-right: 40px;">
                             <i class="fa-solid fa-check-double"></i>
                         </div>
-                        <button type="submit" class="auth-btn-pill" style="margin-top: 16px;">รีเซ็ตรหัสผ่าน</button>
+                        <button type="submit" class="auth-btn-pill auth-btn-primary" style="margin-top: 16px;">รีเซ็ตรหัสผ่าน</button>
                         <div style="text-align: center; margin-top: 14px;">
-                            <a href="#" onclick="app.switchAuthTab('login'); return false;" style="color: #64748b; font-size: 13px; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
+                            <a href="#" onclick="app.switchAuthTab('login'); return false;" style="color: #38bdf8; font-size: 13px; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
                         </div>
                     </form>
-                </div>
-
-                <!-- Bottom Dots -->
-                <div class="auth-dots-indicator">
-                    <span class="active"></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-
-            <!-- Right Panel: Fluid Wave Banner -->
-            <div class="auth-panel-right">
-                <!-- Fluid Wave SVG Background -->
-                <div class="auth-fluid-wave-bg">
-                    <svg viewBox="0 0 1000 700" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="silkFlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#142657" />
-                                <stop offset="35%" stop-color="#1f4886" />
-                                <stop offset="55%" stop-color="#93c3e8" />
-                                <stop offset="72%" stop-color="#fbe2b5" />
-                                <stop offset="85%" stop-color="#fff4dd" />
-                                <stop offset="100%" stop-color="#2c5d9a" />
-                            </linearGradient>
-                            <linearGradient id="goldSilkGlow" x1="30%" y1="0%" x2="70%" y2="100%">
-                                <stop offset="0%" stop-color="#fff5e0" stop-opacity="0.95" />
-                                <stop offset="40%" stop-color="#f6deb0" stop-opacity="0.8" />
-                                <stop offset="80%" stop-color="#3877b8" stop-opacity="0.6" />
-                                <stop offset="100%" stop-color="#14224e" stop-opacity="0" />
-                            </linearGradient>
-                            <radialGradient id="centerLightGlow" cx="60%" cy="30%" r="55%">
-                                <stop offset="0%" stop-color="#fff3dc" stop-opacity="0.7" />
-                                <stop offset="30%" stop-color="#f7dfaf" stop-opacity="0.4" />
-                                <stop offset="70%" stop-color="#24518d" stop-opacity="0.15" />
-                                <stop offset="100%" stop-color="#14224e" stop-opacity="0" />
-                            </radialGradient>
-                            <filter id="softRibbonBlur" x="-20%" y="-20%" width="140%" height="140%">
-                                <feGaussianBlur stdDeviation="22" />
-                            </filter>
-                        </defs>
-
-                        <!-- Base Deep Ocean Navy -->
-                        <rect width="1000" height="700" fill="#14224e" />
-
-                        <!-- Primary Sweeping Silk Wave -->
-                        <path d="M 0,0 
-                                 C 200,80 320,380 440,460 
-                                 C 560,540 680,480 820,320 
-                                 C 920,200 960,100 1000,0 
-                                 L 1000,700 L 0,700 Z" fill="#132049" />
-
-                        <!-- Golden / Cream Silk Ribbon Valley -->
-                        <path d="M 220,0 
-                                 C 280,180 360,340 470,380 
-                                 C 580,420 680,340 760,240 
-                                 C 840,140 920,60 1000,40 
-                                 L 1000,0 Z" fill="url(#silkFlowGrad)" opacity="0.9" />
-
-                        <!-- Luminous Golden Wave Crest with Soft Glow Blur -->
-                        <path d="M 260,0 
-                             C 310,190 380,320 480,360 
-                             C 590,400 700,320 780,220 
-                             C 850,130 920,50 1000,30 
-                             L 1000,0 Z" fill="url(#goldSilkGlow)" filter="url(#softRibbonBlur)" opacity="0.92" />
-
-                        <!-- Gentle Glow Spheres -->
-                        <circle cx="680" cy="200" r="320" fill="url(#centerLightGlow)" />
-                    </svg>
-                </div>
-
-                <!-- Right Content Overlay -->
-                <div class="auth-right-content-wrapper">
-                    <div class="auth-top-nav-bar">
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'เกี่ยวกับระบบ', text:'Mobi SmartLab 2027: ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10', confirmButtonColor:'#1d285a'})">เกี่ยวกับเรา</a>
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'คู่มือการใช้งาน', text:'ระบบบันทึกตัวอย่าง ตรวจวิเคราะห์ และเฝ้าระวังความปลอดภัยด้านอาหาร', confirmButtonColor:'#1d285a'})">คู่มือการใช้งาน</a>
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'ติดต่อสอบถาม', text:'หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10 ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี กรมวิทยาศาสตร์การแพทย์ โทร. 045-210456', confirmButtonColor:'#1d285a'})">ติดต่อเรา</a>
-                    </div>
-
-                    <div class="auth-hero-content">
-                        <h1 class="auth-hero-welcome">ยินดีต้อนรับ</h1>
-                        <p class="auth-hero-system">
-                            ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร
-                        </p>
-                        <p class="auth-hero-agency">
-                            Mobi SmartLab 2027 • หน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10
-                        </p>
-                        <div class="auth-hero-prompt-line" id="authHeroFooterPrompt">
-                            <span>ยังไม่มีบัญชีผู้ใช้งาน?</span>
-                            <a href="#" onclick="app.switchAuthTab('register'); return false;">สมัครสมาชิกที่นี่</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -4302,6 +4307,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793605330000"></script>
+    <script src="app_v85.js?v=1793606100000"></script>
 </body>
 </html>
