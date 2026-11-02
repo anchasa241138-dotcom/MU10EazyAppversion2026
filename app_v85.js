@@ -1012,7 +1012,7 @@ const app = {
             authButtons.innerHTML = `<button class="btn btn-secondary" onclick="app.logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>`;
             userStatusCard.innerHTML = `
                 <div class="user-status-name"><i class="fa-solid fa-circle-user"></i> ${this.currentUser.fullname}</div>
-                <div class="user-status-role">${role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : role === 'executive' ? 'ผู้บริหาร' : role === 'lab' ? 'เจ้าหน้าที่แลป' : role === 'certifier' ? 'ผู้รับรอง' : 'ผู้เก็บตัวอย่าง'}</div>
+                <div class="user-status-role">${role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : role === 'executive' ? 'ผู้บริหาร' : role === 'lab' ? 'เจ้าหน้าที่ห้องปฏิบัติการ' : role === 'certifier' ? 'ผู้รับรองรายงาน' : 'ผู้เก็บตัวอย่าง'}</div>
             `;
         } else {
             authButtons.innerHTML = `<button class="btn btn-primary" onclick="app.showLoginModal()"><i class="fa-solid fa-user-lock"></i> เข้าสู่ระบบ</button>`;
@@ -8895,8 +8895,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             switch (role) {
                 case 'admin': return '<span class="role-badge role-admin"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
                 case 'executive': return '<span class="role-badge role-executive"><i class="fa-solid fa-user-tie"></i> ผู้บริหาร</span>';
-                case 'lab': return '<span class="role-badge role-lab"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป</span>';
-                case 'certifier': return '<span class="role-badge role-certifier"><i class="fa-solid fa-stamp"></i> ผู้รับรอง</span>';
+                case 'lab': return '<span class="role-badge role-lab"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องปฏิบัติการ</span>';
+                case 'certifier': return '<span class="role-badge role-certifier"><i class="fa-solid fa-stamp"></i> ผู้รับรองรายงาน</span>';
                 case 'collector': return '<span class="role-badge role-collector"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
                 default: return '<span class="role-badge" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;">' + (role || '-') + '</span>';
             }
@@ -8976,8 +8976,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         } else if (activeFilter === 'all') {
             const categories = [
                 { role: 'collector', name: 'ผู้เก็บตัวอย่าง', icon: 'fa-vial', color: '#475569', list: collectorUsers },
-                { role: 'lab', name: 'เจ้าหน้าที่แลป', icon: 'fa-flask', color: '#059669', list: labUsers },
-                { role: 'certifier', name: 'ผู้รับรอง', icon: 'fa-stamp', color: '#7c3aed', list: certifierUsers },
+                { role: 'lab', name: 'เจ้าหน้าที่ห้องปฏิบัติการ', icon: 'fa-flask', color: '#059669', list: labUsers },
+                { role: 'certifier', name: 'ผู้รับรองรายงาน', icon: 'fa-stamp', color: '#7c3aed', list: certifierUsers },
                 { role: 'executive', name: 'ผู้บริหาร', icon: 'fa-user-tie', color: '#ea580c', list: executiveUsers }
             ];
 
@@ -9060,8 +9060,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         
         const roleOptions = [
             { val: 'collector', text: 'ผู้เก็บตัวอย่าง' },
-            { val: 'lab', text: 'เจ้าหน้าที่แลป' },
-            { val: 'certifier', text: 'ผู้รับรอง' },
+            { val: 'lab', text: 'เจ้าหน้าที่ห้องปฏิบัติการ' },
+            { val: 'certifier', text: 'ผู้รับรองรายงาน' },
             { val: 'executive', text: 'ผู้บริหาร' }
         ];
 
@@ -9137,8 +9137,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             switch (role) {
                 case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
                 case 'executive': return '<span style="color:#ea580c; font-weight:600;"><i class="fa-solid fa-user-tie"></i> ผู้บริหาร</span>';
-                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป</span>';
-                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรอง</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องปฏิบัติการ</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองรายงาน</span>';
                 case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
                 default: return role || '-';
             }
@@ -9296,8 +9296,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             switch (role) {
                 case 'admin': return '<span style="color:#0284c7; font-weight:600;"><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>';
                 case 'executive': return '<span style="color:#ea580c; font-weight:600;"><i class="fa-solid fa-user-tie"></i> ผู้บริหาร</span>';
-                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่แลป</span>';
-                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรอง</span>';
+                case 'lab': return '<span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-flask"></i> เจ้าหน้าที่ห้องปฏิบัติการ</span>';
+                case 'certifier': return '<span style="color:#8b5cf6; font-weight:600;"><i class="fa-solid fa-stamp"></i> ผู้รับรองรายงาน</span>';
                 case 'collector': return '<span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-vial"></i> ผู้เก็บตัวอย่าง</span>';
                 default: return role || '-';
             }
