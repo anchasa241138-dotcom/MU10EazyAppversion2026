@@ -376,16 +376,22 @@
         .auth-subform.active {
             display: block !important;
         }
-        #loginForm {
+        #loginForm.active {
             width: 100%;
             margin: auto 0 !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
         }
-        #registerForm {
-            width: 100%;
+        #registerForm.active {
+            display: block !important;
+            width: 100% !important;
             margin: 0 !important;
+        }
+        #forgotForm.active {
+            display: block !important;
+            width: 100% !important;
+            margin: auto 0 !important;
         }
 
         /* Form Headers */
@@ -4542,6 +4548,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793609300000"></script>
+    <script src="app_v85.js?v=1793610400000"></script>
 </body>
 </html>
