@@ -1127,11 +1127,11 @@ const app = {
         const topBtnText = document.getElementById('authTopToggleText');
         const footerPrompt = document.getElementById('authHeroFooterPrompt');
         if (tab === 'register') {
-            if (topBtnText) topBtnText.innerText = 'SIGN IN';
-            if (footerPrompt) footerPrompt.innerHTML = '<span>Already have an account? </span><a href="#" onclick="app.switchAuthTab(\'login\'); return false;">Sign in here</a>';
+            if (topBtnText) topBtnText.innerText = 'เข้าสู่ระบบ';
+            if (footerPrompt) footerPrompt.innerHTML = '<span>มีบัญชีผู้ใช้งานแล้ว? </span><a href="#" onclick="app.switchAuthTab(\'login\'); return false;">เข้าสู่ระบบที่นี่</a>';
         } else {
-            if (topBtnText) topBtnText.innerText = 'SIGN UP';
-            if (footerPrompt) footerPrompt.innerHTML = '<span>Not a member? </span><a href="#" onclick="app.switchAuthTab(\'register\'); return false;">Sign up now</a>';
+            if (topBtnText) topBtnText.innerText = 'สมัครสมาชิก';
+            if (footerPrompt) footerPrompt.innerHTML = '<span>ยังไม่มีบัญชีผู้ใช้งาน? </span><a href="#" onclick="app.switchAuthTab(\'register\'); return false;">สมัครสมาชิกที่นี่</a>';
         }
     },
 
