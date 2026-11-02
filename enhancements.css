@@ -2930,11 +2930,13 @@ body.require-login-mode::before {
 }
 
 #authModal .modal-card.auth-split-card .auth-panel-hero {
-  background: linear-gradient(to top, rgba(125, 211, 252, 0.48) 0%, rgba(186, 230, 253, 0.38) 28%, rgba(240, 249, 255, 0.6) 65%, rgba(255, 255, 255, 0.78) 100%) !important;
-  backdrop-filter: blur(18px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
-  border-right: 1.5px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 10px 0 35px rgba(2, 6, 23, 0.1) !important;
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-right: 1.5px solid rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 10px 0 35px rgba(2, 6, 23, 0.08) !important;
+  border-top-left-radius: 26px !important;
+  border-bottom-left-radius: 26px !important;
 }
 
 #authModal .modal-card.auth-split-card .auth-panel-form {
