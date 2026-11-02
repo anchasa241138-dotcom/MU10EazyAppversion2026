@@ -83,8 +83,10 @@
         }
 
         #authModal .modal-card.auth-split-card.register-mode {
-            max-width: 1140px !important;
-            height: 700px !important;
+            width: 1240px !important;
+            max-width: 96vw !important;
+            height: 670px !important;
+            max-height: calc(100vh - 30px) !important;
         }
 
         #authModal .close-modal-btn {
@@ -109,9 +111,9 @@
         }
 
         #authModal .modal-card.register-mode .auth-panel-hero {
-            flex: 0 0 360px;
-            width: 360px;
-            padding: 28px 26px 20px !important;
+            flex: 0 0 280px !important;
+            width: 280px !important;
+            padding: 22px 20px 18px !important;
         }
 
         /* Hero Brand */
@@ -441,60 +443,277 @@
             color: #7dd3fc;
         }
 
-        /* Register & Forgot Forms inside dark panel */
-        .auth-panel-form .input-icon-wrapper label {
-            color: #e2e8f0 !important;
-            font-size: 13px !important;
-            font-weight: 600 !important;
-            margin-bottom: 5px !important;
-        }
-        .auth-panel-form .input-icon-wrapper label .required {
-            color: #38bdf8 !important;
-        }
-        .auth-panel-form .input-icon-wrapper input,
-        .auth-panel-form .input-icon-wrapper select {
+        /* Register Mode Overrides (Clean White Form Side) */
+        #authModal .modal-card.register-mode .auth-panel-form {
             background: #ffffff !important;
+            padding: 20px 34px 16px !important;
+            color: #1e293b !important;
+        }
+        #authModal .modal-card.register-mode .auth-top-nav-bar {
+            margin-bottom: 8px !important;
+        }
+        #authModal .modal-card.register-mode .auth-top-nav-bar a {
+            color: #64748b !important;
+            font-size: 11.5px !important;
+        }
+        #authModal .modal-card.register-mode .auth-top-nav-bar a:hover {
+            color: #2563eb !important;
+        }
+        #authModal .modal-card.register-mode .auth-form-header {
+            margin-bottom: 8px !important;
+        }
+        #authModal .modal-card.register-mode .auth-form-title {
+            color: #1d285a !important;
+            font-size: 20px !important;
+            font-weight: 700 !important;
+            margin: 0 0 2px 0 !important;
+        }
+        #authModal .modal-card.register-mode .auth-form-subtitle {
+            color: #64748b !important;
+            font-size: 12px !important;
+            margin: 0 !important;
+        }
+
+        /* Register Form Grid & Fields */
+        .reg-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            column-gap: 12px !important;
+            row-gap: 8px !important; /* Perfect gap, not too wide, not cramped */
+            margin-bottom: 6px !important;
+        }
+        .reg-span-2 {
+            grid-column: span 2 !important;
+        }
+
+        .reg-field {
+            display: flex !important;
+            flex-direction: column !important;
+            margin-bottom: 0 !important;
+        }
+        .reg-field label {
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            color: #334155 !important;
+            margin-bottom: 3px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            line-height: 1.2 !important;
+        }
+        .reg-field label .required {
+            color: #ef4444 !important;
+        }
+
+        .input-inner-wrap {
+            position: relative !important;
+            width: 100% !important;
+        }
+        .input-inner-wrap input,
+        .input-inner-wrap select {
+            width: 100% !important;
+            height: 38px !important;
+            background: #f8fafc !important;
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 9px !important;
+            padding-left: 36px !important;
+            padding-right: 12px !important;
+            font-size: 13px !important;
+            font-family: 'Prompt', sans-serif !important;
             color: #0f172a !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
-            border-radius: 12px !important;
-            height: 46px !important;
-            padding-left: 42px !important;
+            outline: none !important;
+            box-sizing: border-box !important;
+            box-shadow: none !important;
+            transition: all 0.2s ease !important;
+        }
+        .input-inner-wrap input::placeholder {
+            color: #94a3b8 !important;
+            font-size: 12.5px !important;
+        }
+        .input-inner-wrap input:focus,
+        .input-inner-wrap select:focus {
+            background: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+        }
+        .input-inner-wrap > i:not(.toggle-password) {
+            position: absolute !important;
+            left: 12px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            color: #94a3b8 !important;
             font-size: 13.5px !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            pointer-events: none !important;
+            z-index: 2 !important;
         }
-        .auth-panel-form .input-icon-wrapper input:focus,
-        .auth-panel-form .input-icon-wrapper select:focus {
-            border-color: #38bdf8 !important;
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3) !important;
+        .input-inner-wrap input:focus ~ i,
+        .input-inner-wrap select:focus ~ i {
+            color: #2563eb !important;
         }
-        .auth-panel-form .input-icon-wrapper i {
+        .input-inner-wrap .toggle-password {
+            position: absolute !important;
+            right: 12px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            color: #94a3b8 !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            z-index: 3 !important;
+        }
+        .input-inner-wrap .toggle-password:hover {
+            color: #2563eb !important;
+        }
+
+        /* Bottom Grid: Credentials & Notes */
+        .reg-bottom-grid {
+            display: grid !important;
+            grid-template-columns: 1.15fr 0.85fr !important;
+            align-items: stretch !important;
+            column-gap: 12px !important;
+            row-gap: 8px !important;
+            margin-top: 4px !important;
+            margin-bottom: 6px !important;
+        }
+
+        .reg-auth-block {
+            min-height: auto !important;
+            padding: 10px 14px !important;
+            background: #f8fafc !important;
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            color: #1e293b !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+        }
+        .reg-auth-block small {
+            display: block !important;
+            color: #64748b !important;
+            font-size: 10.5px !important;
+            margin-bottom: 2px !important;
+        }
+        .reg-auth-block .input-inner-wrap input {
+            background: #ffffff !important;
+            height: 36px !important;
+        }
+
+        /* Password Meter */
+        .password-meter {
+            margin-top: 2px !important;
+        }
+        .password-meter .meter-steps {
+            display: flex !important;
+            justify-content: space-between !important;
+            gap: 4px !important;
+            position: relative !important;
+        }
+        .password-meter .meter-step {
+            background: #e2e8f0 !important;
+            border-radius: 6px !important;
+            padding: 2px 6px !important;
+            font-size: 10px !important;
+            color: #64748b !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            width: auto !important;
+        }
+        .password-meter .meter-step .dot {
+            width: 5px !important;
+            height: 5px !important;
+            border-radius: 50% !important;
+            background: #94a3b8 !important;
+            margin: 0 !important;
+        }
+        .password-meter .meter-step.active {
+            background: #dbeafe !important;
+            color: #1d4ed8 !important;
+            font-weight: 600 !important;
+        }
+        .password-meter .meter-step.active .dot {
+            background: #2563eb !important;
+            box-shadow: 0 0 6px #2563eb !important;
+        }
+
+        /* Note Block */
+        .reg-note-block {
+            background: #fffbeb !important;
+            border: 1.5px solid #fde68a !important;
+            border-radius: 12px !important;
+            padding: 10px 14px !important;
+            color: #92400e !important;
+            font-size: 11px !important;
+            line-height: 1.5 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+        }
+        .reg-note-block h5 {
+            color: #b45309 !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            margin: 0 0 4px 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+        }
+        .reg-note-block ul {
+            padding-left: 16px !important;
+            margin: 0 !important;
+        }
+        .reg-note-block li {
+            margin-bottom: 3px !important;
+        }
+        .reg-note-block li:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        /* Register Action Buttons */
+        #registerForm .auth-btn-pill {
+            height: 42px !important;
+            font-size: 14.5px !important;
+            margin-top: 8px !important;
+            border-radius: 10px !important;
+        }
+        #registerForm a {
+            color: #64748b !important;
+            font-size: 12.5px !important;
+            font-weight: 600 !important;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        #registerForm a:hover {
+            color: #1d285a !important;
+            text-decoration: underline !important;
+        }
+
+        /* Forgot Password Form */
+        #forgotForm .input-icon-wrapper {
+            margin-bottom: 12px !important;
+            position: relative !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        #forgotForm label {
+            color: #e2e8f0 !important;
+            font-size: 12.5px !important;
+            font-weight: 600 !important;
+            margin-bottom: 4px !important;
+            display: block !important;
+        }
+        #forgotForm input {
+            background: #ffffff !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+            color: #0f172a !important;
+            height: 42px !important;
+            border-radius: 10px !important;
+            padding-left: 38px !important;
+        }
+        #forgotForm .input-icon-wrapper > i {
+            position: absolute !important;
+            top: 29px !important;
+            left: 12px !important;
             color: #475569 !important;
-        }
-        .auth-panel-form .reg-note-block {
-            background: rgba(15, 23, 42, 0.7) !important;
-            border-radius: 12px;
-            padding: 14px 16px;
-            color: #94a3b8 !important;
-            font-size: 12px;
-            margin-top: 14px;
-            border: 1px solid rgba(56, 189, 248, 0.22) !important;
-        }
-        .auth-panel-form .reg-note-block h5 {
-            color: #38bdf8 !important;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .auth-panel-form .reg-auth-block {
-            background: rgba(15, 23, 42, 0.6) !important;
-            border: 1px solid rgba(56, 189, 248, 0.2) !important;
-            border-radius: 14px !important;
-            padding: 16px;
-        }
-        .auth-panel-form .password-meter .meter-step span {
-            color: #94a3b8 !important;
-        }
-        .auth-panel-form .light-label small {
-            color: #94a3b8 !important;
         }
 
         /* Responsive Breakpoint */
@@ -509,113 +728,33 @@
             .auth-panel-hero {
                 flex: none !important;
                 width: 100% !important;
-                padding: 24px 22px 14px !important;
+                padding: 20px 18px 12px !important;
                 border-right: none !important;
                 border-bottom: 1px solid rgba(56, 189, 248, 0.16) !important;
             }
             .auth-cubes-svg {
-                max-width: 180px !important;
-                max-height: 140px !important;
+                max-width: 160px !important;
+                max-height: 120px !important;
             }
             .auth-hero-title {
-                font-size: 26px !important;
-                margin-bottom: 6px !important;
+                font-size: 24px !important;
+                margin-bottom: 4px !important;
             }
             .auth-panel-form {
                 flex: none !important;
                 width: 100% !important;
-                padding: 20px 22px 24px !important;
+                padding: 18px 18px 20px !important;
+            }
+            .reg-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .reg-span-2 {
+                grid-column: span 1 !important;
+            }
+            .reg-bottom-grid {
+                grid-template-columns: 1fr !important;
             }
         }
-
-        .reg-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-        .reg-span-2 { grid-column: span 2; }
-        
-        .reg-bottom-grid {
-            display: grid;
-            grid-template-columns: 3fr 2fr; align-items: start;
-            gap: 20px;
-        }
-
-        .reg-auth-block { min-height: 300px; padding-bottom: 30px;
-            background: rgba(14, 30, 60, 0.65) !important;
-            border: 1px solid rgba(56, 189, 248, 0.25) !important;
-            padding: 20px;
-            border-radius: 16px !important;
-            color: white;
-        }
-        .reg-auth-block .light-label label {
-            color: #e0f2fe !important;
-        }
-        .reg-auth-block input {
-            border: 1px solid rgba(56, 189, 248, 0.25) !important;
-            background: rgba(4, 11, 24, 0.85) !important;
-            color: #ffffff !important;
-        }
-
-        .reg-note-block {
-            background: rgba(245, 158, 11, 0.1) !important;
-            border: 1px solid rgba(245, 158, 11, 0.28) !important;
-            padding: 20px;
-            border-radius: 14px !important;
-            color: #fde68a !important;
-            font-size: 13.5px;
-            line-height: 1.6;
-        }
-        .reg-note-block h5 {
-            margin: 0 0 10px 0;
-            color: #fbbf24 !important;
-            font-size: 16px;
-        }
-        .reg-note-block ul {
-            padding-left: 20px;
-            margin: 0;
-        }
-        .reg-note-block li {
-            margin-bottom: 6px;
-        }
-
-        .password-meter .meter-steps {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-        }
-        .password-meter .meter-steps::before {
-            content: '';
-            position: absolute;
-            top: 6px; left: 10px; right: 10px;
-            height: 2px;
-            background: rgba(255,255,255,0.2);
-            z-index: 1;
-        }
-        .meter-step {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            width: 40px;
-        }
-        .meter-step .dot {
-            width: 14px;
-            height: 14px;
-            background: #475569;
-            border-radius: 50%;
-            margin: 0 auto 4px;
-            transition: background 0.3s;
-        }
-        .meter-step.active .dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
-        .meter-step span {
-            font-size: 11px;
-            color: #94a3b8;
-            display: block;
-        }
-        .mt-4 { margin-top: 20px; }
-        .mt-2 { margin-top: 10px; }
-        .required { color: #f87171 !important; }
-        .reg-auth-block .required { color: #fca5a5 !important; }
 
         /* Direct Badge Styling in Saved Records Table */
         #view-sample-record .responsive-table table tbody td:nth-child(2) span,
@@ -3482,74 +3621,93 @@
                             <p class="auth-form-subtitle">กรุณากรอกข้อมูลเพื่อขอสิทธิ์เข้าใช้งานระบบ</p>
                         </div>
                         <div class="reg-grid">
-                            <div class="input-icon-wrapper">
+                            <div class="reg-field">
                                 <label for="reg-title">คำนำหน้า <span class="required">*</span></label>
-                                <input type="text" id="reg-title" required placeholder="เช่น นาย, นาง, น.ส.">
-                                <i class="fa-solid fa-user-tag"></i>
+                                <div class="input-inner-wrap">
+                                    <input type="text" id="reg-title" required placeholder="เช่น นาย, นาง, น.ส.">
+                                    <i class="fa-solid fa-user-tag"></i>
+                                </div>
                             </div>
-                            <div class="input-icon-wrapper">
+                            <div class="reg-field">
                                 <label for="reg-firstname">ชื่อ <span class="required">*</span></label>
-                                <input type="text" id="reg-firstname" required placeholder="ชื่อจริง">
-                                <i class="fa-solid fa-user"></i>
+                                <div class="input-inner-wrap">
+                                    <input type="text" id="reg-firstname" required placeholder="ชื่อจริง">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
                             </div>
-                            <div class="input-icon-wrapper">
+                            <div class="reg-field">
                                 <label for="reg-lastname">นามสกุล <span class="required">*</span></label>
-                                <input type="text" id="reg-lastname" required placeholder="นามสกุล">
-                                <i class="fa-regular fa-user"></i>
+                                <div class="input-inner-wrap">
+                                    <input type="text" id="reg-lastname" required placeholder="นามสกุล">
+                                    <i class="fa-regular fa-user"></i>
+                                </div>
                             </div>
                             
-                            <div class="input-icon-wrapper">
+                            <div class="reg-field">
                                 <label for="reg-position">ตำแหน่ง <span class="required">*</span></label>
-                                <input type="text" id="reg-position" required placeholder="ตำแหน่ง">
-                                <i class="fa-solid fa-briefcase"></i>
+                                <div class="input-inner-wrap">
+                                    <input type="text" id="reg-position" required placeholder="ตำแหน่ง">
+                                    <i class="fa-solid fa-briefcase"></i>
+                                </div>
                             </div>
 
-                            <div class="input-icon-wrapper">
+                            <div class="reg-field">
                                 <label for="reg-workplace">สถานที่ปฏิบัติงาน <span class="required">*</span></label>
-                                <input type="text" id="reg-workplace" required placeholder="สถานที่ปฏิบัติงาน / โรงพยาบาล">
-                                <i class="fa-solid fa-hospital"></i>
+                                <div class="input-inner-wrap">
+                                    <input type="text" id="reg-workplace" required placeholder="สถานที่ปฏิบัติงาน / โรงพยาบาล">
+                                    <i class="fa-solid fa-hospital"></i>
+                                </div>
                             </div>
-                            <div class="input-icon-wrapper">
+                            <div class="reg-field">
                                 <label for="reg-province">จังหวัด <span class="required">*</span></label>
-                                <select id="reg-province" required>
-                                    <option value="">-เลือกจังหวัด-</option>
-                                    <option value="ศรีสะเกษ">ศรีสะเกษ</option>
-                                    <option value="อุบลราชธานี">อุบลราชธานี</option>
-                                    <option value="ยโสธร">ยโสธร</option>
-                                    <option value="อำนาจเจริญ">อำนาจเจริญ</option>
-                                    <option value="มุกดาหาร">มุกดาหาร</option>
-                                    <option value="อื่นๆ">อื่นๆ</option>
-                                </select>
-                                <i class="fa-solid fa-map-location-dot"></i>
+                                <div class="input-inner-wrap">
+                                    <select id="reg-province" required>
+                                        <option value="">-เลือกจังหวัด-</option>
+                                        <option value="ศรีสะเกษ">ศรีสะเกษ</option>
+                                        <option value="อุบลราชธานี">อุบลราชธานี</option>
+                                        <option value="ยโสธร">ยโสธร</option>
+                                        <option value="อำนาจเจริญ">อำนาจเจริญ</option>
+                                        <option value="มุกดาหาร">มุกดาหาร</option>
+                                        <option value="อื่นๆ">อื่นๆ</option>
+                                    </select>
+                                    <i class="fa-solid fa-map-location-dot"></i>
+                                </div>
                             </div>
 
-                            <div class="input-icon-wrapper">
+                            <div class="reg-field">
                                 <label for="reg-phone">เบอร์โทรศัพท์ <span class="required">*</span></label>
-                                <input type="tel" id="reg-phone" required placeholder="08XXXXXXXX" maxlength="10">
-                                <i class="fa-solid fa-phone"></i>
+                                <div class="input-inner-wrap">
+                                    <input type="tel" id="reg-phone" required placeholder="08XXXXXXXX" maxlength="10">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
                             </div>
-                            <div class="input-icon-wrapper reg-span-2">
+                            <div class="reg-field reg-span-2">
                                 <label for="reg-email">อีเมล (ถ้ามี)</label>
-                                <input type="email" id="reg-email" placeholder="example@mail.com">
-                                <i class="fa-solid fa-envelope"></i>
+                                <div class="input-inner-wrap">
+                                    <input type="email" id="reg-email" placeholder="example@mail.com">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="reg-bottom-grid mt-3">
+                        <div class="reg-bottom-grid">
                             <div class="reg-auth-block">
-                                <div class="input-icon-wrapper light-label">
+                                <div class="reg-field">
                                     <label for="reg-username">User (ชื่อผู้ใช้งาน) <span class="required">*</span></label>
-                                    <input type="text" id="reg-username" required placeholder="Username">
-                                    <i class="fa-solid fa-user-plus"></i>
+                                    <div class="input-inner-wrap">
+                                        <input type="text" id="reg-username" required placeholder="Username">
+                                        <i class="fa-solid fa-user-plus"></i>
+                                    </div>
                                 </div>
-                                <div class="input-icon-wrapper light-label">
+                                <div class="reg-field">
                                     <label for="reg-password">รหัสผ่าน <span class="required">*</span></label>
-                                    <small style="display:block; color:#94a3b8; font-size:11.5px; margin-bottom:5px;">รหัสผ่านอย่างน้อย 8 ตัว มีพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข อักขระพิเศษ</small>
-                                    <input type="password" id="reg-password" required placeholder="รหัสผ่าน" style="padding-right: 40px;">
-                                    <i class="fa-solid fa-key" style="top: 72px !important; bottom: auto !important;"></i>
-                                    <i class="fa-solid fa-eye toggle-password" style="left: auto !important; right: 16px; top: 72px !important; bottom: auto !important; cursor: pointer; pointer-events: auto; color: #94a3b8;" onclick="const input = document.getElementById('reg-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash');} else {input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye');}"></i>
-                                    
-                                    <div class="password-meter mt-2">
+                                    <small>รหัสผ่านอย่างน้อย 8 ตัว (ตัวพิมพ์ใหญ่ เล็ก ตัวเลข พิเศษ)</small>
+                                    <div class="input-inner-wrap">
+                                        <input type="password" id="reg-password" required placeholder="รหัสผ่าน" style="padding-right: 40px !important;">
+                                        <i class="fa-solid fa-key"></i>
+                                        <i class="fa-solid fa-eye toggle-password" onclick="const input = document.getElementById('reg-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash');} else {input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye');}"></i>
+                                    </div>
+                                    <div class="password-meter">
                                         <div class="meter-steps">
                                             <div class="meter-step" id="meter-length"><div class="dot"></div><span>8 ตัว</span></div>
                                             <div class="meter-step" id="meter-upper"><div class="dot"></div><span>A-Z</span></div>
@@ -3559,26 +3717,28 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="input-icon-wrapper light-label">
+                                <div class="reg-field">
                                     <label for="reg-confirm-password">ยืนยันรหัสผ่าน <span class="required">*</span></label>
-                                    <input type="password" id="reg-confirm-password" required placeholder="กรอกรหัสผ่านอีกครั้ง" style="padding-right: 40px;">
-                                    <i class="fa-solid fa-check-double"></i>
-                                    <i class="fa-solid fa-eye toggle-password" style="left: auto !important; right: 16px; cursor: pointer; pointer-events: auto; color: #94a3b8;" onclick="const input = document.getElementById('reg-confirm-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash');} else {input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye');}"></i>
+                                    <div class="input-inner-wrap">
+                                        <input type="password" id="reg-confirm-password" required placeholder="กรอกรหัสผ่านอีกครั้ง" style="padding-right: 40px !important;">
+                                        <i class="fa-solid fa-check-double"></i>
+                                        <i class="fa-solid fa-eye toggle-password" onclick="const input = document.getElementById('reg-confirm-password'); if(input.type === 'password'){input.type='text'; this.classList.remove('fa-eye'); this.classList.add('fa-eye-slash');} else {input.type='password'; this.classList.remove('fa-eye-slash'); this.classList.add('fa-eye');}"></i>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="reg-note-block">
                                 <h5><i class="fa-solid fa-circle-info"></i> หมายเหตุ</h5>
                                 <ul>
-                                    <li>*** User: กรุณาตั้งตามรูปแบบที่หน่วยงานกำหนด (ถ้ามี) หรืออ้างอิงเลขบัตรประชาชน</li>
-                                    <li>*** รหัสผ่านอย่างน้อย 8 ตัว ประกอบด้วยอักษรพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และอักขระพิเศษ</li>
+                                    <li>User: กำหนดตามที่หน่วยงานระบุ หรืออ้างอิงเลขบัตรประชาชน</li>
+                                    <li>รหัสผ่านอย่างน้อย 8 ตัว มีอักษรพิมพ์ใหญ่ เล็ก ตัวเลข และอักขระพิเศษ</li>
                                 </ul>
                             </div>
                         </div>
 
-                        <button type="submit" class="auth-btn-pill auth-btn-primary" style="margin-top: 16px;">ลงทะเบียนสมัครสมาชิก</button>
-                        <div style="text-align: center; margin-top: 14px;">
-                            <a href="#" onclick="app.switchAuthTab('login'); return false;" style="color: #38bdf8; font-size: 13px; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
+                        <button type="submit" class="auth-btn-pill auth-btn-primary">ลงทะเบียนสมัครสมาชิก</button>
+                        <div style="text-align: center; margin-top: 8px;">
+                            <a href="#" onclick="app.switchAuthTab('login'); return false;"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</a>
                         </div>
                     </form>
 
@@ -4307,6 +4467,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793606100000"></script>
+    <script src="app_v85.js?v=1793607600000"></script>
 </body>
 </html>
