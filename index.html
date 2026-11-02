@@ -22,9 +22,14 @@
     <style>
         /* Modern Split Card Login Styling (Inspired by reference template) */
         body.require-login-mode {
-            background: #1a2656 !important;
+            background: 
+                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0px, rgba(255, 255, 255, 0.03) 6px, transparent 12px, rgba(0, 0, 0, 0.18) 20px, rgba(0, 0, 0, 0.38) 28px),
+                radial-gradient(ellipse 70% 60% at 80% 48%, rgba(0, 140, 255, 0.45) 0%, transparent 65%),
+                radial-gradient(ellipse 60% 70% at 15% 55%, rgba(2, 18, 55, 0.8) 0%, transparent 65%),
+                linear-gradient(95deg, #020c22 0%, #051a4a 32%, #004ca8 68%, #0074ed 100%) !important;
             font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
             overflow: hidden;
+            min-height: 100vh;
         }
         body.require-login-mode::before {
             display: none !important;
@@ -34,7 +39,11 @@
         }
         
         #authModal {
-            background: radial-gradient(circle at 35% 35%, #102454 0%, #080f24 60%, #040814 100%) !important;
+            background: 
+                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0px, rgba(255, 255, 255, 0.03) 6px, transparent 12px, rgba(0, 0, 0, 0.18) 20px, rgba(0, 0, 0, 0.38) 28px),
+                radial-gradient(ellipse 70% 60% at 80% 48%, rgba(0, 140, 255, 0.45) 0%, transparent 65%),
+                radial-gradient(ellipse 60% 70% at 15% 55%, rgba(2, 18, 55, 0.8) 0%, transparent 65%),
+                linear-gradient(95deg, #020c22 0%, #051a4a 32%, #004ca8 68%, #0074ed 100%) !important;
             z-index: 1001 !important;
             display: flex !important;
             align-items: center !important;
@@ -67,12 +76,12 @@
         #authModal .modal-card.auth-split-card {
             display: flex !important;
             flex-direction: row !important;
-            background: rgba(13, 27, 68, 0.65) !important;
-            backdrop-filter: blur(28px) saturate(180%) !important;
-            -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+            background: rgba(10, 25, 65, 0.28) !important;
+            backdrop-filter: blur(18px) saturate(160%) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
             border-radius: 28px !important;
-            border: 1.5px solid rgba(56, 189, 248, 0.32) !important;
-            box-shadow: 0 30px 90px rgba(3, 10, 30, 0.55), 0 0 50px rgba(56, 189, 248, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.26) !important;
+            box-shadow: 0 30px 90px rgba(0, 5, 20, 0.55), 0 0 50px rgba(0, 140, 255, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
             width: 100% !important;
             max-width: 1060px !important;
             height: 640px !important;
@@ -95,19 +104,21 @@
             display: none !important;
         }
 
-        /* Hero Panel (Left on Desktop, Top on Mobile) - Bright Clean Luminous Theme */
+        /* Hero Panel (Left on Desktop, Top on Mobile) - Translucent Light Gradient Theme */
         .auth-panel-hero {
             flex: 0 0 460px;
             width: 460px;
-            background: linear-gradient(to top, #7dd3fc 0%, #bae6fd 25%, #e0f2fe 55%, #ffffff 95%) !important;
+            background: linear-gradient(to top, rgba(125, 211, 252, 0.48) 0%, rgba(186, 230, 253, 0.38) 28%, rgba(240, 249, 255, 0.6) 65%, rgba(255, 255, 255, 0.78) 100%) !important;
+            backdrop-filter: blur(18px) saturate(150%) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
             padding: 34px 38px 24px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
             position: relative !important;
             z-index: 2 !important;
-            border-right: 1.5px solid rgba(186, 230, 253, 0.8) !important;
-            box-shadow: 10px 0 35px rgba(2, 6, 23, 0.12);
+            border-right: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 10px 0 35px rgba(2, 6, 23, 0.1);
             transition: flex 0.35s ease, width 0.35s ease;
             box-sizing: border-box;
         }
@@ -293,7 +304,9 @@
         /* Form Panel (Right on Desktop) */
         .auth-panel-form {
             flex: 1;
-            background: linear-gradient(165deg, rgba(16, 32, 78, 0.58) 0%, rgba(10, 20, 52, 0.72) 100%) !important;
+            background: linear-gradient(165deg, rgba(8, 20, 55, 0.35) 0%, rgba(4, 12, 35, 0.48) 100%) !important;
+            backdrop-filter: blur(18px) saturate(160%) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
             padding: 30px 42px 24px !important;
             display: flex !important;
             flex-direction: column !important;
@@ -959,7 +972,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793611800000">
+    <link rel="stylesheet" href="enhancements.css?v=1793612800000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -4514,6 +4527,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793611800000"></script>
+    <script src="app_v85.js?v=1793612800000"></script>
 </body>
 </html>
