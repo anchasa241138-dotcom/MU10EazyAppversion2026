@@ -16,8 +16,8 @@
     <!-- SweetAlert2 for beautiful popups -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="style_v3.css?v=1793603458257">
-    <link rel="stylesheet" href="fonts.css?v=1793603458257">
+    <link rel="stylesheet" href="style_v3.css?v=1793604522905">
+    <link rel="stylesheet" href="fonts.css?v=1793604522905">
 
     <style>
         /* Modern Split Card Login Styling (Inspired by reference template) */
@@ -204,11 +204,14 @@
         }
         .auth-pill-group input, .auth-pill-group select {
             width: 100%;
-            height: 48px;
+            height: 50px;
             border-radius: 9999px !important;
             border: 1.5px solid #1d285a !important;
-            padding: 0 20px 0 46px !important;
-            font-size: 13.5px !important;
+            padding-left: 54px !important;
+            padding-right: 48px !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            font-size: 14px !important;
             font-family: 'Prompt', sans-serif !important;
             color: #1d285a !important;
             background: #ffffff !important;
@@ -218,32 +221,44 @@
         }
         .auth-pill-group input::placeholder {
             color: #64748b !important;
-            font-size: 12.5px;
-            letter-spacing: 0.5px;
+            font-size: 13px;
+            letter-spacing: 0.3px;
             font-weight: 500;
         }
         .auth-pill-group input:focus, .auth-pill-group select:focus {
             border-color: #2563eb !important;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
         }
+        .auth-pill-group input:-webkit-autofill,
+        .auth-pill-group input:-webkit-autofill:hover, 
+        .auth-pill-group input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #1d285a !important;
+            -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+            box-shadow: 0 0 0 1000px #ffffff inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+            padding-left: 54px !important;
+            padding-right: 48px !important;
+        }
         .auth-pill-group .pill-icon-left {
             position: absolute;
-            left: 18px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: #1d285a !important;
-            font-size: 15px;
+            font-size: 16px;
             pointer-events: none;
+            z-index: 5;
         }
         .auth-pill-group .pill-icon-eye {
             position: absolute;
-            right: 18px;
+            right: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: #94a3b8 !important;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             transition: color 0.2s;
+            z-index: 5;
         }
         .auth-pill-group .pill-icon-eye:hover {
             color: #1d285a !important;
@@ -3327,23 +3342,23 @@
 
                         <div class="auth-pill-group">
                             <i class="fa-solid fa-user pill-icon-left"></i>
-                            <input type="text" id="login-username" required placeholder="USERNAME" autocomplete="username">
+                            <input type="text" id="login-username" required placeholder="ชื่อผู้ใช้งาน" autocomplete="username">
                         </div>
 
                         <div class="auth-pill-group">
                             <i class="fa-solid fa-lock pill-icon-left"></i>
-                            <input type="password" id="login-password" required placeholder="PASSWORD" autocomplete="current-password" style="padding-right: 46px;">
+                            <input type="password" id="login-password" required placeholder="รหัสผ่าน" autocomplete="current-password">
                             <i class="fa-solid fa-eye pill-icon-eye" onclick="app.togglePasswordVisibility('login-password', this)"></i>
                         </div>
 
-                        <button type="submit" class="auth-btn-pill">LOGIN</button>
+                        <button type="submit" class="auth-btn-pill">เข้าสู่ระบบ</button>
 
                         <div class="auth-meta-row">
                             <label class="auth-remember-checkbox">
                                 <input type="checkbox" id="login-remember">
-                                <span>Remember me</span>
+                                <span>จดจำการเข้าสู่ระบบ</span>
                             </label>
-                            <a href="#" class="auth-forgot-link" onclick="app.switchAuthTab('forgot'); return false;">Forgot your password?</a>
+                            <a href="#" class="auth-forgot-link" onclick="app.switchAuthTab('forgot'); return false;">ลืมรหัสผ่านใช่หรือไม่?</a>
                         </div>
                     </form>
 
@@ -3561,16 +3576,16 @@
                 <!-- Right Content Overlay -->
                 <div class="auth-right-content-wrapper">
                     <div class="auth-top-nav-bar">
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'เกี่ยวกับระบบ', text:'Mobi SmartLab 2027: ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี', confirmButtonColor:'#1d285a'})">ABOUT</a>
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'คู่มือการใช้งาน', text:'ระบบบันทึกตัวอย่าง ตรวจวิเคราะห์ และเฝ้าระวังความปลอดภัยด้านอาหาร', confirmButtonColor:'#1d285a'})">MANUAL</a>
-                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'ติดต่อสอบถาม', text:'ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี กรมวิทยาศาสตร์การแพทย์ โทร. 045-210456', confirmButtonColor:'#1d285a'})">CONTACT</a>
+                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'เกี่ยวกับระบบ', text:'Mobi SmartLab 2027: ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี', confirmButtonColor:'#1d285a'})">เกี่ยวกับเรา</a>
+                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'คู่มือการใช้งาน', text:'ระบบบันทึกตัวอย่าง ตรวจวิเคราะห์ และเฝ้าระวังความปลอดภัยด้านอาหาร', confirmButtonColor:'#1d285a'})">คู่มือการใช้งาน</a>
+                        <a href="javascript:void(0);" onclick="Swal.fire({icon:'info', title:'ติดต่อสอบถาม', text:'ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี กรมวิทยาศาสตร์การแพทย์ โทร. 045-210456', confirmButtonColor:'#1d285a'})">ติดต่อเรา</a>
                         <button class="auth-top-action-btn" id="authTopToggleBtn" type="button" onclick="if(window.app && app.toggleAuthMode) app.toggleAuthMode();">
-                            <span id="authTopToggleText">SIGN UP</span>
+                            <span id="authTopToggleText">สมัครสมาชิก</span>
                         </button>
                     </div>
 
                     <div class="auth-hero-content">
-                        <h1 class="auth-hero-welcome">Welcome.</h1>
+                        <h1 class="auth-hero-welcome">ยินดีต้อนรับ</h1>
                         <p class="auth-hero-system">
                             ระบบตรวจวิเคราะห์และเฝ้าระวังความปลอดภัยด้านอาหาร
                         </p>
@@ -3578,8 +3593,8 @@
                             Mobi SmartLab 2027 • ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี
                         </p>
                         <div class="auth-hero-prompt-line" id="authHeroFooterPrompt">
-                            <span>Not a member?</span>
-                            <a href="#" onclick="app.switchAuthTab('register'); return false;">Sign up now</a>
+                            <span>ยังไม่มีบัญชีผู้ใช้งาน?</span>
+                            <a href="#" onclick="app.switchAuthTab('register'); return false;">สมัครสมาชิกที่นี่</a>
                         </div>
                     </div>
                 </div>
@@ -4276,6 +4291,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793603458257"></script>
+    <script src="app_v85.js?v=1793604522905"></script>
 </body>
 </html>
