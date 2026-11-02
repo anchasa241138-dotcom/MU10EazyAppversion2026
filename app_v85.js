@@ -1123,6 +1123,21 @@ const app = {
         const tabBtn = document.getElementById(`tab-${tab}`);
         if(tabBtn) tabBtn.classList.add('active');
         document.getElementById(`${tab}Form`).classList.add('active');
+
+        const topBtnText = document.getElementById('authTopToggleText');
+        const footerPrompt = document.getElementById('authHeroFooterPrompt');
+        if (tab === 'register') {
+            if (topBtnText) topBtnText.innerText = 'SIGN IN';
+            if (footerPrompt) footerPrompt.innerHTML = '<span>Already have an account? </span><a href="#" onclick="app.switchAuthTab(\'login\'); return false;">Sign in here</a>';
+        } else {
+            if (topBtnText) topBtnText.innerText = 'SIGN UP';
+            if (footerPrompt) footerPrompt.innerHTML = '<span>Not a member? </span><a href="#" onclick="app.switchAuthTab(\'register\'); return false;">Sign up now</a>';
+        }
+    },
+
+    toggleAuthMode() {
+        const isRegister = document.getElementById('registerForm') && document.getElementById('registerForm').classList.contains('active');
+        this.switchAuthTab(isRegister ? 'login' : 'register');
     },
 
     
