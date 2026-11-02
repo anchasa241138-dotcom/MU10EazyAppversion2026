@@ -3684,17 +3684,29 @@
                             </div>
 
                             <div class="reg-field">
-                                <label for="reg-phone">เบอร์โทรศัพท์ <span class="required">*</span></label>
+                                <label for="reg-district">อำเภอ <span class="required">*</span></label>
                                 <div class="input-inner-wrap">
-                                    <input type="tel" id="reg-phone" required placeholder="08XXXXXXXX" maxlength="10">
-                                    <i class="fa-solid fa-phone"></i>
+                                    <input type="text" id="reg-district" required placeholder="อำเภอ">
+                                    <i class="fa-solid fa-map"></i>
                                 </div>
                             </div>
-                            <div class="reg-field reg-span-2">
-                                <label for="reg-email">อีเมล (ถ้ามี)</label>
+                            <div class="reg-field">
+                                <label for="reg-subdistrict">ตำบล <span class="required">*</span></label>
                                 <div class="input-inner-wrap">
-                                    <input type="email" id="reg-email" placeholder="example@mail.com">
-                                    <i class="fa-solid fa-envelope"></i>
+                                    <input type="text" id="reg-subdistrict" required placeholder="ตำบล">
+                                    <i class="fa-solid fa-map-pin"></i>
+                                </div>
+                            </div>
+                            <div class="reg-field">
+                                <label for="reg-role">ประเภทบัญชี <span class="required">*</span></label>
+                                <div class="input-inner-wrap">
+                                    <select id="reg-role" required>
+                                        <option value="collector">ผู้เก็บตัวอย่าง</option>
+                                        <option value="lab">เจ้าหน้าที่ห้องปฏิบัติการ</option>
+                                        <option value="certifier">ผู้รับรองรายงาน</option>
+                                        <option value="executive">ผู้บริหาร</option>
+                                    </select>
+                                    <i class="fa-solid fa-user-shield"></i>
                                 </div>
                             </div>
                         </div>
@@ -4476,6 +4488,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793608300000"></script>
+    <script src="app_v85.js?v=1793608400000"></script>
 </body>
 </html>
