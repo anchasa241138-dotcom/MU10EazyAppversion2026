@@ -2892,9 +2892,9 @@ body:has(#view-e-tracking.active) #currentViewTitle {
   box-shadow: 0 12px 28px rgba(16, 185, 129, 0.45) !important;
 }
 
-/* 16. Login & Register Mode - Futuristic Blue Tech Stage & Glassmorphism Theme */
+/* 16. Login & Register Mode - Cyber Digital Tech Network & Glassmorphism Theme */
 body.require-login-mode {
-  background: #081a4a url('login_bg.png') no-repeat center center / cover fixed !important;
+  background: #061536 url('login_bg.png?v=1793674000000') no-repeat center center / cover fixed !important;
   min-height: 100vh !important;
   background-attachment: fixed !important;
 }
@@ -2905,7 +2905,7 @@ body.require-login-mode::before {
 
 #authModal,
 #authModal.modal-overlay {
-  background: #081a4a url('login_bg.png') no-repeat center center / cover fixed !important;
+  background: #061536 url('login_bg.png?v=1793674000000') no-repeat center center / cover fixed !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
