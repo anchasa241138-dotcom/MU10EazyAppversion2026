@@ -1083,8 +1083,45 @@
         #btnCloseCertModal:active {
             transform: translateY(0) scale(0.99) !important;
         }
+
+        /* Force Single Full-Row Stacking for Dashboard Cards on Mobile & Tablets */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 18px !important;
+            }
+            .dashboard-grid > .chart-container,
+            .dashboard-grid > div,
+            .chart-container,
+            .chart-span-2,
+            .chart-span-1,
+            .chart-container.large-chart,
+            .safety-ranking-container {
+                display: flex !important;
+                flex-direction: column !important;
+                grid-column: auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 1 1 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                box-sizing: border-box !important;
+            }
+            .chart-body {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+            }
+            .chart-body canvas {
+                max-width: 100% !important;
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793679000000">
+    <link rel="stylesheet" href="enhancements.css?v=1793681500000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -4622,7 +4659,7 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     
     <!-- App Scripts -->
-    <script src="charts-dash.js?v=1793352234998"></script>
+    <script src="charts-dash.js?v=1793681500000"></script>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -4653,6 +4690,6 @@
             }
         });
     </script>
-    <script src="app_v85.js?v=1793679000000"></script>
+    <script src="app_v85.js?v=1793681500000"></script>
 </body>
 </html>
