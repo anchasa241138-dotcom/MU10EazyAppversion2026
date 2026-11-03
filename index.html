@@ -22,11 +22,7 @@
     <style>
         /* Modern Split Card Login Styling (Inspired by reference template) */
         body.require-login-mode {
-            background: 
-                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0px, rgba(255, 255, 255, 0.03) 6px, transparent 12px, rgba(0, 0, 0, 0.18) 20px, rgba(0, 0, 0, 0.38) 28px),
-                radial-gradient(ellipse 70% 60% at 80% 48%, rgba(0, 140, 255, 0.45) 0%, transparent 65%),
-                radial-gradient(ellipse 60% 70% at 15% 55%, rgba(2, 18, 55, 0.8) 0%, transparent 65%),
-                linear-gradient(95deg, #020c22 0%, #051a4a 32%, #004ca8 68%, #0074ed 100%) !important;
+            background: #081a4a url('login_bg.png') no-repeat center center / cover fixed !important;
             font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
             overflow: hidden;
             min-height: 100vh;
@@ -39,11 +35,7 @@
         }
         
         #authModal {
-            background: 
-                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0px, rgba(255, 255, 255, 0.03) 6px, transparent 12px, rgba(0, 0, 0, 0.18) 20px, rgba(0, 0, 0, 0.38) 28px),
-                radial-gradient(ellipse 70% 60% at 80% 48%, rgba(0, 140, 255, 0.45) 0%, transparent 65%),
-                radial-gradient(ellipse 60% 70% at 15% 55%, rgba(2, 18, 55, 0.8) 0%, transparent 65%),
-                linear-gradient(95deg, #020c22 0%, #051a4a 32%, #004ca8 68%, #0074ed 100%) !important;
+            background: #081a4a url('login_bg.png') no-repeat center center / cover fixed !important;
             z-index: 1001 !important;
             display: flex !important;
             align-items: center !important;
@@ -974,7 +966,7 @@
             transform: translateY(0) scale(0.99) !important;
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793613100000">
+    <link rel="stylesheet" href="enhancements.css?v=1793672300000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -4529,6 +4521,6 @@
         const auth = firebase.auth();
     </script>
 
-    <script src="app_v85.js?v=1793613100000"></script>
+    <script src="app_v85.js?v=1793672300000"></script>
 </body>
 </html>
