@@ -935,6 +935,10 @@ const app = {
             };
 
             while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+                if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+                    idx++;
+                    continue;
+                }
                 processItem(idx);
                 idx++;
             }
