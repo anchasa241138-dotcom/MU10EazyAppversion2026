@@ -748,7 +748,7 @@ function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
         };
 
         const getColiformWaterSummary = () => {
-             let sum = (idx ? (s['analysis_coliform_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '');
+             let sum = (idx ? (s['analysis_coliform_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || '';
              if (!sum && !idx) {
                  sum = s.analysis_coliform_summary_1
                       || s.analysis_coliform_summary
@@ -756,8 +756,8 @@ function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
                       || s.analysis_summary
                       || '';
              }
-             if (sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
-             if (sum.includes('ผ่าน')) return 'ผ่าน';
+             if (sum && sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+             if (sum && sum.includes('ผ่าน')) return 'ผ่าน';
              
              // Check numeric coliform value if present
              const val = idx ? s['analysis_coliform_' + idx] : (s.analysis_coliform_1 !== undefined ? s.analysis_coliform_1 : s.analysis_coliform);
