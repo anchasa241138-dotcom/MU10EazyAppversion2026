@@ -247,6 +247,53 @@ window.substanceDictionary = {
     'coliformWater': { label: 'โคลิฟอร์มในน้ำ', form: 'MU.10-006', icon: 'fa-droplet' },
 };
 
+window.isItemValid = function(s, idx) {
+    if (!s) return false;
+    if (!idx) {
+        return Boolean(s.sample_name && typeof s.sample_name === 'string' && s.sample_name.trim() !== '' && s.sample_name.trim() !== '-');
+    }
+
+    // Check max sample quantity if specified
+    const maxQty = parseInt(s.sample_qty, 10);
+    if (!isNaN(maxQty) && maxQty > 0 && idx > maxQty) {
+        return false;
+    }
+
+    const sName = (s['sample_name_' + idx] || '').trim();
+    const sDetail = (s['sample_detail_' + idx] || '').trim();
+    const hasCleanliness = s['analysis_cleanliness_' + idx] !== undefined && s['analysis_cleanliness_' + idx] !== null && String(s['analysis_cleanliness_' + idx]).trim() !== '';
+    const hasSummary = (s['analysis_summary_' + idx] !== undefined && s['analysis_summary_' + idx] !== null && String(s['analysis_summary_' + idx]).trim() !== '')
+                    || (s['analysis_summary_outcome_' + idx] !== undefined && s['analysis_summary_outcome_' + idx] !== null && String(s['analysis_summary_outcome_' + idx]).trim() !== '')
+                    || (s['analysis_cleanliness_summary_' + idx] !== undefined && s['analysis_cleanliness_summary_' + idx] !== null && String(s['analysis_cleanliness_summary_' + idx]).trim() !== '')
+                    || (s['analysis_coliform_summary_' + idx] !== undefined && s['analysis_coliform_summary_' + idx] !== null && String(s['analysis_coliform_summary_' + idx]).trim() !== '')
+                    || (s['analysis_coliform_' + idx] !== undefined && s['analysis_coliform_' + idx] !== null && String(s['analysis_coliform_' + idx]).trim() !== '')
+                    || (s['polar_value_' + idx] !== undefined && s['polar_value_' + idx] !== null && String(s['polar_value_' + idx]).trim() !== '');
+    const hasDetails = s['analysis_details_' + idx] !== undefined && s['analysis_details_' + idx] !== null && String(s['analysis_details_' + idx]).trim() !== '';
+
+    // If it has a real name that is not a placeholder or dash
+    if (sName !== '' && sName !== '-') {
+        return true;
+    }
+
+    // For MU.10-007, items might have sample_detail (like name of cook or servant)
+    if (s.form_type === 'MU.10-007') {
+        if (sDetail !== '' && sDetail !== '-') {
+            return true;
+        }
+        if (hasCleanliness || hasSummary) {
+            return true;
+        }
+        return false;
+    }
+
+    // If name is empty, it is only valid if there is an explicit item-level test result
+    if (hasSummary || hasDetails || hasCleanliness) {
+        return true;
+    }
+
+    return false;
+};
+
 window.itemMatchesSubstance = function(s, idx, targetSubstance) {
     if (s.form_type === 'MU.10-008') return false; // Exclude foodLabel from dashboard entirely
     if (!targetSubstance || targetSubstance === 'all') return true;
@@ -308,6 +355,10 @@ window.sampleMatchesSubstance = function(s, targetSubstance) {
     let idx = 1;
     let hasItems = false;
     while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+        if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+            idx++;
+            continue;
+        }
         hasItems = true;
         if (window.itemMatchesSubstance(s, idx, targetSubstance)) return true;
         idx++;
@@ -320,10 +371,15 @@ window.sampleMatchesSubstance = function(s, targetSubstance) {
 
 window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
     if (!targetSubstance || targetSubstance === 'all') {
-        let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_coliform_summary_' + idx] || s['label_summary_' + idx]) : '')
-                || s.analysis_summary_outcome 
-                || s.analysis_summary 
-                || '';
+        let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_coliform_summary_' + idx] || s['analysis_cleanliness_summary_' + idx] || s['label_summary_' + idx]) : '');
+        if (!sum && idx && s.form_type === 'MU.10-007') {
+            const clean = s['analysis_cleanliness_' + idx];
+            if (clean === '+' || clean === 'พบ' || clean === 'ไม่สะอาด') sum = 'ไม่ผ่าน';
+            else if (clean === '-' || clean === 'ไม่พบ' || clean === 'สะอาด') sum = 'ผ่าน';
+        }
+        if (!sum && !idx) {
+            sum = s.analysis_summary_outcome || s.analysis_summary || '';
+        }
         if (!sum && s.form_type === 'MU.10-002' && idx) {
             const keys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
             const itemSums = keys.map(k => s['analysis_summary_' + idx + '_' + k]).filter(Boolean);
@@ -353,7 +409,16 @@ window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
     }
 
     if (s.form_type === 'MU.10-007') {
-        return (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
+        let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_cleanliness_summary_' + idx]) : '');
+        if (!sum && idx) {
+            const clean = s['analysis_cleanliness_' + idx];
+            if (clean === '+' || clean === 'พบ' || clean === 'ไม่สะอาด') sum = 'ไม่ผ่าน';
+            else if (clean === '-' || clean === 'ไม่พบ' || clean === 'สะอาด') sum = 'ผ่าน';
+        }
+        if (!sum && !idx) {
+            sum = s.analysis_summary_outcome || s.analysis_summary || '';
+        }
+        return sum;
     }
 
     if (s.form_type === 'MU.10-008') {
@@ -492,6 +557,10 @@ function updateDashboardCharts(samples) {
             let idx = 1;
             let hasItems = false;
             while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+                if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+                    idx++;
+                    continue;
+                }
                 hasItems = true;
                 if (window.itemMatchesSubstance(s, idx, targetSubstance)) count++;
                 idx++;
@@ -538,6 +607,10 @@ function updateDashboardCharts(samples) {
         };
 
         while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+            if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+                idx++;
+                continue;
+            }
             processOutcomeItem(idx);
             idx++;
         }
@@ -628,6 +701,10 @@ function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
         let idx = 1;
         let hasItems = false;
         while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+            if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+                idx++;
+                continue;
+            }
             hasItems = true;
             if (s['item_status_' + idx] !== 'rejected') {
                 checkItem(s, idx, stats);
@@ -656,22 +733,29 @@ function updateSubstanceCharts(samples, targetSubstanceParam, curProvParam) {
         };
 
         const getSingleSummary = () => {
-             const sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
-                      || s.analysis_summary_outcome 
-                      || s.analysis_summary 
-                      || '';
-             if (sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
-             if (sum.includes('ผ่าน')) return 'ผ่าน';
+             let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_cleanliness_summary_' + idx]) : '');
+             if (!sum && idx && s.form_type === 'MU.10-007') {
+                 const clean = s['analysis_cleanliness_' + idx];
+                 if (clean === '+' || clean === 'พบ' || clean === 'ไม่สะอาด') sum = 'ไม่ผ่าน';
+                 else if (clean === '-' || clean === 'ไม่พบ' || clean === 'สะอาด') sum = 'ผ่าน';
+             }
+             if (!sum && !idx) {
+                 sum = s.analysis_summary_outcome || s.analysis_summary || '';
+             }
+             if (sum && sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
+             if (sum && sum.includes('ผ่าน')) return 'ผ่าน';
              return null;
         };
 
         const getColiformWaterSummary = () => {
-             const sum = (idx ? (s['analysis_coliform_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
-                      || s.analysis_coliform_summary_1
+             let sum = (idx ? (s['analysis_coliform_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '');
+             if (!sum && !idx) {
+                 sum = s.analysis_coliform_summary_1
                       || s.analysis_coliform_summary
                       || s.analysis_summary_outcome
                       || s.analysis_summary
                       || '';
+             }
              if (sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
              if (sum.includes('ผ่าน')) return 'ผ่าน';
              
@@ -2976,6 +3060,10 @@ function updateLocationRiskAndFoodMatrix(samples) {
             let isFail = false;
             let idx = 1;
             while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+                if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+                    idx++;
+                    continue;
+                }
                 const sum = window.getItemSubstanceSummary ? window.getItemSubstanceSummary(s, idx, 'all') : '';
                 if (sum && sum.includes('ไม่ผ่าน')) {
                     isFail = true;
@@ -3031,7 +3119,8 @@ function updateLocationRiskAndFoodMatrix(samples) {
         const subLabel = window.substanceDictionary[subKey]?.label || subKey;
         const failedItems = window.currentFailedSamples[subKey] || [];
         failedItems.forEach(item => {
-            const foodName = (item.name || 'ไม่ระบุชื่ออาหาร').trim();
+            const foodName = (item.name || '').trim();
+            if (!foodName || foodName === '-' || foodName === 'ไม่ระบุชื่ออาหาร') return;
             if (!foodMap[foodName]) {
                 foodMap[foodName] = { name: foodName, count: 0, substances: new Set() };
             }
