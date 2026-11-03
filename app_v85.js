@@ -928,8 +928,8 @@ const app = {
                             else if (itemSums.length > 0) sum = 'ผ่าน';
                         }
                     }
-                    if (sum.includes('ไม่ผ่าน')) cStats.failed++;
-                    else if (sum.includes('ผ่าน')) cStats.passed++;
+                    if (typeof sum === 'string' && sum.includes('ไม่ผ่าน')) cStats.failed++;
+                    else if (typeof sum === 'string' && sum.includes('ผ่าน')) cStats.passed++;
                     else cStats.passed++;
                 }
             };
