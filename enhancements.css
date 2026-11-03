@@ -7404,6 +7404,215 @@ body.role-admin .btn-manage-actions {
 }
 
 
+/* ==========================================================
+   Dashboard Responsive & Mobile Viewport Fix
+   Fixes:
+   1. Horizontal overflow & right-side empty space
+   2. Chart side-by-side squeezing on smartphones
+   3. Canvas & banner overflow
+   ========================================================== */
+
+html, body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.app-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.main-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.content-body {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Desktop layout rules for chart columns */
+@media (min-width: 901px) {
+  .chart-span-2 {
+    grid-column: span 2 !important;
+  }
+  .chart-span-1 {
+    grid-column: span 1 !important;
+  }
+  .safety-ranking-container {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Mobile & Tablet Responsive Layout */
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+  }
+
+  .top-navbar {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 12px 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .content-body {
+    padding: 14px 12px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Force dashboard grid to single column layout */
+  .dashboard-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 18px !important;
+  }
+
+  .dashboard-grid > .chart-container,
+  .dashboard-grid > div,
+  .chart-span-2,
+  .chart-span-1,
+  .chart-container.large-chart,
+  .safety-ranking-container {
+    grid-column: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .chart-container {
+    padding: 18px 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .chart-body {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .chart-body canvas {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Welcome Banner on Mobile */
+  #view-dashboard .welcome-banner.sci-food-banner {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 22px 18px !important;
+    text-align: center !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  #view-dashboard .welcome-banner.sci-food-banner .banner-text {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin-bottom: 20px !important;
+    text-align: center !important;
+  }
+
+  #view-dashboard .welcome-banner.sci-food-banner .banner-text * {
+    white-space: normal !important;
+  }
+
+  #view-dashboard .welcome-banner.sci-food-banner .banner-text h3 {
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+  }
+
+  #view-dashboard .welcome-banner.sci-food-banner .banner-logo {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  #view-dashboard .welcome-banner.sci-food-banner .banner-logo img {
+    max-width: 170px !important;
+    height: auto !important;
+  }
+
+  #view-dashboard .welcome-banner.sci-food-banner .banner-logo > div:last-child {
+    position: static !important;
+    margin-top: 14px !important;
+    width: 100% !important;
+    max-width: 240px !important;
+  }
+
+  /* Filter toolbar on Mobile */
+  .dashboard-filter {
+    padding: 14px 16px !important;
+    border-radius: 18px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .overview-controls-group {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .filter-pill-item,
+  .overview-controls-group .filter-pill-item.filter-pill-expand,
+  .overview-controls-group .filter-pill-item.filter-pill-expand-wide {
+    width: 100% !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+  }
+
+  .filter-pill-item select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Stats summary grid on mobile */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  /* Province targets on mobile */
+  .province-targets-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  /* Safety Ranking section on mobile */
+  .safety-ranking-header-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .safety-ranking-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+}
+
 /* Absolute priority .hidden override at end of stylesheet */
 .hidden,
 [hidden],
