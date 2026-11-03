@@ -370,6 +370,9 @@ window.sampleMatchesSubstance = function(s, targetSubstance) {
 };
 
 window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
+    if (!s) return '';
+    let result = '';
+
     if (!targetSubstance || targetSubstance === 'all') {
         let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_coliform_summary_' + idx] || s['analysis_cleanliness_summary_' + idx] || s['label_summary_' + idx]) : '');
         if (!sum && idx && s.form_type === 'MU.10-007') {
@@ -377,38 +380,46 @@ window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
             if (clean === '+' || clean === 'พบ' || clean === 'ไม่สะอาด') sum = 'ไม่ผ่าน';
             else if (clean === '-' || clean === 'ไม่พบ' || clean === 'สะอาด') sum = 'ผ่าน';
         }
-        if (!sum && !idx) {
-            sum = s.analysis_summary_outcome || s.analysis_summary || '';
-        }
         if (!sum && s.form_type === 'MU.10-002' && idx) {
             const keys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
             const itemSums = keys.map(k => s['analysis_summary_' + idx + '_' + k]).filter(Boolean);
-            if (itemSums.some(x => x.includes('ไม่ผ่าน'))) sum = 'ไม่ผ่าน';
+            if (itemSums.some(x => x && typeof x === 'string' && x.includes('ไม่ผ่าน'))) sum = 'ไม่ผ่าน';
             else if (itemSums.length > 0) sum = 'ผ่าน';
         }
-        return sum;
-    }
-
-    if (s.form_type === 'MU.10-001') {
+        if (!sum && (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004')) {
+            const rawVal = (idx ? s['polar_value_' + idx] : '') || s.polar_value || s.analysis_interpretation || s.analysis_interpretation_4;
+            const num = parseFloat(rawVal);
+            if (!isNaN(num)) sum = num <= 25 ? 'ผ่าน' : 'ไม่ผ่าน';
+        }
+        if (!sum && s.form_type === 'MU.10-001') {
+            const sum1 = (idx ? s['analysis_interpretation_' + idx] : '') || s.analysis_interpretation || '';
+            const sum2 = (idx ? s['analysis_interpretation_2_' + idx] : '') || s.analysis_interpretation_2 || '';
+            const combined = `${sum1} ${sum2}`;
+            if (combined.includes('ไม่ผ่าน') || combined.includes('ไม่ปลอดภัย') || combined.includes('พบ')) sum = 'ไม่ผ่าน';
+            else if (combined.includes('ผ่าน') || combined.includes('ปลอดภัย') || combined.includes('ไม่พบ') || combined.includes('ใช้ได้')) sum = 'ผ่าน';
+        }
+        if (!sum) {
+            sum = s.analysis_summary_outcome || s.analysis_summary || '';
+        }
+        result = sum || '';
+    } else if (s.form_type === 'MU.10-001') {
         if (targetSubstance === 'pesticide_tm2') {
             const sumOutcome = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
             const sum1 = (idx ? s['analysis_interpretation_' + idx] : '') || s.analysis_interpretation || '';
             const sum2 = (idx ? s['analysis_interpretation_2_' + idx] : '') || s.analysis_interpretation_2 || '';
             const combined = `${sumOutcome} ${sum1} ${sum2}`;
-            if (combined.includes('ไม่ผ่าน') || combined.includes('ไม่ปลอดภัย') || combined.includes('พบ')) return 'ไม่ผ่าน';
-            if (combined.includes('ผ่าน') || combined.includes('ปลอดภัย') || combined.includes('ไม่พบ') || combined.includes('ใช้ได้')) return 'ผ่าน';
-            return sumOutcome || sum2 || sum1;
-        }
-        if (targetSubstance === 'pesticide_gt') {
+            if (combined.includes('ไม่ผ่าน') || combined.includes('ไม่ปลอดภัย') || combined.includes('พบ')) result = 'ไม่ผ่าน';
+            else if (combined.includes('ผ่าน') || combined.includes('ปลอดภัย') || combined.includes('ไม่พบ') || combined.includes('ใช้ได้')) result = 'ผ่าน';
+            else result = sumOutcome || sum2 || sum1 || '';
+        } else if (targetSubstance === 'pesticide_gt') {
             const sum1 = (idx ? (s['analysis_interpretation_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_interpretation || s.analysis_summary_outcome || s.analysis_summary || '';
-            if (sum1.includes('ไม่ผ่าน') || sum1.includes('ไม่ปลอดภัย') || sum1.includes('พบ')) return 'ไม่ผ่าน';
-            if (sum1.includes('ผ่าน') || sum1.includes('ปลอดภัย') || sum1.includes('ไม่พบ') || sum1.includes('ใช้ได้')) return 'ผ่าน';
-            return sum1;
+            if (sum1.includes('ไม่ผ่าน') || sum1.includes('ไม่ปลอดภัย') || sum1.includes('พบ')) result = 'ไม่ผ่าน';
+            else if (sum1.includes('ผ่าน') || sum1.includes('ปลอดภัย') || sum1.includes('ไม่พบ') || sum1.includes('ใช้ได้')) result = 'ผ่าน';
+            else result = sum1 || '';
+        } else {
+            result = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
         }
-        return (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
-    }
-
-    if (s.form_type === 'MU.10-007') {
+    } else if (s.form_type === 'MU.10-007') {
         let sum = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx] || s['analysis_cleanliness_summary_' + idx]) : '');
         if (!sum && idx) {
             const clean = s['analysis_cleanliness_' + idx];
@@ -418,57 +429,57 @@ window.getItemSubstanceSummary = function(s, idx, targetSubstance) {
         if (!sum && !idx) {
             sum = s.analysis_summary_outcome || s.analysis_summary || '';
         }
-        return sum;
-    }
-
-    if (s.form_type === 'MU.10-008') {
-        return (idx ? (s['label_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.label_summary || s.analysis_summary_outcome || s.analysis_summary || '';
-    }
-
-    if (s.form_type === 'MU.10-006') {
+        result = sum || '';
+    } else if (s.form_type === 'MU.10-008') {
+        result = (idx ? (s['label_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.label_summary || s.analysis_summary_outcome || s.analysis_summary || '';
+    } else if (s.form_type === 'MU.10-006') {
         const sum = (idx ? (s['analysis_coliform_summary_' + idx] || s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '')
                  || s.analysis_coliform_summary_1
                  || s.analysis_coliform_summary
                  || s.analysis_summary_outcome
                  || s.analysis_summary
                  || '';
-        if (sum.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
-        if (sum.includes('ผ่าน')) return 'ผ่าน';
-        const val = idx ? s['analysis_coliform_' + idx] : (s.analysis_coliform_1 !== undefined ? s.analysis_coliform_1 : s.analysis_coliform);
-        if (val !== undefined && val !== null && val !== '') {
-            const num = parseFloat(val);
-            if (!isNaN(num)) return num > 0 ? 'ไม่ผ่าน' : 'ผ่าน';
+        if (typeof sum === 'string' && sum.includes('ไม่ผ่าน')) result = 'ไม่ผ่าน';
+        else if (typeof sum === 'string' && sum.includes('ผ่าน')) result = 'ผ่าน';
+        else {
+            const val = idx ? s['analysis_coliform_' + idx] : (s.analysis_coliform_1 !== undefined ? s.analysis_coliform_1 : s.analysis_coliform);
+            if (val !== undefined && val !== null && val !== '') {
+                const num = parseFloat(val);
+                if (!isNaN(num)) result = num > 0 ? 'ไม่ผ่าน' : 'ผ่าน';
+            } else {
+                result = sum || '';
+            }
         }
-        return sum;
-    }
-
-    if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
+    } else if (s.form_type === 'MU.10-003' || s.form_type === 'MU.10-004') {
         const rawVal = (idx ? s['polar_value_' + idx] : '') || s.polar_value || s.analysis_interpretation || s.analysis_interpretation_4;
         const num = parseFloat(rawVal);
-        if (!isNaN(num)) return num <= 25 ? 'ผ่าน' : 'ไม่ผ่าน';
-        return s.analysis_summary || '';
-    }
-
-    if (s.form_type === 'MU.10-002') {
+        if (!isNaN(num)) result = num <= 25 ? 'ผ่าน' : 'ไม่ผ่าน';
+        else result = s.analysis_summary || '';
+    } else if (s.form_type === 'MU.10-002') {
         const val = (idx ? s['analysis_summary_' + idx + '_' + targetSubstance] : '') || s['analysis_summary_' + targetSubstance];
-        if (val && val.includes('ไม่ผ่าน')) return 'ไม่ผ่าน';
-        if (val && val.includes('ผ่าน')) return 'ผ่าน';
-        const det = (idx ? s['analysis_detail_results_' + idx + '_' + targetSubstance] : '') || s['analysis_detail_results_' + targetSubstance] || (idx ? s['analysis_details_' + idx + '_' + targetSubstance] : '') || s['analysis_details_' + targetSubstance];
-        if (det && det.includes('ไม่พบ')) return 'ผ่าน';
-        if (det && det.includes('พบ')) return 'ไม่ผ่าน';
-        
-        const textToCheck = [
-            idx ? s['sample_name_' + idx] : s.sample_name,
-            idx ? s['analysis_details_' + idx] : s.analysis_details,
-            s.analysis_details,
-            s.analysis_comment
-        ].filter(Boolean).join(' ');
-        if (textToCheck.includes('ไม่พบ')) return 'ผ่าน';
-        if (textToCheck.includes('พบ')) return 'ไม่ผ่าน';
-        return s.analysis_summary || (s.status === 'approved' ? 'ผ่าน' : '');
+        if (val && typeof val === 'string' && val.includes('ไม่ผ่าน')) result = 'ไม่ผ่าน';
+        else if (val && typeof val === 'string' && val.includes('ผ่าน')) result = 'ผ่าน';
+        else {
+            const det = (idx ? s['analysis_detail_results_' + idx + '_' + targetSubstance] : '') || s['analysis_detail_results_' + targetSubstance] || (idx ? s['analysis_details_' + idx + '_' + targetSubstance] : '') || s['analysis_details_' + targetSubstance];
+            if (det && typeof det === 'string' && det.includes('ไม่พบ')) result = 'ผ่าน';
+            else if (det && typeof det === 'string' && det.includes('พบ')) result = 'ไม่ผ่าน';
+            else {
+                const textToCheck = [
+                    idx ? s['sample_name_' + idx] : s.sample_name,
+                    idx ? s['analysis_details_' + idx] : s.analysis_details,
+                    s.analysis_details,
+                    s.analysis_comment
+                ].filter(Boolean).join(' ');
+                if (textToCheck.includes('ไม่พบ')) result = 'ผ่าน';
+                else if (textToCheck.includes('พบ')) result = 'ไม่ผ่าน';
+                else result = s.analysis_summary || (s.status === 'approved' ? 'ผ่าน' : '');
+            }
+        }
+    } else {
+        result = (idx ? (s['analysis_summary_outcome_' + idx] || s['analysis_summary_' + idx]) : '') || s.analysis_summary_outcome || s.analysis_summary || '';
     }
 
-    return '';
+    return typeof result === 'string' ? result : (result ? String(result) : '');
 };
 
 function updateDashboardCharts(samples) {
@@ -600,6 +611,7 @@ function updateDashboardCharts(samples) {
                 pending++;
             } else if (s.status === 'approved') {
                 let sum = window.getItemSubstanceSummary(s, index, targetSubstance);
+                sum = typeof sum === 'string' ? sum : (sum ? String(sum) : '');
                 if (sum.includes('ไม่ผ่าน')) failed++;
                 else if (sum.includes('ผ่าน')) passed++;
                 else passed++;
@@ -1049,11 +1061,19 @@ function updateSafetyRankings(stats, samples, targetSubstance, curProv) {
                     locMap[loc].total++;
                     if (s.status === 'approved') {
                         let sum = window.getItemSubstanceSummary(s, index, targetSubstance);
+                        sum = typeof sum === 'string' ? sum : (sum ? String(sum) : '');
                         if (sum.includes('ไม่ผ่าน')) locMap[loc].fail++;
                         else locMap[loc].pass++;
                     }
                 };
-                while (s['sample_name_' + idx] !== undefined && idx <= 50) { checkItem(idx); idx++; }
+                while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+                    if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+                        idx++;
+                        continue;
+                    }
+                    checkItem(idx);
+                    idx++;
+                }
                 if (!hasItems && s.sample_name) checkItem(null);
             });
 
@@ -1123,11 +1143,19 @@ function updateSafetyRankings(stats, samples, targetSubstance, curProv) {
                     total++;
                     if (s.status === 'approved') {
                         let sum = window.getItemSubstanceSummary(s, index, targetSubstance);
+                        sum = typeof sum === 'string' ? sum : (sum ? String(sum) : '');
                         if (sum.includes('ไม่ผ่าน')) fail++;
                         else pass++;
                     }
                 };
-                while (s['sample_name_' + idx] !== undefined && idx <= 50) { checkProvItem(idx); idx++; }
+                while (s['sample_name_' + idx] !== undefined && idx <= 50) {
+                    if (typeof window.isItemValid === 'function' && !window.isItemValid(s, idx)) {
+                        idx++;
+                        continue;
+                    }
+                    checkProvItem(idx);
+                    idx++;
+                }
                 if (!hasItems && s.sample_name) checkProvItem(null);
             });
             const passRate = total > 0 ? (pass / total) * 100 : 0;
