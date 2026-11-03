@@ -7437,7 +7437,7 @@ html, body {
 }
 
 /* Desktop layout rules for chart columns */
-@media (min-width: 901px) {
+@media (min-width: 1025px) {
   .chart-span-2 {
     grid-column: span 2 !important;
   }
@@ -7450,7 +7450,7 @@ html, body {
 }
 
 /* Mobile & Tablet Responsive Layout */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .main-content {
     margin-left: 0 !important;
     width: 100% !important;
@@ -7482,13 +7482,17 @@ html, body {
 
   .dashboard-grid > .chart-container,
   .dashboard-grid > div,
+  .chart-container,
   .chart-span-2,
   .chart-span-1,
   .chart-container.large-chart,
   .safety-ranking-container {
+    display: flex !important;
+    flex-direction: column !important;
     grid-column: auto !important;
     width: 100% !important;
     max-width: 100% !important;
+    flex: 1 1 100% !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
     box-sizing: border-box !important;
