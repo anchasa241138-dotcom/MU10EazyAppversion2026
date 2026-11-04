@@ -7829,7 +7829,7 @@ html, body {
 /* Table Typography and Padding */
 #certificatePDFContainer .cert-multi-table,
 .cert-multi-table {
-  font-size: 17px !important;
+  font-size: 18.5px !important;
   width: 100% !important;
   border-collapse: collapse !important;
   border: 1.5px solid #000000 !important;
@@ -7840,9 +7840,9 @@ html, body {
 
 #certificatePDFContainer .cert-multi-table th,
 .cert-multi-table th {
-  font-size: 17.5px !important;
+  font-size: 18.5px !important;
   font-weight: 700 !important;
-  padding: 5px 4px !important;
+  padding: 6px 4px !important;
   background-color: #ffffff !important;
   color: #000000 !important;
   border: 1.5px solid #000000 !important;
@@ -7852,8 +7852,8 @@ html, body {
 
 #certificatePDFContainer .cert-multi-table td,
 .cert-multi-table td {
-  font-size: 17px !important;
-  padding: 5px 4px !important;
+  font-size: 18.5px !important;
+  padding: 6px 4px !important;
   color: #000000 !important;
   border: 1px solid #000000 !important;
   vertical-align: middle !important;
@@ -7880,9 +7880,11 @@ html, body {
 #certificatePDFContainer div[style*="font-size:15px"],
 #certificatePDFContainer div[style*="font-size: 15px"],
 #certificatePDFContainer div[style*="font-size:16px"],
-#certificatePDFContainer div[style*="font-size: 16px"] {
-  font-size: 16px !important;
-  line-height: 1.45 !important;
+#certificatePDFContainer div[style*="font-size: 16px"],
+#certificatePDFContainer div[style*="font-size:16.5px"],
+#certificatePDFContainer div[style*="font-size: 16.5px"] {
+  font-size: 16.5px !important;
+  line-height: 1.5 !important;
   color: #000000 !important;
 }
 
@@ -7893,8 +7895,10 @@ html, body {
 #certificatePDFContainer div[style*="font-size:15px"] strong,
 #certificatePDFContainer div[style*="font-size: 15px"] strong,
 #certificatePDFContainer div[style*="font-size:16px"] strong,
-#certificatePDFContainer div[style*="font-size: 16px"] strong {
-  font-size: 16.5px !important;
+#certificatePDFContainer div[style*="font-size: 16px"] strong,
+#certificatePDFContainer div[style*="font-size:16.5px"] strong,
+#certificatePDFContainer div[style*="font-size: 16.5px"] strong {
+  font-size: 17px !important;
   font-weight: 700 !important;
   color: #000000 !important;
 }
@@ -7902,19 +7906,35 @@ html, body {
 /* Signatures Area */
 #certificatePDFContainer .cert-signatures-grid,
 .cert-signatures-grid {
-  font-size: 16px !important;
+  font-size: 18px !important;
   color: #000000 !important;
   margin-top: 8px !important;
 }
 
 #certificatePDFContainer .cert-signature-area,
 .cert-signature-area {
-  font-size: 16px !important;
+  font-size: 18px !important;
   color: #000000 !important;
 }
 
 #certificatePDFContainer .cert-signature-area div,
 .cert-signature-area div {
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-signature-area .sig-name,
+.cert-signature-area .sig-name {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-signature-area .sig-title,
+.cert-signature-area .sig-title {
+  font-size: 17px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
   color: #000000 !important;
 }
 
@@ -7925,16 +7945,8 @@ html, body {
 #certificatePDFContainer .cert-signature-area div[style*="font-size: 14px"],
 #certificatePDFContainer .cert-signature-area div[style*="font-size: 14.5px"],
 #certificatePDFContainer .cert-signature-area div[style*="font-size:14px"],
-#certificatePDFContainer .cert-signature-area div[style*="font-size:14.5px"],
-#certificatePDFContainer .cert-signature-area div[style*="font-size: 15.5px"],
-#certificatePDFContainer .cert-signature-area div[style*="font-size:15.5px"],
-.cert-signature-area div[style*="font-size: 14px"],
-.cert-signature-area div[style*="font-size: 14.5px"],
-.cert-signature-area div[style*="font-size:14px"],
-.cert-signature-area div[style*="font-size:14.5px"],
-.cert-signature-area div[style*="font-size: 15.5px"],
-.cert-signature-area div[style*="font-size:15.5px"] {
-  font-size: 15.5px !important;
+#certificatePDFContainer .cert-signature-area div[style*="font-size:14.5px"] {
+  font-size: 16px !important;
   line-height: 1.35 !important;
   color: #000000 !important;
 }

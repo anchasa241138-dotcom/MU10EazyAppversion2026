@@ -5610,20 +5610,20 @@ document.getElementById('formNameTitle').innerText = title;
                 const pName = PERSON_DATA[personKey]?.name || '';
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 16px; color: #000;">
-                            <div style="padding-top:25px; white-space: nowrap;">ลงชื่อ</div>
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18px; color: #000;">
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div style="margin-top:25px; position:relative; color: #000;">
+                                <div style="margin-top:25px; position:relative; color: #000; font-size: 18px;">
                                     ................................................
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div style="font-size: 15.5px; line-height: 1.35; color: #000;">(${pName})</div>
-                                        <div style="font-size: 15.5px; line-height: 1.35; color: #000;">${defaultRole}</div>
+                                        <div class="sig-name" style="font-size: 18px; line-height: 1.35; color: #000; font-weight: bold;">(${pName})</div>
+                                        <div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="padding-top:25px; white-space: nowrap;">${defaultRole}</div>
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">${defaultRole}</div>
                         </div>
                     </div>
                 `;
@@ -5631,23 +5631,23 @@ document.getElementById('formNameTitle').innerText = title;
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 16px; color: #000;">
-                            <div style="padding-top:25px; white-space: nowrap;">ลงชื่อ</div>
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18px; color: #000;">
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div style="margin-top:25px; position:relative; color: #000;">
+                                <div style="margin-top:25px; position:relative; color: #000; font-size: 18px;">
                                     <div style="position:absolute; bottom: 5px; text-align:center; width:100%;">
-                                        <span class="placeholder-signature">(รอลงนามรับรอง)</span>
+                                        <span class="placeholder-signature" style="font-size: 15px;">(รอลงนามรับรอง)</span>
                                     </div>
                                     ................................................
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div style="font-size: 15.5px; line-height: 1.35; color: #000;">(.......................................)</div>
-                                        <div style="font-size: 15.5px; line-height: 1.35; color: #000;">${defaultRole}</div>
+                                        <div class="sig-name" style="font-size: 18px; line-height: 1.35; color: #000; font-weight: bold;">(.......................................)</div>
+                                        <div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="padding-top:25px; white-space: nowrap;">${defaultRole}</div>
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">${defaultRole}</div>
                         </div>
                     </div>
                 `;
@@ -5680,29 +5680,29 @@ document.getElementById('formNameTitle').innerText = title;
             
             const sigHtml = isSigned ? 
                 `<img src="${imgSrc}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` :  
-                `<span class="placeholder-signature">(รอลงนามรับรอง)</span>`;
+                `<span class="placeholder-signature" style="font-size: 15px;">(รอลงนามรับรอง)</span>`;
             
             return `
                 <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 16px; color: #000;">
-                        <div style="padding-top:35px; white-space: nowrap;">ลงชื่อ</div>
+                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18px; color: #000;">
+                        <div style="padding-top:35px; white-space: nowrap; font-size: 18px;">ลงชื่อ</div>
                         <div style="display:flex; flex-direction:column; align-items:center;">
                             <div style="margin-top:35px; position:relative;">
                                 <div style="position:absolute; bottom: 5px; text-align:center; width:100%; z-index:10; display:flex; justify-content:center;">
                                     ${sigHtml}
                                 </div>
-                                <span style="position:relative; z-index:1; color: #000;">................................................</span>
+                                <span style="position:relative; z-index:1; color: #000; font-size: 18px;">................................................</span>
                             </div>
                             
                             <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                 <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                    <div style="font-size: 15.5px; line-height: 1.35; color: #000;">(${p.name})</div>
-                                    <div style="font-size: 15.5px; line-height: 1.35; color: #000;">${p.title1}</div>
-                                    ${p.title2 ? `<div style="font-size: 15.5px; line-height: 1.35; color: #000;">${p.title2}</div>` : ''}
+                                    <div class="sig-name" style="font-size: 18px; line-height: 1.35; color: #000; font-weight: bold;">(${p.name})</div>
+                                    <div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${p.title1}</div>
+                                    ${p.title2 ? `<div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${p.title2}</div>` : ''}
                                 </div>
                             </div>
                         </div>
-                        <div style="padding-top:35px; white-space: nowrap;">${defaultRole}</div>
+                        <div style="padding-top:35px; white-space: nowrap; font-size: 18px;">${defaultRole}</div>
                     </div>
                 </div>
             `;
@@ -5966,40 +5966,40 @@ document.getElementById('formNameTitle').innerText = title;
                 let rowsHtml = '';
                 chunk.forEach(item => {
                     rowsHtml += `
-                        <tr style="${!item.isPass ? 'background-color:#fef08a;' : 'background-color:#ffffff;'} height: 32px;">
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">${item.idx}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">${item.distributor}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">${item.labId}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">${item.sampleName}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">${item.source}</td>
+                        <tr style="${!item.isPass ? 'background-color:#fef08a;' : 'background-color:#ffffff;'} height: 36px;">
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">${item.idx}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">${item.distributor}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">${item.labId}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">${item.sampleName}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">${item.source}</td>
                             ${
                                 (() => {
                                     if (sample.form_type === 'MU.10-002') {
                                         const usedTestKeys = Array.from(usedTests);
-                                        if (usedTestKeys.length === 0) return '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">-</td>';
+                                        if (usedTestKeys.length === 0) return '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">-</td>';
                                         return usedTestKeys.map(k => {
                                             const det = (item.details && typeof item.details === 'object') ? item.details[k] : undefined;
-                                            return '<td style="text-align:center; white-space: nowrap; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">' + (det ? det : '-') + '</td>';
+                                            return '<td style="text-align:center; white-space: nowrap; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">' + (det ? det : '-') + '</td>';
                                         }).join('');
                                     } else {
                                         return tableHeaderSubstance === 'BOTH' ? 
-                                            '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">' + (item.substance.includes('GT') ? item.details : '-') + '</td>' + 
-                                            '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">' + (item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')) + '</td>' 
-                                        : '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">' + item.details + '</td>';
+                                            '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">' + (item.substance.includes('GT') ? item.details : '-') + '</td>' + 
+                                            '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">' + (item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')) + '</td>' 
+                                        : '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">' + item.details + '</td>';
                                     }
                                 })()
                             }
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 17px; padding: 5px 4px;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 6px 4px;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
                 });
                 
                 const pageHtml = `
                     <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
-                        <div style="position: absolute; top: 155px; left: 60px; font-size: 15px; font-weight: bold; color: #000;">
+                        <div style="position: absolute; top: 155px; left: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
                             ${documentCode}
                         </div>
-                        <div style="position: absolute; top: 155px; right: 60px; font-size: 15px; color: #000;">
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; color: #000;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 15px; margin-bottom: 6px;">
@@ -6029,32 +6029,32 @@ document.getElementById('formNameTitle').innerText = title;
                                 const numSubstances = Math.max(1, Array.from(usedTests).length);
                                 const totalCols = 5 + numSubstances + 1;
                                 if (totalCols >= 9) {
-                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 4px 3px !important; font-size: 14.5px !important; border: 1px solid #000 !important; }</style><table class="cert-multi-table" style="font-size: 14.5px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 8px;">';
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 4px 3px !important; font-size: 15px !important; border: 1px solid #000 !important; }</style><table class="cert-multi-table" style="font-size: 15px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 8px;">';
                                 } else if (totalCols >= 7) {
-                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 5px 4px !important; font-size: 15.5px !important; border: 1px solid #000 !important; }</style><table class="cert-multi-table" style="font-size: 15.5px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 8px;">';
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 5px 4px !important; font-size: 16.5px !important; border: 1px solid #000 !important; }</style><table class="cert-multi-table" style="font-size: 16.5px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 8px;">';
                                 }
                             }
-                            return '<table class="cert-multi-table" style="font-size: 17px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 8px;">';
+                            return '<table class="cert-multi-table" style="font-size: 18.5px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 8px;">';
                         })()}
                             <thead>
-                                <tr style="background-color: #ffffff; height: 34px;">
-                                    <th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">ลำดับ</th>
-                                    <th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">ชื่อผู้จำหน่าย</th>
-                                    <th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">รหัสตัวอย่าง</th>
-                                    <th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">ตัวอย่าง</th>
-                                    <th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">แหล่งที่มา</th>
+                                <tr style="background-color: #ffffff; height: 36px;">
+                                    <th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">ลำดับ</th>
+                                    <th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">ชื่อผู้จำหน่าย</th>
+                                    <th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">รหัสตัวอย่าง</th>
+                                    <th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">ตัวอย่าง</th>
+                                    <th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">แหล่งที่มา</th>
                                     ${
                                         (() => {
                                             if (sample.form_type === 'MU.10-002') {
                                                 const usedTestKeys = Array.from(usedTests);
-                                                if (usedTestKeys.length === 0) return '<th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">สารปนเปื้อน</th>';
-                                                return usedTestKeys.map(k => '<th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">' + testLabels[k] + '</th>').join('');
+                                                if (usedTestKeys.length === 0) return '<th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">สารปนเปื้อน</th>';
+                                                return usedTestKeys.map(k => '<th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">' + testLabels[k] + '</th>').join('');
                                             } else {
-                                                return tableHeaderSubstance === 'BOTH' ? '<th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">GT</th><th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">TM/2</th>' : '<th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">' + tableHeaderSubstance + '</th>';
+                                                return tableHeaderSubstance === 'BOTH' ? '<th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">GT</th><th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">TM/2</th>' : '<th style="border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">' + tableHeaderSubstance + '</th>';
                                             }
                                         })()
                                     }
-                                    <th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 17.5px; font-weight: bold; padding: 5px 4px; text-align: center;">สรุปผล</th>
+                                    <th style="white-space: nowrap; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 18.5px; font-weight: bold; padding: 6px 4px; text-align: center;">สรุปผล</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -6062,11 +6062,11 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:10px; font-size:16px; line-height: 1.45; margin-bottom: 14px; color: #000;">
+                        <div style="margin-top:10px; font-size:16.5px; line-height: 1.5; margin-bottom: 12px; color: #000;">
                             ${remarkText}
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 16px; color: #000; margin-top: 8px; gap: 10px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 18px; color: #000; margin-top: 8px; gap: 10px 40px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}

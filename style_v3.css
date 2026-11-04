@@ -1433,21 +1433,22 @@ body {
     border-collapse: collapse;
     margin-top: 0;
     margin-bottom: 8px;
-    font-size: 17px;
+    font-size: 18.5px;
     border: 1.5px solid #000000;
     color: #000000;
 }
 
 .cert-multi-table th, .cert-multi-table td {
     border: 1px solid #000000;
-    padding: 5px 4px;
+    padding: 6px 4px;
+    font-size: 18.5px;
 }
 
 .cert-multi-table th {
     background-color: #ffffff;
     text-align: center;
     font-weight: 700;
-    font-size: 17.5px;
+    font-size: 18.5px;
     border: 1.5px solid #000000;
     color: #000000;
 }
@@ -1458,7 +1459,20 @@ body {
     gap: 10px 40px;
     justify-items: center;
     margin-top: 8px;
-    font-size: 16px;
+    font-size: 18px;
+}
+
+.cert-signature-area .sig-name {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #000000;
+}
+
+.cert-signature-area .sig-title {
+    font-size: 17px;
+    line-height: 1.35;
+    color: #000000;
 }
 
 .cert-signature-area p {
