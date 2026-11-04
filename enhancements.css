@@ -7761,3 +7761,127 @@ html, body {
   font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', 'Leelawadee UI', 'Tahoma', sans-serif !important;
   letter-spacing: normal !important;
 }
+
+/* ==========================================================================
+   Enhanced Typography for PDF Documents, Titles, Details and Tables (TH SarabunPSK)
+   ========================================================================== */
+#certificatePDFContainer .cert-pdf-border {
+  font-size: 15.5px !important;
+  color: #000000 !important;
+}
+
+/* Titles: Clear, bold and prominent */
+#certificatePDFContainer h4,
+#certificatePDFContainer .cert-pdf-header-mu10 h4,
+.cert-pdf-border h4,
+.mu007-report-container > div[style*="font-weight: bold"][style*="text-align: center"],
+.mu007-report-container > div[style*="font-weight:bold"][style*="text-align:center"] {
+  font-size: 21px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  color: #000000 !important;
+}
+
+/* Document Code & Page numbers */
+#certificatePDFContainer .cert-pdf-border > div[style*="top: 155px"],
+#certificatePDFContainer .cert-pdf-border > div[style*="top:155px"] {
+  font-size: 14px !important;
+  color: #334155 !important;
+}
+
+/* Metadata & Details Section (สถานที่เก็บตัวอย่าง, วันที่รับตัวอย่าง, วันที่ตรวจวิเคราะห์, จำนวนตัวอย่าง) */
+#certificatePDFContainer .cert-pdf-header-mu10 > div,
+#certificatePDFContainer .cert-info-grid,
+#certificatePDFContainer .cert-info-grid > div,
+.mu007-report-container > div[style*="line-height: 1.55"],
+.mu007-report-container > div[style*="line-height: 1.55"] div {
+  font-size: 15.5px !important;
+  line-height: 1.6 !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-pdf-header-mu10 strong,
+#certificatePDFContainer .cert-info-grid strong,
+.mu007-report-container strong {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #000000 !important;
+}
+
+/* Table Typography and Padding */
+#certificatePDFContainer .cert-multi-table {
+  font-size: 15px !important;
+  width: 100% !important;
+  border-collapse: collapse !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-multi-table th {
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  padding: 8px 6px !important;
+  background-color: #f8fafc !important;
+  color: #000000 !important;
+  border: 1px solid #334155 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+#certificatePDFContainer .cert-multi-table td {
+  font-size: 15px !important;
+  padding: 7px 6px !important;
+  color: #000000 !important;
+  border: 1px solid #334155 !important;
+  vertical-align: middle !important;
+}
+
+.mu007-table th {
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  padding: 7px 4px !important;
+  color: #000000 !important;
+}
+
+.mu007-table td {
+  font-size: 15px !important;
+  padding: 6px 4px !important;
+  color: #000000 !important;
+}
+
+/* Remarks & Notes */
+#certificatePDFContainer div[style*="font-size:10px"],
+#certificatePDFContainer div[style*="font-size: 10px"] {
+  font-size: 14.5px !important;
+  line-height: 1.55 !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer div[style*="font-size:10px"] strong,
+#certificatePDFContainer div[style*="font-size: 10px"] strong {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+/* Signatures Area */
+#certificatePDFContainer .cert-signatures-grid {
+  font-size: 14.5px !important;
+  color: #000000 !important;
+  margin-top: 10px !important;
+}
+
+#certificatePDFContainer .cert-signature-area {
+  font-size: 14.5px !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-signature-area div {
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-signature-area div[style*="font-size: 11px"],
+#certificatePDFContainer .cert-signature-area div[style*="font-size: 11.5px"],
+#certificatePDFContainer .cert-signature-area div[style*="font-size:11px"],
+#certificatePDFContainer .cert-signature-area div[style*="font-size:11.5px"] {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}

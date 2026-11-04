@@ -5610,7 +5610,7 @@ document.getElementById('formNameTitle').innerText = title;
                 const pName = PERSON_DATA[personKey]?.name || '';
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 14.5px;">
                             <div style="padding-top:25px;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
                                 <div style="margin-top:25px; position:relative;">
@@ -5618,8 +5618,8 @@ document.getElementById('formNameTitle').innerText = title;
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div style="font-size: 11px; line-height: 1.3;">(${pName})</div>
-                                        <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
+                                        <div style="font-size: 14px; line-height: 1.35;">(${pName})</div>
+                                        <div style="font-size: 14px; line-height: 1.35;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
@@ -5631,7 +5631,7 @@ document.getElementById('formNameTitle').innerText = title;
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 14.5px;">
                             <div style="padding-top:25px;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
                                 <div style="margin-top:25px; position:relative;">
@@ -5642,8 +5642,8 @@ document.getElementById('formNameTitle').innerText = title;
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div style="font-size: 11px; line-height: 1.3;">(.......................................)</div>
-                                        <div style="font-size: 11px; line-height: 1.3;">${defaultRole}</div>
+                                        <div style="font-size: 14px; line-height: 1.35;">(.......................................)</div>
+                                        <div style="font-size: 14px; line-height: 1.35;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
@@ -5684,7 +5684,7 @@ document.getElementById('formNameTitle').innerText = title;
             
             return `
                 <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 11.5px;">
+                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 14.5px;">
                         <div style="padding-top:35px;">ลงชื่อ</div>
                         <div style="display:flex; flex-direction:column; align-items:center;">
                             <div style="margin-top:35px; position:relative;">
@@ -5696,9 +5696,9 @@ document.getElementById('formNameTitle').innerText = title;
                             
                             <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                 <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                    <div style="font-size: 11px; line-height: 1.3;">(${p.name})</div>
-                                    <div style="font-size: 11px; line-height: 1.3;">${p.title1}</div>
-                                    ${p.title2 ? `<div style="font-size: 11px; line-height: 1.3;">${p.title2}</div>` : ''}
+                                    <div style="font-size: 14px; line-height: 1.35;">(${p.name})</div>
+                                    <div style="font-size: 14px; line-height: 1.35;">${p.title1}</div>
+                                    ${p.title2 ? `<div style="font-size: 14px; line-height: 1.35;">${p.title2}</div>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -5996,24 +5996,24 @@ document.getElementById('formNameTitle').innerText = title;
                 
                 const pageHtml = `
                     <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
-                        <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; left: 60px; font-size: 14px; color: #1e293b;">
                             ${documentCode}
                         </div>
-                        <div style="position: absolute; top: 155px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 14px; color: #1e293b;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 20px; margin-bottom: 15px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #000;">${reportTitle}</h4>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size: 12px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 14px; font-size: 21px; color: #000;">${reportTitle}</h4>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size: 16px;">
                                 <div><strong>สถานที่เก็บตัวอย่าง:</strong> ${sample.location_name} จ.${sample.province}</div>
                             </div>
-                            <div style="margin-bottom:6px; font-size: 12px;">
+                            <div style="margin-bottom:6px; font-size: 16px;">
                                 <strong>วันที่รับตัวอย่าง:</strong> ${receiveDate}
                             </div>
-                            <div style="margin-bottom:6px; font-size: 12px;">
+                            <div style="margin-bottom:6px; font-size: 16px;">
                                 <strong>วันที่ตรวจวิเคราะห์:</strong> ${analysisDate}
                             </div>
-                            <div style="margin-bottom:6px; font-size: 12px;">
+                            <div style="margin-bottom:6px; font-size: 16px;">
                                 <strong>จำนวนตัวอย่างทั้งหมด:</strong> &nbsp;ตรวจ ${totalCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp;&nbsp;&nbsp; ผ่านร้อยละ ${passPercent}
                             </div>
                         </div>
@@ -6023,12 +6023,12 @@ document.getElementById('formNameTitle').innerText = title;
                                 const numSubstances = Math.max(1, Array.from(usedTests).length);
                                 const totalCols = 5 + numSubstances + 1;
                                 if (totalCols >= 9) {
-                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 4px 6px !important; letter-spacing: -0.1px; }</style><table class="cert-multi-table" style="font-size: 8.5px;">';
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 5px 4px !important; letter-spacing: -0.1px; font-size: 13.5px !important; }</style><table class="cert-multi-table" style="font-size: 13.5px;">';
                                 } else if (totalCols >= 7) {
-                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 6px !important; }</style><table class="cert-multi-table" style="font-size: 10.5px;">';
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 6px 4px !important; font-size: 14.5px !important; }</style><table class="cert-multi-table" style="font-size: 14.5px;">';
                                 }
                             }
-                            return '<table class="cert-multi-table">';
+                            return '<table class="cert-multi-table" style="font-size: 15.5px;">';
                         })()}
                             <thead>
                                 <tr>
@@ -6056,11 +6056,11 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:15px; font-size:10px; margin-bottom: 20px; color: #334155;">
+                        <div style="margin-top:15px; font-size:14.5px; line-height: 1.55; margin-bottom: 20px; color: #000;">
                             ${remarkText}
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 14.5px; color: #000; margin-top: 10px; gap: 15px 40px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
@@ -6157,36 +6157,36 @@ document.getElementById('formNameTitle').innerText = title;
 
                 const pageHtml = `
                     <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
-                        <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; left: 60px; font-size: 14px; color: #1e293b;">
                             RD-003
                         </div>
-                        <div style="position: absolute; top: 155px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 14px; color: #1e293b;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 20px; margin-bottom: 15px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #000;">${reportTitle}</h4>
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 14px; font-size: 21px; color: #000;">${reportTitle}</h4>
                         </div>
                         
-                        <div class="cert-info-grid" style="margin-top: 15px; font-size: 12px; line-height: 1.8;">
+                        <div class="cert-info-grid" style="margin-top: 15px; font-size: 16px; line-height: 1.7;">
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>สถานที่เก็บตัวอย่าง</strong></div>
+                                <div style="width: 150px;"><strong>สถานที่เก็บตัวอย่าง</strong></div>
                                 <div>: ${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</div>
                             </div>
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>วันที่รับตัวอย่าง</strong></div>
+                                <div style="width: 150px;"><strong>วันที่รับตัวอย่าง</strong></div>
                                 <div>: ${receiveDate}</div>
                             </div>
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>วันที่ตรวจวิเคราะห์</strong></div>
+                                <div style="width: 150px;"><strong>วันที่ตรวจวิเคราะห์</strong></div>
                                 <div>: ${analysisDate}</div>
                             </div>
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>จำนวนตัวอย่าง</strong></div>
+                                <div style="width: 150px;"><strong>จำนวนตัวอย่าง</strong></div>
                                 <div>: ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</div>
                             </div>
                         </div>
                         
-                        <table class="cert-multi-table" style="font-size: 9px; margin-top:10px;">
+                        <table class="cert-multi-table" style="font-size: 13.5px; margin-top:10px;">
                             <thead>
                                 <tr>
                                     <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center;"><div style="margin-top: 14px;">ลำดับ</div></th>
@@ -6208,15 +6208,15 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:10px; font-size:10px; margin-bottom: 10px; color: #334155;">
+                        <div style="margin-top:12px; font-size:14.5px; line-height: 1.55; margin-bottom: 12px; color: #000;">
                             <div style="display:flex;">
-                                <div style="width:45px;"><strong>หมายเหตุ</strong></div>
+                                <div style="width:65px; font-weight:bold;">หมายเหตุ :</div>
                                 <div>- การตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ เกณฑ์ผ่านมาตรฐานสารโพลาร์ในน้ำมันทอดซ้ำ คือ ไม่เกิน 25%<br>
                                 - น้ำมันทอดซ้ำที่มีค่าโพลาร์มากกว่า 25% เป็นน้ำมันเสื่อมสภาพแล้วไม่ควรใช้</div>
                             </div>
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 14.5px; color: #000; margin-top: 10px; gap: 15px 40px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
@@ -6315,36 +6315,36 @@ document.getElementById('formNameTitle').innerText = title;
 
                 const pageHtml = `
                     <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
-                        <div style="position: absolute; top: 155px; left: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; left: 60px; font-size: 14px; color: #1e293b;">
                             RD-004
                         </div>
-                        <div style="position: absolute; top: 155px; right: 60px; font-size: 12.5px; color: #1e293b;">
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 14px; color: #1e293b;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 20px; margin-bottom: 15px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 15px; font-size: 16px; color: #000;">${reportTitle}</h4>
+                            <h4 style="text-align:center; font-weight:bold; margin-bottom: 14px; font-size: 21px; color: #000;">${reportTitle}</h4>
                         </div>
                         
-                        <div class="cert-info-grid" style="margin-top: 15px; font-size: 12px; line-height: 1.8;">
+                        <div class="cert-info-grid" style="margin-top: 15px; font-size: 16px; line-height: 1.7;">
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>สถานที่เก็บตัวอย่าง</strong></div>
+                                <div style="width: 150px;"><strong>สถานที่เก็บตัวอย่าง</strong></div>
                                 <div>: ${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</div>
                             </div>
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>วันที่รับตัวอย่าง</strong></div>
+                                <div style="width: 150px;"><strong>วันที่รับตัวอย่าง</strong></div>
                                 <div>: ${receiveDate}</div>
                             </div>
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>วันที่ตรวจวิเคราะห์</strong></div>
+                                <div style="width: 150px;"><strong>วันที่ตรวจวิเคราะห์</strong></div>
                                 <div>: ${analysisDate}</div>
                             </div>
                             <div style="display:flex; margin-bottom: 6px;">
-                                <div style="width: 140px;"><strong>จำนวนตัวอย่าง</strong></div>
+                                <div style="width: 150px;"><strong>จำนวนตัวอย่าง</strong></div>
                                 <div>: ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</div>
                             </div>
                         </div>
                         
-                        <table class="cert-multi-table" style="font-size: 9px; margin-top:10px;">
+                        <table class="cert-multi-table" style="font-size: 13.5px; margin-top:10px;">
                             <thead>
                                 <tr>
                                     <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center;"><div style="margin-top: 14px;">ลำดับ</div></th>
@@ -6366,15 +6366,15 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:10px; font-size:10px; margin-bottom: 10px; color: #334155;">
+                        <div style="margin-top:12px; font-size:14.5px; line-height: 1.55; margin-bottom: 12px; color: #000;">
                             <div style="display:flex;">
-                                <div style="width:45px;"><strong>หมายเหตุ</strong></div>
+                                <div style="width:65px; font-weight:bold;">หมายเหตุ :</div>
                                 <div>- การตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ เกณฑ์ผ่านมาตรฐานสารโพลาร์ในน้ำมันทอดซ้ำ คือ ไม่เกิน 25%<br>
                                 - น้ำมันทอดซ้ำมีค่าโพลาร์มากกว่า 25% เป็นน้ำมันเสื่อมสภาพแล้วไม่ควรใช้</div>
                             </div>
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 14.5px; color: #000; margin-top: 10px; gap: 15px 40px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
@@ -6982,35 +6982,35 @@ document.getElementById('formNameTitle').innerText = title;
                 fullHtmlResult += `
                     <div class="cert-pdf-border mu007-report-container" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; padding: 152px 45px 35px 45px; background-size: 100% 100%; background-position: top left;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px; margin-bottom: 6px;">
-                            <div style="font-size: 12.5px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
+                            <div style="font-size: 14px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
                                 RD-007
                             </div>
                             ${totalPages > 1 ? `
-                                <div style="font-size: 12.5px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
+                                <div style="font-size: 14px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
                                     หน้าที่ ${page + 1}/${totalPages}
                                 </div>
                             ` : '<div></div>'}
                         </div>
-                        <div style="text-align: center; font-weight: bold; font-size: 13.5px; color: #000; line-height: 1.4; margin-bottom: 12px; white-space: nowrap;">
+                        <div style="text-align: center; font-weight: bold; font-size: 18.5px; color: #000; line-height: 1.4; margin-bottom: 14px; white-space: nowrap;">
                             รายงานผลตรวจเชื้อโคลิฟอร์มแบคทีเรียขั้นต้นในอาหาร ภาชนะอุปกรณ์ และมือผู้สัมผัสอาหาร โดยชุดทดสอบ SI-2
                         </div>
 
-                        <div style="font-size: 13.5px; line-height: 1.55; color: #000; margin-bottom: 10px;">
-                            <div style="display: flex; margin-bottom: 2px;">
-                                <div style="width: 150px; font-weight: bold; white-space: nowrap;">สถานที่ตรวจวิเคราะห์ :</div>
+                        <div style="font-size: 15.5px; line-height: 1.6; color: #000; margin-bottom: 12px;">
+                            <div style="display: flex; margin-bottom: 4px;">
+                                <div style="width: 160px; font-weight: bold; white-space: nowrap;">สถานที่ตรวจวิเคราะห์ :</div>
                                 <div style="font-weight: 500;">${shopName}</div>
                             </div>
                             ${addressText ? `
-                                <div style="display: flex; margin-bottom: 2px; padding-left: 150px;">
+                                <div style="display: flex; margin-bottom: 4px; padding-left: 160px;">
                                     <div>${addressText}</div>
                                 </div>
                             ` : ''}
-                            <div style="display: flex; margin-bottom: 2px;">
-                                <div style="width: 150px; font-weight: bold; white-space: nowrap;">วันที่ตรวจวิเคราะห์ :</div>
+                            <div style="display: flex; margin-bottom: 4px;">
+                                <div style="width: 160px; font-weight: bold; white-space: nowrap;">วันที่ตรวจวิเคราะห์ :</div>
                                 <div>${analysisDateThai}</div>
                             </div>
                             <div style="display: flex; margin-bottom: 6px;">
-                                <div style="width: 150px; font-weight: bold; white-space: nowrap;">ผลตรวจวิเคราะห์ :</div>
+                                <div style="width: 160px; font-weight: bold; white-space: nowrap;">ผลตรวจวิเคราะห์ :</div>
                                 <div>ตรวจทั้งหมด ${items.length} ตัวอย่าง &nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp; ไม่ผ่าน ${failCount} ตัวอย่าง &nbsp; ผ่านร้อยละ ${passPercent}</div>
                             </div>
                         </div>
