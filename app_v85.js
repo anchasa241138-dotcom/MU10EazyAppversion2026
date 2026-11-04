@@ -5610,20 +5610,20 @@ document.getElementById('formNameTitle').innerText = title;
                 const pName = PERSON_DATA[personKey]?.name || '';
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18px; color: #000;">
-                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">ลงชื่อ</div>
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; color: #000;">
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div style="margin-top:25px; position:relative; color: #000; font-size: 18px;">
+                                <div style="margin-top:25px; position:relative; color: #000; font-size: 18.5px;">
                                     ................................................
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div class="sig-name" style="font-size: 18px; line-height: 1.35; color: #000; font-weight: bold;">(${pName})</div>
-                                        <div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${defaultRole}</div>
+                                        <div class="sig-name" style="font-size: 18.5px; line-height: 1.35; color: #000; font-weight: normal;">(${pName})</div>
+                                        <div class="sig-title" style="font-size: 18.5px; line-height: 1.35; color: #000; font-weight: normal;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">${defaultRole}</div>
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">${defaultRole}</div>
                         </div>
                     </div>
                 `;
@@ -5631,10 +5631,10 @@ document.getElementById('formNameTitle').innerText = title;
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18px; color: #000;">
-                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">ลงชื่อ</div>
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; color: #000;">
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div style="margin-top:25px; position:relative; color: #000; font-size: 18px;">
+                                <div style="margin-top:25px; position:relative; color: #000; font-size: 18.5px;">
                                     <div style="position:absolute; bottom: 5px; text-align:center; width:100%;">
                                         <span class="placeholder-signature" style="font-size: 15px;">(รอลงนามรับรอง)</span>
                                     </div>
@@ -5642,12 +5642,12 @@ document.getElementById('formNameTitle').innerText = title;
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div class="sig-name" style="font-size: 18px; line-height: 1.35; color: #000; font-weight: bold;">(.......................................)</div>
-                                        <div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${defaultRole}</div>
+                                        <div class="sig-name" style="font-size: 18.5px; line-height: 1.35; color: #000; font-weight: normal;">(.......................................)</div>
+                                        <div class="sig-title" style="font-size: 18.5px; line-height: 1.35; color: #000; font-weight: normal;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="padding-top:25px; white-space: nowrap; font-size: 18px;">${defaultRole}</div>
+                            <div style="padding-top:25px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">${defaultRole}</div>
                         </div>
                     </div>
                 `;
@@ -5684,25 +5684,25 @@ document.getElementById('formNameTitle').innerText = title;
             
             return `
                 <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 5px; width: 100%; text-align: center;">
-                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18px; color: #000;">
-                        <div style="padding-top:35px; white-space: nowrap; font-size: 18px;">ลงชื่อ</div>
+                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; color: #000;">
+                        <div style="padding-top:35px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">ลงชื่อ</div>
                         <div style="display:flex; flex-direction:column; align-items:center;">
                             <div style="margin-top:35px; position:relative;">
                                 <div style="position:absolute; bottom: 5px; text-align:center; width:100%; z-index:10; display:flex; justify-content:center;">
                                     ${sigHtml}
                                 </div>
-                                <span style="position:relative; z-index:1; color: #000; font-size: 18px;">................................................</span>
+                                <span style="position:relative; z-index:1; color: #000; font-size: 18.5px;">................................................</span>
                             </div>
                             
                             <div style="width: 100%; display: flex; justify-content: center; margin-top:4px;">
                                 <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                    <div class="sig-name" style="font-size: 18px; line-height: 1.35; color: #000; font-weight: bold;">(${p.name})</div>
-                                    <div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${p.title1}</div>
-                                    ${p.title2 ? `<div class="sig-title" style="font-size: 17px; line-height: 1.35; color: #000;">${p.title2}</div>` : ''}
+                                    <div class="sig-name" style="font-size: 18.5px; line-height: 1.35; color: #000; font-weight: normal;">(${p.name})</div>
+                                    <div class="sig-title" style="font-size: 18.5px; line-height: 1.35; color: #000; font-weight: normal;">${p.title1}</div>
+                                    ${p.title2 ? `<div class="sig-title" style="font-size: 18.5px; line-height: 1.35; color: #000; font-weight: normal;">${p.title2}</div>` : ''}
                                 </div>
                             </div>
                         </div>
-                        <div style="padding-top:35px; white-space: nowrap; font-size: 18px;">${defaultRole}</div>
+                        <div style="padding-top:35px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">${defaultRole}</div>
                     </div>
                 </div>
             `;
@@ -6066,7 +6066,7 @@ document.getElementById('formNameTitle').innerText = title;
                             ${remarkText}
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 18px; color: #000; margin-top: 8px; gap: 10px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 18.5px; color: #000; margin-top: 8px; gap: 10px 40px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
