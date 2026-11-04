@@ -4761,7 +4761,7 @@ document.getElementById('formNameTitle').innerText = title;
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
             
             htmlContent = `
-                <div class="pdf-container" style="background:white; color:black; font-family:'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
+                <div class="pdf-container" style="background:white; color:black; font-family:'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
                     <div style="border:1.5px solid #333; margin-bottom: 0;">
                         <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
                             <tr>
@@ -5182,7 +5182,7 @@ document.getElementById('formNameTitle').innerText = title;
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
             
             htmlContent = `
-                <div class="pdf-container" style="background:white; color:black; font-family:'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
+                <div class="pdf-container" style="background:white; color:black; font-family:'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
                     <div style="border:1.5px solid #333; margin-bottom: 0;">
                         <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
                             <tr>
@@ -6891,7 +6891,7 @@ document.getElementById('formNameTitle').innerText = title;
             let fullHtmlResult = `
                 <style>
                     .mu007-report-container {
-                        font-family: 'Sarabun', 'TH Sarabun New', 'Leelawadee UI', sans-serif !important;
+                        font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', 'Leelawadee UI', sans-serif !important;
                         color: #000 !important;
                         box-sizing: border-box !important;
                     }
@@ -7445,7 +7445,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 @page { size: A4 ${orientation}; margin: 10mm; }
                 html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > div, body > div * {
-                    font-family: 'SarabunPDF', 'Sarabun', 'Leelawadee UI', 'Leelawadee', sans-serif !important;
+                    font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', 'Leelawadee UI', 'Leelawadee', sans-serif !important;
                     font-variant-ligatures: normal !important;
                     font-feature-settings: "liga" 1, "ccmp" 1, "mkmk" 1, "mark" 1 !important;
                     letter-spacing: normal !important;
@@ -7505,11 +7505,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if (!document.getElementById('th-sarabun-psk-style')) {
                     const style = document.createElement('style');
                     style.id = 'th-sarabun-psk-style';
-                    style.innerHTML = `@font-face { font-family: 'TH SarabunPSK'; src: url('fonts/THSarabunNew.ttf') format('truetype'); }`;
+                    style.innerHTML = `@font-face { font-family: 'TH SarabunPSK'; src: local('TH SarabunPSK'), local('THSarabunPSK'), local('TH Sarabun New'), local('THSarabunNew'), url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@master/fonts/THSarabunNew/THSarabunNew.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'TH SarabunPSK'; src: local('TH SarabunPSK Bold'), local('THSarabunPSK-Bold'), local('TH Sarabun New Bold'), local('THSarabunNew-Bold'), url('https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@master/fonts/THSarabunNew/THSarabunNew-Bold.woff2') format('woff2'); font-weight: bold; font-style: normal; }`;
                     document.head.appendChild(style);
                 }
-                await document.fonts.load('16px "SarabunPDF"');
                 await document.fonts.load('16px "TH SarabunPSK"');
+                await document.fonts.load('bold 16px "TH SarabunPSK"');
+                await document.fonts.load('16px "SarabunPDF"');
                 await document.fonts.ready;
             } catch (e) {
                 console.warn('Font load error', e);
@@ -7561,10 +7563,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             for (let i = 0; i < pages.length; i++) {
                 const wrap = document.createElement('div');
                 wrap.id = 'certificatePDFContainer'; // CRITICAL: This allows all CSS rules to apply!
-                wrap.style.cssText = 'position: absolute; top: -9999px; left: -9999px; width: 794px; height: 1122px; background: white; z-index: -1; margin: 0; padding: 0;';
+                wrap.style.cssText = 'position: absolute; top: -9999px; left: -9999px; width: 794px; height: 1122px; background: white; z-index: -1; margin: 0; padding: 0; font-family: "TH SarabunPSK", "TH Sarabun New", "Sarabun", "SarabunPDF", sans-serif !important;';
                 
                 const clone = pages[i].cloneNode(true);
                 clone.style.margin = '0';
+                clone.style.fontFamily = "'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', sans-serif";
                 clone.style.pageBreakAfter = 'auto';
                 clone.style.pageBreakBefore = 'auto';
                 
@@ -8373,7 +8376,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
             
             htmlContent = `
-                <div class="pdf-container" style="background:white; color:black; font-family:'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
+                <div class="pdf-container" style="background:white; color:black; font-family:'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
                     <div style="border:1.5px solid #333; margin-bottom: 0;">
                         <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
                             <tr>

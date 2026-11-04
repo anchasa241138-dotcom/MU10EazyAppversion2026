@@ -3381,14 +3381,29 @@ body.require-login-mode::before {
   color: #000000 !important;
 }
 
+.pdf-document,
 .pdf-document *,
+#certificatePDFContainer,
 #certificatePDFContainer *,
+#cert-dynamic-content,
 #cert-dynamic-content *,
+#certReportWrapper,
 #certReportWrapper *,
+.certificate-pdf-wrapper,
+.certificate-pdf-wrapper *,
+.cert-pdf-border,
+.cert-pdf-border *,
+.pdf-container,
 .pdf-container *,
+#pdfContent,
 #pdfContent *,
-.sheet-page * {
-  font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
+.sheet-page,
+.sheet-page *,
+.mu007-report-container,
+.mu007-report-container *,
+#hiddenFormPDFContainer,
+#hiddenFormPDFContainer * {
+  font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', 'Leelawadee UI', 'Tahoma', sans-serif !important;
   box-sizing: border-box;
 }
 
@@ -4498,8 +4513,12 @@ body.require-login-mode::before {
 #verifyRejectModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #analysisInputModal,
 #analysisInputModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
-#certifyModal,
-#certifyModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#certifyModal .modal-header,
+#certifyModal .modal-header *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#certifyModal .cert-approval-controls,
+#certifyModal .cert-approval-controls *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#certifyModal .modal-footer,
+#certifyModal .modal-footer *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 #provincialEmailModal,
 #provincialEmailModal *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
 body:has(#view-lab-verify.active) #currentViewTitle,
@@ -7712,4 +7731,33 @@ html, body {
 #record-content-wrapper .record-hero-header.hidden,
 #record-content-wrapper .form-editor-container.hidden {
   display: none !important;
+}
+
+/* Enforce TH SarabunPSK for PDF Download & Report Previews */
+#certificatePDFContainer,
+#certificatePDFContainer *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#cert-dynamic-content,
+#cert-dynamic-content *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#certReportWrapper,
+#certReportWrapper *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.certificate-pdf-wrapper,
+.certificate-pdf-wrapper *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.cert-pdf-border,
+.cert-pdf-border *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.pdf-document,
+.pdf-document *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.pdf-container,
+.pdf-container *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#pdfContent,
+#pdfContent *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.sheet-page,
+.sheet-page *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+#hiddenFormPDFContainer,
+#hiddenFormPDFContainer *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.cert-multi-table,
+.cert-multi-table *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular),
+.mu007-report-container,
+.mu007-report-container *:not(i):not(.fa):not(.fas):not(.fa-solid):not(.fa-regular) {
+  font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', 'Leelawadee UI', 'Tahoma', sans-serif !important;
+  letter-spacing: normal !important;
 }
