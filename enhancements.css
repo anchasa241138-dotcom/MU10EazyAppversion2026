@@ -7807,13 +7807,13 @@ html, body {
 .mu007-report-container > div[style*="line-height: 1.55"],
 .mu007-report-container > div[style*="line-height: 1.55"] div {
   font-size: 19px !important;
-  line-height: 1.25 !important;
+  line-height: 1.15 !important;
   color: #000000 !important;
 }
 
 #certificatePDFContainer .cert-pdf-header-mu10 td,
 .cert-pdf-header-mu10 td {
-  padding: 1px 0 !important;
+  padding: 0.5px 0 !important;
 }
 
 #certificatePDFContainer .cert-pdf-header-mu10 strong,
@@ -7834,15 +7834,21 @@ html, body {
   border-collapse: collapse !important;
   border: 1.5px solid #000000 !important;
   margin-top: 0 !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 5px !important;
   color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-multi-table tr,
+.cert-multi-table tr {
+  height: 26px !important;
 }
 
 #certificatePDFContainer .cert-multi-table th,
 .cert-multi-table th {
   font-size: 18.5px !important;
   font-weight: 700 !important;
-  padding: 6px 4px !important;
+  padding: 2.5px 4px !important;
+  line-height: 1.15 !important;
   background-color: #ffffff !important;
   color: #000000 !important;
   border: 1.5px solid #000000 !important;
@@ -7853,7 +7859,8 @@ html, body {
 #certificatePDFContainer .cert-multi-table td,
 .cert-multi-table td {
   font-size: 18.5px !important;
-  padding: 6px 4px !important;
+  padding: 2.5px 4px !important;
+  line-height: 1.15 !important;
   color: #000000 !important;
   border: 1px solid #000000 !important;
   vertical-align: middle !important;
@@ -7862,13 +7869,15 @@ html, body {
 .mu007-table th {
   font-size: 16px !important;
   font-weight: 700 !important;
-  padding: 7px 4px !important;
+  padding: 3px 4px !important;
+  line-height: 1.15 !important;
   color: #000000 !important;
 }
 
 .mu007-table td {
   font-size: 15.5px !important;
-  padding: 6px 4px !important;
+  padding: 3px 4px !important;
+  line-height: 1.15 !important;
   color: #000000 !important;
 }
 
@@ -7883,8 +7892,10 @@ html, body {
 #certificatePDFContainer div[style*="font-size: 16px"],
 #certificatePDFContainer div[style*="font-size:16.5px"],
 #certificatePDFContainer div[style*="font-size: 16.5px"] {
-  font-size: 16.5px !important;
-  line-height: 1.5 !important;
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
   color: #000000 !important;
 }
 
@@ -7898,7 +7909,7 @@ html, body {
 #certificatePDFContainer div[style*="font-size: 16px"] strong,
 #certificatePDFContainer div[style*="font-size:16.5px"] strong,
 #certificatePDFContainer div[style*="font-size: 16.5px"] strong {
-  font-size: 17px !important;
+  font-size: 16.5px !important;
   font-weight: 700 !important;
   color: #000000 !important;
 }
@@ -7908,7 +7919,7 @@ html, body {
 .cert-signatures-grid {
   font-size: 18.5px !important;
   color: #000000 !important;
-  margin-top: 8px !important;
+  margin-top: 6px !important;
 }
 
 #certificatePDFContainer .cert-signature-area,
@@ -7926,7 +7937,7 @@ html, body {
 .cert-signature-area .sig-name {
   font-size: 18.5px !important;
   font-weight: 400 !important;
-  line-height: 1.35 !important;
+  line-height: 1.2 !important;
   color: #000000 !important;
 }
 
@@ -7934,7 +7945,7 @@ html, body {
 .cert-signature-area .sig-title {
   font-size: 18.5px !important;
   font-weight: 400 !important;
-  line-height: 1.35 !important;
+  line-height: 1.2 !important;
   color: #000000 !important;
 }
 
