@@ -1432,30 +1432,32 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 15px;
-    font-size: 15px;
+    font-size: 16px;
+    border: 1.5px solid #000000;
     color: #000000;
 }
 
 .cert-multi-table th, .cert-multi-table td {
-    border: 1px solid #475569;
-    padding: 8px 6px;
+    border: 1px solid #000000;
+    padding: 6px 4px;
 }
 
 .cert-multi-table th {
-    background-color: #f8fafc;
+    background-color: #ffffff;
     text-align: center;
     font-weight: 700;
-    font-size: 15.5px;
+    font-size: 16.5px;
+    border: 1.5px solid #000000;
     color: #000000;
 }
 
 .cert-signatures-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px 40px;
+    gap: 15px 40px;
     justify-items: center;
-    margin-top: 15px;
-    font-size: 14.5px;
+    margin-top: 12px;
+    font-size: 15px;
 }
 
 .cert-signature-area p {
