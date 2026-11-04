@@ -344,15 +344,18 @@
             margin-bottom: 14px;
         }
         .auth-top-nav-bar a {
-            color: #94a3b8;
+            color: #ffffff !important;
             font-size: 11.5px;
             font-weight: 600;
             letter-spacing: 0.6px;
             text-decoration: none;
-            transition: color 0.2s;
+            transition: opacity 0.2s, text-decoration 0.2s;
+            opacity: 0.95;
         }
         .auth-top-nav-bar a:hover {
-            color: #38bdf8;
+            color: #ffffff !important;
+            opacity: 1;
+            text-decoration: underline;
         }
 
         /* Forms Scroll Area - Vertically Centered for Login */
@@ -404,7 +407,7 @@
             margin-bottom: 20px;
         }
         .auth-form-title {
-            color: #38bdf8 !important;
+            color: #ffffff !important;
             font-size: 22px !important;
             font-weight: 700 !important;
             letter-spacing: 0.3px;
@@ -412,7 +415,8 @@
             line-height: 1.25;
         }
         .auth-form-subtitle {
-            color: #94a3b8 !important;
+            color: #ffffff !important;
+            opacity: 0.92;
             font-size: 12.5px !important;
             margin: 0 !important;
             line-height: 1.4;
@@ -536,7 +540,7 @@
             justify-content: space-between;
             margin-top: 15px;
             font-size: 12.5px;
-            color: #94a3b8;
+            color: #ffffff !important;
         }
         .auth-remember-checkbox {
             display: flex;
@@ -544,8 +548,11 @@
             gap: 8px;
             cursor: pointer;
             user-select: none;
-            color: #94a3b8;
+            color: #ffffff !important;
             font-size: 12.5px;
+        }
+        .auth-remember-checkbox span {
+            color: #ffffff !important;
         }
         .auth-remember-checkbox input[type="checkbox"] {
             accent-color: #0284c7;
@@ -554,14 +561,16 @@
             cursor: pointer;
         }
         .auth-forgot-link {
-            color: #38bdf8;
+            color: #ffffff !important;
             text-decoration: none;
             font-size: 12.5px;
             font-weight: 500;
-            transition: color 0.2s;
+            transition: opacity 0.2s, text-decoration 0.2s;
+            opacity: 0.95;
         }
         .auth-forgot-link:hover {
-            color: #7dd3fc;
+            color: #ffffff !important;
+            opacity: 1;
             text-decoration: underline;
         }
 
@@ -570,18 +579,25 @@
             text-align: center;
             margin-top: 20px;
             font-size: 13px;
-            color: #94a3b8;
+            color: #ffffff !important;
+        }
+        .auth-bottom-switch span {
+            color: #ffffff !important;
+            opacity: 0.95;
         }
         .auth-bottom-switch a {
-            color: #38bdf8;
+            color: #ffffff !important;
             font-weight: 700;
-            text-decoration: none;
+            text-decoration: underline;
             margin-left: 5px;
             cursor: pointer;
+            transition: opacity 0.2s;
+            opacity: 0.95;
         }
         .auth-bottom-switch a:hover {
             text-decoration: underline;
-            color: #7dd3fc;
+            opacity: 1;
+            color: #ffffff !important;
         }
 
         /* Register Mode Overrides (Clean White Form Side) */
