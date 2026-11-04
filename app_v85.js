@@ -7782,7 +7782,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) =>{
-            return `<span style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; word-break: break-word; white-space: normal;">${checked ? '[✓]' : '[ ]'} ${txt}</span>`;
+            return `<span style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; font-weight: normal !important; word-break: break-word; white-space: normal;">${checked ? '[✓]' : '[ ]'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -7945,10 +7945,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const tdFontSizeFinal = isMu10001Row ? '15px' : '9.5px';
 
                     summaryCell = `
-                        <div style="font-size:${sumFontSize}; line-height:1.25; font-weight:normal;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
+                        <div style="font-size:${sumFontSize}; line-height:1.25; font-weight: normal !important;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
 
                 tableRows += `
-                    <tr style="page-break-inside: avoid;"> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.distributor}</td> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (item.labId || '') : ''}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name}</td> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.weight}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.source}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${checkboxCell}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${interpretCell}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${resultCell}</td> <td style="padding:2px 3px; vertical-align:middle; text-align:center; border:1px solid #555;">${summaryCell}</td> </tr>`;
+                    <tr style="page-break-inside: avoid;"> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.distributor}</td> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (item.labId || '') : ''}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight: normal !important; border:1px solid #555;">${item.name}</td> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.weight}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.source}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${checkboxCell}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${interpretCell}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${resultCell}</td> <td style="padding:2px 3px; vertical-align:middle; text-align:center; font-weight: normal !important; border:1px solid #555;">${summaryCell}</td> </tr>`;
             }
         });
 
@@ -8669,7 +8669,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const doc = iframe.contentWindow.document;
             doc.open();
             const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape';
-            doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="style_v2.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
+            doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="style_v3.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
             doc.write(htmlContent);
             doc.write('</body></html>');
             doc.close();
