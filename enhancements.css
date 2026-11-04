@@ -5553,13 +5553,14 @@ body.followup-view-active #currentViewTitle {
   display: grid;
   grid-template-columns: 1.35fr 1fr;
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 1024px) {
   .substance-analytics-layout {
     grid-template-columns: 1fr;
     gap: 20px;
+    align-items: start;
   }
 }
 
@@ -5571,6 +5572,8 @@ body.followup-view-active #currentViewTitle {
   padding: 22px;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
@@ -5659,14 +5662,15 @@ body.followup-view-active #currentViewTitle {
 .coast-chart-canvas-wrapper {
   position: relative;
   width: 100%;
-  height: 310px;
+  flex: 1 1 auto;
+  min-height: 330px;
 }
 
 .coast-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-top: 18px;
+  margin-top: auto;
   padding-top: 16px;
   border-top: 1px solid #e2e8f0;
 }
@@ -5707,6 +5711,8 @@ body.followup-view-active #currentViewTitle {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 /* 2. Business Statistic Card (Concentric Rings + Wavy Trends) */
@@ -5904,6 +5910,8 @@ body.followup-view-active #currentViewTitle {
   padding: 22px;
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
@@ -5952,7 +5960,8 @@ body.followup-view-active #currentViewTitle {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 205px;
+  flex: 1 1 auto;
+  max-height: 230px;
   overflow-y: auto;
   padding-right: 4px;
   scrollbar-width: thin;
@@ -6028,7 +6037,7 @@ body.followup-view-active #currentViewTitle {
 }
 
 .general-stat-footer {
-  margin-top: 14px;
+  margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid #e2e8f0;
 }
