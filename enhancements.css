@@ -7774,12 +7774,15 @@ html, body {
 /* Titles: Clear, bold and prominent */
 #certificatePDFContainer h4,
 #certificatePDFContainer .cert-pdf-header-mu10 h4,
+.cert-pdf-header-mu10 h4,
 .cert-pdf-border h4,
 .mu007-report-container > div[style*="font-weight: bold"][style*="text-align: center"],
 .mu007-report-container > div[style*="font-weight:bold"][style*="text-align:center"] {
-  font-size: 22px !important;
+  font-size: 23px !important;
   font-weight: 700 !important;
-  line-height: 1.4 !important;
+  line-height: 1.3 !important;
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
   color: #000000 !important;
 }
 
@@ -7788,7 +7791,7 @@ html, body {
 #certificatePDFContainer .cert-pdf-border > div[style*="top:155px"],
 .cert-pdf-border > div[style*="top: 155px"],
 .cert-pdf-border > div[style*="top:155px"] {
-  font-size: 15px !important;
+  font-size: 15.5px !important;
   color: #000000 !important;
 }
 
@@ -7803,9 +7806,14 @@ html, body {
 .cert-info-grid,
 .mu007-report-container > div[style*="line-height: 1.55"],
 .mu007-report-container > div[style*="line-height: 1.55"] div {
-  font-size: 17px !important;
-  line-height: 1.65 !important;
+  font-size: 19px !important;
+  line-height: 1.25 !important;
   color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-pdf-header-mu10 td,
+.cert-pdf-header-mu10 td {
+  padding: 1px 0 !important;
 }
 
 #certificatePDFContainer .cert-pdf-header-mu10 strong,
@@ -7813,7 +7821,7 @@ html, body {
 .cert-pdf-header-mu10 strong,
 .cert-info-grid strong,
 .mu007-report-container strong {
-  font-size: 17px !important;
+  font-size: 19px !important;
   font-weight: 700 !important;
   color: #000000 !important;
 }
@@ -7821,18 +7829,20 @@ html, body {
 /* Table Typography and Padding */
 #certificatePDFContainer .cert-multi-table,
 .cert-multi-table {
-  font-size: 16px !important;
+  font-size: 17px !important;
   width: 100% !important;
   border-collapse: collapse !important;
   border: 1.5px solid #000000 !important;
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
   color: #000000 !important;
 }
 
 #certificatePDFContainer .cert-multi-table th,
 .cert-multi-table th {
-  font-size: 16.5px !important;
+  font-size: 17.5px !important;
   font-weight: 700 !important;
-  padding: 6px 4px !important;
+  padding: 5px 4px !important;
   background-color: #ffffff !important;
   color: #000000 !important;
   border: 1.5px solid #000000 !important;
@@ -7842,8 +7852,8 @@ html, body {
 
 #certificatePDFContainer .cert-multi-table td,
 .cert-multi-table td {
-  font-size: 16px !important;
-  padding: 6px 4px !important;
+  font-size: 17px !important;
+  padding: 5px 4px !important;
   color: #000000 !important;
   border: 1px solid #000000 !important;
   vertical-align: middle !important;
@@ -7868,9 +7878,11 @@ html, body {
 #certificatePDFContainer div[style*="font-size:14.5px"],
 #certificatePDFContainer div[style*="font-size: 14.5px"],
 #certificatePDFContainer div[style*="font-size:15px"],
-#certificatePDFContainer div[style*="font-size: 15px"] {
-  font-size: 15px !important;
-  line-height: 1.55 !important;
+#certificatePDFContainer div[style*="font-size: 15px"],
+#certificatePDFContainer div[style*="font-size:16px"],
+#certificatePDFContainer div[style*="font-size: 16px"] {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
   color: #000000 !important;
 }
 
@@ -7879,8 +7891,10 @@ html, body {
 #certificatePDFContainer div[style*="font-size:14.5px"] strong,
 #certificatePDFContainer div[style*="font-size: 14.5px"] strong,
 #certificatePDFContainer div[style*="font-size:15px"] strong,
-#certificatePDFContainer div[style*="font-size: 15px"] strong {
-  font-size: 15.5px !important;
+#certificatePDFContainer div[style*="font-size: 15px"] strong,
+#certificatePDFContainer div[style*="font-size:16px"] strong,
+#certificatePDFContainer div[style*="font-size: 16px"] strong {
+  font-size: 16.5px !important;
   font-weight: 700 !important;
   color: #000000 !important;
 }
@@ -7888,14 +7902,14 @@ html, body {
 /* Signatures Area */
 #certificatePDFContainer .cert-signatures-grid,
 .cert-signatures-grid {
-  font-size: 15px !important;
+  font-size: 16px !important;
   color: #000000 !important;
-  margin-top: 10px !important;
+  margin-top: 8px !important;
 }
 
 #certificatePDFContainer .cert-signature-area,
 .cert-signature-area {
-  font-size: 15px !important;
+  font-size: 16px !important;
   color: #000000 !important;
 }
 
@@ -7912,11 +7926,15 @@ html, body {
 #certificatePDFContainer .cert-signature-area div[style*="font-size: 14.5px"],
 #certificatePDFContainer .cert-signature-area div[style*="font-size:14px"],
 #certificatePDFContainer .cert-signature-area div[style*="font-size:14.5px"],
+#certificatePDFContainer .cert-signature-area div[style*="font-size: 15.5px"],
+#certificatePDFContainer .cert-signature-area div[style*="font-size:15.5px"],
 .cert-signature-area div[style*="font-size: 14px"],
 .cert-signature-area div[style*="font-size: 14.5px"],
 .cert-signature-area div[style*="font-size:14px"],
-.cert-signature-area div[style*="font-size:14.5px"] {
-  font-size: 14.5px !important;
+.cert-signature-area div[style*="font-size:14.5px"],
+.cert-signature-area div[style*="font-size: 15.5px"],
+.cert-signature-area div[style*="font-size:15.5px"] {
+  font-size: 15.5px !important;
   line-height: 1.35 !important;
   color: #000000 !important;
 }
