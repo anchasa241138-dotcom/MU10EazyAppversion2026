@@ -6285,38 +6285,21 @@ document.getElementById('formNameTitle').innerText = title;
                 const pageItems = validItems.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
                 
                 let rowsHtml = '';
-                for (let i = 0; i < ITEMS_PER_PAGE; i++) {
-                    const item = pageItems[i];
-                    if (item) {
-                        rowsHtml += `
-                            <tr>
-                                <td style="text-align: center;">${page * ITEMS_PER_PAGE + i + 1}</td>
-                                <td>${item.owner_name}</td>
-                                <td style="text-align: center;">${item.food_category}</td>
-                                <td style="text-align: center;">${item.oil_type}</td>
-                                <td style="text-align: center;">${item.fry_duration}</td>
-                                <td style="text-align: center;">${item.replacement_type}</td>
-                                <td style="text-align: center;">${item.replacement_frequency}</td>
-                                <td style="text-align: center;">${item.polar_value}</td>
-                                <td style="text-align: center;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
-                            </tr>
-                        `;
-                    } else {
-                        rowsHtml += `
-                            <tr>
-                                <td style="text-align: center; color: transparent;">-</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        `;
-                    }
-                }
+                pageItems.forEach((item, i) => {
+                    rowsHtml += `
+                        <tr style="height: 26px;">
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${page * ITEMS_PER_PAGE + i + 1}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.owner_name}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.food_category}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.oil_type}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.fry_duration}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.replacement_type}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.replacement_frequency}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.polar_value}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${!item.isPass ? 'color: #dc2626; font-weight: bold;' : ''}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                        </tr>
+                    `;
+                });
 
                 const pageHtml = `
                     <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
@@ -6326,43 +6309,43 @@ document.getElementById('formNameTitle').innerText = title;
                         <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; color: #000;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
-                        <div class="cert-pdf-header-mu10" style="margin-top: 15px; margin-bottom: 6px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 6px; font-size: 23px; color: #000; line-height: 1.3;">${reportTitle}</h4>
-                            <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.25; margin: 0; padding: 0; color: #000;">
+                        <div class="cert-pdf-header-mu10" style="margin-top: 10px; margin-bottom: 4px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 4px; font-size: 22px; color: #000; line-height: 1.2;">${reportTitle}</h4>
+                            <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.15; margin: 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 175px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</u></td>
+                                    <td style="width: 175px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
+                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</u></td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${receiveDate}</u></td>
+                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
+                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${receiveDate}</u></td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${analysisDate}</u></td>
+                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
+                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${analysisDate}</u></td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent}</u> ดังนี้</td>
+                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
+                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent}</u> ดังนี้</td>
                                 </tr>
                             </table>
                         </div>
                         
-                        <table class="cert-multi-table" style="font-size: 13.5px; margin-top:10px;">
+                        <table class="cert-multi-table" style="font-size: 15px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 5px; margin-bottom: 5px;">
                             <thead>
-                                <tr>
-                                    <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center;"><div style="margin-top: 14px;">ลำดับ</div></th>
-                                    <th rowspan="2" style="width: 15%; text-align: center;"><div style="margin-top: 14px;">ชื่อผู้จำหน่าย</div></th>
-                                    <th rowspan="2" style="width: 12%; text-align: center;"><div style="margin-top: 14px;">ชนิดอาหาร</div></th>
-                                    <th colspan="4" style="text-align: center;"><div>น้ำมันที่ทอดอาหาร</div></th>
-                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">ค่าโพลาร์</div></th>
-                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">สรุปผล</div></th>
+                                <tr style="background-color: #ffffff; height: 26px;">
+                                    <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 15px; font-weight: bold; padding: 2.5px 2px; vertical-align: middle; line-height: 1.15;">ลำดับ</th>
+                                    <th rowspan="2" style="width: 15%; text-align: center; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 15px; font-weight: bold; padding: 2.5px 3px; vertical-align: middle; line-height: 1.15;">ชื่อผู้จำหน่าย</th>
+                                    <th rowspan="2" style="width: 12%; text-align: center; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 15px; font-weight: bold; padding: 2.5px 3px; vertical-align: middle; line-height: 1.15;">ชนิดอาหาร</th>
+                                    <th colspan="4" style="text-align: center; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 15px; font-weight: bold; padding: 2.5px 3px; vertical-align: middle; line-height: 1.15;">น้ำมันที่ทอดอาหาร</th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 15px; font-weight: bold; padding: 2.5px 3px; vertical-align: middle; line-height: 1.15;">ค่าโพลาร์</th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center; border: 1.5px solid #000; background-color: #fff; color: #000; font-size: 15px; font-weight: bold; padding: 2.5px 3px; vertical-align: middle; line-height: 1.15;">สรุปผล</th>
                                 </tr>
-                                <tr>
-                                    <th style="width: 10%;">ชนิด<br>น้ำมัน</th>
-                                    <th style="width: 10%;">ระยะเวลาที่<br>ใช้ทอด</th>
-                                    <th style="width: 10%;">การใช้<br>น้ำมัน</th>
-                                    <th style="width: 10%;">ระยะเวลาใน<br>การเปลี่ยน<br>น้ำมัน</th>
+                                <tr style="background-color: #ffffff; height: 26px;">
+                                    <th style="width: 10%; border: 1px solid #000; background-color: #fff; color: #000; font-size: 14px; font-weight: bold; padding: 2px 2px; text-align: center; vertical-align: middle; line-height: 1.15;">ชนิด<br>น้ำมัน</th>
+                                    <th style="width: 10%; border: 1px solid #000; background-color: #fff; color: #000; font-size: 14px; font-weight: bold; padding: 2px 2px; text-align: center; vertical-align: middle; line-height: 1.15;">ระยะเวลาที่<br>ใช้ทอด</th>
+                                    <th style="width: 10%; border: 1px solid #000; background-color: #fff; color: #000; font-size: 14px; font-weight: bold; padding: 2px 2px; text-align: center; vertical-align: middle; line-height: 1.15;">การใช้<br>น้ำมัน</th>
+                                    <th style="width: 10%; border: 1px solid #000; background-color: #fff; color: #000; font-size: 14px; font-weight: bold; padding: 2px 2px; text-align: center; vertical-align: middle; line-height: 1.15;">ระยะเวลาใน<br>การเปลี่ยน<br>น้ำมัน</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -6370,7 +6353,7 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:12px; font-size:14.5px; line-height: 1.55; margin-bottom: 12px; color: #000;">
+                        <div style="margin-top:6px; font-size:15px; line-height: 1.25; margin-bottom: 6px; color: #000;">
                             <div style="display:flex;">
                                 <div style="width:65px; font-weight:bold;">หมายเหตุ :</div>
                                 <div>- การตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ เกณฑ์ผ่านมาตรฐานสารโพลาร์ในน้ำมันทอดซ้ำ คือ ไม่เกิน 25%<br>
@@ -6378,7 +6361,7 @@ document.getElementById('formNameTitle').innerText = title;
                             </div>
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 14.5px; color: #000; margin-top: 10px; gap: 15px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 18.5px; color: #000; margin-top: 6px; gap: 6px 35px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
