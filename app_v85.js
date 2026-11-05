@@ -7695,16 +7695,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 }
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({
-                    distributor: sample[`distributor_${idx}`] || '',
-                    food_type: sample[`sample_name_${idx}`] || '',
-                    food_serial_no: sample[`food_serial_no_${idx}`] || '',
-                    manufacturer_info: sample[`manufacturer_info_${idx}`] || '',
-                    has_mfg_exp: sample[`has_mfg_exp_${idx}`] || '',
-                    net_weight: sample[`net_weight_${idx}`] || '',
-                    has_storage_warning: sample[`has_storage_warning_${idx}`] || '',
-                    label_summary: sample[`label_summary_${idx}`] || '',
-                    iodate_value: sample[`iodate_value_${idx}`] || '',
-                    test_outcome: sample[`test_outcome_${idx}`] || ''
+                    distributor: sample[`distributor_${idx}`] || (idx === 1 ? sample.distributor : '') || '',
+                    food_type: sample[`sample_name_${idx}`] || (idx === 1 ? (sample.sample_name || sample.name || sample.food_type) : '') || '',
+                    food_serial_no: sample[`food_serial_no_${idx}`] || (idx === 1 ? sample.food_serial_no : '') || '',
+                    manufacturer_info: sample[`manufacturer_info_${idx}`] || (idx === 1 ? sample.manufacturer_info : '') || '',
+                    has_mfg_exp: sample[`has_mfg_exp_${idx}`] || (idx === 1 ? sample.has_mfg_exp : '') || '',
+                    net_weight: sample[`net_weight_${idx}`] || (idx === 1 ? sample.net_weight : '') || '',
+                    has_storage_warning: sample[`has_storage_warning_${idx}`] || (idx === 1 ? sample.has_storage_warning : '') || '',
+                    label_summary: sample[`label_summary_${idx}`] || (idx === 1 ? sample.label_summary : '') || '',
+                    iodate_value: sample[`iodate_value_${idx}`] || (idx === 1 ? sample.iodate_value : '') || '',
+                    test_outcome: sample[`test_outcome_${idx}`] || (idx === 1 ? sample.test_outcome : '') || ''
                 });
             } else {
                 let tests = [];
@@ -7743,17 +7743,33 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         // Fallback: if old single-entry style
 
         if (sampleItems.length === 0) {
-            sampleItems.push({
-                name: sample.sample_name || '',
-                distributor: sample.distributor || '',
-                weight: '',
-                source: sample.source || '',
-            });
+            if (sample.form_type === 'MU.10-005') {
+                sampleItems.push({
+                    distributor: sample.distributor || '',
+                    food_type: sample.sample_name || sample.name || sample.food_type || '',
+                    food_serial_no: sample.food_serial_no || '',
+                    manufacturer_info: sample.manufacturer_info || '',
+                    has_mfg_exp: sample.has_mfg_exp || '',
+                    net_weight: sample.net_weight || '',
+                    has_storage_warning: sample.has_storage_warning || '',
+                    label_summary: sample.label_summary || '',
+                    iodate_value: sample.iodate_value || '',
+                    test_outcome: sample.test_outcome || ''
+                });
+            } else {
+                sampleItems.push({
+                    name: sample.sample_name || '',
+                    distributor: sample.distributor || '',
+                    weight: '',
+                    source: sample.source || '',
+                });
+            }
         }
 
-        // Ensure at least 5 rows for the table
+        // Ensure rows for the table (10 rows for MU.10-005 to match official template)
+        const minRowsNeeded = (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') ? 10 : 5;
         let padLoops = 0;
-        while (sampleItems.length < 5 && padLoops++ < 10) {
+        while (sampleItems.length < minRowsNeeded && padLoops++ < 15) {
             if (sample.form_type === 'MU.10-003') {
                 sampleItems.push({ distributor:'', food_type:'', oil_type:'', fry_duration:'', replacement_type:'', last_replacement_date:'', replacement_frequency:'', replacement_reason:'', oil_disposal:'', polar_value:'' });
             } else if (sample.form_type === 'MU.10-004') {
@@ -7813,8 +7829,21 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                             ${chk('ไม่ผ่าน', isFailChecked)}
                         </td> </tr>`;
             } else if (sample.form_type === 'MU.10-005') {
+                const hasItem = !!(item.food_type || item.distributor || item.food_serial_no || item.name);
                 tableRows += `
-                    <tr style="height: 50px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.distributor}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_serial_no}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.manufacturer_info}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.has_mfg_exp}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.net_weight}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.has_storage_warning}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; font-weight:bold; border:1px solid #555;">${item.label_summary}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; font-weight:bold; border:1px solid #555;">${item.iodate_value}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; font-weight:bold; border:1px solid #555;">${item.test_outcome}</td> </tr>`;
+                    <tr style="height: 28px; page-break-inside: avoid;"> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${hasItem ? (i + 1) : ''}</td> 
+                        <td style="padding:2px 4px; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.distributor || ''}</td> 
+                        <td style="padding:2px 4px; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.food_type || item.name || ''}</td> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_serial_no || ''}</td> 
+                        <td style="padding:2px 4px; vertical-align:middle; font-size:12px; line-height:1.2; border:1px solid #555;">${item.manufacturer_info || ''}</td> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.has_mfg_exp || ''}</td> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.net_weight || ''}</td> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.has_storage_warning || ''}</td> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.label_summary || ''}</td> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.iodate_value || ''}</td> 
+                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.test_outcome || ''}</td> 
+                    </tr>`;
             } else {
                 const showChecked = !!item.name;
                 let checkboxCell = '';
@@ -7989,8 +8018,28 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             `;
         } else if (sample.form_type === 'MU.10-005') {
             mainTableHTML = `
-                <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;"> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th> <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th> <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th> <th colspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th> </tr> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; font-size:13px;"> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">น้ำหนักสุทธิ</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:9.5%;">แสดงข้อความ<br>“ควรเก็บในที่ร่ม<br>และแห้ง” (มี/ไม่มี)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล<br>ตรวจฉลาก</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:8%;">ค่าไอโอเดท<br>(ppm)</th> <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล</th> </tr> </thead> <tbody>${tableRows}
-                    </tbody> </table>`;
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> 
+                    <thead style="text-align:center;"> 
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px; font-weight:bold;"> 
+                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th> 
+                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th> 
+                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th> 
+                            <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th> 
+                            <th colspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th> 
+                        </tr> 
+                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px; font-weight:bold;"> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">น้ำหนักสุทธิ</th> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:9.5%;">แสดงข้อความ<br>“ควรเก็บในที่ร่ม<br>และแห้ง” (มี/ไม่มี)</th> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล<br>ตรวจฉลาก</th> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:8%;">ค่าไอโอเดท<br>(ppm)</th> 
+                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล</th> 
+                        </tr> 
+                    </thead> 
+                    <tbody>${tableRows}</tbody> 
+                </table>`;
         } else {
             const isMu10001Table = sample.form_type === 'MU.10-001' || !sample.form_type;
             const tableBaseFont = isMu10001Table ? '14.5px' : '9.5px';
@@ -8452,123 +8501,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </table>
                     </div>
                 </div>`;
-        } else if (sample.form_type === 'MU.10-005') {
-            let passCount = 0;
-            let totalCount = 0;
-            
-            // Build table rows specifically for MU.10-005 PDF format
-            let tableRowsHTML = '';
-            sampleItems.forEach((item, i) => {
-                if (item.food_type) {
-                    totalCount++;
-                    if (item.test_outcome === 'ผ่าน') passCount++;
-                    tableRowsHTML += `
-                        <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_type}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.iodate_value}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.test_outcome}</td> 
-                        </tr>`;
-                }
-            });
-            
-            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
-            const analyst1 = sample.analysis_analyst || '..............................................';
-            
-            htmlContent = `
-              <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0; padding: 25px 30px; box-sizing: border-box;"> 
-                  
-                  <!-- HEADER -->
-                  <div style="position: relative; height: 100px; margin-bottom: 25px;">
-                      <div style="position: absolute; top: 0; right: 0; text-align: right; font-size: 13px;">
-                          RD-005<br>หน้าที่ 1/1
-                      </div>
-                  </div>
-                  
-                  <!-- TITLE -->
-                  <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px;">
-                      ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader
-                  </div>
-                  
-                  <!-- META INFO -->
-                  <table style="width: 100%; border: none; font-size: 15px; margin-bottom: 15px; line-height: 1.5;">
-                      <tr>
-                          <td style="width: 160px; font-weight: bold;">สถานที่เก็บตัวอย่าง</td>
-                          <td>: ${sample.location_name || ''} ${sample.amphoe ? 'อำเภอ'+sample.amphoe : ''} ${sample.province ? 'จังหวัด'+sample.province : ''}</td>
-                      </tr>
-                      <tr>
-                          <td style="font-weight: bold;">วันที่รับตัวอย่าง</td>
-                          <td>: ${samplingDate}</td>
-                      </tr>
-                      <tr>
-                          <td style="font-weight: bold;">วันที่ตรวจวิเคราะห์</td>
-                          <td>: ${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : ''}</td>
-                      </tr>
-                      <tr>
-                          <td style="font-weight: bold;">จำนวนตัวอย่างทั้งหมด</td>
-                          <td>: ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
-                      </tr>
-                  </table>
-                  
-                  <!-- TABLE -->
-                  <table style="width: 100%; border-collapse: collapse; font-size: 14px;" border="1">
-                      <thead>
-                          <tr style="background: #f5f5f5; text-align: center; font-weight: bold;">
-                              <th style="padding: 6px 2px; width: 5%; border: 1px solid #555;">ลำดับ</th>
-                              <th style="padding: 6px 2px; width: 14%; border: 1px solid #555;">ชื่อ</th>
-                              <th style="padding: 6px 2px; width: 14%; border: 1px solid #555;">ตัวอย่าง</th>
-                              <th style="padding: 6px 2px; width: 15%; border: 1px solid #555;">เลขสารบบอาหาร</th>
-                              <th style="padding: 6px 2px; width: 22%; border: 1px solid #555;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
-                              <th style="padding: 6px 2px; width: 10%; border: 1px solid #555;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
-                              <th style="padding: 6px 2px; width: 10%; border: 1px solid #555;">ไอโอดีน<br>(ppm)</th>
-                              <th style="padding: 6px 2px; width: 10%; border: 1px solid #555;">สรุปผล</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${tableRowsHTML}
-                      </tbody>
-                  </table>
-                  
-                  <!-- NOTE -->
-                  <div style="font-size: 11.5px; margin-top: 5px; line-height: 1.3;">
-                      <table style="width: 100%; border: none;">
-                          <tr>
-                              <td style="width: 60px; font-weight: bold; vertical-align: top; padding-right: 5px;">หมายเหตุ</td>
-                              <td>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
-                          </tr>
-                      </table>
-                  </div>
-                  
-                  <!-- SIGNATURES -->
-                  <table style="width: 100%; margin-top: 35px; border: none; font-size: 14px; text-align: center;">
-                      <tr>
-                          <td style="width: 50%; padding: 10px;">
-                              ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>
-                              (นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข
-                          </td>
-                          <td style="width: 50%; padding: 10px;">
-                              ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>
-                              (นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข
-                          </td>
-                      </tr>
-                      <tr>
-                          <td style="width: 50%; padding: 10px; padding-top: 25px;">
-                              ลงชื่อ..........................................................ผู้รับรอง<br>
-                              (นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ
-                          </td>
-                          <td style="width: 50%; padding: 10px; padding-top: 25px;">
-                              ลงชื่อ..........................................................ผู้รับรอง<br>
-                              (นางสาวมัลลิกา สุพล)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข
-                          </td>
-                      </tr>
-                  </table>
-                  
-              </div>`;
         } else {
             let mu10003Note = '';
         if (sample.form_type === 'MU.10-003') {
@@ -8582,11 +8514,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         }
 
             const isMu10001Doc = sample.form_type === 'MU.10-001' || !sample.form_type;
-            const headerDocNameFont = isMu10001Doc ? '17px' : '11.5px';
-            const headerTextFont = isMu10001Doc ? '15px' : '11.5px';
-            const headerDocNumFont = isMu10001Doc ? '15.5px' : '12px';
-            const metaInfoFont = isMu10001Doc ? '15px' : '11.5px';
-            const footerFont = isMu10001Doc ? '14.5px' : '9.5px';
+            const isMu10005Doc = sample.form_type === 'MU.10-005';
+            const isStandardDoc = isMu10001Doc || isMu10005Doc;
+            const headerDocNameFont = isStandardDoc ? '17px' : '11.5px';
+            const headerTextFont = isStandardDoc ? '15px' : '11.5px';
+            const headerDocNumFont = isStandardDoc ? '15.5px' : '12px';
+            const metaInfoFont = isStandardDoc ? '15px' : '11.5px';
+            const footerFont = isStandardDoc ? '14px' : '9.5px';
 
             htmlContent = `
             <style>
@@ -8604,9 +8538,19 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     padding: 0 !important;
                     background: #fff !important;
                 }
-            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: ${isMu10001Doc ? '14.5px' : '10.5px'}; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:70px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:190px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div> <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
+            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '14.5px' : '10.5px'}; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:70px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:190px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div> <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
                     sample.form_type === 'MU.10-006' 
                     ? `<table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:100%; padding:1px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td style="padding:1px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
+                    : sample.form_type === 'MU.10-005'
+                    ? `<table style="width:100%; margin:0 0 6px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; line-height:1.4;"> 
+                        <tr> 
+                            <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....${sample.agency ? '<u>' + sample.agency + '</u>' : '.........................................................................'}....</td> 
+                            <td style="width:50%; padding:2px 0;">สถานที่เก็บตัวอย่าง ....${sample.location_name ? '<u>' + sample.location_name + '</u>' : '..........................................................................'}....</td> 
+                        </tr> 
+                        <tr> 
+                            <td colspan="2" style="padding:2px 0;">ตำบล ....${sample.tambon ? '<u>' + sample.tambon + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;อำเภอ ....${sample.amphoe ? '<u>' + sample.amphoe + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;จังหวัด ....${sample.province ? '<u>' + sample.province + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '.........................................'}....</td> 
+                        </tr> 
+                    </table>`
                     : `<table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:50%; padding:1px 0;">หน่วยงานที่เก็บตัวอย่าง: <u>${sample.agency || ''}</u></td> <td style="padding:1px 0;">สถานที่เก็บตัวอย่าง: <u>${sample.location_name || ''}</u></td> </tr> <tr> <td colspan="2" style="padding:1px 0;">ตำบล: <u>${sample.tambon || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;อำเภอ: <u>${sample.amphoe || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;จังหวัด: <u>${sample.province || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง: <u>${samplingDate}</u></td> </tr> </table>`
                 } <!-- MAIN TABLE -->${mainTableHTML}
 
@@ -8626,10 +8570,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 scrollY: 0,
                 x: 0,
                 y: 0,
-                width: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 780 : 1100,
-                windowWidth: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 780 : 1200
+                width: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 780 : 1100,
+                windowWidth: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 780 : 1200
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005') ? 'portrait' : 'landscape' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['css', 'legacy'] }
         };
 
@@ -8668,7 +8612,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             document.body.appendChild(iframe);
             const doc = iframe.contentWindow.document;
             doc.open();
-            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape';
+            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape';
             doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="style_v3.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
             doc.write(htmlContent);
             doc.write('</body></html>');
