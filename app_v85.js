@@ -1863,23 +1863,7 @@ document.getElementById('formNameTitle').innerText = title;
         const container = document.getElementById('globalSampleEntries');
         if (!container) return;
 
-        // Limit to max 5 samples per record (except MU.10-007) when user clicks add
-        if (isUserAction && formType !== 'MU.10-007') {
-            const currentSections = container.querySelectorAll('.sample-section').length;
-            if (currentSections >= 5) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'จำกัดจำนวนตัวอย่าง',
-                        text: 'สามารถบันทึกได้สูงสุด 5 ตัวอย่าง ต่อ 1 แบบบันทึก',
-                        confirmButtonText: 'ตกลง'
-                    });
-                } else {
-                    alert('สามารถบันทึกได้สูงสุด 5 ตัวอย่าง ต่อ 1 แบบบันทึก');
-                }
-                return;
-            }
-        }
+        // Unlimited samples per record allowed
 
         this.globalSampleIndex = (this.globalSampleIndex || 0) + 1;
 
@@ -3916,7 +3900,7 @@ document.getElementById('formNameTitle').innerText = title;
             let polarText = [];
             let isFailed = false;
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 500) {
                 if (sample['sample_name_' + idx]) {
                     const polarStr = sample['polar_value_' + idx] || '-';
                     const polarVal = parseFloat(polarStr);
@@ -4413,7 +4397,7 @@ document.getElementById('formNameTitle').innerText = title;
         if (sample.form_type === 'MU.10-001') {
             const sampleNames = [];
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 500) {
                 if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') sampleNames.push({ name: sample['sample_name_' + idx], idx: idx });
                 idx++;
             }
@@ -4550,7 +4534,7 @@ document.getElementById('formNameTitle').innerText = title;
         } else if (sample.form_type === 'MU.10-002') {
             const sampleNames = [];
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 500) {
                 if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
 
                     const tests = [];
@@ -5458,7 +5442,7 @@ document.getElementById('formNameTitle').innerText = title;
             let passCount = 0;
             let totalCount = 0;
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 500) {
                 if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                     const iodateEl = document.getElementById('analysis-iodate-' + idx);
                     if (iodateEl) {
@@ -5948,7 +5932,7 @@ document.getElementById('formNameTitle').innerText = title;
             };
 
             let idx = 1;
-            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
+            while (sample['sample_name_' + idx] !== undefined && idx <= 500) {
                 if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                     totalCount++;
                     let isPass = false;
@@ -6126,7 +6110,7 @@ document.getElementById('formNameTitle').innerText = title;
                     isPass: isPass, details2: sample['analysis_details_2_1'] || '-', substance: (sample['analysis_substance_1'] || sample.analysis_substance || '')});
             }
 
-            const ITEMS_PER_PAGE = sample.form_type === 'MU.10-002' ? 10 : 5;
+            const ITEMS_PER_PAGE = 5;
             const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
             const passPercent = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(2) : 0;
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
@@ -6307,7 +6291,7 @@ document.getElementById('formNameTitle').innerText = title;
             
             const validItems = [];
             let idx = 1;
-            while (sample['polar_value_' + idx] !== undefined && idx <= 50) {
+            while (sample['polar_value_' + idx] !== undefined && idx <= 500) {
                 if (sample['polar_value_' + idx] && sample['item_status_' + idx] !== 'rejected') {
                     validItems.push({
                         idx: idx,
@@ -6340,7 +6324,7 @@ document.getElementById('formNameTitle').innerText = title;
             const passItemsCount = passCount;
             const passItemsPercent = totalItemsCount > 0 ? ((passCount / totalItemsCount) * 100).toFixed(2) : '0.00';
 
-            const ITEMS_PER_PAGE = 10;
+            const ITEMS_PER_PAGE = 5;
             const totalPages = Math.ceil(validItems.length / ITEMS_PER_PAGE);
             let fullHtml = '';
             
@@ -6495,7 +6479,7 @@ document.getElementById('formNameTitle').innerText = title;
             const passItemsCount = passCount;
             const passItemsPercent = totalItemsCount > 0 ? ((passCount / totalItemsCount) * 100).toFixed(2) : '0.00';
 
-            const ITEMS_PER_PAGE = 10;
+            const ITEMS_PER_PAGE = 5;
             const totalPages = Math.ceil(validItems.length / ITEMS_PER_PAGE);
             let fullHtml = '';
             
@@ -7881,9 +7865,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         // Collect all dynamic sample entries from sample object keys
         let sampleItems = [];
         let idx = 1;
-        while ((sample[`sample_name_${idx}`] !== undefined || sample[`item_sampling_date_${idx}`] !== undefined) && idx <= 50) {
+        while ((sample[`sample_name_${idx}`] !== undefined || sample[`item_sampling_date_${idx}`] !== undefined) && idx <= 100) {
             if (sample.form_type === 'MU.10-003') {
                 sampleItems.push({
+                    idx: idx,
                     distributor: sample[`distributor_${idx}`] || '',
                     food_type: sample[`sample_name_${idx}`] || '',
                     oil_type: sample[`oil_type_${idx}`] || '',
@@ -7909,6 +7894,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 });
             } else if (sample.form_type === 'MU.10-006') {
                 sampleItems.push({
+                    idx: idx,
                     amphoe: sample[`amphoe_${idx}`] || '',
                     location: sample[`location_${idx}`] || '',
                     sample_name: sample[`sample_name_${idx}`] || '',
@@ -7924,6 +7910,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 });
             } else if (sample.form_type === 'MU.10-008') {
                 sampleItems.push({
+                    idx: idx,
                     distributor: sample[`distributor_${idx}`] || '',
                     name: sample[`sample_name_${idx}`] || '',
                     food_serial_no: sample[`food_serial_no_${idx}`] || '',
@@ -7952,6 +7939,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 }
             } else if (sample.form_type === 'MU.10-005') {
                 sampleItems.push({
+                    idx: idx,
                     distributor: sample[`distributor_${idx}`] || (idx === 1 ? sample.distributor : '') || '',
                     food_type: sample[`sample_name_${idx}`] || (idx === 1 ? (sample.sample_name || sample.name || sample.food_type) : '') || '',
                     food_serial_no: sample[`food_serial_no_${idx}`] || (idx === 1 ? sample.food_serial_no : '') || '',
@@ -8023,47 +8011,12 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             }
         }
 
-        if (sample.form_type !== 'MU.10-007' && sampleItems.length > 5) {
-            sampleItems = sampleItems.slice(0, 5);
-        }
-
-        // Ensure rows for the table (5 rows per record / 5 samples per form)
-        const minRowsNeeded = 5;
-        let padLoops = 0;
-        while (sampleItems.length < minRowsNeeded && padLoops++ < 15) {
-            if (sample.form_type === 'MU.10-003') {
-                sampleItems.push({ distributor:'', food_type:'', oil_type:'', fry_duration:'', replacement_type:'', last_replacement_date:'', replacement_frequency:'', replacement_reason:'', oil_disposal:'', polar_value:'' });
-            } else if (sample.form_type === 'MU.10-004') {
-                sampleItems.push({ food_category:'', food_type:'', oil_type:'', fry_duration:'', fry_count:'', replacement_type:'', replacement_frequency:'' });
-            } else if (sample.form_type === 'MU.10-008') {
-                sampleItems.push({
-                    distributor: sample[`distributor_${idx}`] || '',
-                    name: sample[`sample_name_${idx}`] || '',
-                    food_serial_no: sample[`food_serial_no_${idx}`] || '',
-                    manufacturer_info: sample[`manufacturer_info_${idx}`] || '',
-                    has_ingredient_pct: sample[`has_ingredient_pct_${idx}`] || '',
-                    has_mfg_exp: sample[`has_mfg_exp_${idx}`] || '',
-                    net_weight: sample[`net_weight_${idx}`] || '',
-                    label_summary: sample[`label_summary_${idx}`] || ''
-                });
-            } else if (sample.form_type === 'MU.10-006') {
-                sampleItems.push({ amphoe:'', location:'', sample_name:'', company:'', system:'', ocpb_advice:false, ocpb_filter_date:false, ocpb_warning:false, claim_magnetic:false, claim_molecule:false, claim_other:'', remark:'' });
-            } else if (sample.form_type === 'MU.10-008') {
-                sampleItems.push({ distributor:'', name:'', food_serial_no:'', manufacturer_info:'', has_ingredient_pct:'', has_mfg_exp:'', net_weight:'', label_summary:'' });
-            } else if (sample.form_type === 'MU.10-005') {
-                sampleItems.push({ distributor:'', food_type:'', food_serial_no:'', manufacturer_info:'', has_mfg_exp:'', net_weight:'', has_storage_warning:'', label_summary:'', iodate_value:'', test_outcome:'' });
-            } else {
-                sampleItems.push({ name:'', distributor:'', weight:'', source:'', tests:[] });
-            }
-        }
-
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) =>{
             return `<span style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; font-weight: bold !important; word-break: break-word; white-space: normal;">${checked ? '[✓]' : '[ ]'} ${txt}</span>`;
         };
 
-        let tableRows = '';
-        sampleItems.forEach((item, i) =>{
+        const buildRowHtml = (item, globalIdx) => {
             if (sample.form_type === 'MU.10-003') {
                 const polarNum = parseFloat(item.polar_value);
                 let summaryText = '';
@@ -8078,22 +8031,22 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     } catch(e) {}
                 }
 
-                tableRows += `
-                    <tr style="height: 60px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor ? (i + 1) : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_duration}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${formattedDate}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_frequency}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_reason}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_disposal}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; font-weight:bold; border:1px solid #555;">${item.polar_value}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:11px; font-weight:bold; border:1px solid #555;">${summaryText}</td> </tr>`;
+                return `
+                    <tr style="height: 60px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor ? globalIdx : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.distributor}</td> <td style="padding:4px; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.fry_duration}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${formattedDate}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_frequency}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.replacement_reason}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; border:1px solid #555;">${item.oil_disposal}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:9.5px; font-weight:bold; border:1px solid #555;">${item.polar_value}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:11px; font-weight:bold; border:1px solid #555;">${summaryText}</td> </tr>`;
             } else if (sample.form_type === 'MU.10-004') {
                 const showChecked = !!item.food_type;
                 const isPassChecked = showChecked && (sample.analysis_summary === 'ผ่าน' || sample.analysis_summary === 'ผ่านเกณฑ์มาตรฐาน');
                 const isFailChecked = showChecked && (sample.analysis_summary === 'ไม่ผ่าน' || sample.analysis_summary === 'ไม่ผ่านเกณฑ์มาตรฐาน');
 
-                tableRows += `
-                    <tr style="height: 65px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type ? (i + 1) : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_category}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.oil_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.fry_duration}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.fry_count}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.replacement_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.replacement_frequency}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${chk('ผ่าน', isPassChecked)}  
+                return `
+                    <tr style="height: 65px; page-break-inside: avoid;"> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type ? globalIdx : ''}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_category}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.oil_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.fry_duration}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.fry_count}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.replacement_type}</td> <td style="padding:4px; text-align:left; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.replacement_frequency}</td> <td style="padding:4px; vertical-align:middle; font-size:13px; border:1px solid #555;">${chk('ผ่าน', isPassChecked)}  
                             ${chk('ไม่ผ่าน', isFailChecked)}
                         </td> </tr>`;
             } else if (sample.form_type === 'MU.10-005') {
                 const hasItem = !!(item.food_type || item.distributor || item.food_serial_no || item.name);
-                tableRows += `
+                return `
                     <tr style="height: 60px; page-break-inside: avoid;"> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${hasItem ? (i + 1) : ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${hasItem ? globalIdx : ''}</td> 
                         <td style="padding:4px 4px; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.distributor || ''}</td> 
                         <td style="padding:4px 4px; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.food_type || item.name || ''}</td> 
                         <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14px; border:1px solid #555;">${item.food_serial_no || ''}</td> 
@@ -8104,6 +8057,19 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.label_summary || ''}</td> 
                         <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.iodate_value || ''}</td> 
                         <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.test_outcome || ''}</td> 
+                    </tr>`;
+            } else if (sample.form_type === 'MU.10-008') {
+                return `
+                    <tr style="height: 48px; page-break-inside: avoid; text-align: center;"> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.name ? globalIdx : ''}</td> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor || ''}</td> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.name || ''}</td> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no || ''}</td> 
+                        <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info || ''}</td> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_ingredient_pct || ''}</td> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp || ''}</td> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.net_weight || ''}</td> 
+                        <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.label_summary || ''}</td> 
                     </tr>`;
             } else {
                 const showChecked = !!item.name;
@@ -8164,10 +8130,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const hasAnyAnalysis = b_res || f_res || bl_res || s_res || a_res || b_sum || f_sum || bl_sum || s_sum || a_sum || sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
                     const hasFail = b_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่าน' || b_res === 'พบ' || f_res === 'พบ' || bl_res === 'พบ' || s_res === 'พบ' || a_res === 'พบ';
                     
+                    let sumValue = '';
                     if (showChecked && hasAnyAnalysis) {
                         sumValue = hasFail ? 'ไม่ผ่าน' : 'ผ่าน';
-                    } else {
-                        sumValue = '';
                     }
 
                     const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่านเกณฑ์มาตรฐาน');
@@ -8223,6 +8188,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     resultCell = `
                         <div style="font-size:${interpFontSize}; line-height:1.2; font-weight:bold !important; text-align:left !important; padding-left:8px !important;"> <div style="text-align:left !important;">${chk('ไม่พบ', res === 'ไม่พบ' || res2 === 'ไม่พบ')}</div> <div style="margin-top:1px; text-align:left !important;">${chk('พบ', res === 'พบ' || res2 === 'พบ')}</div> <div style="margin-top:1px; text-align:left !important;">${chk('พบปลอดภัย', res === 'พบปลอดภัย' || res2 === 'พบปลอดภัย')}</div> <div style="margin-top:1px; text-align:left !important;">${chk('พบอันตราย', res === 'พบอันตราย' || res2 === 'พบอันตราย')}</div> </div>`;
 
+                    let sumValue = '';
                     if (sample.form_type === 'MU.10-001') {
                         sumValue = sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
                     }
@@ -8238,92 +8204,89 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 const isStdRow = isMu10001Row || isMu10002Row;
                 const tdFontSizeFinal = isStdRow ? '14.5px' : '9.5px';
 
-                tableRows += `
+                return `
                     <tr style="page-break-inside: avoid; height: ${isMu10001Row ? '72px' : 'auto'}; font-weight:bold !important;"> 
-                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> 
-                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.distributor}</td> 
-                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name ? (item.labId || '') : ''}</td> 
-                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name}</td> 
-                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.weight}</td> 
-                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.source}</td> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name ? globalIdx : ''}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.distributor || ''}</td> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name ? (item.labId || (sample.lab_no ? String(parseInt(sample.lab_no, 10) + globalIdx - 1).padStart(4, '0') : '')) : ''}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name || ''}</td> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.weight || ''}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.source || ''}</td> 
                         <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${checkboxCell}</td> 
                         <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${interpretCell}</td> 
                         <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; text-align:left !important; border:1px solid #555;">${resultCell}</td> 
                         <td style="padding:3px 2px; vertical-align:middle; text-align:left !important; font-weight:bold !important; border:1px solid #555;">${summaryCell}</td> 
                     </tr>`;
             }
-        });
+        };
 
-        const samplingDate = sample.sampling_date ? new Date(sample.sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '';
-        const logoBase64 = "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";
-
-        let mainTableHTML = '';
-        if (sample.form_type === 'MU.10-003') {
-            mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important; " border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; page-break-inside: avoid;"> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ชื่อผู้จำหน่าย</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:11%;">ชนิดอาหาร</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:9%;">ชนิดน้ำมัน</th> <th colspan="5" style="text-align:center; padding:5px 3px; border:1px solid #555; width:45%;">พฤติกรรมการใช้น้ำมันทอดอาหาร</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">การกำจัด<br>น้ำมัน (3)</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:6%;">ค่าโพลาร์</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:6%;">สรุปผล</th> </tr><tr style="background:#f5f5f5; text-align:left; vertical-align:middle; page-break-inside: avoid;"><th style="text-align:center; padding:5px 3px; border:1px solid #555; width:8%;">ระยะเวลา<br>ใช้ทอด</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ลักษณะ<br>การเปลี่ยน (1)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:9%;">วันที่เปลี่ยน<br>ล่าสุด</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:8%;">ความถี่ในการ<br>เปลี่ยน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">เหตุผลที่<br>เปลี่ยน (2)</th></tr> </thead> <tbody>${tableRows}
-                    </tbody> </table>`;
-        } else if (sample.form_type === 'MU.10-004') {
-            mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important; " border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; page-break-inside: avoid;"> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:15%;">ประเภทอาหาร</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:15%;">ระบุชนิดอาหาร</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ชนิดน้ำมัน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ระยะเวลาใช้ทอด<br>(นาที/ครั้ง)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">จำนวนครั้งที่ทอด<br>(ครั้ง/วัน)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ลักษณะการเปลี่ยนน้ำมัน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ความถี่ (วัน)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ผลการตรวจ</th> </tr> </thead> <tbody>${tableRows}
-                    </tbody> </table>`;
-        } else if (sample.form_type === 'MU.10-008') {
-            mainTableHTML = `
-                <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
-                    <thead style="text-align:center;">
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
-                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
-                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
-                            <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
-                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
-                        </tr>
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tableRows}
-                    </tbody>
-                </table>
-            `;
-        } else if (sample.form_type === 'MU.10-005') {
-            mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> 
-                    <thead style="text-align:center;"> 
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px; font-weight:bold;"> 
-                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th> 
-                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th> 
-                            <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th> 
-                            <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th> 
-                            <th colspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th> 
-                        </tr> 
-                        <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px; font-weight:bold;"> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">น้ำหนักสุทธิ</th> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:9.5%;">แสดงข้อความ<br>“ควรเก็บในที่ร่ม<br>และแห้ง” (มี/ไม่มี)</th> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล<br>ตรวจฉลาก</th> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:8%;">ค่าไอโอเดท<br>(ppm)</th> 
-                            <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล</th> 
-                        </tr> 
-                    </thead> 
-                    <tbody>${tableRows}</tbody> 
-                </table>`;
-        } else {
-            const isMu10001Table = sample.form_type === 'MU.10-001' || !sample.form_type;
-            const isMu10002Table = sample.form_type === 'MU.10-002';
-            const isStdTable = isMu10001Table || isMu10002Table;
-            const tableBaseFont = isStdTable ? '14.5px' : '9.5px';
-            const subTitleFont = isStdTable ? '11.5px' : '7.5px';
-            const thFontSize = isStdTable ? '15px' : '9.5px';
-            mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:${tableBaseFont}; font-weight:bold !important; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid; font-size:${thFontSize}; font-weight:bold;"> <th style="padding:5px 2px; border:1px solid #555; width:4%; text-align:center; line-height:1.2;">ลำดับ</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ชื่อผู้จำหน่าย</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">รหัสตัวอย่าง<div style="font-weight:normal;font-size:${subTitleFont};">(สำหรับผู้ตรวจวิเคราะห์)</div></th> <th style="padding:5px 2px; border:1px solid #555; width:8%; text-align:center; line-height:1.2;">ชื่อตัวอย่าง</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">ปริมาณ<br>(กรัม)</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">แหล่งที่มา</th> <th style="padding:5px 2px; border:1px solid #555; width:16%; text-align:center; line-height:1.2;">สารที่ตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:20%; text-align:center; line-height:1.2;">การแปลผล</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ผลการตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">สรุปผล</th> </tr> </thead> <tbody style="font-weight:bold !important;">${tableRows}
-                    </tbody> </table>`;
-        }
+        const buildTableHtml = (rowsHtml) => {
+            if (sample.form_type === 'MU.10-003') {
+                return `
+                    <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important; " border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; page-break-inside: avoid;"> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:3%;">ลำดับ</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ชื่อผู้จำหน่าย</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:11%;">ชนิดอาหาร</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:9%;">ชนิดน้ำมัน</th> <th colspan="5" style="text-align:center; padding:5px 3px; border:1px solid #555; width:45%;">พฤติกรรมการใช้น้ำมันทอดอาหาร</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">การกำจัด<br>น้ำมัน (3)</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:6%;">ค่าโพลาร์</th> <th rowspan="2" style="text-align:center; padding:5px 3px; border:1px solid #555; width:6%;">สรุปผล</th> </tr><tr style="background:#f5f5f5; text-align:left; vertical-align:middle; page-break-inside: avoid;"><th style="text-align:center; padding:5px 3px; border:1px solid #555; width:8%;">ระยะเวลา<br>ใช้ทอด</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ลักษณะ<br>การเปลี่ยน (1)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:9%;">วันที่เปลี่ยน<br>ล่าสุด</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:8%;">ความถี่ในการ<br>เปลี่ยน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">เหตุผลที่<br>เปลี่ยน (2)</th></tr> </thead> <tbody>${rowsHtml}
+                        </tbody> </table>`;
+            } else if (sample.form_type === 'MU.10-004') {
+                return `
+                    <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important; " border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; text-align:left; vertical-align:middle; page-break-inside: avoid;"> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:4%;">ลำดับ</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:15%;">ประเภทอาหาร</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:15%;">ระบุชนิดอาหาร</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ชนิดน้ำมัน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ระยะเวลาใช้ทอด<br>(นาที/ครั้ง)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">จำนวนครั้งที่ทอด<br>(ครั้ง/วัน)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ลักษณะการเปลี่ยนน้ำมัน</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:10%;">ความถี่ (วัน)</th> <th style="text-align:center; padding:5px 3px; border:1px solid #555; width:12%;">ผลการตรวจ</th> </tr> </thead> <tbody>${rowsHtml}
+                        </tbody> </table>`;
+            } else if (sample.form_type === 'MU.10-008') {
+                return `
+                    <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
+                        <thead style="text-align:center;">
+                            <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
+                                <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
+                                <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
+                                <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
+                                <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
+                            </tr>
+                            <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHtml}
+                        </tbody>
+                    </table>`;
+            } else if (sample.form_type === 'MU.10-005') {
+                return `
+                    <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> 
+                        <thead style="text-align:center;"> 
+                            <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px; font-weight:bold;"> 
+                                <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th> 
+                                <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย/ร้านค้า</th> 
+                                <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th> 
+                                <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:57.5%;">การตรวจสอบฉลาก</th> 
+                                <th colspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:15%;">ผลตรวจ</th> 
+                            </tr> 
+                            <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px; font-weight:bold;"> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสารบบอาหาร</th> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:15%;">ชื่อ/ที่อยู่ ผู้ผลิต<br>หรือจัดจำหน่าย</th> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">วันผลิต/<br>หมดอายุ<br>(มี/ไม่มี)</th> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">น้ำหนักสุทธิ</th> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:9.5%;">แสดงข้อความ<br>“ควรเก็บในที่ร่ม<br>และแห้ง” (มี/ไม่มี)</th> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล<br>ตรวจฉลาก</th> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:8%;">ค่าไอโอเดท<br>(ppm)</th> 
+                                <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7%;">สรุปผล</th> 
+                            </tr> 
+                        </thead> 
+                        <tbody>${rowsHtml}</tbody> 
+                    </table>`;
+            } else {
+                const isMu10001Table = sample.form_type === 'MU.10-001' || !sample.form_type;
+                const isMu10002Table = sample.form_type === 'MU.10-002';
+                const isStdTable = isMu10001Table || isMu10002Table;
+                const tableBaseFont = isStdTable ? '14.5px' : '9.5px';
+                const subTitleFont = isStdTable ? '11.5px' : '7.5px';
+                const thFontSize = isStdTable ? '15px' : '9.5px';
+                return `
+                    <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:${tableBaseFont}; font-weight:bold !important; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid; font-size:${thFontSize}; font-weight:bold;"> <th style="padding:5px 2px; border:1px solid #555; width:4%; text-align:center; line-height:1.2;">ลำดับ</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ชื่อผู้จำหน่าย</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">รหัสตัวอย่าง<div style="font-weight:normal;font-size:${subTitleFont};">(สำหรับผู้ตรวจวิเคราะห์)</div></th> <th style="padding:5px 2px; border:1px solid #555; width:8%; text-align:center; line-height:1.2;">ชื่อตัวอย่าง</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">ปริมาณ<br>(กรัม)</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">แหล่งที่มา</th> <th style="padding:5px 2px; border:1px solid #555; width:16%; text-align:center; line-height:1.2;">สารที่ตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:20%; text-align:center; line-height:1.2;">การแปลผล</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ผลการตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">สรุปผล</th> </tr> </thead> <tbody style="font-weight:bold !important;">${rowsHtml}
+                        </tbody> </table>`;
+            }
+        };
 
         
         let htmlContent = '';
@@ -8671,132 +8634,124 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     </div>
                 </div>
             `;
-        } else if (sample.form_type === 'MU.10-008') {
-            let passCount = 0;
-            let totalCount = 0;
-            
-            let tableRowsHTML = '';
-            sampleItems.forEach((item, i) => {
-                if (item.name) {
-                    totalCount++;
-                    if (item.label_summary === 'ผ่าน') passCount++;
-                    tableRowsHTML += `
-                        <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.name}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.net_weight}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.label_summary}</td> 
-                        </tr>`;
-                }
-            });
-            
-            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
-            const analyst1 = sample.analysis_analyst || '..............................................';
-            const analystPos = sample.analysis_analyst ? (sample.analysis_analyst_position || '..............................................') : '..............................................';
-            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
-            
-            htmlContent = `
-                <div class="pdf-container" style="background:white; color:black; font-family:'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
-                    <div style="border:1.5px solid #333; margin-bottom: 0;">
-                        <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
-                            <tr>
-                                <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
-                                    <img src="${typeof logoBase64 !== 'undefined' ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : ''}" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
-                                </td>
-                                <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
-                                    <div>ประเภทเอกสาร : แบบบันทึก</div>
-                                    <div>ชื่อเอกสาร : แบบบันทึกตรวจฉลากอาหาร</div>
-                                    <div>วันที่เริ่มใช้ :</div>
-                                    <div>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
-                                </td>
-                                <td style="width:250px; text-align:right; padding:10px 15px; border-bottom:1px solid #333; font-weight:bold; vertical-align:top; line-height:1.5;">
-                                    <div>หมายเลขเอกสาร : MU.10-008</div>
-                                    <div>แก้ไขครั้งที่ : 002</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
-                        <table style="width:100%; margin-bottom:12px; font-size:13px; color:#000; border:none; border-collapse:collapse;">
-                              <tr>
-                                  <td style="width:50%; padding:4px 0;">หน่วยงานที่เก็บตัวอย่าง ${sample.agency ? '....<u>' + sample.agency + '</u>....' : '.....................................................................'}</td>
-                                  <td style="width:50%; padding:4px 0; text-align:left;">สถานที่เก็บตัวอย่าง ${sample.location_name ? '....<u>' + sample.location_name + '</u>....' : '.................................................................'}</td>
-                              </tr>
-                              <tr>
-                                  <td style="width:50%; padding:4px 0;">ตำบล ${sample.tambon ? '....<u>' + sample.tambon + '</u>....' : '...................'} อำเภอ ${sample.amphoe ? '....<u>' + sample.amphoe + '</u>....' : '...................'} จังหวัด ${sample.province ? '....<u>' + sample.province + '</u>....' : '...................'}</td>
-                                  <td style="width:50%; padding:4px 0; text-align:left;">วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '.................................................................'}</td>
-                              </tr>
-                          </table>
-                        
-                        <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
-                            <thead style="text-align:center;">
-                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
-                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
-                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
-                                    <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
-                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
-                                </tr>
-                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
-                                </tr>
-                            </thead>
-                            <tbody>${tableRowsHTML}</tbody>
-                        </table>
-                        
-                        <!-- FOOTER SIGNATURES -->
-                        <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
-                            <tr>
-                                <td style="width:33%; vertical-align:top; text-align:left; padding-right:10px;">
-                                    <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
-                                </td>
-                                <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
-                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
-                                </td>
-                                <td style="width:33%; vertical-align:top; text-align:center;">
-                                    <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div>
-                                    <div style="margin-top:4px;">ตำแหน่ง ผจก.ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div>
-                                    <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>`;
         } else {
             let mu10003Note = '';
-        if (sample.form_type === 'MU.10-003') {
-            mu10003Note = `
-            <div style="width:100%; border:none; padding:4px 0; margin:8px 0; font-size:13px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
-                <strong>หมายเหตุ โปรดระบุพฤติกรรมการใช้น้ำมันทอดอาหารและการกำจัดน้ำมัน ใช้วิธีสอบถามผู้จำหน่าย รายละเอียดดังนี้</strong><br>
-                <span style="display:inline-block; margin-left:15px;">(1) ลักษณะการเปลี่ยนถ่ายน้ำมัน กำหนดให้ A1 = ไม่เปลี่ยนเลย / A2 = เปลี่ยนบางส่วน / A3 = เปลี่ยนใหม่ทั้งหมด</span><br>
-                <span style="display:inline-block; margin-left:15px;">(2) เหตุผลที่เปลี่ยน กำหนดให้ B1 = สภาพน้ำมันเปลี่ยน / B2 = สภาพอาหารเปลี่ยน / B3 = อื่น ๆ โปรดระบุ</span><br>
-                <span style="display:inline-block; margin-left:15px;">(3) การกำจัดน้ำมัน กำหนดให้ C1 = เก็บรวบรวมน้ำมันใช้แล้วขายต่อ โปรดระบุขายต่อให้กับใครด้วย / C2 = เก็บรวบรวมน้ำมันใช้แล้วมาทิ้งเองในระบบสาธารณะ</span>
-            </div>`;
-        }
+            if (sample.form_type === 'MU.10-003') {
+                mu10003Note = `
+                <div style="width:100%; border:none; padding:4px 0; margin:8px 0; font-size:13px; line-height:1.5; color:#000; text-align:left; box-sizing:border-box;">
+                    <strong>หมายเหตุ โปรดระบุพฤติกรรมการใช้น้ำมันทอดอาหารและการกำจัดน้ำมัน ใช้วิธีสอบถามผู้จำหน่าย รายละเอียดดังนี้</strong><br>
+                    <span style="display:inline-block; margin-left:15px;">(1) ลักษณะการเปลี่ยนถ่ายน้ำมัน กำหนดให้ A1 = ไม่เปลี่ยนเลย / A2 = เปลี่ยนบางส่วน / A3 = เปลี่ยนใหม่ทั้งหมด</span><br>
+                    <span style="display:inline-block; margin-left:15px;">(2) เหตุผลที่เปลี่ยน กำหนดให้ B1 = สภาพน้ำมันเปลี่ยน / B2 = สภาพอาหารเปลี่ยน / B3 = อื่น ๆ โปรดระบุ</span><br>
+                    <span style="display:inline-block; margin-left:15px;">(3) การกำจัดน้ำมัน กำหนดให้ C1 = เก็บรวบรวมน้ำมันใช้แล้วขายต่อ โปรดระบุขายต่อให้กับใครด้วย / C2 = เก็บรวบรวมน้ำมันใช้แล้วมาทิ้งเองในระบบสาธารณะ</span>
+                </div>`;
+            }
 
             const isMu10001Doc = sample.form_type === 'MU.10-001' || !sample.form_type;
             const isMu10002Doc = sample.form_type === 'MU.10-002';
             const isMu10005Doc = sample.form_type === 'MU.10-005';
-            const isStandardDoc = isMu10001Doc || isMu10002Doc || isMu10005Doc;
+            const isMu10008Doc = sample.form_type === 'MU.10-008';
+            const isStandardDoc = isMu10001Doc || isMu10002Doc || isMu10005Doc || isMu10008Doc;
             const headerDocNameFont = isStandardDoc ? '17.5px' : '11.5px';
             const headerTextFont = isStandardDoc ? '15.5px' : '11.5px';
             const headerDocNumFont = isStandardDoc ? '16px' : '12px';
             const metaInfoFont = isStandardDoc ? '15.5px' : '11.5px';
             const footerFont = isStandardDoc ? '14.5px' : '9.5px';
+
+            const metaFieldsHtml = sample.form_type === 'MU.10-006' 
+                ? `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:100%; padding:1px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td style="padding:1px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
+                : (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-008')
+                ? `<table style="width:100%; margin:0 0 6px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; line-height:1.4;"> 
+                    <tr> 
+                        <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....${sample.agency ? '<u>' + sample.agency + '</u>' : '.........................................................................'}....</td> 
+                        <td style="width:50%; padding:2px 0;">สถานที่เก็บตัวอย่าง ....${sample.location_name ? '<u>' + sample.location_name + '</u>' : '..........................................................................'}....</td> 
+                    </tr> 
+                    <tr> 
+                        <td colspan="2" style="padding:2px 0;">ตำบล ....${sample.tambon ? '<u>' + sample.tambon + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;อำเภอ ....${sample.amphoe ? '<u>' + sample.amphoe + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;จังหวัด ....${sample.province ? '<u>' + sample.province + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '.........................................'}....</td> 
+                    </tr> 
+                </table>`
+                : `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.4;"> <tr> <td style="width:50%; padding:1px 0;">หน่วยงานที่เก็บตัวอย่าง: <u>${sample.agency || ''}</u></td> <td style="padding:1px 0;">สถานที่เก็บตัวอย่าง: <u>${sample.location_name || ''}</u></td> </tr> <tr> <td colspan="2" style="padding:1px 0;">ตำบล: <u>${sample.tambon || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;อำเภอ: <u>${sample.amphoe || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;จังหวัด: <u>${sample.province || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง: <u>${samplingDate}</u></td> </tr> </table>`;
+
+            const footerSignaturesHtml = `
+            <table style="width:100%; margin:${isStandardDoc ? '12px' : '6px'} 0 0 0; border-collapse:collapse; font-size:${footerFont}; color: #000; line-height:1.4; table-layout:fixed;"> 
+                <tr> 
+                    <td style="width:33%; vertical-align:top; padding-right:8px; text-align:left;"> 
+                        <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '...........................................'}</u>....</div> 
+                        <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.collector_position || '...................................................'}</u>....</div> 
+                        <div style="margin-top:3px; white-space:nowrap;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '.......................................'}</u>....</div> 
+                    </td> 
+                    <td style="width:33%; vertical-align:top; text-align:left; padding:0 8px;"> 
+                        <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '...........................................'}</u>....</div> 
+                        <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '...................................................') : '...................................................'}</u>....</div> 
+                        <div style="margin-top:3px; white-space:nowrap;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '.......................................'}</u>....</div> 
+                    </td> 
+                    <td style="width:34%; vertical-align:top; text-align:right;"> 
+                        <div style="white-space:nowrap;">ลงชื่อผู้ทบทวนเอกสาร ................................................</div> 
+                        <div style="margin-top:3px; white-space:nowrap; font-size:14px;">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> 
+                        <div style="margin-top:3px; white-space:nowrap;">วันที่ทบทวนเอกสาร ............................................</div> 
+                    </td> 
+                </tr> 
+            </table>`;
+
+            const ITEMS_PER_PAGE = 5;
+            const totalPages = Math.ceil(sampleItems.length / ITEMS_PER_PAGE) || 1;
+            let pagesHtml = '';
+
+            for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
+                const pageItems = sampleItems.slice(pageIdx * ITEMS_PER_PAGE, (pageIdx + 1) * ITEMS_PER_PAGE);
+                while (pageItems.length < ITEMS_PER_PAGE) {
+                    if (sample.form_type === 'MU.10-003') {
+                        pageItems.push({ distributor:'', food_type:'', oil_type:'', fry_duration:'', replacement_type:'', last_replacement_date:'', replacement_frequency:'', replacement_reason:'', oil_disposal:'', polar_value:'' });
+                    } else if (sample.form_type === 'MU.10-005') {
+                        pageItems.push({ distributor:'', food_type:'', food_serial_no:'', manufacturer_info:'', has_mfg_exp:'', net_weight:'', has_storage_warning:'', label_summary:'', iodate_value:'', test_outcome:'' });
+                    } else if (sample.form_type === 'MU.10-008') {
+                        pageItems.push({ distributor:'', name:'', food_serial_no:'', manufacturer_info:'', has_ingredient_pct:'', has_mfg_exp:'', net_weight:'', label_summary:'' });
+                    } else {
+                        pageItems.push({ name:'', distributor:'', weight:'', source:'', tests:[] });
+                    }
+                }
+
+                let pageRowsHtml = '';
+                pageItems.forEach((item, localIdx) => {
+                    const globalIdx = (pageIdx * ITEMS_PER_PAGE) + localIdx + 1;
+                    pageRowsHtml += buildRowHtml(item, globalIdx);
+                });
+
+                const pageTableHTML = buildTableHtml(pageRowsHtml);
+                const isLastPage = pageIdx === totalPages - 1;
+                const pageBreakStyle = isLastPage ? 'page-break-after: auto; break-after: auto;' : 'page-break-after: always; break-after: page;';
+
+                pagesHtml += `
+                <div class="pdf-document pdf-page" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box; ${pageBreakStyle}">
+                    <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '15px' : '10.5px'}; color: #1a1a1a;">
+                        <!-- HEADER -->
+                        <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;">
+                            <tr>
+                                <td style="width:72px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
+                                    <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:54px; height:auto;">
+                                </td>
+                                <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};">
+                                    <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
+                                    <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div>
+                                    <div><strong>วันที่เริ่มใช้ :</strong> </div>
+                                    <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div>
+                                </td>
+                                <td style="width:200px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:top; text-align:left; color:#000;">
+                                    <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div>
+                                    <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div>
+                                    <div style="margin-top:2px; font-size:${headerDocNumFont}; font-weight:bold;"><strong>หน้า :</strong> <span>${pageIdx + 1}/${totalPages}</span></div>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- META FIELDS -->
+                        ${metaFieldsHtml}
+                        <!-- MAIN TABLE -->
+                        ${pageTableHTML}
+                        ${mu10003Note}
+                        <!-- FOOTER SIGNATURES -->
+                        ${footerSignaturesHtml}
+                    </div>
+                </div>`;
+            }
 
             htmlContent = `
             <style>
@@ -8814,24 +8769,23 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     padding: 0 !important;
                     background: #fff !important;
                 }
-            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '15px' : '10.5px'}; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:72px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:54px; height:auto;"> </td> <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div> </td> <td style="width:200px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:top; text-align:left; color:#000;"> <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div> <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
-                    sample.form_type === 'MU.10-006' 
-                    ? `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:100%; padding:1px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td style="padding:1px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
-                    : sample.form_type === 'MU.10-005'
-                    ? `<table style="width:100%; margin:0 0 6px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; line-height:1.4;"> 
-                        <tr> 
-                            <td style="width:50%; padding:2px 0;">หน่วยงานที่เก็บตัวอย่าง ....${sample.agency ? '<u>' + sample.agency + '</u>' : '.........................................................................'}....</td> 
-                            <td style="width:50%; padding:2px 0;">สถานที่เก็บตัวอย่าง ....${sample.location_name ? '<u>' + sample.location_name + '</u>' : '..........................................................................'}....</td> 
-                        </tr> 
-                        <tr> 
-                            <td colspan="2" style="padding:2px 0;">ตำบล ....${sample.tambon ? '<u>' + sample.tambon + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;อำเภอ ....${sample.amphoe ? '<u>' + sample.amphoe + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;จังหวัด ....${sample.province ? '<u>' + sample.province + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '.........................................'}....</td> 
-                        </tr> 
-                    </table>`
-                    : `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.4;"> <tr> <td style="width:50%; padding:1px 0;">หน่วยงานที่เก็บตัวอย่าง: <u>${sample.agency || ''}</u></td> <td style="padding:1px 0;">สถานที่เก็บตัวอย่าง: <u>${sample.location_name || ''}</u></td> </tr> <tr> <td colspan="2" style="padding:1px 0;">ตำบล: <u>${sample.tambon || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;อำเภอ: <u>${sample.amphoe || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;จังหวัด: <u>${sample.province || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง: <u>${samplingDate}</u></td> </tr> </table>`
-                } <!-- MAIN TABLE -->${mainTableHTML}
-
-                ${mu10003Note}
-                <!-- FOOTER SIGNATURES --> <table style="width:100%; margin:${isStandardDoc ? '12px' : '6px'} 0 0 0; border-collapse:collapse; font-size:${footerFont}; color: #000; line-height:1.4; table-layout:fixed;"> <tr> <td style="width:33%; vertical-align:top; padding-right:8px; text-align:left;"> <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '...........................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.collector_position || '...................................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '.......................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:left; padding:0 8px;"> <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '...........................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '...................................................') : '...................................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '.......................................'}</u>....</div> </td> <td style="width:34%; vertical-align:top; text-align:right;"> <div style="white-space:nowrap;">ลงชื่อผู้ทบทวนเอกสาร ................................................</div> <div style="margin-top:3px; white-space:nowrap; font-size:14px;">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> <div style="margin-top:3px; white-space:nowrap;">วันที่ทบทวนเอกสาร ............................................</div> </td> </tr> </table>  </div> </div>`;
+                .pdf-page {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                }
+                @media print {
+                    .pdf-page {
+                        page-break-after: always !important;
+                        break-after: page !important;
+                    }
+                    .pdf-page:last-child {
+                        page-break-after: auto !important;
+                        break-after: auto !important;
+                    }
+                }
+            </style>
+            ${pagesHtml}
+            `;
         }
 
         const opt = {
