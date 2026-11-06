@@ -3795,7 +3795,7 @@ document.getElementById('formNameTitle').innerText = title;
                             <i class="fa-solid fa-pen-to-square"></i> บันทึกผล
                         </button>
                         ${s.status === 'summarized' ? `
-                        <button class="btn btn-secondary btn-text" onclick="app.generateSubmissionPDF({currentTarget: {dataset: {refId: '${s.ref_id}'}}})" style="white-space: nowrap; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08); padding: 6px 14px; font-size: 12px; width: 100%; max-width: 130px;">
+                        <button class="btn btn-secondary btn-text" onclick="app.generateSubmissionPDF('${s.ref_id}')" style="white-space: nowrap; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08); padding: 6px 14px; font-size: 12px; width: 100%; max-width: 130px;">
                             <i class="fa-solid fa-file-pdf"></i> ใบนำส่งตัวอย่าง
                         </button>` : ''}
                     </div>
@@ -6201,24 +6201,24 @@ document.getElementById('formNameTitle').innerText = title;
                         <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
-                        <div class="cert-pdf-header-mu10" style="margin-top: 10px; margin-bottom: 4px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 4px; font-size: 22px; color: #000; line-height: 1.2;">${reportTitle}</h4>
-                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
+                        <div class="cert-pdf-header-mu10" style="margin-top: 12px; margin-bottom: 8px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 8px; font-size: 21px; color: #000; line-height: 1.3;">${reportTitle}</h4>
+                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16.5px; font-weight: bold; line-height: 1.45; margin: 0 0 4px 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
-                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} จ.${sample.province || ''}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} จ.${sample.province || ''}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
-                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
-                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่างทั้งหมด</td>
-                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPercent}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่างทั้งหมด</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPercent}</td>
                                 </tr>
                             </table>
                         </div>
@@ -6371,24 +6371,24 @@ document.getElementById('formNameTitle').innerText = title;
                         <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; color: #000;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
-                        <div class="cert-pdf-header-mu10" style="margin-top: 15px; margin-bottom: 6px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 6px; font-size: 23px; color: #000; line-height: 1.3;">${reportTitle}</h4>
-                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.25; margin: 0; padding: 0; color: #000;">
+                        <div class="cert-pdf-header-mu10" style="margin-top: 12px; margin-bottom: 8px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 8px; font-size: 21px; color: #000; line-height: 1.3;">${reportTitle}</h4>
+                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16.5px; font-weight: bold; line-height: 1.45; margin: 0 0 4px 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
-                                    <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</td>
                                 </tr>
                             </table>
                         </div>
@@ -6514,24 +6514,24 @@ document.getElementById('formNameTitle').innerText = title;
                         <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; color: #000;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
-                        <div class="cert-pdf-header-mu10" style="margin-top: 10px; margin-bottom: 4px;">
-                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 4px; font-size: 22px; color: #000; line-height: 1.2;">${reportTitle}</h4>
-                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.15; margin: 0; padding: 0; color: #000;">
+                        <div class="cert-pdf-header-mu10" style="margin-top: 12px; margin-bottom: 8px;">
+                            <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 8px; font-size: 21px; color: #000; line-height: 1.3;">${reportTitle}</h4>
+                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16.5px; font-weight: bold; line-height: 1.45; margin: 0 0 4px 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</td>
+                                    <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
+                                    <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</td>
                                 </tr>
                             </table>
                         </div>
@@ -6679,24 +6679,24 @@ document.getElementById('formNameTitle').innerText = title;
                       </div>
                       
                       <!-- HEADER & META INFO -->
-                      <div class="cert-pdf-header-mu10005" style="margin-top: 6px; margin-bottom: 3px;">
-                          <h4 style="text-align: center; font-weight: bold; margin-top: 0; margin-bottom: 3px; font-size: 25px; color: #000; line-height: 1.2;">ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader</h4>
-                          <table class="cert-meta-mu10005" style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16px !important; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
-                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">สถานที่เก็บตัวอย่าง</td>
-                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${locationTxt}</td>
+                      <div class="cert-pdf-header-mu10005" style="margin-top: 10px; margin-bottom: 6px;">
+                          <h4 style="text-align: center; font-weight: bold; margin-top: 0; margin-bottom: 8px; font-size: 22px; color: #000; line-height: 1.3;">ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader</h4>
+                          <table class="cert-meta-mu10005" style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16.5px !important; font-weight: bold; line-height: 1.45; margin: 0 0 4px 0; padding: 0; color: #000;">
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.45; height: auto;">
+                                  <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">สถานที่เก็บตัวอย่าง</td>
+                                  <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">: &nbsp;${locationTxt}</td>
                               </tr>
-                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">วันที่รับตัวอย่าง</td>
-                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${samplingDate}</td>
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.45; height: auto;">
+                                  <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">วันที่รับตัวอย่าง</td>
+                                  <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">: &nbsp;${samplingDate}</td>
                               </tr>
-                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">วันที่ตรวจวิเคราะห์</td>
-                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${analysisDate}</td>
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.45; height: auto;">
+                                  <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">วันที่ตรวจวิเคราะห์</td>
+                                  <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">: &nbsp;${analysisDate}</td>
                               </tr>
-                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">จำนวนตัวอย่างทั้งหมด</td>
-                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.45; height: auto;">
+                                  <td style="width: 140px; font-weight: bold; white-space: nowrap; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">จำนวนตัวอย่างทั้งหมด</td>
+                                  <td style="font-weight: bold; padding: 2.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16.5px !important; line-height: 1.45;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
                               </tr>
                           </table>
                       </div>
@@ -7840,9 +7840,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         let sidebarEl = null;
         let mainContentEl = null;
         try {
-            const refId = e.currentTarget.dataset.refId;
-            const sample = this.samples.find(s =>s.ref_id === refId);
-            if(!sample) return;
+            const refId = (typeof e === 'string') ? e : (e?.currentTarget?.dataset?.refId || e?.target?.dataset?.refId || e?.dataset?.refId || e?.refId);
+            const sample = this.samples.find(s => s.ref_id === refId || s.lab_id === refId);
+            if(!sample) {
+                console.warn('Sample not found for refId:', refId);
+                return;
+            }
+
+            const samplingDate = sample.sampling_date 
+                ? new Date(sample.sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' }) 
+                : (sample.created_at ? new Date(sample.created_at).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' }) : '-');
+            const logoBase64 = 'logo.jpg';
 
             if (!sample.form_type && sample.ref_id) {
                 if (sample.ref_id.startsWith('MU001')) sample.form_type = 'MU.10-001';
@@ -8495,7 +8503,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             @page { size: A4 portrait; margin: 10mm 12mm 6mm 12mm; }
                 th { text-align: center !important; }
                 table { box-sizing: border-box !important; }
-            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 4px !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 16.5px; color: #000;"> <!-- HEADER --> <table style="width: 100%; margin:0 0 3px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:65px; padding:2px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:46px; height:auto;"> </td> <td style="padding:2px 8px; vertical-align:middle; line-height:1.25; color:#000; font-size: 16px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size: 18px;">แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div> </td> <td style="width:185px; padding:2px 8px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size: 16.5px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">MU.10-004</span></div> <div style="margin-top:2px; font-size: 16.5px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <table style="width: 100%; margin: 2px 0; border: none; border-collapse: collapse; font-size: 16px; line-height: 1.35; color: #000; table-layout: fixed;"> <tr> <td style="border: none; padding: 1px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> (เจ้าหน้าที่) หน่วยงาน: <u>${sample.agency || '................................'}</u> </td> <td style="border: none; padding: 1px 0; width: 22%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> อำเภอ: <u>${sample.amphoe || '................'}</u> </td> <td style="border: none; padding: 1px 0; width: 22%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> จังหวัด: <u>${sample.province || '................'}</u> </td> </tr> <tr> <td style="border: none; padding: 1px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> (ผู้ประกอบการ) ชื่อสถานที่: <u>${sample.location_name || '................................'}</u> </td> <td colspan="2" style="border: none; padding: 1px 0; width: 44%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> เจ้าของร้าน/ผู้ดูแล: <u>................................................</u> </td> </tr> <tr> <td style="border: none; padding: 1px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> ที่อยู่: <u>............................................................</u> </td> <td colspan="2" style="border: none; padding: 1px 0; width: 44%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> เบอร์โทร: <u>................................................</u> </td> </tr> </table> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:1px 0 2px 0;"> <!-- QUESTIONNAIRE --> <div style="width: 100%; line-height:1.2; color:#000; font-size: 16.5px; margin-bottom:3px;"> <div><strong>ประเภท</strong> ${isFlour ? '[✓]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ
+            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 4px !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: 16.5px; color: #000;"> <!-- HEADER --> <table style="width: 100%; margin:0 0 3px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:65px; padding:2px; text-align:left; border-right:1px solid #aaa; vertical-align:middle;"> <img src="logo.jpg" style="display:block; margin:auto; width:46px; height:auto;"> </td> <td style="padding:2px 8px; vertical-align:middle; line-height:1.25; color:#000; font-size: 16px;"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size: 18px;">แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div> </td> <td style="width:185px; padding:2px 8px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size: 16.5px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">MU.10-004</span></div> <div style="margin-top:2px; font-size: 16.5px;"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> <table style="width: 100%; margin: 2px 0; border: none; border-collapse: collapse; font-size: 16px; line-height: 1.35; color: #000; table-layout: fixed;"> <tr> <td style="border: none; padding: 1px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> (เจ้าหน้าที่) หน่วยงาน: <u>${sample.agency || '................................'}</u> </td> <td style="border: none; padding: 1px 0; width: 22%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> อำเภอ: <u>${sample.amphoe || '................'}</u> </td> <td style="border: none; padding: 1px 0; width: 22%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> จังหวัด: <u>${sample.province || '................'}</u> </td> </tr> <tr> <td style="border: none; padding: 1px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> (ผู้ประกอบการ) ชื่อสถานที่: <u>${sample.location_name || '................................'}</u> </td> <td colspan="2" style="border: none; padding: 1px 0; width: 44%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> เจ้าของร้าน/ผู้ดูแล: <u>................................................</u> </td> </tr> <tr> <td style="border: none; padding: 1px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> ที่อยู่: <u>............................................................</u> </td> <td colspan="2" style="border: none; padding: 1px 0; width: 44%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"> เบอร์โทร: <u>................................................</u> </td> </tr> </table> <hr style="width: 100%; border:none; border-top:1.5px solid #333; margin:1px 0 2px 0;"> <!-- QUESTIONNAIRE --> <div style="width: 100%; line-height:1.2; color:#000; font-size: 16.5px; margin-bottom:3px;"> <div><strong>ประเภท</strong> ${isFlour ? '[✓]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ
                     </div> <div style="margin-top:0px; padding-left:55px;">ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '......................................................') : '......................................................'}</u>....
                     </div> <div style="margin-top:0px; padding-left:35px;">${isMeat ? '[✓]' : '[ ]'} เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด ฯลฯ
                     </div> <div style="margin-top:0px; padding-left:55px;">ระบุชนิดอาหาร ....<u>${isMeat ? (firstItem.food_type || '......................................................') : '......................................................'}</u>....
@@ -8741,7 +8749,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;">
                             <tr>
                                 <td style="width:72px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
-                                    <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:54px; height:auto;">
+                                    <img src="logo.jpg" style="display:block; margin:auto; width:54px; height:auto;">
                                 </td>
                                 <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};">
                                     <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
