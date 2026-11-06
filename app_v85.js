@@ -3937,6 +3937,43 @@ document.getElementById('formNameTitle').innerText = title;
         }
     },
 
+    calculateMu10005Iodate(idx) {
+        const iodateEl = document.getElementById('analysis-iodate-' + idx);
+        const summaryEl = document.getElementById('analysis-summary-outcome-' + idx);
+        if (!iodateEl || !summaryEl) return;
+
+        const valStr = iodateEl.value.trim();
+        if (valStr === '') {
+            summaryEl.value = '';
+            summaryEl.style.color = '';
+            summaryEl.style.backgroundColor = '';
+            summaryEl.style.borderColor = '#cbd5e1';
+            return;
+        }
+
+        const val = parseFloat(valStr);
+        if (isNaN(val)) {
+            summaryEl.value = 'ไม่ถูกต้อง';
+            summaryEl.style.color = '#dc2626';
+            summaryEl.style.backgroundColor = '#fef2f2';
+            summaryEl.style.borderColor = '#fecaca';
+            return;
+        }
+
+        // ถ้าค่าอยู่ในช่วง 20-40 ppm จะสรุปผล: ผ่าน
+        if (val >= 20 && val <= 40) {
+            summaryEl.value = 'ผ่าน';
+            summaryEl.style.color = '#16a34a';
+            summaryEl.style.backgroundColor = '#f0fdf4';
+            summaryEl.style.borderColor = '#86efac';
+        } else {
+            summaryEl.value = 'ไม่ผ่าน';
+            summaryEl.style.color = '#dc2626';
+            summaryEl.style.backgroundColor = '#fef2f2';
+            summaryEl.style.borderColor = '#fca5a5';
+        }
+    },
+
     
     
     
@@ -4973,237 +5010,135 @@ document.getElementById('formNameTitle').innerText = title;
                 </div>
             `;
         } else if (sample.form_type === 'MU.10-008') {
-            let passCount = 0;
-            let totalCount = 0;
-            
-            let tableRowsHTML = '';
-            sampleItems.forEach((item, i) => {
-                if (item.name) {
-                    totalCount++;
-                    if (item.label_summary === 'ผ่าน') passCount++;
-                    tableRowsHTML += `
-                        <tr style="height: 40px; page-break-inside: avoid; text-align: center;"> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${i + 1}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.distributor}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.name}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.food_serial_no}</td> 
-                            <td style="padding:4px; text-align:left; font-size:12px; border:1px solid #555;">${item.manufacturer_info}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_ingredient_pct}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.has_mfg_exp}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.net_weight}</td> 
-                            <td style="padding:4px; font-size:12px; border:1px solid #555;">${item.label_summary}</td> 
-                        </tr>`;
-                }
-            });
-            
-            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
-            const analyst1 = sample.analysis_analyst || '..............................................';
-            const analystPos = sample.analysis_analyst ? (sample.analysis_analyst_position || '..............................................') : '..............................................';
-            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '............................................';
-            
-            htmlContent = `
-                <div class="pdf-container" style="background:white; color:black; font-family:'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
-                    <div style="border:1.5px solid #333; margin-bottom: 0;">
-                        <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
-                            <tr>
-                                <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
-                                    <img src="${typeof logoBase64 !== 'undefined' ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : ''}" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
-                                </td>
-                                <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
-                                    <div>ประเภทเอกสาร : แบบบันทึก</div>
-                                    <div>ชื่อเอกสาร : แบบบันทึกตรวจฉลากอาหาร</div>
-                                    <div>วันที่เริ่มใช้ :</div>
-                                    <div>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
-                                </td>
-                                <td style="width:250px; text-align:right; padding:10px 15px; border-bottom:1px solid #333; font-weight:bold; vertical-align:top; line-height:1.5;">
-                                    <div>หมายเลขเอกสาร : MU.10-008</div>
-                                    <div>แก้ไขครั้งที่ : 002</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    <div style="padding: 10px 15px 15px 15px; font-size:13px; line-height: 1.8;">
-                        <table style="width:100%; margin-bottom:12px; font-size:13px; color:#000; border:none; border-collapse:collapse;">
-                              <tr>
-                                  <td style="width:50%; padding:4px 0;">หน่วยงานที่เก็บตัวอย่าง ${sample.agency ? '....<u>' + sample.agency + '</u>....' : '.....................................................................'}</td>
-                                  <td style="width:50%; padding:4px 0; text-align:left;">สถานที่เก็บตัวอย่าง ${sample.location_name ? '....<u>' + sample.location_name + '</u>....' : '.................................................................'}</td>
-                              </tr>
-                              <tr>
-                                  <td style="width:50%; padding:4px 0;">ตำบล ${sample.tambon ? '....<u>' + sample.tambon + '</u>....' : '...................'} อำเภอ ${sample.amphoe ? '....<u>' + sample.amphoe + '</u>....' : '...................'} จังหวัด ${sample.province ? '....<u>' + sample.province + '</u>....' : '...................'}</td>
-                                  <td style="width:50%; padding:4px 0; text-align:left;">วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '.................................................................'}</td>
-                              </tr>
-                          </table>
-                        
-                        <table style="width:100%; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:13px;" border="1">
-                            <thead style="text-align:center;">
-                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; page-break-inside: avoid; font-size:13px;">
-                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:3.5%;">ลำดับ</th>
-                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ชื่อผู้จำหน่าย</th>
-                                    <th colspan="6" style="text-align:center; padding:4px 2px; border:1px solid #555; width:72.5%;">การตรวจสอบฉลากอาหาร</th>
-                                    <th rowspan="2" style="text-align:center; padding:4px 2px; border:1px solid #555; width:12%;">ผลตรวจฉลากอาหาร</th>
-                                </tr>
-                                <tr style="background:#f5f5f5; text-align:center; vertical-align:middle; font-size:13px;">
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">ชื่ออาหาร/ยี่ห้อ</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:12%;">เลขสาระบบอาหาร</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:20%;">ชื่อผู้ผลิตและที่ตั้ง/นำเข้า</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">ส่วนประกอบสำคัญ<br>เป็นร้อยละ (มี/ไม่มี)</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:10.5%;">วันผลิตหรือ<br>หมดอายุ (มี/ไม่มี)</th>
-                                    <th style="text-align:center; padding:3px 2px; border:1px solid #555; width:7.5%;">ปริมาณสุทธิ</th>
-                                </tr>
-                            </thead>
-                            <tbody>${tableRowsHTML}</tbody>
-                        </table>
-                        
-                        <!-- FOOTER SIGNATURES -->
-                        <table style="width: 100%; margin:30px 0 0 0; border-collapse:collapse; font-size:12px; color: #000; line-height:1.6;">
-                            <tr>
-                                <td style="width:33%; vertical-align:top; text-align:left; padding-right:10px;">
-                                    <div>ลงชื่อผู้เก็บตัวอย่าง ....${sample.collector_name ? '<u>' + sample.collector_name + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">ตำแหน่ง ....${sample.collector_position ? '<u>' + sample.collector_position + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '............................................'}....</div>
-                                </td>
-                                <td style="width:33%; vertical-align:top; text-align:center; padding:0 10px;">
-                                    <div>ลงชื่อผู้ตรวจวิเคราะห์ ....${sample.analysis_analyst ? '<u>' + sample.analysis_analyst + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">ตำแหน่ง ....${analystPos ? '<u>' + analystPos + '</u>' : '................................................'}....</div>
-                                    <div style="margin-top:4px;">วันที่ตรวจวิเคราะห์ ....${analysisDate ? '<u>' + analysisDate + '</u>' : '............................................'}....</div>
-                                </td>
-                                <td style="width:33%; vertical-align:top; text-align:center;">
-                                    <div>ลงชื่อผู้ทบทวนเอกสาร ................................................</div>
-                                    <div style="margin-top:4px;">ตำแหน่ง ผจก.ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div>
-                                    <div style="margin-top:4px;">วันที่ทบทวนเอกสาร ............................................</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>`;
+            container.innerHTML = `
+                <div class="form-section-divider"><i class="fa-solid fa-tags"></i> ผลการตรวจสอบฉลากอาหาร (MU.10-008)</div>
+                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
+                    <p style="margin:0; color:#475569; font-size:14px;"><i class="fa-solid fa-circle-check" style="color:#16a34a; margin-right:6px;"></i>รายการตรวจฉลากอาหารได้รับการบันทึกผลการตรวจสอบเรียบร้อยแล้วในขั้นตอนเก็บตัวอย่าง</p>
+                </div>
+            `;
         } else if (sample.form_type === 'MU.10-005') {
-            let passCount = 0;
-            let totalCount = 0;
             const sampleItems = [];
-            let itemIdx = 1;
-            while (sample['sample_name_'+itemIdx] !== undefined && itemIdx <= 50) {
-                sampleItems.push({
-                    food_type: sample['sample_name_'+itemIdx] || '',
-                    distributor: sample['distributor_'+itemIdx] || sample.distributor || '',
-                    food_serial_no: sample['food_serial_no_'+itemIdx] || '-',
-                    manufacturer_info: sample['manufacturer_info_'+itemIdx] || '-',
-                    has_mfg_exp: sample['has_mfg_exp_'+itemIdx] || '-',
-                    iodate_value: sample['iodate_value_'+itemIdx] || '-',
-                    test_outcome: sample['test_outcome_'+itemIdx] || '-'
-                });
-                itemIdx++;
+            let idx = 1;
+            while ((sample['sample_name_' + idx] !== undefined || sample['distributor_' + idx] !== undefined) && idx <= 50) {
+                if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+                    sampleItems.push({
+                        idx: idx,
+                        name: sample['sample_name_' + idx],
+                        distributor: sample['distributor_' + idx] || sample.distributor || '',
+                        food_serial_no: sample['food_serial_no_' + idx] || '',
+                        net_weight: sample['net_weight_' + idx] || '',
+                        iodate: sample['iodate_value_' + idx] !== undefined ? sample['iodate_value_' + idx] : (sample['analysis_iodate_' + idx] !== undefined ? sample['analysis_iodate_' + idx] : ((idx === 1 && sample.iodate_value !== undefined) ? sample.iodate_value : '')),
+                        summary: sample['test_outcome_' + idx] || sample['analysis_summary_' + idx] || (idx === 1 ? (sample.test_outcome || sample.analysis_summary || '') : '')
+                    });
+                }
+                idx++;
             }
-            
-            let tableRowsHTML = '';
-            sampleItems.forEach((item, i) => {
-                if (item.food_type) {
-                    totalCount++;
-                    if (item.test_outcome === 'ผ่าน') passCount++;
-                    
-                    const isFail = item.test_outcome === 'ไม่ผ่าน';
-                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
-                    
-                    tableRowsHTML += `
-                        <tr class="${failClass}" style="page-break-inside: avoid; text-align: center; ${failStyle}"> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${i + 1}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.distributor}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.food_type}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.food_serial_no}</td> 
-                            <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000; ${failStyle}">${item.manufacturer_info}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.has_mfg_exp}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.iodate_value}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.test_outcome}</td> 
-                        </tr>`;
+            if (sampleItems.length === 0) {
+                sampleItems.push({
+                    idx: 1,
+                    name: sample.sample_name || sample.name || 'เกลือบริโภค',
+                    distributor: sample.distributor || '',
+                    food_serial_no: sample.food_serial_no || '',
+                    net_weight: sample.net_weight || '',
+                    iodate: sample.iodate_value_1 !== undefined ? sample.iodate_value_1 : (sample.analysis_iodate_1 !== undefined ? sample.analysis_iodate_1 : (sample.iodate_value || sample.analysis_iodate || '')),
+                    summary: sample.test_outcome_1 || sample.analysis_summary_1 || sample.test_outcome || sample.analysis_summary || ''
+                });
+            }
+
+            let html = `
+                <div class="form-section-divider">
+                    <i class="fa-solid fa-cookie-bite"></i> ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค (MU.10-005)
+                </div>
+            `;
+
+            sampleItems.forEach(item => {
+                const itemLabNo = this.getItemLabNo(sample, item.idx);
+                const curIodate = (item.iodate !== '-' && item.iodate !== null && item.iodate !== undefined) ? item.iodate : '';
+                const curSummary = (item.summary !== '-' && item.summary !== null && item.summary !== undefined) ? item.summary : '';
+
+                html += `
+                    <div style="background:#ffffff; padding:18px 20px; border-radius:12px; border:1.5px solid #e2e8f0; margin-bottom:16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                            <div style="font-weight:700; color:#0f172a; font-size:15px; display:inline-flex; align-items:center; gap:8px;">
+                                <span style="background:#0f766e; color:#fff; width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:bold;">${item.idx}</span>
+                                <span>รายการ: <strong style="color:#0f766e;">${item.name}</strong></span>
+                                ${item.distributor ? `<span style="font-size:13px; color:#64748b; font-weight:normal;">(ผู้จำหน่าย: ${item.distributor})</span>` : ''}
+                            </div>
+                            <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 12px; border-radius:9999px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง: <strong style="font-family:monospace; font-size:13.5px;">${itemLabNo}</strong>
+                            </span>
+                        </div>
+
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <!-- ช่องสำหรับบันทึกผลตรวจค่า ไอโอเดท(ppm) -->
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="analysis-iodate-${item.idx}" style="font-weight:700; color:#0f172a; font-size:14px; display:flex; align-items:center; justify-content:space-between;">
+                                    <span>
+                                        <i class="fa-solid fa-flask" style="color:#0f766e; margin-right:6px;"></i>
+                                        ค่าไอโอเดท (ppm) <span class="required" style="color:#ef4444;">*</span>
+                                    </span>
+                                    <span style="font-size:11.5px; color:#0f766e; font-weight:normal; background:#f0fdfa; border:1px solid #ccfbf1; padding:2px 8px; border-radius:6px;">
+                                        เกณฑ์มาตรฐาน: 20 - 40 ppm
+                                    </span>
+                                </label>
+                                <div style="position:relative; margin-top:4px;">
+                                    <input type="number" 
+                                           step="any" 
+                                           min="0" 
+                                           id="analysis-iodate-${item.idx}" 
+                                           name="analysis_iodate_${item.idx}" 
+                                           value="${curIodate}" 
+                                           placeholder="เช่น 25.4" 
+                                           required 
+                                           class="form-control" 
+                                           style="font-size:16px; font-weight:700; padding:10px 50px 10px 14px; border-radius:8px; border:1.5px solid #cbd5e1;" 
+                                           oninput="app.calculateMu10005Iodate(${item.idx})">
+                                    <span style="position:absolute; right:12px; top:50%; transform:translateY(-50%); font-weight:600; color:#64748b; font-size:13px;">ppm</span>
+                                </div>
+                                <span class="input-helper" style="font-size:12px; color:#64748b; margin-top:4px; display:block;">
+                                    กรอกตัวเลขค่าไอโอเดทที่ตรวจวัดได้จากเครื่อง I-Reader
+                                </span>
+                            </div>
+
+                            <!-- สรุปผล -->
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="analysis-summary-outcome-${item.idx}" style="font-weight:700; color:#0f172a; font-size:14px;">
+                                    สรุปผล <span class="required" style="color:#ef4444;">*</span>
+                                </label>
+                                <div style="margin-top:4px;">
+                                    <input type="text" 
+                                           id="analysis-summary-outcome-${item.idx}" 
+                                           name="analysis_summary_outcome_${item.idx}" 
+                                           value="${curSummary}" 
+                                           readonly 
+                                           class="readonly-input" 
+                                           placeholder="คำนวณอัตโนมัติ" 
+                                           style="font-weight:700; font-size:15px; padding:10px 14px; border-radius:8px; border:1.5px solid #cbd5e1;">
+                                </div>
+                                <span class="input-helper" style="font-size:12px; color:#64748b; margin-top:4px; display:block;">
+                                    <i class="fa-solid fa-wand-magic-sparkles" style="color:#0f766e;"></i> ระบบประเมินอัตโนมัติ: ค่า 20 - 40 ppm = ผ่าน (นอกเกณฑ์ = ไม่ผ่าน)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="form-group" style="margin-top: 14px;">
+                    <label for="analysis-comment" style="font-weight: 600; color: #334155;">หมายเหตุเพิ่มเติม</label>
+                    <input type="text" id="analysis-comment" class="form-control" placeholder="คำชี้แจงเพิ่มเติมถ้ามี" value="${sample.analysis_comment || ''}">
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            sampleItems.forEach(item => {
+                const curIodate = (item.iodate !== '-' && item.iodate !== null && item.iodate !== undefined) ? item.iodate : '';
+                if (curIodate !== '') {
+                    this.calculateMu10005Iodate(item.idx);
                 }
             });
-            
-            const passPct = totalCount > 0 ? ((passCount / totalCount) * 100).toFixed(0) : 0;
-            const samplingDate = sample.sampling_date ? new Date(sample.sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric' }) : '-';
-            const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '-';
-            const locationTxt = `${sample.location_name || ''} ${sample.amphoe ? 'อำเภอ'+sample.amphoe : ''} ${sample.province ? 'จังหวัด'+sample.province : ''}`;
-
-            const fullHtmlResult = `
-              <div class="pdf-document cert-pdf-border" style="width: 780px !important; height: 1103px !important; max-height: 1103px !important; display: block; position: relative; margin: 0 auto; padding: 155px 45px 100px 45px; box-sizing: border-box; background-color: white; color: black; background-size: 100% 100% !important; background-repeat: no-repeat !important;">
-                  <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
-                  <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style> 
-                  
-                  <!-- HEADER -->
-                  <div style="position: relative; height: 20px; margin-bottom: 5px;">
-                      <div style="position: absolute; top: 0; left: 0; font-size: 13px;">
-                          RD-005
-                      </div>
-                      <div style="position: absolute; top: 0; right: 0; text-align: right; font-size: 13px;">
-                          หน้าที่ 1/1
-                      </div>
-                  </div>
-                  
-                  <!-- TITLE -->
-                  <div style="text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 10px;">
-                      ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader
-                  </div>
-                  
-                  <!-- META INFO -->
-                  <table style="width: 100%; table-layout: fixed; border: none; font-size: 14px; margin-bottom: 5px; line-height: 1.2;">
-                      <tr>
-                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">สถานที่เก็บตัวอย่าง</td>
-                          <td style="padding: 2px 0;">: ${locationTxt}</td>
-                      </tr>
-                      <tr>
-                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">วันที่รับตัวอย่าง</td>
-                          <td style="padding: 2px 0;">: ${samplingDate}</td>
-                      </tr>
-                      <tr>
-                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">วันที่ตรวจวิเคราะห์</td>
-                          <td style="padding: 2px 0;">: ${analysisDate}</td>
-                      </tr>
-                      <tr>
-                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">จำนวนตัวอย่างทั้งหมด</td>
-                          <td style="padding: 2px 0;">: ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
-                      </tr>
-                  </table>
-                  
-                  <!-- TABLE -->
-                  <table style="width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #000; margin-top: 5px;">
-                      <thead>
-                          <tr style="text-align: center; font-weight: bold;">
-                              <th style="padding: 4px 2px; width: 5%; border: 1px solid #000;">ลำดับ</th>
-                              <th style="padding: 4px 2px; width: 14%; border: 1px solid #000;">ชื่อ</th>
-                              <th style="padding: 4px 2px; width: 13%; border: 1px solid #000;">ตัวอย่าง</th>
-                              <th style="padding: 4px 2px; width: 15%; border: 1px solid #000;">เลขสารบบอาหาร</th>
-                              <th style="padding: 4px 2px; width: 23%; border: 1px solid #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือ<br>จัดจำหน่าย</th>
-                              <th style="padding: 4px 2px; width: 12%; border: 1px solid #000;">วันผลิต/<br>หมดอายุ/ควร<br>บริโภคก่อน</th>
-                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">ไอโอดีน<br>(ppm)</th>
-                              <th style="padding: 4px 2px; width: 9%; border: 1px solid #000;">สรุปผล</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${tableRowsHTML}
-                      </tbody>
-                  </table>
-                  
-                  <!-- NOTE -->
-                  <div style="font-size: 11px; margin-top: 5px; line-height: 1.2;">
-                      <table style="width: 100%; border: none;">
-                          <tr>
-                              <td style="width: 60px; font-weight: bold; vertical-align: top; padding-right: 5px;">หมายเหตุ</td>
-                              <td>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</td>
-                          </tr>
-                      </table>
-                  </div>
-                  
-                  <!-- SIGNATURES -->
-                  <div class="cert-signatures-grid" style="font-size: 13px; color: #000; margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center;">
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวมัลลิกา สุพล)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</div>`}
-                  </div>
-                  
-              </div>`;
-
-            htmlContent = fullHtmlResult;
         } else {
             // Generic form for other form types
             const labRange = this.getSampleLabNoRange(sample);
@@ -5503,38 +5438,51 @@ document.getElementById('formNameTitle').innerText = title;
         } else if (sample.form_type === 'MU.10-005') {
             let passCount = 0;
             let totalCount = 0;
-                let idx = 1;
-                while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
-                    if (sample['sample_name_' + idx]) {
-                        const iodateEl = document.getElementById('analysis-iodate-' + idx);
-                        if (iodateEl) {
-                            totalCount++;
-                            sample['iodate_value_' + idx] = iodateEl.value;
-                            sample['analysis_iodate_' + idx] = iodateEl.value;
-                            const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
-                            sample['test_outcome_' + idx] = summary;
-                            sample['analysis_summary_' + idx] = summary;
-                            if (summary === 'ผ่าน') passCount++;
-                        }
-                    }
-                    idx++;
-                }
-                
-                // Fallback check
-                if (totalCount === 0) {
-                    const iodateEl = document.getElementById('analysis-iodate-1');
+            let idx = 1;
+            while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
+                if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+                    const iodateEl = document.getElementById('analysis-iodate-' + idx);
                     if (iodateEl) {
                         totalCount++;
-                        sample['iodate_value_1'] = iodateEl.value;
-                        sample['analysis_iodate_1'] = iodateEl.value;
-                        const summary = document.getElementById('analysis-summary-outcome-1')?.value || '';
-                        sample['test_outcome_1'] = summary;
-                        sample['analysis_summary_1'] = summary;
+                        const iodateVal = iodateEl.value.trim();
+                        sample['iodate_value_' + idx] = iodateVal;
+                        sample['analysis_iodate_' + idx] = iodateVal;
+                        const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
+                        sample['test_outcome_' + idx] = summary;
+                        sample['analysis_summary_' + idx] = summary;
                         if (summary === 'ผ่าน') passCount++;
                     }
                 }
+                idx++;
+            }
+            
+            // Fallback check
+            if (totalCount === 0) {
+                const iodateEl = document.getElementById('analysis-iodate-1');
+                if (iodateEl) {
+                    totalCount++;
+                    const iodateVal = iodateEl.value.trim();
+                    sample['iodate_value_1'] = iodateVal;
+                    sample['analysis_iodate_1'] = iodateVal;
+                    const summary = document.getElementById('analysis-summary-outcome-1')?.value || '';
+                    sample['test_outcome_1'] = summary;
+                    sample['analysis_summary_1'] = summary;
+                    if (summary === 'ผ่าน') passCount++;
+                }
+            }
 
-                if (totalCount > 0) {
+            if (totalCount > 0) {
+                const firstIodate = sample.iodate_value_1 || sample['iodate_value_1'] || '';
+                const firstSummary = sample.test_outcome_1 || sample['test_outcome_1'] || '';
+                sample.iodate_value = firstIodate;
+                sample.analysis_iodate = firstIodate;
+                sample.test_outcome = firstSummary;
+
+                if (totalCount === 1) {
+                    sample.analysis_summary = firstSummary;
+                    sample.analysis_details = `ตรวจพบปริมาณไอโอเดท ${firstIodate} ppm (${firstSummary})`;
+                    sample.analysis_interpretation = `ปริมาณไอโอดีน ${firstIodate} ppm`;
+                } else {
                     if (passCount === totalCount) {
                         sample.analysis_summary = 'ผ่าน';
                     } else if (passCount === 0) {
@@ -5542,7 +5490,10 @@ document.getElementById('formNameTitle').innerText = title;
                     } else {
                         sample.analysis_summary = `ผ่าน ${passCount} / ไม่ผ่าน ${totalCount - passCount}`;
                     }
+                    sample.analysis_details = `ตรวจทั้งหมด ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง`;
+                    sample.analysis_interpretation = `ผ่าน ${passCount} จาก ${totalCount} รายการ`;
                 }
+            }
             } else if (sample.form_type === 'MU.10-004') {
                 let passCount = 0;
                 let totalCount = 0;
@@ -6643,10 +6594,21 @@ document.getElementById('formNameTitle').innerText = title;
                     food_serial_no: sample['food_serial_no_'+itemIdx] || '-',
                     manufacturer_info: sample['manufacturer_info_'+itemIdx] || '-',
                     has_mfg_exp: sample['has_mfg_exp_'+itemIdx] || '-',
-                    iodate_value: sample['iodate_value_'+itemIdx] || '-',
-                    test_outcome: sample['test_outcome_'+itemIdx] || '-'
+                    iodate_value: sample['iodate_value_'+itemIdx] || (itemIdx === 1 ? sample.iodate_value : '') || '-',
+                    test_outcome: sample['test_outcome_'+itemIdx] || (itemIdx === 1 ? sample.test_outcome : '') || '-'
                 });
                 itemIdx++;
+            }
+            if (sampleItems.length === 0 && (sample.sample_name || sample.name)) {
+                sampleItems.push({
+                    food_type: sample.sample_name || sample.name || '',
+                    distributor: sample.distributor || '',
+                    food_serial_no: sample.food_serial_no || '-',
+                    manufacturer_info: sample.manufacturer_info || '-',
+                    has_mfg_exp: sample.has_mfg_exp || '-',
+                    iodate_value: sample.iodate_value_1 || sample.iodate_value || '-',
+                    test_outcome: sample.test_outcome_1 || sample.test_outcome || '-'
+                });
             }
             
             let tableRowsHTML = '';
