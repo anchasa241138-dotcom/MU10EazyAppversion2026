@@ -6714,7 +6714,7 @@ document.getElementById('formNameTitle').innerText = title;
                   </div>
                   
                   <!-- SIGNATURES -->
-                  <div class="cert-signatures-grid" style="font-size: 18.5px; font-weight: bold; color: #000; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; text-align: center;">
+                  <div class="cert-signatures-grid cert-signatures-mu10005" style="font-size: 16px !important; font-weight: bold; color: #000; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; text-align: center;">
                       ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
                       ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
                       ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ</div>`}

@@ -8156,3 +8156,29 @@ html, body {
   color: #000000 !important;
 }
 
+/* MU.10-005 (RD-005) Signatures Area - Match table font size (16px) */
+#certificatePDFContainer .cert-signatures-mu10005,
+#certificatePDFContainer .cert-signatures-mu10005 *,
+.cert-signatures-mu10005,
+.cert-signatures-mu10005 * {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #000000 !important;
+  line-height: 1.25 !important;
+}
+
+#certificatePDFContainer .cert-signatures-mu10005 .sig-name,
+#certificatePDFContainer .cert-signatures-mu10005 .sig-title,
+.cert-signatures-mu10005 .sig-name,
+.cert-signatures-mu10005 .sig-title {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-signatures-mu10005 .placeholder-signature,
+.cert-signatures-mu10005 .placeholder-signature {
+  font-size: 13px !important;
+}
+
