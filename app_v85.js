@@ -8047,7 +8047,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         // Checkbox Helper for PDF
         const chk = (txt, checked = false) =>{
-            return `<span style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; font-weight: normal !important; word-break: break-word; white-space: normal;">${checked ? '[✓]' : '[ ]'} ${txt}</span>`;
+            return `<span style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; font-weight: bold !important; word-break: break-word; white-space: normal;">${checked ? '[✓]' : '[ ]'} ${txt}</span>`;
         };
 
         let tableRows = '';
@@ -8143,16 +8143,37 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const mu2LineHeight = '1.32';
 
                     checkboxCell = `
-                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('สารบอแรกซ์', isBoraxChecked)}</div> <div>${chk('สารฟอร์มาลิน', isFormalinChecked)}</div> <div>${chk('สารฟอกขาว', isBleachChecked)}</div> <div>${chk('สารกันรา (กรดซาลิซิลิค)', isSalicylicChecked)}</div> <div>${chk('สารเร่งเนื้อแดง', isAgonistChecked)}</div> </div>`;
+                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight}; font-weight:bold !important;"> <div>${chk('สารบอแรกซ์', isBoraxChecked)}</div> <div>${chk('สารฟอร์มาลิน', isFormalinChecked)}</div> <div>${chk('สารฟอกขาว', isBleachChecked)}</div> <div>${chk('สารกันรา (กรดซาลิซิลิค)', isSalicylicChecked)}</div> <div>${chk('สารเร่งเนื้อแดง', isAgonistChecked)}</div> </div>`;
 
                     interpretCell = `
-                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('สีแดง', b_interp === 'สีแดง')}  ${chk('สีส้มแดง', b_interp === 'สีส้มแดง')}  ${chk('สีเหลือง', b_interp === 'สีเหลือง')}</div> <div>${chk('ชมพู', f_interp === 'สีชมพู')}  ${chk('สีแดง', f_interp === 'สีแดง')}  ${chk('สีเหลือง', f_interp === 'สีเหลือง')}  ${chk('ไม่มีสี', f_interp === 'ไม่มีสี')}</div> <div>${chk('ตะกอนสีเทาดำ', bl_interp === 'ตะกอนสีเทาดำ')}  ${chk('สีฟ้า', bl_interp === 'สีฟ้า')}  ${chk('ไม่มีสี', bl_interp === 'ไม่มีสี')}</div> <div>${chk('สีม่วงดำ', s_interp === 'สีม่วงดำ')}  ${chk('สีเหลือง', s_interp === 'สีเหลือง')}  ${chk('สีเขียว', s_interp === 'สีเขียว')}</div> <div>${chk('1 ขีด (Control)', a_interp === '1 ขีด (Control)')}  ${chk('2 ขีด (Control) และ (Test)', a_interp === '2 ขีด (Control) และ (Test)')}</div> </div>`;
+                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight}; font-weight:bold !important;"> <div>${chk('สีแดง', b_interp === 'สีแดง')}  ${chk('สีส้มแดง', b_interp === 'สีส้มแดง')}  ${chk('สีเหลือง', b_interp === 'สีเหลือง')}</div> <div>${chk('ชมพู', f_interp === 'สีชมพู')}  ${chk('สีแดง', f_interp === 'สีแดง')}  ${chk('สีเหลือง', f_interp === 'สีเหลือง')}  ${chk('ไม่มีสี', f_interp === 'ไม่มีสี')}</div> <div>${chk('ตะกอนสีเทาดำ', bl_interp === 'ตะกอนสีเทาดำ')}  ${chk('สีฟ้า', bl_interp === 'สีฟ้า')}  ${chk('ไม่มีสี', bl_interp === 'ไม่มีสี')}</div> <div>${chk('สีม่วงดำ', s_interp === 'สีม่วงดำ')}  ${chk('สีเหลือง', s_interp === 'สีเหลือง')}  ${chk('สีเขียว', s_interp === 'สีเขียว')}</div> <div>${chk('1 ขีด (Control)', a_interp === '1 ขีด (Control)')}  ${chk('2 ขีด (Control) และ (Test)', a_interp === '2 ขีด (Control) และ (Test)')}</div> </div>`;
+
+                    // Single pair for Result and Summary (MU.10-002)
+                    const hasAnyAnalysis = b_res || f_res || bl_res || s_res || a_res || b_sum || f_sum || bl_sum || s_sum || a_sum || sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
+                    const hasFail = b_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่าน' || b_res === 'พบ' || f_res === 'พบ' || bl_res === 'พบ' || s_res === 'พบ' || a_res === 'พบ';
+                    
+                    if (showChecked && hasAnyAnalysis) {
+                        sumValue = hasFail ? 'ไม่ผ่าน' : 'ผ่าน';
+                    } else {
+                        sumValue = '';
+                    }
+
+                    const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่านเกณฑ์มาตรฐาน');
+                    const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
+
+                    const isDetected = showChecked && (isFailChecked || b_res === 'พบ' || f_res === 'พบ' || bl_res === 'พบ' || s_res === 'พบ' || a_res === 'พบ');
+                    const isNotDetected = showChecked && isPassChecked && !isDetected;
 
                     resultCell = `
-                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('ไม่พบ', b_res === 'ไม่พบ')} ${chk('พบ', b_res === 'พบ')}</div> <div>${chk('ไม่พบ', f_res === 'ไม่พบ')} ${chk('พบ', f_res === 'พบ')}</div> <div>${chk('ไม่พบ', bl_res === 'ไม่พบ')} ${chk('พบ', bl_res === 'พบ')}</div> <div>${chk('ไม่พบ', s_res === 'ไม่พบ')} ${chk('พบ', s_res === 'พบ')}</div> <div>${chk('ไม่พบ', a_res === 'ไม่พบ')} ${chk('พบ', a_res === 'พบ')}</div> </div>`;
+                        <div style="font-size:14.5px; line-height:1.35; font-weight:bold !important; text-align:center;">
+                            <div>${chk('ไม่พบ', isNotDetected)} &nbsp; ${chk('พบ', isDetected)}</div>
+                        </div>`;
                         
                     summaryCell = `
-                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('ผ่าน', (b_sum === 'ผ่าน' || b_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (b_sum === 'ไม่ผ่าน' || b_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (f_sum === 'ผ่าน' || f_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (f_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (bl_sum === 'ผ่าน' || bl_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (bl_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (s_sum === 'ผ่าน' || s_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (s_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (a_sum === 'ผ่าน' || a_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (a_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> </div>`;
+                        <div style="font-size:14.5px; line-height:1.35; font-weight:bold !important; text-align:center;">
+                            <div>${chk('ผ่าน', isPassChecked)}</div>
+                            <div style="margin-top:3px;">${chk('ไม่ผ่าน', isFailChecked)}</div>
+                        </div>`;
                 } else {
                     const sub = showChecked ? (sample['analysis_substance_' + (item.idx || 1)] || '') : '';
                     const interp = showChecked ? (sample['analysis_interpretation_' + (item.idx || 1)] || '') : '';
@@ -8181,67 +8202,41 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const interpFontSize = isMu10001 ? '13.5px' : '9.5px';
 
                     checkboxCell = `
-                        <div style="font-size:${cellFontSize}; line-height:1.25;"> <div>${chk('ยาฆ่าแมลง (GT Kit)', isGtChecked)}</div> <div style="margin-top:2px;">${chk('ยาฆ่าแมลง (TM/2 Kit)', isTmChecked)}</div> </div>`;
+                        <div style="font-size:${cellFontSize}; line-height:1.25; font-weight:bold !important;"> <div>${chk('ยาฆ่าแมลง (GT Kit)', isGtChecked)}</div> <div style="margin-top:2px;">${chk('ยาฆ่าแมลง (TM/2 Kit)', isTmChecked)}</div> </div>`;
 
                     interpretCell = `
-                        <div style="font-size:${interpFontSize}; line-height:1.15;"> <div>${chk('สีตัวอย่าง = สีควบคุม', interp === 'สีตัวอย่าง = สีควบคุม' || interp2 === 'สีตัวอย่าง = สีควบคุม')}</div> <div style="margin-top:1px;">${chk('สีควบคุม >สีตัวอย่าง < สีตัดสิน', (interp.includes('สีควบคุม') && interp.includes('สีตัดสิน') && interp.includes('>')) || (interp2.includes('สีควบคุม') && interp2.includes('สีตัดสิน') && interp2.includes('>')))}</div> <div style="margin-top:1px;">${chk('สีตัวอย่าง >= สีตัดสิน', interp.includes('≥') || interp.includes('>=') || interp2.includes('≥') || interp2.includes('>='))}</div> <div style="margin-top:1px;">${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' || interp2 === 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div> <div style="margin-top:1px;">${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' || interp2 === 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div> </div>`;
+                        <div style="font-size:${interpFontSize}; line-height:1.15; font-weight:bold !important;"> <div>${chk('สีตัวอย่าง = สีควบคุม', interp === 'สีตัวอย่าง = สีควบคุม' || interp2 === 'สีตัวอย่าง = สีควบคุม')}</div> <div style="margin-top:1px;">${chk('สีควบคุม >สีตัวอย่าง < สีตัดสิน', (interp.includes('สีควบคุม') && interp.includes('สีตัดสิน') && interp.includes('>')) || (interp2.includes('สีควบคุม') && interp2.includes('สีตัดสิน') && interp2.includes('>')))}</div> <div style="margin-top:1px;">${chk('สีตัวอย่าง >= สีตัดสิน', interp.includes('≥') || interp.includes('>=') || interp2.includes('≥') || interp2.includes('>='))}</div> <div style="margin-top:1px;">${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' || interp2 === 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div> <div style="margin-top:1px;">${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' || interp2 === 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div> </div>`;
 
                     resultCell = `
-                        <div style="font-size:${interpFontSize}; line-height:1.2;"> <div>${chk('ไม่พบ', res === 'ไม่พบ' || res2 === 'ไม่พบ')}</div> <div style="margin-top:1px;">${chk('พบ', res === 'พบ' || res2 === 'พบ')}</div> <div style="margin-top:1px;">${chk('พบปลอดภัย', res === 'พบปลอดภัย' || res2 === 'พบปลอดภัย')}</div> <div style="margin-top:1px;">${chk('พบอันตราย', res === 'พบอันตราย' || res2 === 'พบอันตราย')}</div> </div>`;
-                }
+                        <div style="font-size:${interpFontSize}; line-height:1.2; font-weight:bold !important;"> <div>${chk('ไม่พบ', res === 'ไม่พบ' || res2 === 'ไม่พบ')}</div> <div style="margin-top:1px;">${chk('พบ', res === 'พบ' || res2 === 'พบ')}</div> <div style="margin-top:1px;">${chk('พบปลอดภัย', res === 'พบปลอดภัย' || res2 === 'พบปลอดภัย')}</div> <div style="margin-top:1px;">${chk('พบอันตราย', res === 'พบอันตราย' || res2 === 'พบอันตราย')}</div> </div>`;
 
-                let sumValue = sample.analysis_summary;
                     if (sample.form_type === 'MU.10-001') {
                         sumValue = sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
-                    } else if (sample.form_type === 'MU.10-002') {
-                        // Re-evaluate the summaries to prevent scoping issues
-                        const getSum = (key) => {
-                            const interp = sample['analysis_interpretation_' + (item.idx || 1) + '_' + key] || '';
-                            const localMap = {
-                                'สีแดง': { summary: 'ไม่ผ่าน' },
-                                'สีส้มแดง': { summary: 'ไม่ผ่าน' },
-                                'สีเหลือง': { summary: 'ผ่าน' },
-                                'สีชมพู': { summary: 'ไม่ผ่าน' },
-                                'ไม่มีสี': { summary: 'ผ่าน' },
-                                'ตะกอนสีเทาดำ': { summary: 'ไม่ผ่าน' },
-                                'สีฟ้า': { summary: 'ผ่าน' },
-                                'สีม่วงดำ': { summary: 'ไม่ผ่าน' },
-                                'สีเขียว': { summary: 'ผ่าน' },
-                                '1 ขีด (Control)': { summary: 'ไม่ผ่าน' },
-                                '2 ขีด (Control) และ (Test)': { summary: 'ผ่าน' }
-                            };
-                            const mapped = localMap[interp.trim()];
-                            return mapped ? mapped.summary : (sample['analysis_summary_' + (item.idx || 1) + '_' + key] || '');
-                        };
-                        const hasFail = getSum('borax') === 'ไม่ผ่าน' || getSum('formalin') === 'ไม่ผ่าน' || getSum('bleach') === 'ไม่ผ่าน' || getSum('salicylic') === 'ไม่ผ่าน' || getSum('agonist') === 'ไม่ผ่าน';
-                        sumValue = hasFail ? 'ไม่ผ่าน' : 'ผ่าน';
                     }
                     const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่านเกณฑ์มาตรฐาน');
                     const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
-                    
-                    const isMu10001Row = sample.form_type === 'MU.10-001' || !sample.form_type;
-                    const isMu10002Row = sample.form_type === 'MU.10-002';
-                    const isStdRow = isMu10001Row || isMu10002Row;
-                    const sumFontSize = isStdRow ? '14.5px' : '9.5px';
-                    const tdFontSizeFinal = isStdRow ? '14.5px' : '9.5px';
+                    const sumFontSize = '14.5px';
+                    summaryCell = `
+                        <div style="font-size:${sumFontSize}; line-height:1.25; font-weight: bold !important; text-align:center;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
+                }
 
-                    if (sample.form_type !== 'MU.10-002') {
-                        summaryCell = `
-                            <div style="font-size:${sumFontSize}; line-height:1.25; font-weight: normal !important;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
-                    }
+                const isMu10001Row = sample.form_type === 'MU.10-001' || !sample.form_type;
+                const isMu10002Row = sample.form_type === 'MU.10-002';
+                const isStdRow = isMu10001Row || isMu10002Row;
+                const tdFontSizeFinal = isStdRow ? '14.5px' : '9.5px';
 
                 tableRows += `
-                    <tr style="page-break-inside: avoid; height: ${isMu10001Row ? '72px' : 'auto'};"> 
-                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> 
-                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.distributor}</td> 
-                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (item.labId || '') : ''}</td> 
-                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight: normal !important; border:1px solid #555;">${item.name}</td> 
-                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.weight}</td> 
-                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.source}</td> 
-                        <td style="padding:3px 3px; vertical-align:middle; border:1px solid #555;">${checkboxCell}</td> 
-                        <td style="padding:3px 3px; vertical-align:middle; border:1px solid #555;">${interpretCell}</td> 
-                        <td style="padding:3px 3px; vertical-align:middle; border:1px solid #555;">${resultCell}</td> 
-                        <td style="padding:3px 2px; vertical-align:middle; text-align:center; font-weight: normal !important; border:1px solid #555;">${summaryCell}</td> 
+                    <tr style="page-break-inside: avoid; height: ${isMu10001Row ? '72px' : 'auto'}; font-weight:bold !important;"> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.distributor}</td> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name ? (item.labId || '') : ''}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.name}</td> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.weight}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.source}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${checkboxCell}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${interpretCell}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; text-align:center; border:1px solid #555;">${resultCell}</td> 
+                        <td style="padding:3px 2px; vertical-align:middle; text-align:center; font-weight:bold !important; border:1px solid #555;">${summaryCell}</td> 
                     </tr>`;
             }
         });
@@ -8313,7 +8308,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const subTitleFont = isStdTable ? '11.5px' : '7.5px';
             const thFontSize = isStdTable ? '15px' : '9.5px';
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:${tableBaseFont}; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid; font-size:${thFontSize}; font-weight:bold;"> <th style="padding:5px 2px; border:1px solid #555; width:4%; text-align:center; line-height:1.2;">ลำดับ</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ชื่อผู้จำหน่าย</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">รหัสตัวอย่าง<div style="font-weight:normal;font-size:${subTitleFont};">(สำหรับผู้ตรวจวิเคราะห์)</div></th> <th style="padding:5px 2px; border:1px solid #555; width:8%; text-align:center; line-height:1.2;">ชื่อตัวอย่าง</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">ปริมาณ<br>(กรัม)</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">แหล่งที่มา</th> <th style="padding:5px 2px; border:1px solid #555; width:16%; text-align:center; line-height:1.2;">สารที่ตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:20%; text-align:center; line-height:1.2;">การแปลผล</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ผลการตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">สรุปผล</th> </tr> </thead> <tbody>${tableRows}
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:${tableBaseFont}; font-weight:bold !important; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid; font-size:${thFontSize}; font-weight:bold;"> <th style="padding:5px 2px; border:1px solid #555; width:4%; text-align:center; line-height:1.2;">ลำดับ</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ชื่อผู้จำหน่าย</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">รหัสตัวอย่าง<div style="font-weight:normal;font-size:${subTitleFont};">(สำหรับผู้ตรวจวิเคราะห์)</div></th> <th style="padding:5px 2px; border:1px solid #555; width:8%; text-align:center; line-height:1.2;">ชื่อตัวอย่าง</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">ปริมาณ<br>(กรัม)</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">แหล่งที่มา</th> <th style="padding:5px 2px; border:1px solid #555; width:16%; text-align:center; line-height:1.2;">สารที่ตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:20%; text-align:center; line-height:1.2;">การแปลผล</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ผลการตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">สรุปผล</th> </tr> </thead> <tbody style="font-weight:bold !important;">${tableRows}
                     </tbody> </table>`;
         }
 
