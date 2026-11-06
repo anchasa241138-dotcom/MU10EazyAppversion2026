@@ -7830,6 +7830,19 @@ html, body {
   color: #000000 !important;
 }
 
+#certificatePDFContainer .cert-pdf-header-mu10 table,
+.cert-pdf-header-mu10 table {
+  table-layout: fixed !important;
+}
+
+#certificatePDFContainer .cert-pdf-header-mu10 td:first-child,
+.cert-pdf-header-mu10 td:first-child {
+  width: 138px !important;
+  min-width: 138px !important;
+  max-width: 138px !important;
+  white-space: nowrap !important;
+}
+
 #certificatePDFContainer .cert-pdf-header-mu10 u,
 #certificatePDFContainer .cert-pdf-header-mu10 td u,
 .cert-pdf-header-mu10 u,

@@ -5145,21 +5145,21 @@ document.getElementById('formNameTitle').innerText = title;
                   </div>
                   
                   <!-- META INFO -->
-                  <table style="width: 100%; border: none; font-size: 14px; margin-bottom: 5px; line-height: 1.2;">
+                  <table style="width: 100%; table-layout: fixed; border: none; font-size: 14px; margin-bottom: 5px; line-height: 1.2;">
                       <tr>
-                          <td style="width: 150px; font-weight: bold; padding: 2px 0;">สถานที่เก็บตัวอย่าง</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">สถานที่เก็บตัวอย่าง</td>
                           <td style="padding: 2px 0;">: ${locationTxt}</td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold; padding: 2px 0;">วันที่รับตัวอย่าง</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">วันที่รับตัวอย่าง</td>
                           <td style="padding: 2px 0;">: ${samplingDate}</td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold; padding: 2px 0;">วันที่ตรวจวิเคราะห์</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">วันที่ตรวจวิเคราะห์</td>
                           <td style="padding: 2px 0;">: ${analysisDate}</td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold; padding: 2px 0;">จำนวนตัวอย่างทั้งหมด</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">จำนวนตัวอย่างทั้งหมด</td>
                           <td style="padding: 2px 0;">: ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
                       </tr>
                   </table>
@@ -6249,21 +6249,21 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 10px; margin-bottom: 4px;">
                             <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 4px; font-size: 22px; color: #000; line-height: 1.2;">${reportTitle}</h4>
-                            <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 19px; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
+                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 175px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
                                     <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} จ.${sample.province || ''}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
                                     <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
                                     <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่างทั้งหมด</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่างทั้งหมด</td>
                                     <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPercent}</td>
                                 </tr>
                             </table>
@@ -6419,21 +6419,21 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 15px; margin-bottom: 6px;">
                             <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 6px; font-size: 23px; color: #000; line-height: 1.3;">${reportTitle}</h4>
-                            <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.25; margin: 0; padding: 0; color: #000;">
+                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.25; margin: 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 175px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
                                     <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
                                     <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
                                     <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
                                     <td style="padding: 1px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</td>
                                 </tr>
                             </table>
@@ -6562,21 +6562,21 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 10px; margin-bottom: 4px;">
                             <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 4px; font-size: 22px; color: #000; line-height: 1.2;">${reportTitle}</h4>
-                            <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.15; margin: 0; padding: 0; color: #000;">
+                            <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.15; margin: 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="width: 175px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
                                     <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${sample.location_name || '-'} ${sample.amphoe ? 'อำเภอ' + sample.amphoe : ''} ${sample.province ? 'จังหวัด' + sample.province : ''}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
                                     <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${receiveDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
                                     <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
+                                    <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่าง</td>
                                     <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;ตรวจ ${totalItemsCount} ตัวอย่าง ผ่าน ${passItemsCount} ตัวอย่าง ผ่านร้อยละ ${passItemsPercent} ดังนี้</td>
                                 </tr>
                             </table>
@@ -6699,21 +6699,21 @@ document.getElementById('formNameTitle').innerText = title;
                   </div>
                   
                   <!-- META INFO -->
-                  <table style="width: 100%; border: none; font-size: 14px; margin-bottom: 5px; line-height: 1.2;">
+                  <table style="width: 100%; table-layout: fixed; border: none; font-size: 14px; margin-bottom: 5px; line-height: 1.2;">
                       <tr>
-                          <td style="width: 150px; font-weight: bold; padding: 2px 0;">สถานที่เก็บตัวอย่าง</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">สถานที่เก็บตัวอย่าง</td>
                           <td style="padding: 2px 0;">: ${locationTxt}</td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold; padding: 2px 0;">วันที่รับตัวอย่าง</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">วันที่รับตัวอย่าง</td>
                           <td style="padding: 2px 0;">: ${samplingDate}</td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold; padding: 2px 0;">วันที่ตรวจวิเคราะห์</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">วันที่ตรวจวิเคราะห์</td>
                           <td style="padding: 2px 0;">: ${analysisDate}</td>
                       </tr>
                       <tr>
-                          <td style="font-weight: bold; padding: 2px 0;">จำนวนตัวอย่างทั้งหมด</td>
+                          <td style="width: 138px; font-weight: bold; padding: 2px 0;">จำนวนตัวอย่างทั้งหมด</td>
                           <td style="padding: 2px 0;">: ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
                       </tr>
                   </table>
