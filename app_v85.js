@@ -877,7 +877,12 @@ const app = {
 
             const actionBtn = `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-download"></i> ดาวน์โหลดรายงาน PDF</button>`;
             
+            const isFailed = (typeof this.isSampleFailed === 'function') ? this.isSampleFailed(s) : false;
             const tr = document.createElement('tr');
+            if (isFailed) {
+                tr.className = 'row-failed highlight-failed-row';
+                tr.style.setProperty('background-color', '#fef08a', 'important');
+            }
             const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
                 <td>
@@ -3258,6 +3263,66 @@ document.getElementById('formNameTitle').innerText = title;
         return list.length || 1;
     },
 
+    isSampleFailed(sample) {
+        if (!sample) return false;
+        
+        // 1. Direct summary text checks
+        if (typeof sample.analysis_summary === 'string' && sample.analysis_summary.includes('ไม่ผ่าน')) return true;
+        if (typeof sample.test_outcome === 'string' && sample.test_outcome.includes('ไม่ผ่าน')) return true;
+        if (typeof sample.label_summary === 'string' && sample.label_summary.includes('ไม่ผ่าน')) return true;
+
+        // 2. Loop dynamic sample entries (1 to 50)
+        for (let i = 1; i <= 50; i++) {
+            // General summaries
+            if (sample['analysis_summary_' + i] && String(sample['analysis_summary_' + i]).includes('ไม่ผ่าน')) return true;
+            if (sample['analysis_summary_outcome_' + i] && String(sample['analysis_summary_outcome_' + i]).includes('ไม่ผ่าน')) return true;
+            if (sample['test_outcome_' + i] && String(sample['test_outcome_' + i]).includes('ไม่ผ่าน')) return true;
+            if (sample['label_summary_' + i] && String(sample['label_summary_' + i]).includes('ไม่ผ่าน')) return true;
+            if (sample['analysis_summary_4_' + i] && String(sample['analysis_summary_4_' + i]).includes('ไม่ผ่าน')) return true;
+
+            // Form MU.10-002: chemical contaminants
+            const subKeys = ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'];
+            for (const k of subKeys) {
+                const sSum = sample['analysis_summary_' + i + '_' + k] || (i === 1 ? sample['analysis_summary_' + k] : '');
+                if (sSum && String(sSum).includes('ไม่ผ่าน')) return true;
+                const sInterp = sample['analysis_interpretation_' + i + '_' + k] || (i === 1 ? sample['analysis_interpretation_' + k] : '');
+                if (sInterp && String(sInterp).includes('พบ') && !String(sInterp).includes('ไม่พบ')) return true;
+                const sDet = sample['analysis_details_' + i + '_' + k] || (i === 1 ? sample['analysis_details_' + k] : '');
+                if (sDet && String(sDet).includes('พบ') && !String(sDet).includes('ไม่พบ')) return true;
+            }
+
+            // Form MU.10-003 & MU.10-004: polar value in oil > 25%
+            const polarStr = sample['polar_value_' + i] || (i === 1 ? sample.polar_value : '');
+            if (polarStr !== undefined && polarStr !== null && polarStr !== '') {
+                const pVal = parseFloat(polarStr);
+                if (!isNaN(pVal) && pVal > 25) return true;
+            }
+
+            // Form MU.10-006: water dispenser coliform, tds, hardness, ph
+            if (sample['analysis_coliform_summary_' + i] && String(sample['analysis_coliform_summary_' + i]).includes('ไม่ผ่าน')) return true;
+            if (sample['analysis_coliform_' + i] !== undefined && parseFloat(sample['analysis_coliform_' + i]) > 0) return true;
+            if (sample['analysis_tds_summary_' + i] && String(sample['analysis_tds_summary_' + i]).includes('ควรเปลี่ยน')) return true;
+            if (sample['analysis_hardness_summary_' + i] && String(sample['analysis_hardness_summary_' + i]).includes('ไม่ผ่าน')) return true;
+            if (sample['analysis_ph_summary_' + i] && String(sample['analysis_ph_summary_' + i]).includes('ไม่ผ่าน')) return true;
+        }
+
+        // 3. Structured items array if available
+        if (Array.isArray(sample.items)) {
+            for (const it of sample.items) {
+                if (it && (
+                    it.summary === 'ไม่ผ่าน' ||
+                    it.test_outcome === 'ไม่ผ่าน' ||
+                    it.isPass === false ||
+                    (typeof it.summary === 'string' && it.summary.includes('ไม่ผ่าน'))
+                )) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    },
+
     getSampleLabNoRange(sample) {
         if (!sample) return '-';
 
@@ -5041,18 +5106,20 @@ document.getElementById('formNameTitle').innerText = title;
                     totalCount++;
                     if (item.test_outcome === 'ผ่าน') passCount++;
                     
-                    const rowBg = item.test_outcome === 'ไม่ผ่าน' ? 'background-color: #fef08a;' : '';
+                    const isFail = item.test_outcome === 'ไม่ผ่าน';
+                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
+                    const failStyle = isFail ? 'background-color: #fef08a !important;' : '';
                     
                     tableRowsHTML += `
-                        <tr style="page-break-inside: avoid; text-align: center; ${rowBg}"> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${i + 1}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.distributor}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_type}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_serial_no}</td> 
-                            <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000;">${item.manufacturer_info}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.has_mfg_exp}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.iodate_value}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.test_outcome}</td> 
+                        <tr class="${failClass}" style="page-break-inside: avoid; text-align: center; ${failStyle}"> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${i + 1}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.distributor}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.food_type}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.food_serial_no}</td> 
+                            <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000; ${failStyle}">${item.manufacturer_info}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.has_mfg_exp}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.iodate_value}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.test_outcome}</td> 
                         </tr>`;
                 }
             });
@@ -5668,7 +5735,12 @@ document.getElementById('formNameTitle').innerText = title;
                 underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</div>';
             }
 
+            const isFailed = (typeof this.isSampleFailed === 'function') ? this.isSampleFailed(s) : false;
             const tr = document.createElement('tr');
+            if (isFailed) {
+                tr.className = 'row-failed highlight-failed-row';
+                tr.style.setProperty('background-color', '#fef08a', 'important');
+            }
             const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
                 <td>
@@ -6146,31 +6218,33 @@ document.getElementById('formNameTitle').innerText = title;
                 
                 let rowsHtml = '';
                 chunk.forEach(item => {
+                    const isFail = !item.isPass;
+                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
+                    const failStyle = isFail ? 'background-color:#fef08a !important;' : '';
                     rowsHtml += `
-                        <tr style="${!item.isPass ? 'background-color:#fef08a;' : 'background-color:#ffffff;'} height: 26px;">
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">${item.idx}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">${item.distributor}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">${item.labId}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">${item.sampleName}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">${item.source}</td>
+                        <tr class="${failClass}" style="height: 26px; ${failStyle}">
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.idx}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.distributor}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.labId}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.sampleName}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.source}</td>
                             ${
                                 (() => {
                                     if (sample.form_type === 'MU.10-002') {
                                         const usedTestKeys = Array.from(usedTests);
-                                        if (usedTestKeys.length === 0) return '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">-</td>';
+                                        if (usedTestKeys.length === 0) return `<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">-</td>`;
                                         return usedTestKeys.map(k => {
                                             const det = (item.details && typeof item.details === 'object') ? item.details[k] : undefined;
-                                            return '<td style="text-align:center; white-space: nowrap; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">' + (det ? det : '-') + '</td>';
+                                            return `<td style="text-align:center; white-space: nowrap; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${det ? det : '-'}</td>`;
                                         }).join('');
                                     } else {
                                         return tableHeaderSubstance === 'BOTH' ? 
-                                            '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">' + (item.substance.includes('GT') ? item.details : '-') + '</td>' + 
-                                            '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">' + (item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')) + '</td>' 
-                                        : '<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">' + item.details + '</td>';
+                                            `<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.substance.includes('GT') ? item.details : '-'}</td><td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')}</td>` 
+                                        : `<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.details}</td>`;
                                     }
                                 })()
                             }
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15;">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
                 });
@@ -6326,17 +6400,20 @@ document.getElementById('formNameTitle').innerText = title;
                     const item = pageItems[i];
                     if (item) {
                         const marks = getCheckMark(item.polar_value);
+                        const isFail = marks.text === 'ไม่ผ่าน';
+                        const failClass = isFail ? 'row-failed highlight-failed-row' : '';
+                        const failStyle = isFail ? 'background-color:#fef08a !important;' : '';
                         rowsHtml += `
-                            <tr>
-                                <td style="text-align: center;">${page * ITEMS_PER_PAGE + i + 1}</td>
-                                <td>${item.distributor}</td>
-                                <td style="text-align: center;">${item.food_type}</td>
-                                <td style="text-align: center;">${item.oil_type}</td>
-                                <td style="text-align: center;">${item.fry_duration ? item.fry_duration + ' นาที/ครั้ง' : '-'}</td>
-                                <td style="text-align: center;">${item.replacement_type}</td>
-                                <td style="text-align: center;">${item.replacement_frequency ? item.replacement_frequency + ' วัน/ครั้ง' : '-'}</td>
-                                <td style="text-align: center;">${item.polar_value ? item.polar_value + '%' : '-'}</td>
-                                <td style="text-align: center; ${marks.text === 'ไม่ผ่าน' ? 'color: #dc2626; font-weight: bold;' : ''}">${marks.text}</td>
+                            <tr class="${failClass}" style="${failStyle}">
+                                <td style="text-align: center; ${failStyle}">${page * ITEMS_PER_PAGE + i + 1}</td>
+                                <td style="${failStyle}">${item.distributor}</td>
+                                <td style="text-align: center; ${failStyle}">${item.food_type}</td>
+                                <td style="text-align: center; ${failStyle}">${item.oil_type}</td>
+                                <td style="text-align: center; ${failStyle}">${item.fry_duration ? item.fry_duration + ' นาที/ครั้ง' : '-'}</td>
+                                <td style="text-align: center; ${failStyle}">${item.replacement_type}</td>
+                                <td style="text-align: center; ${failStyle}">${item.replacement_frequency ? item.replacement_frequency + ' วัน/ครั้ง' : '-'}</td>
+                                <td style="text-align: center; ${failStyle}">${item.polar_value ? item.polar_value + '%' : '-'}</td>
+                                <td style="text-align: center; ${failStyle} ${marks.text === 'ไม่ผ่าน' ? 'color: #dc2626; font-weight: bold;' : ''}">${marks.text}</td>
                             </tr>
                         `;
                     }
@@ -6467,17 +6544,20 @@ document.getElementById('formNameTitle').innerText = title;
                 
                 let rowsHtml = '';
                 pageItems.forEach((item, i) => {
+                    const isFail = !item.isPass;
+                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
+                    const failStyle = isFail ? 'background-color:#fef08a !important;' : '';
                     rowsHtml += `
-                        <tr style="height: 26px;">
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${page * ITEMS_PER_PAGE + i + 1}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.owner_name}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.food_category}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.oil_type}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.fry_duration}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.replacement_type}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.replacement_frequency}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15;">${item.polar_value}</td>
-                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${!item.isPass ? 'color: #dc2626; font-weight: bold;' : ''}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                        <tr class="${failClass}" style="height: 26px; ${failStyle}">
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${page * ITEMS_PER_PAGE + i + 1}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${item.owner_name}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${item.food_category}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${item.oil_type}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${item.fry_duration}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${item.replacement_type}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${item.replacement_frequency}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${item.polar_value}</td>
+                            <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle} ${!item.isPass ? 'color: #dc2626; font-weight: bold;' : ''}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
                 });
@@ -6585,18 +6665,20 @@ document.getElementById('formNameTitle').innerText = title;
                     totalCount++;
                     if (item.test_outcome === 'ผ่าน') passCount++;
                     
-                    const rowBg = item.test_outcome === 'ไม่ผ่าน' ? 'background-color: #fef08a;' : '';
+                    const isFail = item.test_outcome === 'ไม่ผ่าน';
+                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
+                    const failStyle = isFail ? 'background-color: #fef08a !important;' : '';
                     
                     tableRowsHTML += `
-                        <tr style="page-break-inside: avoid; text-align: center; ${rowBg}"> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${i + 1}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.distributor}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_type}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.food_serial_no}</td> 
-                            <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000;">${item.manufacturer_info}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.has_mfg_exp}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.iodate_value}</td> 
-                            <td style="padding:2px; font-size:13px; border:1px solid #000;">${item.test_outcome}</td> 
+                        <tr class="${failClass}" style="page-break-inside: avoid; text-align: center; ${failStyle}"> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${i + 1}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.distributor}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.food_type}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.food_serial_no}</td> 
+                            <td style="padding:2px; text-align:center; font-size:13px; border:1px solid #000; ${failStyle}">${item.manufacturer_info}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.has_mfg_exp}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.iodate_value}</td> 
+                            <td style="padding:2px; font-size:13px; border:1px solid #000; ${failStyle}">${item.test_outcome}</td> 
                         </tr>`;
                 }
             });
@@ -6823,18 +6905,22 @@ document.getElementById('formNameTitle').innerText = title;
                     const pValStyle = isPFail ? 'color: #dc2626; font-weight: bold;' : '';
                     const pSumStyle = isPFail ? 'color: #dc2626; font-weight: bold;' : '';
 
+                    const isAnyFail = isCFail || isTFail || isHFail || isPFail;
+                    const failClass = isAnyFail ? 'row-failed highlight-failed-row' : '';
+                    const failStyle = isAnyFail ? 'background-color: #fef08a !important;' : '';
+
                     pageRowsHTML += `
-                        <tr style="text-align: center; height: 24px;">
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box;">${rowNum}</td>
-                            <td style="border: 1px solid #333; padding: 2px 6px; text-align: left; font-size: 11px; line-height: 1.2; word-break: break-word; vertical-align: middle; box-sizing: border-box;">${item.location}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${cValStyle}">${cVal}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${cSumStyle}">${item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${tValStyle}">${tVal || '-'}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; white-space: nowrap; font-size: 9.5px; letter-spacing: -0.2px; text-align: center; vertical-align: middle; box-sizing: border-box; ${tSumStyle}">${item.tds_sum || (isTFail ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ')}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${hValStyle}">${hVal || '-'}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${hSumStyle}">${item.hardness_sum || 'ผ่าน'}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${pValStyle}">${pVal || '-'}</td>
-                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${pSumStyle}">${item.ph_sum || 'ผ่าน'}</td>
+                        <tr class="${failClass}" style="text-align: center; height: 24px; ${failStyle}">
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${failStyle}">${rowNum}</td>
+                            <td style="border: 1px solid #333; padding: 2px 6px; text-align: left; font-size: 11px; line-height: 1.2; word-break: break-word; vertical-align: middle; box-sizing: border-box; ${failStyle}">${item.location}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cValStyle}">${cVal}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cSumStyle}">${item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tValStyle}">${tVal || '-'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; white-space: nowrap; font-size: 9.5px; letter-spacing: -0.2px; text-align: center; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tSumStyle}">${item.tds_sum || (isTFail ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ')}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hValStyle}">${hVal || '-'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hSumStyle}">${item.hardness_sum || 'ผ่าน'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pValStyle}">${pVal || '-'}</td>
+                            <td style="border: 1px solid #333; padding: 2px 1px; font-size: 11px; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pSumStyle}">${item.ph_sum || 'ผ่าน'}</td>
                         </tr>`;
                 });
 
@@ -7129,17 +7215,20 @@ document.getElementById('formNameTitle').innerText = title;
 
                     const si2Val = item.cleanliness === '-' ? 'ไม่พบ' : 'พบ';
                     const sumVal = item.summary;
+                    const isFail = sumVal === 'ไม่ผ่าน';
+                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
+                    const failStyle = isFail ? 'background-color: #fef08a !important;' : '';
 
                     rowsHtml += `
-                        <tr>
-                            <td>${item.idx}</td>
-                            <td>${catDisplay}</td>
-                            <td>${item.distributor || ''}</td>
-                            <td>${sName}</td>
-                            <td style="color: #000 !important; font-weight: normal !important;">${si2Val}</td>
-                            <td style="color: #000 !important; font-weight: normal !important;">${sumVal}</td>
+                        <tr class="${failClass}" style="${failStyle}">
+                            <td style="${failStyle}">${item.idx}</td>
+                            <td style="${failStyle}">${catDisplay}</td>
+                            <td style="${failStyle}">${item.distributor || ''}</td>
+                            <td style="${failStyle}">${sName}</td>
+                            <td style="color: #000 !important; font-weight: normal !important; ${failStyle}">${si2Val}</td>
+                            <td style="color: #000 !important; font-weight: normal !important; ${failStyle}">${sumVal}</td>
                             ${rIdx === 0 ? `
-                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: normal !important; color: #000 !important;">
+                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: normal !important; color: #000 !important; ${!overallPass ? 'background-color: #fef08a !important;' : ''}">
                                     ${overallPass ? 'ผ่าน' : 'ไม่ผ่าน'}
                                 </td>
                             ` : ''}
