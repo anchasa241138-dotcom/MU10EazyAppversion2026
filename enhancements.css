@@ -7974,27 +7974,12 @@ html, body {
 }
 
 /* ==========================================================================
-   Highlight Failed Sample Rows in Yellow (#fef08a)
-   Applies to Step 4 (Certify), Step 5 (Download), Modals and PDF Reports
+   Highlight Failed Sample Rows in Bright Yellow (#ffff00) in PDF Reports & Modals
    ========================================================================== */
-#view-lab-certify #certifyTable tbody tr.row-failed,
-#view-lab-certify #certifyTable tbody tr.row-failed:nth-child(even),
-#view-lab-certify #certifyTable tbody tr.highlight-failed-row,
-#view-lab-certify #certifyTable tbody tr.highlight-failed-row:nth-child(even),
-#view-lab-certify #certifyTable tbody tr.row-failed td,
-#view-lab-certify #certifyTable tbody tr.highlight-failed-row td,
-#view-download-results #downloadTable tbody tr.row-failed,
-#view-download-results #downloadTable tbody tr.row-failed:nth-child(even),
-#view-download-results #downloadTable tbody tr.highlight-failed-row,
-#view-download-results #downloadTable tbody tr.highlight-failed-row:nth-child(even),
-#view-download-results #downloadTable tbody tr.row-failed td,
-#view-download-results #downloadTable tbody tr.highlight-failed-row td,
-tr.row-failed,
-tr.row-failed:nth-child(even),
-tr.row-failed td,
-tr.highlight-failed-row,
-tr.highlight-failed-row:nth-child(even),
-tr.highlight-failed-row td,
+#certificatePDFContainer tr.row-failed,
+#certificatePDFContainer tr.row-failed td,
+#certificatePDFContainer tr.highlight-failed-row,
+#certificatePDFContainer tr.highlight-failed-row td,
 .cert-multi-table tr.row-failed,
 .cert-multi-table tr.row-failed td,
 .cert-multi-table tr.highlight-failed-row,
@@ -8003,23 +7988,13 @@ tr.highlight-failed-row td,
 .mu007-table tr.row-failed td,
 .mu007-table tr.highlight-failed-row,
 .mu007-table tr.highlight-failed-row td,
-#certificatePDFContainer tr.row-failed,
-#certificatePDFContainer tr.row-failed td,
-#certificatePDFContainer tr.highlight-failed-row,
-#certificatePDFContainer tr.highlight-failed-row td {
-  background-color: #fef08a !important;
-  background: #fef08a !important;
+.pdf-document tr.row-failed,
+.pdf-document tr.row-failed td,
+.pdf-document tr.highlight-failed-row,
+.pdf-document tr.highlight-failed-row td {
+  background-color: #ffff00 !important;
+  background: #ffff00 !important;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
-}
-
-#view-lab-certify #certifyTable tbody tr.row-failed:hover,
-#view-lab-certify #certifyTable tbody tr.highlight-failed-row:hover,
-#view-download-results #downloadTable tbody tr.row-failed:hover,
-#view-download-results #downloadTable tbody tr.highlight-failed-row:hover,
-tr.row-failed:hover,
-tr.highlight-failed-row:hover {
-  background-color: #fde047 !important;
-  background: #fde047 !important;
 }
 

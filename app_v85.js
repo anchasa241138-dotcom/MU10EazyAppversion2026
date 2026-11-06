@@ -877,12 +877,7 @@ const app = {
 
             const actionBtn = `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-download"></i> ดาวน์โหลดรายงาน PDF</button>`;
             
-            const isFailed = (typeof this.isSampleFailed === 'function') ? this.isSampleFailed(s) : false;
             const tr = document.createElement('tr');
-            if (isFailed) {
-                tr.className = 'row-failed highlight-failed-row';
-                tr.style.setProperty('background-color', '#fef08a', 'important');
-            }
             const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
                 <td>
@@ -5108,7 +5103,7 @@ document.getElementById('formNameTitle').innerText = title;
                     
                     const isFail = item.test_outcome === 'ไม่ผ่าน';
                     const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color: #fef08a !important;' : '';
+                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
                     
                     tableRowsHTML += `
                         <tr class="${failClass}" style="page-break-inside: avoid; text-align: center; ${failStyle}"> 
@@ -5735,12 +5730,7 @@ document.getElementById('formNameTitle').innerText = title;
                 underActionStatus = '<div style="margin-top:5px; font-size:12px; color:#f97316; font-weight:600;"><i class="fa-solid fa-clock"></i> รอผู้รับรองลงนาม</div>';
             }
 
-            const isFailed = (typeof this.isSampleFailed === 'function') ? this.isSampleFailed(s) : false;
             const tr = document.createElement('tr');
-            if (isFailed) {
-                tr.className = 'row-failed highlight-failed-row';
-                tr.style.setProperty('background-color', '#fef08a', 'important');
-            }
             const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
                 <td>
@@ -6220,7 +6210,7 @@ document.getElementById('formNameTitle').innerText = title;
                 chunk.forEach(item => {
                     const isFail = !item.isPass;
                     const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color:#fef08a !important;' : '';
+                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
                     rowsHtml += `
                         <tr class="${failClass}" style="height: 26px; ${failStyle}">
                             <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.idx}</td>
@@ -6402,7 +6392,7 @@ document.getElementById('formNameTitle').innerText = title;
                         const marks = getCheckMark(item.polar_value);
                         const isFail = marks.text === 'ไม่ผ่าน';
                         const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                        const failStyle = isFail ? 'background-color:#fef08a !important;' : '';
+                        const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
                         rowsHtml += `
                             <tr class="${failClass}" style="${failStyle}">
                                 <td style="text-align: center; ${failStyle}">${page * ITEMS_PER_PAGE + i + 1}</td>
@@ -6546,7 +6536,7 @@ document.getElementById('formNameTitle').innerText = title;
                 pageItems.forEach((item, i) => {
                     const isFail = !item.isPass;
                     const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color:#fef08a !important;' : '';
+                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
                     rowsHtml += `
                         <tr class="${failClass}" style="height: 26px; ${failStyle}">
                             <td style="text-align: center; border: 1px solid #000; color: #000; font-size: 15px; padding: 2.5px 3px; line-height: 1.15; ${failStyle}">${page * ITEMS_PER_PAGE + i + 1}</td>
@@ -6667,7 +6657,7 @@ document.getElementById('formNameTitle').innerText = title;
                     
                     const isFail = item.test_outcome === 'ไม่ผ่าน';
                     const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color: #fef08a !important;' : '';
+                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
                     
                     tableRowsHTML += `
                         <tr class="${failClass}" style="page-break-inside: avoid; text-align: center; ${failStyle}"> 
@@ -6907,7 +6897,7 @@ document.getElementById('formNameTitle').innerText = title;
 
                     const isAnyFail = isCFail || isTFail || isHFail || isPFail;
                     const failClass = isAnyFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isAnyFail ? 'background-color: #fef08a !important;' : '';
+                    const failStyle = isAnyFail ? 'background-color: #ffff00 !important;' : '';
 
                     pageRowsHTML += `
                         <tr class="${failClass}" style="text-align: center; height: 24px; ${failStyle}">
@@ -7217,7 +7207,7 @@ document.getElementById('formNameTitle').innerText = title;
                     const sumVal = item.summary;
                     const isFail = sumVal === 'ไม่ผ่าน';
                     const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color: #fef08a !important;' : '';
+                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
 
                     rowsHtml += `
                         <tr class="${failClass}" style="${failStyle}">
@@ -7228,7 +7218,7 @@ document.getElementById('formNameTitle').innerText = title;
                             <td style="color: #000 !important; font-weight: normal !important; ${failStyle}">${si2Val}</td>
                             <td style="color: #000 !important; font-weight: normal !important; ${failStyle}">${sumVal}</td>
                             ${rIdx === 0 ? `
-                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: normal !important; color: #000 !important; ${!overallPass ? 'background-color: #fef08a !important;' : ''}">
+                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: normal !important; color: #000 !important; ${!overallPass ? 'background-color: #ffff00 !important;' : ''}">
                                     ${overallPass ? 'ผ่าน' : 'ไม่ผ่าน'}
                                 </td>
                             ` : ''}
