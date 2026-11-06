@@ -7674,7 +7674,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     getStandardPdfStyles(orientation) {
         return `
             <style id="sskmoph-standard-pdf-styles">
-                @page { size: A4 ${orientation}; margin: 10mm; }
+                @page { size: A4 ${orientation}; margin: 7mm 8mm; }
                 html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 body > div, body > div * {
                     font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', 'Leelawadee UI', 'Leelawadee', sans-serif !important;
@@ -8080,18 +8080,18 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             } else if (sample.form_type === 'MU.10-005') {
                 const hasItem = !!(item.food_type || item.distributor || item.food_serial_no || item.name);
                 tableRows += `
-                    <tr style="height: 28px; page-break-inside: avoid;"> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${hasItem ? (i + 1) : ''}</td> 
-                        <td style="padding:2px 4px; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.distributor || ''}</td> 
-                        <td style="padding:2px 4px; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.food_type || item.name || ''}</td> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13px; border:1px solid #555;">${item.food_serial_no || ''}</td> 
-                        <td style="padding:2px 4px; vertical-align:middle; font-size:12px; line-height:1.2; border:1px solid #555;">${item.manufacturer_info || ''}</td> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.has_mfg_exp || ''}</td> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.net_weight || ''}</td> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.has_storage_warning || ''}</td> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.label_summary || ''}</td> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.iodate_value || ''}</td> 
-                        <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:13.5px; border:1px solid #555;">${item.test_outcome || ''}</td> 
+                    <tr style="height: 60px; page-break-inside: avoid;"> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${hasItem ? (i + 1) : ''}</td> 
+                        <td style="padding:4px 4px; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.distributor || ''}</td> 
+                        <td style="padding:4px 4px; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.food_type || item.name || ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14px; border:1px solid #555;">${item.food_serial_no || ''}</td> 
+                        <td style="padding:4px 4px; vertical-align:middle; font-size:13px; line-height:1.25; border:1px solid #555;">${item.manufacturer_info || ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.has_mfg_exp || ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.net_weight || ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.has_storage_warning || ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.label_summary || ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.iodate_value || ''}</td> 
+                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; border:1px solid #555;">${item.test_outcome || ''}</td> 
                     </tr>`;
             } else {
                 const showChecked = !!item.name;
@@ -8139,19 +8139,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const s_sum = showChecked ? (interpretationMap[s_interp?.trim()]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_salicylic'] || '') : '';
                     const a_sum = showChecked ? (interpretationMap[a_interp?.trim()]?.summary || sample['analysis_summary_' + (item.idx || 1) + '_agonist'] || '') : '';
                     
-                    // Comment out the old assignments that follow
+                    const mu2CellFont = '12px';
+                    const mu2LineHeight = '1.32';
 
                     checkboxCell = `
-                        <div style="font-size:9.5px; line-height:1.3;"> <div>${chk('สารบอแรกซ์', isBoraxChecked)}</div> <div>${chk('สารฟอร์มาลิน', isFormalinChecked)}</div> <div>${chk('สารฟอกขาว', isBleachChecked)}</div> <div>${chk('สารกันรา (กรดซาลิซิลิค)', isSalicylicChecked)}</div> <div>${chk('สารเร่งเนื้อแดง', isAgonistChecked)}</div> </div>`;
+                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('สารบอแรกซ์', isBoraxChecked)}</div> <div>${chk('สารฟอร์มาลิน', isFormalinChecked)}</div> <div>${chk('สารฟอกขาว', isBleachChecked)}</div> <div>${chk('สารกันรา (กรดซาลิซิลิค)', isSalicylicChecked)}</div> <div>${chk('สารเร่งเนื้อแดง', isAgonistChecked)}</div> </div>`;
 
                     interpretCell = `
-                        <div style="font-size:9.5px; line-height:1.3;"> <div>${chk('สีแดง', b_interp === 'สีแดง')}  ${chk('สีส้มแดง', b_interp === 'สีส้มแดง')}  ${chk('สีเหลือง', b_interp === 'สีเหลือง')}</div> <div>${chk('ชมพู', f_interp === 'สีชมพู')}  ${chk('สีแดง', f_interp === 'สีแดง')}  ${chk('สีเหลือง', f_interp === 'สีเหลือง')}  ${chk('ไม่มีสี', f_interp === 'ไม่มีสี')}</div> <div>${chk('ตะกอนสีเทาดำ', bl_interp === 'ตะกอนสีเทาดำ')}  ${chk('สีฟ้า', bl_interp === 'สีฟ้า')}  ${chk('ไม่มีสี', bl_interp === 'ไม่มีสี')}</div> <div>${chk('สีม่วงดำ', s_interp === 'สีม่วงดำ')}  ${chk('สีเหลือง', s_interp === 'สีเหลือง')}  ${chk('สีเขียว', s_interp === 'สีเขียว')}</div> <div>${chk('1 ขีด (Control)', a_interp === '1 ขีด (Control)')}  ${chk('2 ขีด (Control) และ (Test)', a_interp === '2 ขีด (Control) และ (Test)')}</div> </div>`;
+                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('สีแดง', b_interp === 'สีแดง')}  ${chk('สีส้มแดง', b_interp === 'สีส้มแดง')}  ${chk('สีเหลือง', b_interp === 'สีเหลือง')}</div> <div>${chk('ชมพู', f_interp === 'สีชมพู')}  ${chk('สีแดง', f_interp === 'สีแดง')}  ${chk('สีเหลือง', f_interp === 'สีเหลือง')}  ${chk('ไม่มีสี', f_interp === 'ไม่มีสี')}</div> <div>${chk('ตะกอนสีเทาดำ', bl_interp === 'ตะกอนสีเทาดำ')}  ${chk('สีฟ้า', bl_interp === 'สีฟ้า')}  ${chk('ไม่มีสี', bl_interp === 'ไม่มีสี')}</div> <div>${chk('สีม่วงดำ', s_interp === 'สีม่วงดำ')}  ${chk('สีเหลือง', s_interp === 'สีเหลือง')}  ${chk('สีเขียว', s_interp === 'สีเขียว')}</div> <div>${chk('1 ขีด (Control)', a_interp === '1 ขีด (Control)')}  ${chk('2 ขีด (Control) และ (Test)', a_interp === '2 ขีด (Control) และ (Test)')}</div> </div>`;
 
                     resultCell = `
-                        <div style="font-size:9.5px; line-height:1.3;"> <div>${chk('ไม่พบ', b_res === 'ไม่พบ')} ${chk('พบ', b_res === 'พบ')}</div> <div>${chk('ไม่พบ', f_res === 'ไม่พบ')} ${chk('พบ', f_res === 'พบ')}</div> <div>${chk('ไม่พบ', bl_res === 'ไม่พบ')} ${chk('พบ', bl_res === 'พบ')}</div> <div>${chk('ไม่พบ', s_res === 'ไม่พบ')} ${chk('พบ', s_res === 'พบ')}</div> <div>${chk('ไม่พบ', a_res === 'ไม่พบ')} ${chk('พบ', a_res === 'พบ')}</div> </div>`;
+                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('ไม่พบ', b_res === 'ไม่พบ')} ${chk('พบ', b_res === 'พบ')}</div> <div>${chk('ไม่พบ', f_res === 'ไม่พบ')} ${chk('พบ', f_res === 'พบ')}</div> <div>${chk('ไม่พบ', bl_res === 'ไม่พบ')} ${chk('พบ', bl_res === 'พบ')}</div> <div>${chk('ไม่พบ', s_res === 'ไม่พบ')} ${chk('พบ', s_res === 'พบ')}</div> <div>${chk('ไม่พบ', a_res === 'ไม่พบ')} ${chk('พบ', a_res === 'พบ')}</div> </div>`;
                         
                     summaryCell = `
-                        <div style="font-size:9.5px; line-height:1.3;"> <div>${chk('ผ่าน', (b_sum === 'ผ่าน' || b_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (b_sum === 'ไม่ผ่าน' || b_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (f_sum === 'ผ่าน' || f_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (f_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (bl_sum === 'ผ่าน' || bl_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (bl_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (s_sum === 'ผ่าน' || s_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (s_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (a_sum === 'ผ่าน' || a_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (a_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> </div>`;
+                        <div style="font-size:${mu2CellFont}; line-height:${mu2LineHeight};"> <div>${chk('ผ่าน', (b_sum === 'ผ่าน' || b_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (b_sum === 'ไม่ผ่าน' || b_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (f_sum === 'ผ่าน' || f_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (f_sum === 'ไม่ผ่าน' || f_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (bl_sum === 'ผ่าน' || bl_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (bl_sum === 'ไม่ผ่าน' || bl_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (s_sum === 'ผ่าน' || s_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (s_sum === 'ไม่ผ่าน' || s_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> <div>${chk('ผ่าน', (a_sum === 'ผ่าน' || a_sum === 'ผ่านเกณฑ์มาตรฐาน'))} ${chk('ไม่ผ่าน', (a_sum === 'ไม่ผ่าน' || a_sum === 'ไม่ผ่านเกณฑ์มาตรฐาน'))}</div> </div>`;
                 } else {
                     const sub = showChecked ? (sample['analysis_substance_' + (item.idx || 1)] || '') : '';
                     const interp = showChecked ? (sample['analysis_interpretation_' + (item.idx || 1)] || '') : '';
@@ -8219,14 +8220,29 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
                     
                     const isMu10001Row = sample.form_type === 'MU.10-001' || !sample.form_type;
-                    const sumFontSize = isMu10001Row ? '15px' : '9.5px';
-                    const tdFontSizeFinal = isMu10001Row ? '15px' : '9.5px';
+                    const isMu10002Row = sample.form_type === 'MU.10-002';
+                    const isStdRow = isMu10001Row || isMu10002Row;
+                    const sumFontSize = isStdRow ? '14.5px' : '9.5px';
+                    const tdFontSizeFinal = isStdRow ? '14.5px' : '9.5px';
 
-                    summaryCell = `
-                        <div style="font-size:${sumFontSize}; line-height:1.25; font-weight: normal !important;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
+                    if (sample.form_type !== 'MU.10-002') {
+                        summaryCell = `
+                            <div style="font-size:${sumFontSize}; line-height:1.25; font-weight: normal !important;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
+                    }
 
                 tableRows += `
-                    <tr style="page-break-inside: avoid;"> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.distributor}</td> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (item.labId || '') : ''}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight: normal !important; border:1px solid #555;">${item.name}</td> <td style="padding:2px 3px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.weight}</td> <td style="padding:2px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.source}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${checkboxCell}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${interpretCell}</td> <td style="padding:2px 3px; vertical-align:middle; border:1px solid #555;">${resultCell}</td> <td style="padding:2px 3px; vertical-align:middle; text-align:center; font-weight: normal !important; border:1px solid #555;">${summaryCell}</td> </tr>`;
+                    <tr style="page-break-inside: avoid; height: ${isMu10001Row ? '72px' : 'auto'};"> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (i + 1) : ''}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.distributor}</td> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.name ? (item.labId || '') : ''}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight: normal !important; border:1px solid #555;">${item.name}</td> 
+                        <td style="padding:3px 2px; text-align:center; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.weight}</td> 
+                        <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; border:1px solid #555;">${item.source}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; border:1px solid #555;">${checkboxCell}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; border:1px solid #555;">${interpretCell}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; border:1px solid #555;">${resultCell}</td> 
+                        <td style="padding:3px 2px; vertical-align:middle; text-align:center; font-weight: normal !important; border:1px solid #555;">${summaryCell}</td> 
+                    </tr>`;
             }
         });
 
@@ -8291,11 +8307,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </table>`;
         } else {
             const isMu10001Table = sample.form_type === 'MU.10-001' || !sample.form_type;
-            const tableBaseFont = isMu10001Table ? '14.5px' : '9.5px';
-            const subTitleFont = isMu10001Table ? '11.5px' : '7.5px';
-            const thFontSize = isMu10001Table ? '15px' : '9.5px';
+            const isMu10002Table = sample.form_type === 'MU.10-002';
+            const isStdTable = isMu10001Table || isMu10002Table;
+            const tableBaseFont = isStdTable ? '14.5px' : '9.5px';
+            const subTitleFont = isStdTable ? '11.5px' : '7.5px';
+            const thFontSize = isStdTable ? '15px' : '9.5px';
             mainTableHTML = `
-                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:${tableBaseFont}; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid; font-size:${thFontSize}; font-weight:bold;"> <th style="padding:4px 2px; border:1px solid #555; width:4%; text-align:center; line-height:1.15;">ลำดับ</th> <th style="padding:4px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.15;">ชื่อผู้จำหน่าย</th> <th style="padding:4px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.15;">รหัสตัวอย่าง<div style="font-weight:normal;font-size:${subTitleFont};">(สำหรับผู้ตรวจวิเคราะห์)</div></th> <th style="padding:4px 2px; border:1px solid #555; width:8%; text-align:center; line-height:1.15;">ชื่อตัวอย่าง</th> <th style="padding:4px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.15;">ปริมาณ<br>(กรัม)</th> <th style="padding:4px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.15;">แหล่งที่มา</th> <th style="padding:4px 2px; border:1px solid #555; width:16%; text-align:center; line-height:1.15;">สารที่ตรวจวิเคราะห์</th> <th style="padding:4px 2px; border:1px solid #555; width:20%; text-align:center; line-height:1.15;">การแปลผล</th> <th style="padding:4px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.15;">ผลการตรวจวิเคราะห์</th> <th style="padding:4px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.15;">สรุปผล</th> </tr> </thead> <tbody>${tableRows}
+                <table style="width:100%; table-layout:fixed; word-break:normal; word-wrap:break-word; overflow-wrap:break-word; margin:0; border-collapse:collapse; border:1.5px solid #333; font-size:${tableBaseFont}; letter-spacing:0px !important; word-spacing:0px !important;" border="1"> <thead style="text-align:center;"> <tr style="background:#f5f5f5; vertical-align:middle; page-break-inside: avoid; font-size:${thFontSize}; font-weight:bold;"> <th style="padding:5px 2px; border:1px solid #555; width:4%; text-align:center; line-height:1.2;">ลำดับ</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ชื่อผู้จำหน่าย</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">รหัสตัวอย่าง<div style="font-weight:normal;font-size:${subTitleFont};">(สำหรับผู้ตรวจวิเคราะห์)</div></th> <th style="padding:5px 2px; border:1px solid #555; width:8%; text-align:center; line-height:1.2;">ชื่อตัวอย่าง</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">ปริมาณ<br>(กรัม)</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">แหล่งที่มา</th> <th style="padding:5px 2px; border:1px solid #555; width:16%; text-align:center; line-height:1.2;">สารที่ตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:20%; text-align:center; line-height:1.2;">การแปลผล</th> <th style="padding:5px 2px; border:1px solid #555; width:10%; text-align:center; line-height:1.2;">ผลการตรวจวิเคราะห์</th> <th style="padding:5px 2px; border:1px solid #555; width:6%; text-align:center; line-height:1.2;">สรุปผล</th> </tr> </thead> <tbody>${tableRows}
                     </tbody> </table>`;
         }
 
@@ -8763,13 +8781,14 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         }
 
             const isMu10001Doc = sample.form_type === 'MU.10-001' || !sample.form_type;
+            const isMu10002Doc = sample.form_type === 'MU.10-002';
             const isMu10005Doc = sample.form_type === 'MU.10-005';
-            const isStandardDoc = isMu10001Doc || isMu10005Doc;
-            const headerDocNameFont = isStandardDoc ? '17px' : '11.5px';
-            const headerTextFont = isStandardDoc ? '15px' : '11.5px';
-            const headerDocNumFont = isStandardDoc ? '15.5px' : '12px';
-            const metaInfoFont = isStandardDoc ? '15px' : '11.5px';
-            const footerFont = isStandardDoc ? '14px' : '9.5px';
+            const isStandardDoc = isMu10001Doc || isMu10002Doc || isMu10005Doc;
+            const headerDocNameFont = isStandardDoc ? '17.5px' : '11.5px';
+            const headerTextFont = isStandardDoc ? '15.5px' : '11.5px';
+            const headerDocNumFont = isStandardDoc ? '16px' : '12px';
+            const metaInfoFont = isStandardDoc ? '15.5px' : '11.5px';
+            const footerFont = isStandardDoc ? '14.5px' : '9.5px';
 
             htmlContent = `
             <style>
@@ -8780,16 +8799,16 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 }
                 @page {
                     size: A4 landscape;
-                    margin: 10mm;
+                    margin: 7mm 8mm;
                 }
                 html, body {
                     margin: 0 !important;
                     padding: 0 !important;
                     background: #fff !important;
                 }
-            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '14.5px' : '10.5px'}; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:70px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:52px; height:auto;"> </td> <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:190px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div> <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
+            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '15px' : '10.5px'}; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:72px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:54px; height:auto;"> </td> <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div> <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
                     sample.form_type === 'MU.10-006' 
-                    ? `<table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:100%; padding:1px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td style="padding:1px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
+                    ? `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:100%; padding:1px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td style="padding:1px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
                     : sample.form_type === 'MU.10-005'
                     ? `<table style="width:100%; margin:0 0 6px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; line-height:1.4;"> 
                         <tr> 
@@ -8800,11 +8819,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                             <td colspan="2" style="padding:2px 0;">ตำบล ....${sample.tambon ? '<u>' + sample.tambon + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;อำเภอ ....${sample.amphoe ? '<u>' + sample.amphoe + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;จังหวัด ....${sample.province ? '<u>' + sample.province + '</u>' : '.........................................'}.... &nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง ....${samplingDate ? '<u>' + samplingDate + '</u>' : '.........................................'}....</td> 
                         </tr> 
                     </table>`
-                    : `<table style="width:100%; margin:0 0 4px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:50%; padding:1px 0;">หน่วยงานที่เก็บตัวอย่าง: <u>${sample.agency || ''}</u></td> <td style="padding:1px 0;">สถานที่เก็บตัวอย่าง: <u>${sample.location_name || ''}</u></td> </tr> <tr> <td colspan="2" style="padding:1px 0;">ตำบล: <u>${sample.tambon || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;อำเภอ: <u>${sample.amphoe || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;จังหวัด: <u>${sample.province || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง: <u>${samplingDate}</u></td> </tr> </table>`
+                    : `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.4;"> <tr> <td style="width:50%; padding:1px 0;">หน่วยงานที่เก็บตัวอย่าง: <u>${sample.agency || ''}</u></td> <td style="padding:1px 0;">สถานที่เก็บตัวอย่าง: <u>${sample.location_name || ''}</u></td> </tr> <tr> <td colspan="2" style="padding:1px 0;">ตำบล: <u>${sample.tambon || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;อำเภอ: <u>${sample.amphoe || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;จังหวัด: <u>${sample.province || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง: <u>${samplingDate}</u></td> </tr> </table>`
                 } <!-- MAIN TABLE -->${mainTableHTML}
 
                 ${mu10003Note}
-                <!-- FOOTER SIGNATURES --> <table style="width:100%; margin:6px 0 0 0; border-collapse:collapse; font-size:${footerFont}; color: #000; line-height:1.35; table-layout:fixed;"> <tr> <td style="width:33%; vertical-align:top; padding-right:8px; text-align:left;"> <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '...........................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.collector_position || '...................................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '.......................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:left; padding:0 8px;"> <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '...........................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '...................................................') : '...................................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '.......................................'}</u>....</div> </td> <td style="width:34%; vertical-align:top; text-align:right;"> <div style="white-space:nowrap;">ลงชื่อผู้ทบทวนเอกสาร ................................................</div> <div style="margin-top:3px; white-space:nowrap; font-size:13.5px;">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> <div style="margin-top:3px; white-space:nowrap;">วันที่ทบทวนเอกสาร ............................................</div> </td> </tr> </table>  </div> </div>`;
+                <!-- FOOTER SIGNATURES --> <table style="width:100%; margin:${isStandardDoc ? '12px' : '6px'} 0 0 0; border-collapse:collapse; font-size:${footerFont}; color: #000; line-height:1.4; table-layout:fixed;"> <tr> <td style="width:33%; vertical-align:top; padding-right:8px; text-align:left;"> <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '...........................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.collector_position || '...................................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '.......................................'}</u>....</div> </td> <td style="width:33%; vertical-align:top; text-align:left; padding:0 8px;"> <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '...........................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '...................................................') : '...................................................'}</u>....</div> <div style="margin-top:3px; white-space:nowrap;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '.......................................'}</u>....</div> </td> <td style="width:34%; vertical-align:top; text-align:right;"> <div style="white-space:nowrap;">ลงชื่อผู้ทบทวนเอกสาร ................................................</div> <div style="margin-top:3px; white-space:nowrap; font-size:14px;">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> <div style="margin-top:3px; white-space:nowrap;">วันที่ทบทวนเอกสาร ............................................</div> </td> </tr> </table>  </div> </div>`;
         }
 
         const opt = {
