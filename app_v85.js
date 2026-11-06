@@ -6590,16 +6590,18 @@ document.getElementById('formNameTitle').innerText = title;
             let totalCount = 0;
             const sampleItems = [];
             let itemIdx = 1;
-            while (sample['sample_name_'+itemIdx] !== undefined && itemIdx <= 50) {
-                sampleItems.push({
-                    food_type: sample['sample_name_'+itemIdx] || '',
-                    distributor: sample['distributor_'+itemIdx] || sample.distributor || '',
-                    food_serial_no: sample['food_serial_no_'+itemIdx] || '-',
-                    manufacturer_info: sample['manufacturer_info_'+itemIdx] || '-',
-                    has_mfg_exp: sample['has_mfg_exp_'+itemIdx] || '-',
-                    iodate_value: sample['iodate_value_'+itemIdx] || (itemIdx === 1 ? sample.iodate_value : '') || '-',
-                    test_outcome: sample['test_outcome_'+itemIdx] || (itemIdx === 1 ? sample.test_outcome : '') || '-'
-                });
+            while (sample['sample_name_'+itemIdx] !== undefined && itemIdx <= 500) {
+                if (sample['sample_name_'+itemIdx] && sample['item_status_'+itemIdx] !== 'rejected') {
+                    sampleItems.push({
+                        food_type: sample['sample_name_'+itemIdx] || '',
+                        distributor: sample['distributor_'+itemIdx] || sample.distributor || '',
+                        food_serial_no: sample['food_serial_no_'+itemIdx] || '-',
+                        manufacturer_info: sample['manufacturer_info_'+itemIdx] || '-',
+                        has_mfg_exp: sample['has_mfg_exp_'+itemIdx] || '-',
+                        iodate_value: sample['iodate_value_'+itemIdx] || (itemIdx === 1 ? sample.iodate_value : '') || '-',
+                        test_outcome: sample['test_outcome_'+itemIdx] || (itemIdx === 1 ? sample.test_outcome : '') || '-'
+                    });
+                }
                 itemIdx++;
             }
             if (sampleItems.length === 0 && (sample.sample_name || sample.name)) {
@@ -6622,27 +6624,10 @@ document.getElementById('formNameTitle').innerText = title;
                 wrapper.style.width = '100%';
             }
 
-            let tableRowsHTML = '';
-            sampleItems.forEach((item, i) => {
+            sampleItems.forEach((item) => {
                 if (item.food_type) {
                     totalCount++;
                     if (item.test_outcome === 'ผ่าน') passCount++;
-                    
-                    const isFail = item.test_outcome === 'ไม่ผ่าน';
-                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
-                    
-                    tableRowsHTML += `
-                        <tr class="${failClass}" style="page-break-inside: avoid; text-align: center; height: 26px; ${failStyle}"> 
-                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${i + 1}</td> 
-                            <td style="padding: 2.5px 4px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.distributor || '-'}</td> 
-                            <td style="padding: 2.5px 4px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.food_type || '-'}</td> 
-                            <td style="padding: 2.5px 4px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.food_serial_no || '-'}</td> 
-                            <td style="padding: 2.5px 4px; font-size: 14.5px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; line-height: 1.15; ${failStyle}">${item.manufacturer_info || '-'}</td> 
-                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.has_mfg_exp || '-'}</td> 
-                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.iodate_value !== undefined && item.iodate_value !== '' ? item.iodate_value : '-'}</td> 
-                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.test_outcome || '-'}</td> 
-                        </tr>`;
                 }
             });
             
@@ -6653,78 +6638,107 @@ document.getElementById('formNameTitle').innerText = title;
             let provinceTxt = sample.province ? (sample.province.startsWith('จ.') || sample.province.startsWith('จังหวัด') ? sample.province : 'จ.' + sample.province) : '';
             const locationTxt = `${sample.location_name || '-'} ${amphoeTxt} ${provinceTxt}`.trim();
 
-            const fullHtmlResult = `
-              <div class="cert-pdf-border" style="width: 794px; height: 1122px; position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
-                  <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
-                  <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style> 
-                  
-                  <!-- RD-005 & Page No -->
-                  <div style="position: absolute; top: 155px; left: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
-                      RD-005
-                  </div>
-                  <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
-                      หน้าที่ 1/1
-                  </div>
-                  
-                  <!-- HEADER & META INFO -->
-                  <div class="cert-pdf-header-mu10005" style="margin-top: 6px; margin-bottom: 3px;">
-                      <h4 style="text-align: center; font-weight: bold; margin-top: 0; margin-bottom: 3px; font-size: 25px; color: #000; line-height: 1.2;">ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader</h4>
-                      <table class="cert-meta-mu10005" style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16px !important; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">สถานที่เก็บตัวอย่าง</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${locationTxt}</td>
-                          </tr>
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">วันที่รับตัวอย่าง</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${samplingDate}</td>
-                          </tr>
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">วันที่ตรวจวิเคราะห์</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${analysisDate}</td>
-                          </tr>
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">จำนวนตัวอย่างทั้งหมด</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
-                          </tr>
-                      </table>
-                  </div>
-                  
-                  <!-- TABLE -->
-                  <table class="cert-multi-table cert-table-mu10005" style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 5px; margin-bottom: 5px;">
-                      <thead>
-                          <tr style="background-color: #ffffff; height: 26px;">
-                              <th style="width: 5%; white-space: nowrap; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ลำดับ</th>
-                              <th style="width: 15%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ชื่อผู้จำหน่าย</th>
-                              <th style="width: 15%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ตัวอย่าง</th>
-                              <th style="width: 14%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">เลขสารบบอาหาร</th>
-                              <th style="width: 24%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือจัดจำหน่าย</th>
-                              <th style="width: 11%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000; line-height: 1.15;">วันผลิต/<br>หมดอายุ</th>
-                              <th style="width: 8%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000; line-height: 1.15;">ไอโอดีน<br>(ppm)</th>
-                              <th style="width: 8%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">สรุปผล</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${tableRowsHTML}
-                      </tbody>
-                  </table>
-                  
-                  <!-- NOTE -->
-                  <div class="cert-note-mu10005" style="font-size: 16px; font-weight: bold; line-height: 1.18; margin-top: 5px; margin-bottom: 5px; color: #000;">
-                      <div style="display: flex;">
-                          <div style="white-space: nowrap; padding-right: 5px;">หมายเหตุ</div>
-                          <div>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</div>
+            const ITEMS_PER_PAGE = 5;
+            const totalPages = Math.ceil(sampleItems.length / ITEMS_PER_PAGE) || 1;
+            let fullHtmlResult = '';
+
+            for (let page = 0; page < totalPages; page++) {
+                const chunk = sampleItems.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
+                let tableRowsHTML = '';
+                
+                chunk.forEach((item, localIdx) => {
+                    const globalIdx = (page * ITEMS_PER_PAGE) + localIdx + 1;
+                    const isFail = item.test_outcome === 'ไม่ผ่าน';
+                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
+                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
+                    
+                    tableRowsHTML += `
+                        <tr class="${failClass}" style="page-break-inside: avoid; text-align: center; height: 26px; ${failStyle}"> 
+                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${globalIdx}</td> 
+                            <td style="padding: 2.5px 4px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.distributor || '-'}</td> 
+                            <td style="padding: 2.5px 4px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.food_type || '-'}</td> 
+                            <td style="padding: 2.5px 4px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.food_serial_no || '-'}</td> 
+                            <td style="padding: 2.5px 4px; font-size: 14.5px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; line-height: 1.15; ${failStyle}">${item.manufacturer_info || '-'}</td> 
+                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.has_mfg_exp || '-'}</td> 
+                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.iodate_value !== undefined && item.iodate_value !== '' ? item.iodate_value : '-'}</td> 
+                            <td style="padding: 2.5px 2px; font-size: 16px; font-weight: bold; border: 1.5px solid #000; color: #000; text-align: center; vertical-align: middle; ${failStyle}">${item.test_outcome || '-'}</td> 
+                        </tr>`;
+                });
+
+                const pageHtml = `
+                  <div class="cert-pdf-border" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; background-size: 100% 100%; background-position: top left;">
+                      <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
+                      <style>.cert-pdf-border { background-image: url('${CERT_BG_BASE64}') !important; background-size: cover; }</style> 
+                      
+                      <!-- RD-005 & Page No -->
+                      <div style="position: absolute; top: 155px; left: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
+                          RD-005
                       </div>
-                  </div>
-                  
-                  <!-- SIGNATURES -->
-                  <div class="cert-signatures-grid cert-signatures-mu10005" style="font-size: 16px !important; font-weight: bold; color: #000; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; text-align: center;">
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ</div>`}
-                      ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวมัลลิกา สุพล)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</div>`}
-                  </div>
-                  
-              </div>`;
+                      <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
+                          หน้าที่ ${page + 1}/${totalPages}
+                      </div>
+                      
+                      <!-- HEADER & META INFO -->
+                      <div class="cert-pdf-header-mu10005" style="margin-top: 6px; margin-bottom: 3px;">
+                          <h4 style="text-align: center; font-weight: bold; margin-top: 0; margin-bottom: 3px; font-size: 25px; color: #000; line-height: 1.2;">ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader</h4>
+                          <table class="cert-meta-mu10005" style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16px !important; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">สถานที่เก็บตัวอย่าง</td>
+                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${locationTxt}</td>
+                              </tr>
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">วันที่รับตัวอย่าง</td>
+                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${samplingDate}</td>
+                              </tr>
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">วันที่ตรวจวิเคราะห์</td>
+                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${analysisDate}</td>
+                              </tr>
+                              <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                                  <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">จำนวนตัวอย่างทั้งหมด</td>
+                                  <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px !important; line-height: 1.15;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
+                              </tr>
+                          </table>
+                      </div>
+                      
+                      <!-- TABLE -->
+                      <table class="cert-multi-table cert-table-mu10005" style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 5px; margin-bottom: 5px;">
+                          <thead>
+                              <tr style="background-color: #ffffff; height: 26px;">
+                                  <th style="width: 5%; white-space: nowrap; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ลำดับ</th>
+                                  <th style="width: 15%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ชื่อผู้จำหน่าย</th>
+                                  <th style="width: 15%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ตัวอย่าง</th>
+                                  <th style="width: 14%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">เลขสารบบอาหาร</th>
+                                  <th style="width: 24%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">ชื่อ/ที่อยู่ ผู้ผลิต หรือจัดจำหน่าย</th>
+                                  <th style="width: 11%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000; line-height: 1.15;">วันผลิต/<br>หมดอายุ</th>
+                                  <th style="width: 8%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000; line-height: 1.15;">ไอโอดีน<br>(ppm)</th>
+                                  <th style="width: 8%; border: 1.5px solid #000; text-align: center; font-size: 16px; font-weight: bold; padding: 3px 2px; color: #000;">สรุปผล</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              ${tableRowsHTML}
+                          </tbody>
+                      </table>
+                      
+                      <!-- NOTE -->
+                      <div class="cert-note-mu10005" style="font-size: 16px; font-weight: bold; line-height: 1.18; margin-top: 5px; margin-bottom: 5px; color: #000;">
+                          <div style="display: flex;">
+                              <div style="white-space: nowrap; padding-right: 5px;">หมายเหตุ</div>
+                              <div>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</div>
+                          </div>
+                      </div>
+                      
+                      <!-- SIGNATURES -->
+                      <div class="cert-signatures-grid cert-signatures-mu10005" style="font-size: 16px !important; font-weight: bold; color: #000; margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; text-align: center;">
+                          ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นางสาวอัญชสา ทองสีงามตา)<br>นักวิชาการสาธารณสุข</div>`}
+                          ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2') : `<div style="margin-bottom:10px;">ลงชื่อ..........................................................ผู้ตรวจวิเคราะห์<br>(นายสุรชัย รินทอง)<br>นักวิชาการสาธารณสุข</div>`}
+                          ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวฐิติพร อินศร)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้าห้องปฏิบัติการ</div>`}
+                          ${typeof renderSignatureSlot !== 'undefined' ? renderSignatureSlot(sample.sel_approver_2, 'ผู้รับรอง', 'approver_2') : `<div>ลงชื่อ..........................................................ผู้รับรอง<br>(นางสาวมัลลิกา สุพล)<br>เภสัชกรชำนาญการพิเศษ<br>หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข</div>`}
+                      </div>
+                      
+                  </div>`;
+                fullHtmlResult += pageHtml;
+            }
 
             container.innerHTML = fullHtmlResult;
         } else if (sample.form_type === 'MU.10-006') {
