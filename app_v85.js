@@ -7846,6 +7846,18 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const sample = this.samples.find(s =>s.ref_id === refId);
             if(!sample) return;
 
+            if (!sample.form_type && sample.ref_id) {
+                if (sample.ref_id.startsWith('MU001')) sample.form_type = 'MU.10-001';
+                else if (sample.ref_id.startsWith('MU002')) sample.form_type = 'MU.10-002';
+                else if (sample.ref_id.startsWith('MU003')) sample.form_type = 'MU.10-003';
+                else if (sample.ref_id.startsWith('MU004')) sample.form_type = 'MU.10-004';
+                else if (sample.ref_id.startsWith('MU005')) sample.form_type = 'MU.10-005';
+                else if (sample.ref_id.startsWith('MU006')) sample.form_type = 'MU.10-006';
+                else if (sample.ref_id.startsWith('MU007')) sample.form_type = 'MU.10-007';
+                else if (sample.ref_id.startsWith('MU008')) sample.form_type = 'MU.10-008';
+            }
+            if (!sample.form_type) sample.form_type = 'MU.10-001';
+
         // Document Details mapping based on formType
         let documentName = 'แบบบันทึกการสุ่มตัวอย่างอาหาร (กลุ่มผักและผลไม้)';
         let documentNum = 'MU.10-001';
@@ -8209,7 +8221,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <div style="font-size:${interpFontSize}; line-height:1.15; font-weight:bold !important;"> <div>${chk('สีตัวอย่าง = สีควบคุม', interp === 'สีตัวอย่าง = สีควบคุม' || interp2 === 'สีตัวอย่าง = สีควบคุม')}</div> <div style="margin-top:1px;">${chk('สีควบคุม >สีตัวอย่าง < สีตัดสิน', (interp.includes('สีควบคุม') && interp.includes('สีตัดสิน') && interp.includes('>')) || (interp2.includes('สีควบคุม') && interp2.includes('สีตัดสิน') && interp2.includes('>')))}</div> <div style="margin-top:1px;">${chk('สีตัวอย่าง >= สีตัดสิน', interp.includes('≥') || interp.includes('>=') || interp2.includes('≥') || interp2.includes('>='))}</div> <div style="margin-top:1px;">${chk('พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' || interp2 === 'พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div> <div style="margin-top:1px;">${chk('ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ', interp === 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ' || interp2 === 'ไม่พบ Spot สีเทา สีน้ำตาลเข้มถึงดำ')}</div> </div>`;
 
                     resultCell = `
-                        <div style="font-size:${interpFontSize}; line-height:1.2; font-weight:bold !important; text-align:left; padding-left:8px;"> <div>${chk('ไม่พบ', res === 'ไม่พบ' || res2 === 'ไม่พบ')}</div> <div style="margin-top:1px;">${chk('พบ', res === 'พบ' || res2 === 'พบ')}</div> <div style="margin-top:1px;">${chk('พบปลอดภัย', res === 'พบปลอดภัย' || res2 === 'พบปลอดภัย')}</div> <div style="margin-top:1px;">${chk('พบอันตราย', res === 'พบอันตราย' || res2 === 'พบอันตราย')}</div> </div>`;
+                        <div style="font-size:${interpFontSize}; line-height:1.2; font-weight:bold !important; text-align:left !important; padding-left:8px !important;"> <div style="text-align:left !important;">${chk('ไม่พบ', res === 'ไม่พบ' || res2 === 'ไม่พบ')}</div> <div style="margin-top:1px; text-align:left !important;">${chk('พบ', res === 'พบ' || res2 === 'พบ')}</div> <div style="margin-top:1px; text-align:left !important;">${chk('พบปลอดภัย', res === 'พบปลอดภัย' || res2 === 'พบปลอดภัย')}</div> <div style="margin-top:1px; text-align:left !important;">${chk('พบอันตราย', res === 'พบอันตราย' || res2 === 'พบอันตราย')}</div> </div>`;
 
                     if (sample.form_type === 'MU.10-001') {
                         sumValue = sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
@@ -8218,7 +8230,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
                     const sumFontSize = '14.5px';
                     summaryCell = `
-                        <div style="font-size:${sumFontSize}; line-height:1.25; font-weight:bold !important; text-align:left; padding-left:5px;"> <div>${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
+                        <div style="font-size:${sumFontSize}; line-height:1.25; font-weight:bold !important; text-align:left !important; padding-left:6px !important;"> <div style="text-align:left !important;">${chk('ผ่าน', isPassChecked)}</div> <div style="margin-top:2px; text-align:left !important;">${chk('ไม่ผ่าน', isFailChecked)}</div> </div>`;
                 }
 
                 const isMu10001Row = sample.form_type === 'MU.10-001' || !sample.form_type;
@@ -8236,8 +8248,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.source}</td> 
                         <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${checkboxCell}</td> 
                         <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${interpretCell}</td> 
-                        <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; text-align:${isStdRow ? 'left' : 'center'}; border:1px solid #555;">${resultCell}</td> 
-                        <td style="padding:3px 2px; vertical-align:middle; text-align:${isStdRow ? 'left' : 'center'}; font-weight:bold !important; border:1px solid #555;">${summaryCell}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; text-align:left !important; border:1px solid #555;">${resultCell}</td> 
+                        <td style="padding:3px 2px; vertical-align:middle; text-align:left !important; font-weight:bold !important; border:1px solid #555;">${summaryCell}</td> 
                     </tr>`;
             }
         });
