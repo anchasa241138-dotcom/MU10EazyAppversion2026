@@ -5853,20 +5853,20 @@ document.getElementById('formNameTitle').innerText = title;
                 const pName = PERSON_DATA[personKey]?.name || '';
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 2px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; color: #000;">
-                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">ลงชื่อ</div>
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; font-weight: bold; color: #000;">
+                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: bold;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div style="margin-top:18px; position:relative; color: #000; font-size: 18.5px;">
+                                <div style="margin-top:18px; position:relative; color: #000; font-size: 18.5px; font-weight: bold;">
                                     ................................................
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:2px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div class="sig-name" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: normal;">(${pName})</div>
-                                        <div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: normal;">${defaultRole}</div>
+                                        <div class="sig-name" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: bold;">(${pName})</div>
+                                        <div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: bold;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">${defaultRole}</div>
+                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: bold;">${defaultRole}</div>
                         </div>
                     </div>
                 `;
@@ -5874,23 +5874,23 @@ document.getElementById('formNameTitle').innerText = title;
             if (!personKey || !PERSON_DATA[personKey]) {
                 return `
                     <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 2px; width: 100%; text-align: center;">
-                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; color: #000;">
-                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">ลงชื่อ</div>
+                        <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; font-weight: bold; color: #000;">
+                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: bold;">ลงชื่อ</div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div style="margin-top:18px; position:relative; color: #000; font-size: 18.5px;">
+                                <div style="margin-top:18px; position:relative; color: #000; font-size: 18.5px; font-weight: bold;">
                                     <div style="position:absolute; bottom: 5px; text-align:center; width:100%;">
-                                        <span class="placeholder-signature" style="font-size: 15px;">(รอลงนามรับรอง)</span>
+                                        <span class="placeholder-signature" style="font-size: 15px; font-weight: bold;">(รอลงนามรับรอง)</span>
                                     </div>
                                     ................................................
                                 </div>
                                 <div style="width: 100%; display: flex; justify-content: center; margin-top:2px;">
                                     <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                        <div class="sig-name" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: normal;">(.......................................)</div>
-                                        <div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: normal;">${defaultRole}</div>
+                                        <div class="sig-name" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: bold;">(.......................................)</div>
+                                        <div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: bold;">${defaultRole}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">${defaultRole}</div>
+                            <div style="padding-top:18px; white-space: nowrap; font-size: 18.5px; font-weight: bold;">${defaultRole}</div>
                         </div>
                     </div>
                 `;
@@ -5923,29 +5923,29 @@ document.getElementById('formNameTitle').innerText = title;
             
             const sigHtml = isSigned ? 
                 `<img src="${imgSrc}" class="official-signature-img" style="${extraStyle}" onerror="this.style.display='none'">` :  
-                `<span class="placeholder-signature" style="font-size: 15px;">(รอลงนามรับรอง)</span>`;
+                `<span class="placeholder-signature" style="font-size: 15px; font-weight: bold;">(รอลงนามรับรอง)</span>`;
             
             return `
                 <div class="cert-signature-area" data-sig-slot="${roleId}" style="margin-top: 2px; width: 100%; text-align: center;">
-                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; color: #000;">
-                        <div style="padding-top:20px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">ลงชื่อ</div>
+                    <div style="display:flex; align-items:flex-start; justify-content:center; font-size: 18.5px; font-weight: bold; color: #000;">
+                        <div style="padding-top:20px; white-space: nowrap; font-size: 18.5px; font-weight: bold;">ลงชื่อ</div>
                         <div style="display:flex; flex-direction:column; align-items:center;">
                             <div style="margin-top:20px; position:relative;">
                                 <div style="position:absolute; bottom: 5px; text-align:center; width:100%; z-index:10; display:flex; justify-content:center;">
                                     ${sigHtml}
                                 </div>
-                                <span style="position:relative; z-index:1; color: #000; font-size: 18.5px;">................................................</span>
+                                <span style="position:relative; z-index:1; color: #000; font-size: 18.5px; font-weight: bold;">................................................</span>
                             </div>
                             
                             <div style="width: 100%; display: flex; justify-content: center; margin-top:2px;">
                                 <div style="width: 0px; display: flex; flex-direction: column; align-items: center; white-space: nowrap; overflow: visible;">
-                                    <div class="sig-name" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: normal;">(${p.name})</div>
-                                    <div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: normal;">${p.title1}</div>
-                                    ${p.title2 ? `<div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: normal;">${p.title2}</div>` : ''}
+                                    <div class="sig-name" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: bold;">(${p.name})</div>
+                                    <div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: bold;">${p.title1}</div>
+                                    ${p.title2 ? `<div class="sig-title" style="font-size: 18.5px; line-height: 1.2; color: #000; font-weight: bold;">${p.title2}</div>` : ''}
                                 </div>
                             </div>
                         </div>
-                        <div style="padding-top:20px; white-space: nowrap; font-size: 18.5px; font-weight: normal;">${defaultRole}</div>
+                        <div style="padding-top:20px; white-space: nowrap; font-size: 18.5px; font-weight: bold;">${defaultRole}</div>
                     </div>
                 </div>
             `;
@@ -6170,9 +6170,9 @@ document.getElementById('formNameTitle').innerText = title;
             if (sample.form_type === 'MU.10-002') {
                 const usedTestNames = Array.from(usedTests).map(k => testLabels[k]);
                 tableHeaderSubstance = usedTestNames.length > 0 ? usedTestNames.join(', ') : 'สารปนเปื้อน';
-                remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> - การตรวจวิเคราะห์สารปนเปื้อนในอาหาร โดยชุดทดสอบเบื้องต้น Test kit ได้แก่ ${tableHeaderSubstance}</div>
-                              <div style="margin-left: 65px; margin-bottom:4px;">- ผ่าน หมายถึง ไม่พบสารปนเปื้อน</div>
-                              <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบสารปนเปื้อน</div>`;
+                remarkText = `<div style="margin-bottom:4px; font-weight: bold;"><strong>หมายเหตุ :</strong> - การตรวจวิเคราะห์สารปนเปื้อนในอาหาร โดยชุดทดสอบเบื้องต้น Test kit ได้แก่ ${tableHeaderSubstance}</div>
+                              <div style="margin-left: 65px; margin-bottom:4px; font-weight: bold;">- ผ่าน หมายถึง ไม่พบสารปนเปื้อน</div>
+                              <div style="margin-left: 65px; font-weight: bold;">- ไม่ผ่าน หมายถึง พบสารปนเปื้อน</div>`;
             } else {
                 let hasGT = false;
                 let hasTM2 = false;
@@ -6183,21 +6183,21 @@ document.getElementById('formNameTitle').innerText = title;
                 
                 if (hasGT && hasTM2) {
                     tableHeaderSubstance = 'BOTH';
-                    remarkText = `<div style="margin-bottom:4px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 4 กลุ่ม ดังนี้</div>
-                                  <div style="margin-left: 65px; margin-bottom:4px;">กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
-                                  <div style="margin-left: 65px; margin-bottom:4px;">กลุ่มออร์แกโนคลอรีน และไพรีทรอยด์ (ชุดตรวจ TM/2-Kit)</div>
-                                  <div style="margin-bottom:4px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
-                                  <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
+                    remarkText = `<div style="margin-bottom:4px; font-weight: bold;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 4 กลุ่ม ดังนี้</div>
+                                  <div style="margin-left: 65px; margin-bottom:4px; font-weight: bold;">กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
+                                  <div style="margin-left: 65px; margin-bottom:4px; font-weight: bold;">กลุ่มออร์แกโนคลอรีน และไพรีทรอยด์ (ชุดตรวจ TM/2-Kit)</div>
+                                  <div style="margin-bottom:4px; font-weight: bold;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
+                                  <div style="margin-left: 65px; font-weight: bold;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
                 } else if (hasTM2) {
                     tableHeaderSubstance = 'TM/2';
-                    remarkText = `<div style="margin-bottom:2px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนคลอรีน และไพรีทรอยด์ (ชุดตรวจ TM/2-Kit)</div>
-                                  <div style="margin-bottom:2px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
-                                  <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
+                    remarkText = `<div style="margin-bottom:2px; font-weight: bold;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนคลอรีน และไพรีทรอยด์ (ชุดตรวจ TM/2-Kit)</div>
+                                  <div style="margin-bottom:2px; font-weight: bold;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
+                                  <div style="margin-left: 65px; font-weight: bold;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
                 } else {
                     tableHeaderSubstance = 'GT';
-                    remarkText = `<div style="margin-bottom:2px;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
-                                  <div style="margin-bottom:2px;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
-                                  <div style="margin-left: 65px;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
+                    remarkText = `<div style="margin-bottom:2px; font-weight: bold;"><strong>หมายเหตุ :</strong> การตรวจสารตกค้างยาฆ่าแมลงในผักผลไม้สด ทำการตรวจสาร 2 กลุ่ม ดังนี้ กลุ่มออร์แกโนฟอสเฟต และคาร์บาเมต (ชุดตรวจ GT-Kit)</div>
+                                  <div style="margin-bottom:2px; font-weight: bold;"><strong>การสรุปผล :</strong> - ผ่าน หมายถึง ไม่พบ (Inhibitor 0%), พบปลอดภัย (พบน้อยกว่า Inhibition 50%) อยู่ในเกณฑ์มาตรฐาน (ในระดับปลอดภัย)</div>
+                                  <div style="margin-left: 65px; font-weight: bold;">- ไม่ผ่าน หมายถึง พบ : พบในระดับไม่ปลอดภัย (Inhibition มากกว่าหรือเท่ากับ 50%) ไม่อยู่ในเกณฑ์มาตรฐาน</div>`;
                 }
             }
 
@@ -6213,28 +6213,28 @@ document.getElementById('formNameTitle').innerText = title;
                     const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
                     rowsHtml += `
                         <tr class="${failClass}" style="height: 26px; ${failStyle}">
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.idx}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.distributor}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.labId}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.sampleName}</td>
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.source}</td>
+                            <td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.idx}</td>
+                            <td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.distributor}</td>
+                            <td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.labId}</td>
+                            <td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.sampleName}</td>
+                            <td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.source}</td>
                             ${
                                 (() => {
                                     if (sample.form_type === 'MU.10-002') {
                                         const usedTestKeys = Array.from(usedTests);
-                                        if (usedTestKeys.length === 0) return `<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">-</td>`;
+                                        if (usedTestKeys.length === 0) return `<td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">-</td>`;
                                         return usedTestKeys.map(k => {
                                             const det = (item.details && typeof item.details === 'object') ? item.details[k] : undefined;
-                                            return `<td style="text-align:center; white-space: nowrap; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${det ? det : '-'}</td>`;
+                                            return `<td style="text-align:center; white-space: nowrap; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${det ? det : '-'}</td>`;
                                         }).join('');
                                     } else {
                                         return tableHeaderSubstance === 'BOTH' ? 
-                                            `<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.substance.includes('GT') ? item.details : '-'}</td><td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')}</td>` 
-                                        : `<td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.details}</td>`;
+                                            `<td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.substance.includes('GT') ? item.details : '-'}</td><td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.substance === 'GT และ TM/2' ? item.details2 : (item.substance === 'TM/2' ? item.details : '-')}</td>` 
+                                        : `<td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.details}</td>`;
                                     }
                                 })()
                             }
-                            <td style="text-align:center; border: 1px solid #000; color: #000; font-size: 18.5px; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
+                            <td style="text-align:center; border: 1.5px solid #000; color: #000; font-size: 18.5px; font-weight: bold; padding: 2.5px 4px; line-height: 1.15; ${failStyle}">${item.isPass ? 'ผ่าน' : 'ไม่ผ่าน'}</td>
                         </tr>
                     `;
                 });
@@ -6244,27 +6244,27 @@ document.getElementById('formNameTitle').innerText = title;
                         <div style="position: absolute; top: 155px; left: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
                             ${documentCode}
                         </div>
-                        <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; color: #000;">
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 10px; margin-bottom: 4px;">
                             <h4 style="text-align:center; font-weight:bold; margin-top: 0; margin-bottom: 4px; font-size: 22px; color: #000; line-height: 1.2;">${reportTitle}</h4>
-                            <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 19px; line-height: 1.15; margin: 0; padding: 0; color: #000;">
+                            <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 19px; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
                                 <tr style="border: none !important; background: transparent !important;">
                                     <td style="width: 175px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${sample.location_name || '-'} จ.${sample.province || ''}</u></td>
+                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${sample.location_name || '-'} จ.${sample.province || ''}</u></td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
                                     <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${receiveDate}</u></td>
+                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${receiveDate}</u></td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
                                     <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${analysisDate}</u></td>
+                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>${analysisDate}</u></td>
                                 </tr>
                                 <tr style="border: none !important; background: transparent !important;">
                                     <td style="font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่างทั้งหมด</td>
-                                    <td style="padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>ตรวจ ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPercent}</u></td>
+                                    <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;<u>ตรวจ ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPercent}</u></td>
                                 </tr>
                             </table>
                         </div>
@@ -6274,9 +6274,9 @@ document.getElementById('formNameTitle').innerText = title;
                                 const numSubstances = Math.max(1, Array.from(usedTests).length);
                                 const totalCols = 5 + numSubstances + 1;
                                 if (totalCols >= 9) {
-                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 2.5px 3px !important; font-size: 15px !important; border: 1px solid #000 !important; line-height: 1.15 !important; }</style><table class="cert-multi-table" style="font-size: 15px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 5px;">';
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 2.5px 3px !important; font-size: 15px !important; font-weight: bold !important; border: 1.5px solid #000 !important; line-height: 1.15 !important; }</style><table class="cert-multi-table" style="font-size: 15px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 5px;">';
                                 } else if (totalCols >= 7) {
-                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 2.5px 4px !important; font-size: 16.5px !important; border: 1px solid #000 !important; line-height: 1.15 !important; }</style><table class="cert-multi-table" style="font-size: 16.5px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 5px;">';
+                                    return '<style>.cert-multi-table th, .cert-multi-table td { padding: 2.5px 4px !important; font-size: 16.5px !important; font-weight: bold !important; border: 1.5px solid #000 !important; line-height: 1.15 !important; }</style><table class="cert-multi-table" style="font-size: 16.5px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 5px;">';
                                 }
                             }
                             return '<table class="cert-multi-table" style="font-size: 18.5px; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 0; margin-bottom: 5px;">';
@@ -6307,11 +6307,11 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:6px; font-size:16px; line-height: 1.25; margin-bottom: 6px; color: #000;">
+                        <div style="margin-top:6px; font-size:16px; font-weight: bold; line-height: 1.25; margin-bottom: 6px; color: #000;">
                             ${remarkText}
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 18.5px; color: #000; margin-top: 6px; gap: 6px 35px;">
+                        <div class="cert-signatures-grid" style="font-size: 18.5px; font-weight: bold; color: #000; margin-top: 6px; gap: 6px 35px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
