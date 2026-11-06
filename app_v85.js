@@ -256,6 +256,19 @@ const app = {
                         hasMigration = true;
                     }
                     this.samples.forEach(s => {
+                        // If sample was edited in Step 1 (e.g. MU002-691105002) and had an older approved status, reset to registered so it appears in Step 2 for lab verification
+                        if (s.ref_id === 'MU002-691105002' && s.status === 'approved') {
+                            s.status = 'registered';
+                            delete s.approved_timestamp;
+                            delete s.analyst_signed_timestamp;
+                            delete s.analysis_timestamp;
+                            delete s.analysis_summary;
+                            delete s.analysis_details;
+                            delete s.lab_receive_timestamp;
+                            delete s.lab_receive_date;
+                            hasMigration = true;
+                        }
+
                         if (s.form_type === 'MU.10-008' && (s.status === 'pending' || s.status === 'registered' || s.status === 'accepted' || s.status === 'analyzed')) {
                             s.status = 'summarized';
                             if (!s.lab_receive_date) s.lab_receive_date = new Date().toISOString().split('T')[0];
@@ -2442,27 +2455,42 @@ document.getElementById('formNameTitle').innerText = title;
                 const originalRefId = oldSample.ref_id || editingRefId;
                 const originalCreatedAt = oldSample.created_at || new Date().toISOString();
                 const originalCreatedBy = oldSample.created_by || (this.currentUser ? this.currentUser.username : 'user');
-                const originalStatus = oldSample.status || 'registered';
                 const originalLabId = oldSample.lab_id;
                 const originalLabNo = oldSample.lab_no;
+
+                // When edited in Step 1, advance/reset to Step 2 (registered) for lab verification
+                let nextStatus = 'registered';
+                if (sampleData.form_type === 'MU.10-003' || sampleData.form_type === 'MU.10-008') {
+                    nextStatus = 'summarized';
+                }
 
                 delete sampleData.editing_ref_id;
                 const updatedSample = Object.assign(oldSample, sampleData);
                 updatedSample.ref_id = originalRefId;
                 updatedSample.created_at = originalCreatedAt;
                 updatedSample.created_by = originalCreatedBy;
-                updatedSample.status = originalStatus;
+                updatedSample.status = nextStatus;
                 if (originalLabId) updatedSample.lab_id = originalLabId;
                 if (originalLabNo) updatedSample.lab_no = originalLabNo;
                 updatedSample.updated_at = new Date().toISOString();
                 updatedSample.updated_by = this.currentUser ? this.currentUser.username : '';
+
+                if (nextStatus === 'registered') {
+                    delete updatedSample.approved_timestamp;
+                    delete updatedSample.analyst_signed_timestamp;
+                    delete updatedSample.analysis_timestamp;
+                    delete updatedSample.analysis_summary;
+                    delete updatedSample.analysis_details;
+                    delete updatedSample.lab_receive_timestamp;
+                    delete updatedSample.lab_receive_date;
+                }
 
                 this.samples[index] = updatedSample;
             } else {
                 // If somehow index was not found, overwrite or insert using the exact same editingRefId (NEVER generateRefId)
                 delete sampleData.editing_ref_id;
                 sampleData.ref_id = editingRefId;
-                sampleData.status = sampleData.status || 'registered';
+                sampleData.status = (sampleData.form_type === 'MU.10-003' || sampleData.form_type === 'MU.10-008') ? 'summarized' : 'registered';
                 sampleData.updated_at = new Date().toISOString();
                 sampleData.updated_by = this.currentUser ? this.currentUser.username : '';
                 this.samples.unshift(sampleData);
@@ -2482,7 +2510,7 @@ document.getElementById('formNameTitle').innerText = title;
             Swal.fire({
                 icon: 'success',
                 title: 'อัปเดตข้อมูลสำเร็จ',
-                html: `แก้ไขและบันทึกทับข้อมูลรหัส <b>${tempId}</b> เรียบร้อยแล้ว<br><small style="color: #64748b;">(บันทึกทับไฟล์เดิม ไม่สร้างรหัสใหม่)</small>`,
+                html: `แก้ไขและบันทึกทับข้อมูลรหัส <b>${tempId}</b> เรียบร้อยแล้ว<br><small style="color: #0284c7; font-weight: 600;">(บันทึกทับไฟล์เดิม และส่งต่อไปยังขั้นตอนที่ 2: ตรวจสอบตัวอย่าง (แลป) แล้ว)</small>`,
                 confirmButtonText: 'ตกลง'
             });
 
