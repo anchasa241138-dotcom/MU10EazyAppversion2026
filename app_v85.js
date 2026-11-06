@@ -537,7 +537,7 @@ const app = {
 
         const addGlobalBtn = document.getElementById('addGlobalSampleBtn');
         if (addGlobalBtn) {
-            addGlobalBtn.addEventListener('click', () => this.addGlobalSampleEntry());
+            addGlobalBtn.addEventListener('click', () => this.addGlobalSampleEntry(null, true));
         }
 
         // Verification & Analysis Modals
@@ -1858,11 +1858,30 @@ document.getElementById('formNameTitle').innerText = title;
         }
     },
 
-    addGlobalSampleEntry(defaultItem = null) {
-        const formType = document.getElementById('field-form-type').value;
-        this.globalSampleIndex = (this.globalSampleIndex || 0) + 1;
+    addGlobalSampleEntry(defaultItem = null, isUserAction = false) {
+        const formType = document.getElementById('field-form-type')?.value;
         const container = document.getElementById('globalSampleEntries');
         if (!container) return;
+
+        // Limit to max 5 samples per record (except MU.10-007) when user clicks add
+        if (isUserAction && formType !== 'MU.10-007') {
+            const currentSections = container.querySelectorAll('.sample-section').length;
+            if (currentSections >= 5) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'จำกัดจำนวนตัวอย่าง',
+                        text: 'สามารถบันทึกได้สูงสุด 5 ตัวอย่าง ต่อ 1 แบบบันทึก',
+                        confirmButtonText: 'ตกลง'
+                    });
+                } else {
+                    alert('สามารถบันทึกได้สูงสุด 5 ตัวอย่าง ต่อ 1 แบบบันทึก');
+                }
+                return;
+            }
+        }
+
+        this.globalSampleIndex = (this.globalSampleIndex || 0) + 1;
 
         // Retrieve distributor from previous sample entry (if any)
         let previousDistributor = '';
@@ -7992,8 +8011,12 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             }
         }
 
-        // Ensure rows for the table (10 rows for MU.10-005 to match official template)
-        const minRowsNeeded = (sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002') ? 10 : 5;
+        if (sample.form_type !== 'MU.10-007' && sampleItems.length > 5) {
+            sampleItems = sampleItems.slice(0, 5);
+        }
+
+        // Ensure rows for the table (5 rows per record / 5 samples per form)
+        const minRowsNeeded = 5;
         let padLoops = 0;
         while (sampleItems.length < minRowsNeeded && padLoops++ < 15) {
             if (sample.form_type === 'MU.10-003') {
