@@ -8044,3 +8044,54 @@ html, body {
   print-color-adjust: exact !important;
 }
 
+/* ==========================================================================
+   MU.10-005 (RD-005) Official Report Styling (Matches Official PDF Template)
+   ========================================================================== */
+#certificatePDFContainer .cert-table-mu10005,
+.cert-table-mu10005 {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border: 1.5px solid #000000 !important;
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-table-mu10005 th,
+.cert-table-mu10005 th {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  padding: 3px 2px !important;
+  line-height: 1.15 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1.5px solid #000000 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+#certificatePDFContainer .cert-table-mu10005 td,
+.cert-table-mu10005 td {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  padding: 2.5px 3px !important;
+  line-height: 1.15 !important;
+  color: #000000 !important;
+  border: 1.5px solid #000000 !important;
+  vertical-align: middle !important;
+}
+
+#certificatePDFContainer .cert-table-mu10005 tr.row-failed,
+#certificatePDFContainer .cert-table-mu10005 tr.row-failed td,
+#certificatePDFContainer .cert-table-mu10005 tr.highlight-failed-row,
+#certificatePDFContainer .cert-table-mu10005 tr.highlight-failed-row td,
+.cert-table-mu10005 tr.row-failed,
+.cert-table-mu10005 tr.row-failed td,
+.cert-table-mu10005 tr.highlight-failed-row,
+.cert-table-mu10005 tr.highlight-failed-row td {
+  background-color: #ffff00 !important;
+  background: #ffff00 !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
