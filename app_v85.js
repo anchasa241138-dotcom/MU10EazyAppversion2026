@@ -5283,46 +5283,62 @@ document.getElementById('formNameTitle').innerText = title;
                     sample.analysis_summary = `ผ่าน ${passCount} / ไม่ผ่าน ${totalCount - passCount}`;
                 }
             } else if (sample.form_type === 'MU.10-002') {
-                let passCount = 0;
-                let totalCount = 0;
+                let totalItems = 0;
+                let passedItems = 0;
                 let idx = 1;
-                while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
+                while (sample['sample_name_' + idx] !== undefined && idx <= 500) {
                     if (sample['sample_name_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+                        totalItems++;
+                        let itemPassed = true;
+                        let itemHasTests = false;
                         ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(key => {
                             const interpEl = document.getElementById('analysis-interpretation-' + idx + '-' + key);
                             if (interpEl) {
-                                totalCount++;
+                                itemHasTests = true;
                                 sample['analysis_interpretation_' + idx + '_' + key] = interpEl.value;
-                                sample['analysis_details_' + idx + '_' + key] = document.getElementById('analysis-detail-results-' + idx + '-' + key)?.value || '';
+                                const detVal = document.getElementById('analysis-detail-results-' + idx + '-' + key)?.value || '';
+                                sample['analysis_details_' + idx + '_' + key] = detVal;
                                 const summary = document.getElementById('analysis-summary-outcome-' + idx + '-' + key)?.value || '';
                                 sample['analysis_summary_' + idx + '_' + key] = summary;
-                                if (summary === 'ผ่าน') passCount++;
+                                if (summary === 'ไม่ผ่าน' || (detVal && detVal.includes('พบ') && !detVal.includes('ไม่พบ'))) {
+                                    itemPassed = false;
+                                }
                             }
                         });
+                        sample['analysis_summary_' + idx] = itemPassed ? 'ผ่าน' : 'ไม่ผ่าน';
+                        if (itemPassed) passedItems++;
                     }
                     idx++;
                 }
                 
                 // Fallback check
-                if (totalCount === 0) {
+                if (totalItems === 0) {
+                    totalItems = 1;
+                    let itemPassed = true;
                     ['borax', 'formalin', 'bleach', 'salicylic', 'agonist'].forEach(key => {
                         const interpEl = document.getElementById('analysis-interpretation-1-' + key);
                         if (interpEl) {
-                            totalCount++;
                             sample['analysis_interpretation_1_' + key] = interpEl.value;
-                            sample['analysis_details_1_' + key] = document.getElementById('analysis-detail-results-1-' + key)?.value || '';
+                            const detVal = document.getElementById('analysis-detail-results-1-' + key)?.value || '';
+                            sample['analysis_details_1_' + key] = detVal;
                             const summary = document.getElementById('analysis-summary-outcome-1-' + key)?.value || '';
                             sample['analysis_summary_1_' + key] = summary;
-                            if (summary === 'ผ่าน') passCount++;
+                            if (summary === 'ไม่ผ่าน' || (detVal && detVal.includes('พบ') && !detVal.includes('ไม่พบ'))) {
+                                itemPassed = false;
+                            }
                         }
                     });
+                    sample['analysis_summary_1'] = itemPassed ? 'ผ่าน' : 'ไม่ผ่าน';
+                    if (itemPassed) passedItems++;
                 }
 
-                if (totalCount > 0) {
-                    if (passCount === totalCount) {
+                if (totalItems > 0) {
+                    if (passedItems === totalItems) {
                         sample.analysis_summary = 'ผ่าน';
-                    } else {
+                    } else if (passedItems === 0) {
                         sample.analysis_summary = 'ไม่ผ่าน';
+                    } else {
+                        sample.analysis_summary = `ผ่าน ${passedItems} / ไม่ผ่าน ${totalItems - passedItems}`;
                     }
                     sample.analysis_details = 'ดูรายละเอียดในใบรายงานผล';
                 }
@@ -5959,8 +5975,8 @@ document.getElementById('formNameTitle').innerText = title;
                             sample.analysis_comment
                         ].filter(Boolean).join(' ');
 
-                        const itemSummary = sample['analysis_summary_' + idx] || sample.analysis_summary || '';
-                        const isOverallFail = itemSummary.includes('ไม่ผ่าน');
+                        // For item summary, check item-level field only (do NOT fall back to batch summary sample.analysis_summary!)
+                        const itemSummary = sample['analysis_summary_' + idx] || '';
 
                         if (!itemHasExplicitTest || Object.keys(itemDetailsMap).length === 0) {
                             const substanceKeywords = {
@@ -5974,7 +5990,7 @@ document.getElementById('formNameTitle').innerText = title;
                                 if (words.some(w => textToCheck.includes(w))) {
                                     usedTests.add(k);
                                     const det = sample['analysis_details_' + idx] || sample.analysis_details || '';
-                                    if (isOverallFail || (det && det.includes('พบ') && !det.includes('ไม่พบ'))) {
+                                    if (itemSummary === 'ไม่ผ่าน' || (det && det.includes('พบ') && !det.includes('ไม่พบ'))) {
                                         itemPass = false;
                                         itemDetailsMap[k] = det || 'พบ';
                                     } else {
@@ -5985,18 +6001,26 @@ document.getElementById('formNameTitle').innerText = title;
                             }
                         }
 
-                        if (isOverallFail) {
+                        if (itemSummary === 'ไม่ผ่าน') {
                             itemPass = false;
-                            if (usedTests.size === 0) {
-                                usedTests.add('borax');
-                                itemDetailsMap['borax'] = sample['analysis_details_' + idx] || sample.analysis_details || 'พบสารปนเปื้อน';
-                            }
                         }
 
                         isPass = itemPass;
                         detailsText = itemDetailsMap; // Store object instead of string
                     } else {
-                        isPass = (sample['analysis_summary_' + idx] || sample.analysis_summary) === 'ผ่าน';
+                        const itemSummary = sample['analysis_summary_' + idx];
+                        if (itemSummary) {
+                            isPass = itemSummary === 'ผ่าน';
+                        } else {
+                            const det = sample['analysis_details_' + idx] || sample.analysis_details || '';
+                            if (det && det.includes('พบไม่ปลอดภัย')) {
+                                isPass = false;
+                            } else if (det && (det.includes('ไม่พบ') || det.includes('พบปลอดภัย'))) {
+                                isPass = true;
+                            } else {
+                                isPass = sample.analysis_summary === 'ผ่าน';
+                            }
+                        }
                         detailsText = sample['analysis_details_' + idx] || sample.analysis_details || '-';
                     }
 
@@ -6077,20 +6101,20 @@ document.getElementById('formNameTitle').innerText = title;
                             }
                         }
 
-                        if (isOverallFail) {
+                        if (itemSummary === 'ไม่ผ่าน') {
                             itemPass = false;
-                            if (usedTests.size === 0) {
-                                usedTests.add('borax');
-                                itemDetailsMap['borax'] = sample.analysis_details || 'พบสารปนเปื้อน';
-                            }
+                        }
+                        if (usedTests.size === 0 && isOverallFail) {
+                            usedTests.add('borax');
+                            itemDetailsMap['borax'] = sample.analysis_details || 'พบสารปนเปื้อน';
                         }
 
                         isPass = itemPass;
                         detailsText = itemDetailsMap; // Store object instead of string
                     } else {
-                    isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่าน';
-                    detailsText = sample['analysis_details_1'] || sample.analysis_details || '-';
-                }
+                        isPass = (sample['analysis_summary_1'] || sample.analysis_summary) === 'ผ่าน';
+                        detailsText = sample['analysis_details_1'] || sample.analysis_details || '-';
+                    }
 
                 if (isPass) passCount++;
                 allItems.push({
@@ -8205,7 +8229,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                     let sumValue = '';
                     if (sample.form_type === 'MU.10-001') {
-                        sumValue = sample['analysis_summary_' + (item.idx || 1)] || sample.analysis_summary;
+                        sumValue = sample['analysis_summary_' + (item.idx || 1)] || (sample['sample_name_2'] ? '' : sample.analysis_summary);
                     }
                     const isPassChecked = showChecked && (sumValue === 'ผ่าน' || sumValue === 'ผ่านเกณฑ์มาตรฐาน');
                     const isFailChecked = showChecked && (sumValue === 'ไม่ผ่าน' || sumValue === 'ไม่ผ่านเกณฑ์มาตรฐาน');
