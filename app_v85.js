@@ -2743,7 +2743,7 @@ document.getElementById('formNameTitle').innerText = title;
                 <td style="padding: 12px 15px; text-align: center;">
                     <div style="display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: nowrap;">
                         ${actionButtons}
-                        <button class="btn btn-sm btn-pdf" onclick="app.downloadSubmissionPDFDirect('${s.ref_id}')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; background-color: #059669; border-color: #047857; color: #ffffff;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                        <button class="btn btn-sm btn-pdf" onclick="app.generateSubmissionPDF('${s.ref_id}')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; background-color: #059669; border-color: #047857; color: #ffffff;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                     </div>
                 </td>
             `;
@@ -2752,14 +2752,7 @@ document.getElementById('formNameTitle').innerText = title;
     },
 
     downloadSubmissionPDFDirect(refId) {
-        const mockEvent = {
-            currentTarget: {
-                dataset: {
-                    refId: refId
-                }
-            }
-        };
-        this.generateSubmissionPDF(mockEvent);
+        this.generateSubmissionPDF(refId);
     },
 
     cancelSavedRecord(refId) {
@@ -8878,13 +8871,24 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 }
             };
             iframe.contentWindow.onafterprint = cleanupIframe;
-            setTimeout(cleanupIframe, 15000);
+            setTimeout(cleanupIframe, 30000);
+
+            if (typeof Swal !== 'undefined' && Swal.isVisible && Swal.isVisible()) {
+                Swal.close();
+            }
 
             const originalTitle = document.title;
             document.title = opt.filename;
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-            setTimeout(() => { document.title = originalTitle; }, 1000);
+
+            setTimeout(() => {
+                try {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                } catch (ePrint) {
+                    console.error('print error:', ePrint);
+                }
+                setTimeout(() => { document.title = originalTitle; }, 1000);
+            }, 250);
         } catch (pdfErr) {
             console.error('PDF generation error:', pdfErr);
             Swal.fire({
@@ -8893,7 +8897,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 text: pdfErr.message || pdfErr.toString()
             });
         } finally {
-            Swal.close();
+            if (typeof Swal !== 'undefined' && Swal.isVisible && Swal.isVisible()) {
+                Swal.close();
+            }
             if (typeof document !== 'undefined' && document.body && document.body.classList) {
                 document.body.classList.remove('is-printing-pdf');
             }
