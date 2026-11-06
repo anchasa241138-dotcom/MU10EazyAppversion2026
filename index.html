@@ -2888,6 +2888,17 @@
                             
                             <form id="sampleSubmissionForm" class="modern-form">
                                 <input type="hidden" id="field-form-type" name="form_type">
+                                <input type="hidden" id="field-editing-ref-id" name="editing_ref_id" value="">
+                                
+                                <div id="editingBannerAlert" class="alert alert-warning hidden" style="background-color: #fef3c7; border: 1.5px solid #f59e0b; color: #92400e; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="fa-solid fa-pen-to-square" style="font-size: 18px; color: #d97706;"></i>
+                                        <span>กำลังอยู่ในโหมดแก้ไขข้อมูลรหัส: <b id="editingBannerRefId" style="font-size: 15px; color: #b45309; text-decoration: underline;">-</b> (เมื่อกดบันทึก จะเป็นการแก้ไขทับข้อมูลเดิม ไม่สร้างรหัสใหม่)</span>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="app.cancelEditingMode()" style="font-size: 12px; padding: 4px 10px; background: #ffffff; border: 1px solid #d97706; color: #b45309; font-weight: 600; border-radius: 5px; cursor: pointer;">
+                                        <i class="fa-solid fa-xmark"></i> ยกเลิกโหมดแก้ไข
+                                    </button>
+                                </div>
                                 
                                 <h3 class="form-section-title" id="formNameTitle">แบบบันทึกการเก็บตัวอย่างผักและผลไม้</h3>
                                 
@@ -4775,6 +4786,6 @@
             }
         });
     </script>
-    <script src="app_v85.js?v=1793870500000"></script>
+    <script src="app_v85.js?v=1793874000000"></script>
 </body>
 </html>
