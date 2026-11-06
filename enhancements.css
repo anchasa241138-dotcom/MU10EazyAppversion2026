@@ -8103,6 +8103,28 @@ html, body {
   print-color-adjust: exact !important;
 }
 
+#certificatePDFContainer .cert-meta-mu10005,
+#certificatePDFContainer .cert-meta-mu10005 td,
+#certificatePDFContainer .cert-meta-mu10005 tr,
+.cert-meta-mu10005,
+.cert-meta-mu10005 td,
+.cert-meta-mu10005 tr {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  padding: 0.5px 0 !important;
+  color: #000000 !important;
+  height: auto !important;
+}
+
+#certificatePDFContainer .cert-meta-mu10005 td:first-child,
+.cert-meta-mu10005 td:first-child {
+  width: 138px !important;
+  min-width: 138px !important;
+  max-width: 138px !important;
+  white-space: nowrap !important;
+}
+
 #certificatePDFContainer .cert-note-mu10005,
 .cert-note-mu10005,
 .cert-note-mu10005 div,

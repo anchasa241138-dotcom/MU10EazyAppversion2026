@@ -6666,22 +6666,22 @@ document.getElementById('formNameTitle').innerText = title;
                   <!-- HEADER & META INFO -->
                   <div class="cert-pdf-header-mu10" style="margin-top: 6px; margin-bottom: 3px;">
                       <h4 style="text-align: center; font-weight: bold; margin-top: 0; margin-bottom: 3px; font-size: 25px; color: #000; line-height: 1.2;">ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader</h4>
-                      <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 21px; font-weight: bold; line-height: 1.12; margin: 0; padding: 0; color: #000;">
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">สถานที่เก็บตัวอย่าง</td>
-                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${locationTxt}</td>
+                      <table class="cert-meta-mu10005" style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 16px; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">สถานที่เก็บตัวอย่าง</td>
+                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">: &nbsp;${locationTxt}</td>
                           </tr>
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">วันที่รับตัวอย่าง</td>
-                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${samplingDate}</td>
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">วันที่รับตัวอย่าง</td>
+                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">: &nbsp;${samplingDate}</td>
                           </tr>
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">วันที่ตรวจวิเคราะห์</td>
-                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${analysisDate}</td>
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">วันที่ตรวจวิเคราะห์</td>
+                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">: &nbsp;${analysisDate}</td>
                           </tr>
-                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">จำนวนตัวอย่างทั้งหมด</td>
-                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.15; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">จำนวนตัวอย่างทั้งหมด</td>
+                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000; font-size: 16px; line-height: 1.15;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
                           </tr>
                       </table>
                   </div>
