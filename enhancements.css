@@ -7786,11 +7786,11 @@ html, body {
 .cert-pdf-border h4,
 .mu007-report-container > div[style*="font-weight: bold"][style*="text-align: center"],
 .mu007-report-container > div[style*="font-weight:bold"][style*="text-align:center"] {
-  font-size: 23px !important;
+  font-size: 25px !important;
   font-weight: 800 !important;
-  line-height: 1.3 !important;
+  line-height: 1.2 !important;
   margin-top: 0 !important;
-  margin-bottom: 6px !important;
+  margin-bottom: 3px !important;
   color: #000000 !important;
 }
 
@@ -7807,27 +7807,35 @@ html, body {
 /* Metadata & Details Section (สถานที่เก็บตัวอย่าง, วันที่รับตัวอย่าง, วันที่ตรวจวิเคราะห์, จำนวนตัวอย่าง) */
 #certificatePDFContainer .cert-pdf-header-mu10 table,
 #certificatePDFContainer .cert-pdf-header-mu10 td,
+#certificatePDFContainer .cert-pdf-header-mu10 tr,
 #certificatePDFContainer .cert-pdf-header-mu10 td u,
 #certificatePDFContainer .cert-pdf-header-mu10 > div,
 #certificatePDFContainer .cert-info-grid,
 #certificatePDFContainer .cert-info-grid > div,
 .cert-pdf-header-mu10 table,
 .cert-pdf-header-mu10 td,
+.cert-pdf-header-mu10 tr,
 .cert-pdf-header-mu10 td u,
 .cert-info-grid,
 .mu007-report-container > div[style*="line-height: 1.55"],
 .mu007-report-container > div[style*="line-height: 1.55"] div {
-  font-size: 19px !important;
+  font-size: 21px !important;
   font-weight: 700 !important;
-  line-height: 1.15 !important;
+  line-height: 1.12 !important;
   color: #000000 !important;
+  height: auto !important;
 }
 
 #certificatePDFContainer .cert-pdf-header-mu10 td,
-.cert-pdf-header-mu10 td {
-  padding: 0.5px 0 !important;
+#certificatePDFContainer .cert-pdf-header-mu10 tr,
+.cert-pdf-header-mu10 td,
+.cert-pdf-header-mu10 tr {
+  padding: 0 !important;
+  margin: 0 !important;
   font-weight: 700 !important;
+  line-height: 1.12 !important;
   color: #000000 !important;
+  height: auto !important;
 }
 
 #certificatePDFContainer .cert-pdf-header-mu10 table,
@@ -8093,5 +8101,15 @@ html, body {
   background: #ffff00 !important;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
+}
+
+#certificatePDFContainer .cert-note-mu10005,
+.cert-note-mu10005,
+.cert-note-mu10005 div,
+.cert-note-mu10005 * {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.18 !important;
+  color: #000000 !important;
 }
 

@@ -6664,24 +6664,24 @@ document.getElementById('formNameTitle').innerText = title;
                   </div>
                   
                   <!-- HEADER & META INFO -->
-                  <div class="cert-pdf-header-mu10" style="margin-top: 10px; margin-bottom: 4px;">
-                      <h4 style="text-align: center; font-weight: bold; margin-top: 0; margin-bottom: 4px; font-size: 22px; color: #000; line-height: 1.2;">ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader</h4>
-                      <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px; font-weight: bold; line-height: 1.15; margin: 0; padding: 0; color: #000;">
-                          <tr style="border: none !important; background: transparent !important;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">สถานที่เก็บตัวอย่าง</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${locationTxt}</td>
+                  <div class="cert-pdf-header-mu10" style="margin-top: 6px; margin-bottom: 3px;">
+                      <h4 style="text-align: center; font-weight: bold; margin-top: 0; margin-bottom: 3px; font-size: 25px; color: #000; line-height: 1.2;">ผลการตรวจวิเคราะห์ปริมาณไอโอดีนในเกลือบริโภค โดยใช้เครื่อง I-Reader</h4>
+                      <table style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 21px; font-weight: bold; line-height: 1.12; margin: 0; padding: 0; color: #000;">
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">สถานที่เก็บตัวอย่าง</td>
+                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${locationTxt}</td>
                           </tr>
-                          <tr style="border: none !important; background: transparent !important;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่รับตัวอย่าง</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${samplingDate}</td>
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">วันที่รับตัวอย่าง</td>
+                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${samplingDate}</td>
                           </tr>
-                          <tr style="border: none !important; background: transparent !important;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">วันที่ตรวจวิเคราะห์</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${analysisDate}</td>
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">วันที่ตรวจวิเคราะห์</td>
+                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${analysisDate}</td>
                           </tr>
-                          <tr style="border: none !important; background: transparent !important;">
-                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">จำนวนตัวอย่างทั้งหมด</td>
-                              <td style="font-weight: bold; padding: 0.5px 0; vertical-align: middle; border: none !important; color: #000;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
+                          <tr style="border: none !important; background: transparent !important; line-height: 1.12; height: auto;">
+                              <td style="width: 138px; font-weight: bold; white-space: nowrap; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">จำนวนตัวอย่างทั้งหมด</td>
+                              <td style="font-weight: bold; padding: 0; vertical-align: middle; border: none !important; color: #000; line-height: 1.12;">: &nbsp;${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ผ่านร้อยละ ${passPct} ดังนี้</td>
                           </tr>
                       </table>
                   </div>
@@ -6706,7 +6706,7 @@ document.getElementById('formNameTitle').innerText = title;
                   </table>
                   
                   <!-- NOTE -->
-                  <div style="font-size: 14.5px; font-weight: bold; line-height: 1.35; margin-top: 8px; margin-bottom: 8px; color: #000;">
+                  <div class="cert-note-mu10005" style="font-size: 16px; font-weight: bold; line-height: 1.18; margin-top: 5px; margin-bottom: 5px; color: #000;">
                       <div style="display: flex;">
                           <div style="white-space: nowrap; padding-right: 5px;">หมายเหตุ</div>
                           <div>-ประกาศกระทรวงสาธารณสุข ลงวันที่ 7 เมษายน 2554 เรื่อง เกลือบริโภคโดยที่เป็นการสมควรปรับปรุงประกาศ กระทรวงสาธารณสุข<br>ว่าด้วยเรื่อง เกลือบริโภค อาศัยอำนาจตามความในมาตรา 5 และมาตรา 6 (3) (4) (6) (7) และ (10) แห่งพระราชบัญญัติอาหาร พ.ศ. 2522<br>รัฐมนตรีว่าการกระทรวงสาธารณสุขออกประกาศไว้ ดังต่อไปนี้ ข้อ 4 เกลือบริโภคต้องมีปริมาณไอโอดีนไม่น้อยกว่า 20 มิลลิกรัม<br>และไม่เกิน 40 มิลลิกรัมต่อเกลือบริโภค 1 กิโลกรัม</div>
