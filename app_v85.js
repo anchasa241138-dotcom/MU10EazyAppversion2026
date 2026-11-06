@@ -1466,7 +1466,7 @@ const app = {
                 `;
                 break;
             case 'MU.10-002':
-                title = 'แบบบันทึกการเก็บตัวอย่างสารปนเปื้อน 5 ชนิด';
+                title = 'แบบบันทึกการสุ่มตัวอย่างอาหาร (กลุ่มอาหารทั่วไป)';
                 dynamicHTML = `<p class="input-helper">ชนิดสารปนเปื้อนสามารถเลือกได้ในแต่ละรายการตัวอย่างด้านบน</p>`;
                 break;
             case 'MU.10-003':
@@ -7850,7 +7850,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         let documentName = 'แบบบันทึกการสุ่มตัวอย่างอาหาร (กลุ่มผักและผลไม้)';
         let documentNum = 'MU.10-001';
         if (sample.form_type === 'MU.10-002') {
-            documentName = 'แบบบันทึกการเก็บตัวอย่างสารปนเปื้อน 5 ชนิด';
+            documentName = 'แบบบันทึกการสุ่มตัวอย่างอาหาร (กลุ่มอาหารทั่วไป)';
             documentNum = 'MU.10-002';
         } else if (sample.form_type === 'MU.10-003') {
             documentName = 'แบบบันทึกการสุ่มตัวอย่างน้ำมันและตรวจวัดปริมาณสารโพลาร์ ณ สถานที่จำหน่าย โดยใช้เครื่อง Testo/E-bro';
@@ -8801,7 +8801,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     padding: 0 !important;
                     background: #fff !important;
                 }
-            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '15px' : '10.5px'}; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:72px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:54px; height:auto;"> </td> <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:middle; text-align:left; color:#000;"> <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div> <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
+            </style> <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box;"> <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '15px' : '10.5px'}; color: #1a1a1a;"> <!-- HEADER --> <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;"> <tr> <td style="width:72px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;"> <img src="data:image/jpeg;base64,${logoBase64}" style="display:block; margin:auto; width:54px; height:auto;"> </td> <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};"> <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div> <div><strong>ชื่อเอกสาร : <span style="font-size:${headerDocNameFont};">${documentName}</span></strong></div> <div><strong>วันที่เริ่มใช้ :</strong> </div> <div><strong>แผนก :</strong>ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div> </td> <td style="width:200px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:top; text-align:left; color:#000;"> <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div> <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span>002</span></div> </td> </tr> </table> <!-- META FIELDS --> ${
                     sample.form_type === 'MU.10-006' 
                     ? `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.35;"> <tr> <td style="width:100%; padding:1px 0;">สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || ''}</u>....</td> </tr> <tr> <td style="padding:1px 0;">ตำบล ....<u>${sample.tambon || ''}</u>.... อำเภอ ....<u>${sample.amphoe || ''}</u>.... จังหวัด ....<u>${sample.province || ''}</u>.... วันที่เก็บตัวอย่าง ....<u>${samplingDate}</u>.... </td> </tr> </table>`
                     : sample.form_type === 'MU.10-005'
