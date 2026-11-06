@@ -8165,12 +8165,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const isNotDetected = showChecked && isPassChecked && !isDetected;
 
                     resultCell = `
-                        <div style="font-size:14.5px; line-height:1.35; font-weight:bold !important; text-align:center;">
-                            <div>${chk('ไม่พบ', isNotDetected)} &nbsp; ${chk('พบ', isDetected)}</div>
+                        <div style="font-size:14.5px; line-height:1.35; font-weight:bold !important; text-align:left; padding-left:8px;">
+                            <div>${chk('ไม่พบ', isNotDetected)}</div>
+                            <div style="margin-top:3px;">${chk('พบ', isDetected)}</div>
                         </div>`;
                         
                     summaryCell = `
-                        <div style="font-size:14.5px; line-height:1.35; font-weight:bold !important; text-align:center;">
+                        <div style="font-size:14.5px; line-height:1.35; font-weight:bold !important; text-align:left; padding-left:5px;">
                             <div>${chk('ผ่าน', isPassChecked)}</div>
                             <div style="margin-top:3px;">${chk('ไม่ผ่าน', isFailChecked)}</div>
                         </div>`;
@@ -8235,8 +8236,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <td style="padding:3px 4px; vertical-align:middle; font-size:${tdFontSizeFinal}; font-weight:bold !important; border:1px solid #555;">${item.source}</td> 
                         <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${checkboxCell}</td> 
                         <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; border:1px solid #555;">${interpretCell}</td> 
-                        <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; text-align:center; border:1px solid #555;">${resultCell}</td> 
-                        <td style="padding:3px 2px; vertical-align:middle; text-align:center; font-weight:bold !important; border:1px solid #555;">${summaryCell}</td> 
+                        <td style="padding:3px 3px; vertical-align:middle; font-weight:bold !important; text-align:${isMu10002Row ? 'left' : 'center'}; border:1px solid #555;">${resultCell}</td> 
+                        <td style="padding:3px 2px; vertical-align:middle; text-align:${isMu10002Row ? 'left' : 'center'}; font-weight:bold !important; border:1px solid #555;">${summaryCell}</td> 
                     </tr>`;
             }
         });
