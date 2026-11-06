@@ -432,6 +432,7 @@ const app = {
         document.querySelectorAll('.form-select-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 const formType = e.currentTarget.getAttribute('data-form-type');
+                this.cancelEditingMode();
                 this.openFormEditor(formType);
             });
         });
@@ -473,6 +474,13 @@ const app = {
                 submitBtn.className = 'btn btn-success';
             }
             this.currentEditingRefId = null;
+            const editInp = document.getElementById('field-editing-ref-id');
+            if (editInp) editInp.value = '';
+            const alertBanner = document.getElementById('editingBannerAlert');
+            if (alertBanner) {
+                alertBanner.classList.add('hidden');
+                alertBanner.style.display = 'none';
+            }
         });
 
         // Submit form
@@ -2385,17 +2393,16 @@ document.getElementById('formNameTitle').innerText = title;
         }
         
         let tempId = '';
-        if (this.currentEditingRefId) {
+        const editingRefId = this.currentEditingRefId || (sampleData && sampleData.editing_ref_id) || document.getElementById('field-editing-ref-id')?.value;
+        if (editingRefId) {
             // Updating existing record
-            tempId = this.currentEditingRefId;
+            tempId = editingRefId;
             const index = this.samples.findIndex(s => s.ref_id === tempId);
             if (index !== -1) {
                 const oldSample = this.samples[index];
                 
                 // Security Check
-                const owner = oldSample.created_by || 'user';
-                const canEditOrCancel = (owner === this.currentUser.username) || (this.currentUser.username === 'admin');
-                if (!canEditOrCancel) {
+                if (!this.canUserEditOrCancelSample(oldSample)) {
                     Swal.fire('ข้อผิดพลาด', 'คุณไม่มีสิทธิ์แก้ไขรายการนี้', 'error');
                     return;
                 }
@@ -2408,21 +2415,50 @@ document.getElementById('formNameTitle').innerText = title;
                         key.startsWith('oil_disposal_') || key.startsWith('polar_value_') || key.startsWith('food_category_') ||
                         key.startsWith('food_serial_no_') || key.startsWith('manufacturer_info_') || key.startsWith('has_mfg_exp_') ||
                         key.startsWith('net_weight_') || key.startsWith('has_storage_warning_') || key.startsWith('label_summary_') ||
-                        key.startsWith('iodate_value_') || key.startsWith('test_outcome_') || key.startsWith('sample_category_') || key.startsWith('sample_detail_')) {
+                        key.startsWith('iodate_value_') || key.startsWith('test_outcome_') || key.startsWith('sample_category_') || key.startsWith('sample_detail_') ||
+                        key.startsWith('item_sampling_date_') || key.startsWith('has_ingredient_pct_') || key.startsWith('amphoe_') || key.startsWith('location_') ||
+                        key.startsWith('company_') || key.startsWith('system_') || key.startsWith('ocpb_') || key.startsWith('claim_') || key.startsWith('remark_')) {
                         delete oldSample[key];
                     }
                 });
 
+                // Preserve original immutable keys
+                const originalRefId = oldSample.ref_id;
+                const originalCreatedAt = oldSample.created_at;
+                const originalCreatedBy = oldSample.created_by;
+                const originalStatus = oldSample.status || 'registered';
+                const originalLabId = oldSample.lab_id;
+                const originalLabNo = oldSample.lab_no;
+
+                delete sampleData.editing_ref_id;
                 const updatedSample = Object.assign(oldSample, sampleData);
+                updatedSample.ref_id = originalRefId;
+                updatedSample.created_at = originalCreatedAt;
+                updatedSample.created_by = originalCreatedBy;
+                updatedSample.status = originalStatus;
+                if (originalLabId) updatedSample.lab_id = originalLabId;
+                if (originalLabNo) updatedSample.lab_no = originalLabNo;
+                updatedSample.updated_at = new Date().toISOString();
+                updatedSample.updated_by = this.currentUser ? this.currentUser.username : '';
+
                 this.samples[index] = updatedSample;
                 this.saveSamples();
                 this.currentEditingRefId = null;
+                const editInp = document.getElementById('field-editing-ref-id');
+                if (editInp) editInp.value = '';
+                const alertBanner = document.getElementById('editingBannerAlert');
+                if (alertBanner) {
+                    alertBanner.classList.add('hidden');
+                    alertBanner.style.display = 'none';
+                }
+            } else {
+                console.warn('Sample not found for ref_id:', tempId);
             }
             
             Swal.fire({
                 icon: 'success',
                 title: 'อัปเดตข้อมูลสำเร็จ',
-                text: 'การแก้ไขข้อมูลถูกบันทึกเข้าระบบแล้ว',
+                html: `แก้ไขและบันทึกทับข้อมูลรหัส <b>${tempId}</b> เรียบร้อยแล้ว`,
                 confirmButtonText: 'ตกลง'
             });
 
@@ -2432,6 +2468,8 @@ document.getElementById('formNameTitle').innerText = title;
                 submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลเข้าระบบ';
                 submitBtn.className = 'btn btn-success';
             }
+            const recordsWrapper = document.getElementById('savedRecordsContainerWrapper');
+            if (recordsWrapper) recordsWrapper.classList.remove('hidden');
         } else {
             // Creating new record
             tempId = this.generateRefId(sampleData.form_type);
@@ -2495,6 +2533,49 @@ document.getElementById('formNameTitle').innerText = title;
         this.renderSavedRecords();
         this.updateDashboardStats();
         if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
+    },
+
+    canUserEditOrCancelSample(sample) {
+        if (!this.currentUser || !sample) return false;
+        const role = this.currentUser.role;
+        const username = this.currentUser.username;
+        if (role === 'admin' || username === 'admin') return true;
+        const owner = sample.created_by || 'user';
+        return (
+            owner === username ||
+            (this.currentUser.uid && owner === this.currentUser.uid) ||
+            (this.currentUser.fullname && owner === this.currentUser.fullname)
+        );
+    },
+
+    cancelEditingMode() {
+        this.currentEditingRefId = null;
+        const editInp = document.getElementById('field-editing-ref-id');
+        if (editInp) editInp.value = '';
+
+        const alertBanner = document.getElementById('editingBannerAlert');
+        if (alertBanner) {
+            alertBanner.classList.add('hidden');
+            alertBanner.style.display = 'none';
+        }
+
+        const submitBtn = document.querySelector('#sampleSubmissionForm button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลเข้าระบบ';
+            submitBtn.className = 'btn btn-success';
+        }
+
+        const recordsWrapper = document.getElementById('savedRecordsContainerWrapper');
+        if (recordsWrapper) recordsWrapper.classList.remove('hidden');
+
+        const form = document.getElementById('sampleSubmissionForm');
+        if (form) form.reset();
+
+        const pdfBtn = document.getElementById('btnExportSubmissionPDF');
+        if (pdfBtn) {
+            pdfBtn.disabled = true;
+            delete pdfBtn.dataset.refId;
+        }
     },
 
     renderSavedRecords() {
@@ -2572,8 +2653,7 @@ document.getElementById('formNameTitle').innerText = title;
             }
 
             // Security check for rendering actions
-            const owner = s.created_by || 'user';
-            const canEditOrCancel = (owner === this.currentUser.username) || (this.currentUser.username === 'admin');
+            const canEditOrCancel = this.canUserEditOrCancelSample(s);
 
             let actionButtons = '';
             if (canEditOrCancel) {
@@ -2625,9 +2705,7 @@ document.getElementById('formNameTitle').innerText = title;
         const sample = this.samples.find(s => s.ref_id === refId);
         if (!sample) return;
 
-        const owner = sample.created_by || 'user';
-        const canEditOrCancel = (owner === this.currentUser.username) || (this.currentUser.username === 'admin');
-        if (!canEditOrCancel) {
+        if (!this.canUserEditOrCancelSample(sample)) {
             Swal.fire('ข้อผิดพลาด', 'คุณไม่มีสิทธิ์ยกเลิกรายการนี้ (สิทธิ์เฉพาะผู้บันทึกข้อมูลและแอดมิน)', 'error');
             return;
         }
@@ -2664,21 +2742,36 @@ document.getElementById('formNameTitle').innerText = title;
         const sample = this.samples.find(s => s.ref_id === refId);
         if (!sample) return;
 
-        const owner = sample.created_by || 'user';
-        const canEditOrCancel = (owner === this.currentUser.username) || (this.currentUser.username === 'admin');
-        if (!canEditOrCancel) {
+        if (!this.canUserEditOrCancelSample(sample)) {
             Swal.fire('ข้อผิดพลาด', 'คุณไม่มีสิทธิ์แก้ไขรายการนี้ (สิทธิ์เฉพาะผู้บันทึกข้อมูลและแอดมิน)', 'error');
             return;
         }
 
-        // 1. Open the form editor
+        // 1. Set editing refId FIRST so any listener or state knows we are editing
+        this.currentEditingRefId = refId;
+        const editInp = document.getElementById('field-editing-ref-id');
+        if (editInp) editInp.value = refId;
+
+        // 2. Open the form editor for this form type
         this.openFormEditor(sample.form_type);
 
-        // 2. Hide the saved records container
-        document.getElementById('savedRecordsContainerWrapper').classList.add('hidden');
+        // Keep editing refId intact after openFormEditor
+        this.currentEditingRefId = refId;
+        if (editInp) editInp.value = refId;
 
-        // 3. Pre-fill basic fields
-        document.getElementById('field-agency').value = sample.agency || '';
+        // 3. Show edit banner alert
+        const alertBanner = document.getElementById('editingBannerAlert');
+        const alertBannerRefId = document.getElementById('editingBannerRefId');
+        if (alertBanner) {
+            if (alertBannerRefId) alertBannerRefId.innerText = refId;
+            alertBanner.classList.remove('hidden');
+            alertBanner.style.display = 'flex';
+        }
+
+        // 4. Pre-fill basic fields safely
+        const agencyEl = document.getElementById('field-agency');
+        if (agencyEl) agencyEl.value = sample.agency || '';
+
         let locType = sample.location_type || '';
         if (locType === 'ห้างสรรพสินค้า' || locType === 'ห้างสรรพสินค้า / ซุปเปอร์มาร์เก็ต') locType = 'ห้างสรรพสินค้า/ซุปเปอร์มาเก็ต';
         else if (locType === 'โรงงานผลิต' || locType === 'สถานที่ผลิตอาหาร / โรงงาน') locType = 'โรงงาน/สถานที่ผลิตอาหาร';
@@ -2690,79 +2783,93 @@ document.getElementById('formNameTitle').innerText = title;
         if (locSelect) {
             locSelect.value = locType;
             if (locType && locSelect.value !== locType) {
-                // If not matched exactly in predefined options, select "อื่นๆ" or keep value
                 const hasOpt = Array.from(locSelect.options).some(o => o.value === locType);
                 if (!hasOpt) locSelect.value = 'อื่นๆ';
             }
         }
-        document.getElementById('field-location-name').value = sample.location_name || '';
-        document.getElementById('field-province').value = sample.province || '';
+        const locNameEl = document.getElementById('field-location-name');
+        if (locNameEl) locNameEl.value = sample.location_name || '';
+
+        const provEl = document.getElementById('field-province');
+        if (provEl) provEl.value = sample.province || '';
         this.updateAmphoeDatalist();
-        document.getElementById('field-amphoe').value = sample.amphoe || '';
+
+        const amphoeEl = document.getElementById('field-amphoe');
+        if (amphoeEl) amphoeEl.value = sample.amphoe || '';
         this.updateTambonDatalist();
-        document.getElementById('field-tambon').value = sample.tambon || '';
-        document.getElementById('field-collector-name').value = sample.collector_name || '';
-        document.getElementById('field-collector-position').value = sample.collector_position || '';
-        document.getElementById('field-sampling-date').value = sample.sampling_date || '';
-        if (sample.shop_name) {
-            const inpShop = document.getElementById('field-shop-name');
-            if (inpShop) inpShop.value = sample.shop_name;
-        }
-        if (sample.test_kit) {
-            const selKit = document.getElementById('field-test-kit');
-            if (selKit) selKit.value = sample.test_kit;
-        }
 
-        // 4. Fill dynamic sample rows
+        const tambonEl = document.getElementById('field-tambon');
+        if (tambonEl) tambonEl.value = sample.tambon || '';
+
+        const collNameEl = document.getElementById('field-collector-name');
+        if (collNameEl) collNameEl.value = sample.collector_name || '';
+
+        const collPosEl = document.getElementById('field-collector-position');
+        if (collPosEl) collPosEl.value = sample.collector_position || '';
+
+        const sampDateEl = document.getElementById('field-sampling-date');
+        if (sampDateEl) sampDateEl.value = sample.sampling_date || '';
+
+        const inpShop = document.getElementById('field-shop-name');
+        if (inpShop && sample.shop_name) inpShop.value = sample.shop_name;
+
+        const selKit = document.getElementById('field-test-kit');
+        if (selKit && sample.test_kit) selKit.value = sample.test_kit;
+
+        // 5. Fill dynamic sample rows
         const container = document.getElementById('globalSampleEntries');
-        container.innerHTML = '';
-        this.globalSampleIndex = 0;
+        if (container) {
+            container.innerHTML = '';
+            this.globalSampleIndex = 0;
 
-        let idx = 1;
-        while (sample['sample_name_' + idx] !== undefined && idx <= 50) {
-            this.addGlobalSampleEntry();
-            const lastSection = container.lastElementChild;
-            if (lastSection) {
-                const inputs = lastSection.querySelectorAll('input, select');
-                inputs.forEach(input => {
-                    const baseName = input.name.replace(/_\d+$/, '');
-                    const sampleKey = `${baseName}_${idx}`;
-                    if (sample[sampleKey] !== undefined) {
-                        if (input.type === 'checkbox') {
-                            input.checked = sample[sampleKey] === 'on' || sample[sampleKey] === true || sample[sampleKey] === input.value;
-                        } else {
-                            input.value = sample[sampleKey];
+            let idx = 1;
+            while ((sample['sample_name_' + idx] !== undefined || sample['distributor_' + idx] !== undefined || sample['item_sampling_date_' + idx] !== undefined) && idx <= 50) {
+                this.addGlobalSampleEntry();
+                const lastSection = container.lastElementChild;
+                if (lastSection) {
+                    const inputs = lastSection.querySelectorAll('input, select');
+                    inputs.forEach(input => {
+                        const baseName = input.name.replace(/_\d+$/, '');
+                        const sampleKey = `${baseName}_${idx}`;
+                        if (sample[sampleKey] !== undefined) {
+                            if (input.type === 'checkbox') {
+                                input.checked = sample[sampleKey] === 'on' || sample[sampleKey] === true || sample[sampleKey] === input.value;
+                            } else {
+                                input.value = sample[sampleKey];
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                idx++;
             }
-            idx++;
+
+            // Fallback for older single sample structure
+            if (this.globalSampleIndex === 0 && (sample.sample_name || sample.distributor)) {
+                this.addGlobalSampleEntry();
+                const lastSection = container.lastElementChild;
+                if (lastSection) {
+                    const sName = lastSection.querySelector('input[name="sample_name_1"]');
+                    if (sName) sName.value = sample.sample_name || '';
+                    const sDist = lastSection.querySelector('input[name="distributor_1"]');
+                    if (sDist) sDist.value = sample.distributor || '';
+                    const sWeight = lastSection.querySelector('input[name="weight_1"]');
+                    if (sWeight) sWeight.value = sample.weight || '';
+                    const sSource = lastSection.querySelector('input[name="source_1"]');
+                    if (sSource) sSource.value = sample.source || '';
+                }
+            }
         }
 
-        // If it was old single sample structure
-        if (this.globalSampleIndex === 0 && sample.sample_name) {
-            this.addGlobalSampleEntry();
-            const lastSection = container.lastElementChild;
-            if (lastSection) {
-                lastSection.querySelector(`input[name="sample_name_1"]`).value = sample.sample_name || '';
-                lastSection.querySelector(`input[name="distributor_1"]`).value = sample.distributor || '';
-                lastSection.querySelector(`input[name="weight_1"]`).value = '';
-                lastSection.querySelector(`input[name="source_1"]`).value = sample.source || '';
-            }
-        }
-
-        // 5. Pre-fill form-specific dynamic fields (checkboxes, number inputs)
+        // 6. Pre-fill form-specific dynamic fields (checkboxes, number inputs)
         setTimeout(() => {
             const formFieldsContainer = document.getElementById('dynamicFormFields');
             if (formFieldsContainer) {
-                // Check checkboxes
                 formFieldsContainer.querySelectorAll('input[type="checkbox"]').forEach(chk => {
                     if (sample[chk.name] !== undefined) {
                         chk.checked = sample[chk.name] === 'on' || sample[chk.name] === true;
                     }
                 });
-                // Fill other inputs
-                formFieldsContainer.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+                formFieldsContainer.querySelectorAll('input[type="text"], input[type="number"], select').forEach(input => {
                     if (sample[input.name] !== undefined) {
                         input.value = sample[input.name];
                     }
@@ -2770,19 +2877,25 @@ document.getElementById('formNameTitle').innerText = title;
             }
         }, 50);
 
-        // 6. Set the editing ref ID in state
-        this.currentEditingRefId = refId;
-        
         // 7. Enable PDF button for editing
-        document.getElementById('btnExportSubmissionPDF').disabled = false;
-        document.getElementById('btnExportSubmissionPDF').dataset.refId = refId;
+        const pdfBtn = document.getElementById('btnExportSubmissionPDF');
+        if (pdfBtn) {
+            pdfBtn.disabled = false;
+            pdfBtn.dataset.refId = refId;
+        }
 
         // 8. Update save button text and style
         const submitBtn = document.querySelector('#sampleSubmissionForm button[type="submit"]');
         if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> อัปเดตการแก้ไขข้อมูล';
+            submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> บันทึกการแก้ไข (รหัส ${refId})`;
             submitBtn.className = 'btn btn-primary';
         }
+
+        const recordsWrapper = document.getElementById('savedRecordsContainerWrapper');
+        if (recordsWrapper) recordsWrapper.classList.remove('hidden');
+
+        // Scroll up to form smoothly
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     },
 
     // Lab Verify Logic
