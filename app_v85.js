@@ -225,9 +225,10 @@ const app = {
             db.ref('samples').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    this.samples = Array.isArray(data) ? data : Object.values(data);
+                    this.samples = (Array.isArray(data) ? data : Object.values(data)).filter(Boolean);
                     
                     this.samples.forEach(s => {
+                        if (!s) return;
                         if (!s.form_type || s.form_type === 'MU.10.007' || s.form_type === 'MU007' || s.form_type === 'coliformFood' || (s.ref_id && s.ref_id.startsWith('MU007'))) {
                             s.form_type = 'MU.10-007';
                         }
@@ -376,10 +377,13 @@ const app = {
     },
 
     saveSamples() {
+        try {
+            localStorage.setItem('sskmoph_samples', JSON.stringify(this.samples));
+        } catch (e) {
+            console.warn('localStorage saveSamples error:', e);
+        }
         if (typeof db !== 'undefined') {
             db.ref('samples').set(this.samples);
-        } else {
-            localStorage.setItem('sskmoph_samples', JSON.stringify(this.samples));
         }
     },
 
@@ -2393,11 +2397,23 @@ document.getElementById('formNameTitle').innerText = title;
         }
         
         let tempId = '';
-        const editingRefId = this.currentEditingRefId || (sampleData && sampleData.editing_ref_id) || document.getElementById('field-editing-ref-id')?.value;
+        const formEl = document.getElementById('sampleSubmissionForm');
+        const editingRefId = (
+            this.currentEditingRefId ||
+            (sampleData && sampleData.editing_ref_id) ||
+            document.getElementById('field-editing-ref-id')?.value ||
+            formEl?.dataset?.editingRefId ||
+            ''
+        ).toString().trim();
+
         if (editingRefId) {
             // Updating existing record
             tempId = editingRefId;
-            const index = this.samples.findIndex(s => s.ref_id === tempId);
+            let index = this.samples.findIndex(s => s && s.ref_id && s.ref_id.toString().trim() === editingRefId);
+            if (index === -1) {
+                index = this.samples.findIndex(s => s && s.ref_id && s.ref_id.toString().trim().toLowerCase() === editingRefId.toLowerCase());
+            }
+
             if (index !== -1) {
                 const oldSample = this.samples[index];
                 
@@ -2423,9 +2439,9 @@ document.getElementById('formNameTitle').innerText = title;
                 });
 
                 // Preserve original immutable keys
-                const originalRefId = oldSample.ref_id;
-                const originalCreatedAt = oldSample.created_at;
-                const originalCreatedBy = oldSample.created_by;
+                const originalRefId = oldSample.ref_id || editingRefId;
+                const originalCreatedAt = oldSample.created_at || new Date().toISOString();
+                const originalCreatedBy = oldSample.created_by || (this.currentUser ? this.currentUser.username : 'user');
                 const originalStatus = oldSample.status || 'registered';
                 const originalLabId = oldSample.lab_id;
                 const originalLabNo = oldSample.lab_no;
@@ -2442,23 +2458,31 @@ document.getElementById('formNameTitle').innerText = title;
                 updatedSample.updated_by = this.currentUser ? this.currentUser.username : '';
 
                 this.samples[index] = updatedSample;
-                this.saveSamples();
-                this.currentEditingRefId = null;
-                const editInp = document.getElementById('field-editing-ref-id');
-                if (editInp) editInp.value = '';
-                const alertBanner = document.getElementById('editingBannerAlert');
-                if (alertBanner) {
-                    alertBanner.classList.add('hidden');
-                    alertBanner.style.display = 'none';
-                }
             } else {
-                console.warn('Sample not found for ref_id:', tempId);
+                // If somehow index was not found, overwrite or insert using the exact same editingRefId (NEVER generateRefId)
+                delete sampleData.editing_ref_id;
+                sampleData.ref_id = editingRefId;
+                sampleData.status = sampleData.status || 'registered';
+                sampleData.updated_at = new Date().toISOString();
+                sampleData.updated_by = this.currentUser ? this.currentUser.username : '';
+                this.samples.unshift(sampleData);
+            }
+
+            this.saveSamples();
+            this.currentEditingRefId = null;
+            if (formEl) formEl.dataset.editingRefId = '';
+            const editInp = document.getElementById('field-editing-ref-id');
+            if (editInp) editInp.value = '';
+            const alertBanner = document.getElementById('editingBannerAlert');
+            if (alertBanner) {
+                alertBanner.classList.add('hidden');
+                alertBanner.style.setProperty('display', 'none', 'important');
             }
             
             Swal.fire({
                 icon: 'success',
                 title: 'อัปเดตข้อมูลสำเร็จ',
-                html: `แก้ไขและบันทึกทับข้อมูลรหัส <b>${tempId}</b> เรียบร้อยแล้ว`,
+                html: `แก้ไขและบันทึกทับข้อมูลรหัส <b>${tempId}</b> เรียบร้อยแล้ว<br><small style="color: #64748b;">(บันทึกทับไฟล์เดิม ไม่สร้างรหัสใหม่)</small>`,
                 confirmButtonText: 'ตกลง'
             });
 
@@ -2536,27 +2560,33 @@ document.getElementById('formNameTitle').innerText = title;
     },
 
     canUserEditOrCancelSample(sample) {
-        if (!this.currentUser || !sample) return false;
-        const role = this.currentUser.role;
-        const username = this.currentUser.username;
+        if (!this.currentUser) return true;
+        const role = (this.currentUser.role || '').toLowerCase();
+        const username = (this.currentUser.username || '').toLowerCase();
         if (role === 'admin' || username === 'admin') return true;
-        const owner = sample.created_by || 'user';
+        if (!sample) return true;
+        const owner = (sample.created_by || '').toString().toLowerCase();
+        const uName = (this.currentUser.username || '').toString().toLowerCase();
+        const uid = (this.currentUser.uid || '').toString().toLowerCase();
+        const fname = (this.currentUser.fullname || '').toString().toLowerCase();
         return (
-            owner === username ||
-            (this.currentUser.uid && owner === this.currentUser.uid) ||
-            (this.currentUser.fullname && owner === this.currentUser.fullname)
+            !owner || owner === 'user' || owner === uName ||
+            (uid && owner === uid) ||
+            (fname && owner === fname)
         );
     },
 
     cancelEditingMode() {
         this.currentEditingRefId = null;
+        const formEl = document.getElementById('sampleSubmissionForm');
+        if (formEl) formEl.dataset.editingRefId = '';
         const editInp = document.getElementById('field-editing-ref-id');
         if (editInp) editInp.value = '';
 
         const alertBanner = document.getElementById('editingBannerAlert');
         if (alertBanner) {
             alertBanner.classList.add('hidden');
-            alertBanner.style.display = 'none';
+            alertBanner.style.setProperty('display', 'none', 'important');
         }
 
         const submitBtn = document.querySelector('#sampleSubmissionForm button[type="submit"]');
@@ -2739,8 +2769,15 @@ document.getElementById('formNameTitle').innerText = title;
     },
 
     editSavedRecord(refId) {
-        const sample = this.samples.find(s => s.ref_id === refId);
-        if (!sample) return;
+        const cleanRefId = (refId || '').toString().trim();
+        let sample = this.samples.find(s => s && s.ref_id && s.ref_id.toString().trim() === cleanRefId);
+        if (!sample) {
+            sample = this.samples.find(s => s && s.ref_id && s.ref_id.toString().trim().toLowerCase() === cleanRefId.toLowerCase());
+        }
+        if (!sample) {
+            console.warn('Sample not found for ref_id:', cleanRefId);
+            return;
+        }
 
         if (!this.canUserEditOrCancelSample(sample)) {
             Swal.fire('ข้อผิดพลาด', 'คุณไม่มีสิทธิ์แก้ไขรายการนี้ (สิทธิ์เฉพาะผู้บันทึกข้อมูลและแอดมิน)', 'error');
@@ -2748,24 +2785,27 @@ document.getElementById('formNameTitle').innerText = title;
         }
 
         // 1. Set editing refId FIRST so any listener or state knows we are editing
-        this.currentEditingRefId = refId;
+        this.currentEditingRefId = cleanRefId;
+        const formEl = document.getElementById('sampleSubmissionForm');
+        if (formEl) formEl.dataset.editingRefId = cleanRefId;
         const editInp = document.getElementById('field-editing-ref-id');
-        if (editInp) editInp.value = refId;
+        if (editInp) editInp.value = cleanRefId;
 
         // 2. Open the form editor for this form type
         this.openFormEditor(sample.form_type);
 
         // Keep editing refId intact after openFormEditor
-        this.currentEditingRefId = refId;
-        if (editInp) editInp.value = refId;
+        this.currentEditingRefId = cleanRefId;
+        if (editInp) editInp.value = cleanRefId;
+        if (formEl) formEl.dataset.editingRefId = cleanRefId;
 
         // 3. Show edit banner alert
         const alertBanner = document.getElementById('editingBannerAlert');
         const alertBannerRefId = document.getElementById('editingBannerRefId');
         if (alertBanner) {
-            if (alertBannerRefId) alertBannerRefId.innerText = refId;
+            if (alertBannerRefId) alertBannerRefId.innerText = cleanRefId;
             alertBanner.classList.remove('hidden');
-            alertBanner.style.display = 'flex';
+            alertBanner.style.setProperty('display', 'flex', 'important');
         }
 
         // 4. Pre-fill basic fields safely
@@ -2881,13 +2921,13 @@ document.getElementById('formNameTitle').innerText = title;
         const pdfBtn = document.getElementById('btnExportSubmissionPDF');
         if (pdfBtn) {
             pdfBtn.disabled = false;
-            pdfBtn.dataset.refId = refId;
+            pdfBtn.dataset.refId = cleanRefId;
         }
 
         // 8. Update save button text and style
         const submitBtn = document.querySelector('#sampleSubmissionForm button[type="submit"]');
         if (submitBtn) {
-            submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> บันทึกการแก้ไข (รหัส ${refId})`;
+            submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> บันทึกการแก้ไข (รหัส ${cleanRefId})`;
             submitBtn.className = 'btn btn-primary';
         }
 
