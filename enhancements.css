@@ -2270,11 +2270,75 @@ input[type="text"]:focus, select.form-control:focus, textarea.form-control:focus
   font-weight: 600 !important;
 }
 
+.modal-body input:not([type="checkbox"]):not([type="radio"]),
+.modal-body select,
+.modal-body textarea,
 .modal-body .form-group input,
 .modal-body .form-group select {
   background: #ffffff !important;
   border: 1.5px solid #cbd5e1 !important;
   color: #0f172a !important;
+}
+
+.modal-body input:not([type="checkbox"]):not([type="radio"]):focus,
+.modal-body select:focus,
+.modal-body textarea:focus {
+  background: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18) !important;
+  color: #0f172a !important;
+  outline: none !important;
+}
+
+.modal-body input.readonly-input,
+.modal-body input[readonly] {
+  background: #f8fafc !important;
+  color: #334155 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Wide & No-Scroll Layout for Analysis Input Modal */
+#analysisInputModal .modal-card.modal-large {
+  width: 1180px !important;
+  max-width: 96vw !important;
+}
+
+#analysisInputModal .modal-header {
+  padding: 12px 22px !important;
+}
+
+#analysisInputModal .modal-body {
+  max-height: 88vh !important;
+  padding: 14px 22px 18px !important;
+  overflow-y: auto !important;
+}
+
+#analysisInputModal .form-section-divider {
+  margin: 8px 0 8px 0 !important;
+  padding-bottom: 4px !important;
+  font-size: 13.5px !important;
+}
+
+#analysisInputModal .form-group {
+  margin-bottom: 6px !important;
+}
+
+#analysisInputModal .form-group label {
+  font-size: 12.5px !important;
+  margin-bottom: 3px !important;
+}
+
+#analysisInputModal .form-group input,
+#analysisInputModal .form-group select {
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+}
+
+#analysisInputModal .form-actions.margin-top {
+  margin-top: 10px !important;
+  padding-top: 10px !important;
 }
 
 /* Sample Detail Preview Modal Specific Theme */
@@ -2914,6 +2978,13 @@ body.require-login-mode::before {
   inset: 0 !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
+}
+
+.modal-overlay:not(.active),
+#authModal:not(.active) {
+  display: none !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
 }
 
 .auth-bg-video {
