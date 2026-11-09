@@ -4018,6 +4018,18 @@ document.getElementById('formNameTitle').innerText = title;
         }
     },
 
+    syncMu10003SampleNames() {
+        const names = [];
+        document.querySelectorAll('input[id^="analysis-sample-name-"]').forEach(el => {
+            const v = el.value.trim();
+            if (v) names.push(v);
+        });
+        const topDisplay = document.getElementById('analysis-sample-name-display');
+        if (topDisplay && names.length > 0) {
+            topDisplay.value = names.join(', ');
+        }
+    },
+
     calculateMu10005Iodate(idx) {
         const iodateEl = document.getElementById('analysis-iodate-' + idx);
         const summaryEl = document.getElementById('analysis-summary-outcome-' + idx);
@@ -5147,42 +5159,97 @@ document.getElementById('formNameTitle').innerText = title;
                 const curPolar = (item.polar_value !== '-' && item.polar_value !== null && item.polar_value !== undefined) ? item.polar_value : '';
                 const curSummary = (item.summary !== '-' && item.summary !== null && item.summary !== undefined) ? item.summary : '';
 
-                let repDateStr = '-';
+                let dateInputVal = '';
                 if (item.last_replacement_date) {
                     try {
-                        repDateStr = new Date(item.last_replacement_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                        const d = new Date(item.last_replacement_date);
+                        if (!isNaN(d.getTime())) {
+                            dateInputVal = d.toISOString().split('T')[0];
+                        } else {
+                            dateInputVal = item.last_replacement_date;
+                        }
                     } catch(e) {
-                        repDateStr = item.last_replacement_date;
+                        dateInputVal = item.last_replacement_date;
                     }
                 }
 
                 html += `
-                    <div style="background:#ffffff; padding:18px 20px; border-radius:12px; border:1.5px solid #e2e8f0; margin-bottom:16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                    <div style="background:#ffffff; padding:18px 20px; border-radius:12px; border:1.5px solid #e2e8f0; margin-bottom:18px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
                         <!-- หัวข้อตัวอย่างและรหัสแลป -->
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
                             <div style="font-weight:700; color:#0f172a; font-size:15px; display:inline-flex; align-items:center; gap:8px;">
                                 <span style="background:#b45309; color:#fff; width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:bold;">${item.idx}</span>
-                                <span>ชื่อตัวอย่าง / ชนิดอาหาร: <strong style="color:#b45309; font-size:15.5px;">${item.name}</strong></span>
-                                ${item.distributor ? `<span style="font-size:13px; color:#64748b; font-weight:normal;">(ผู้จำหน่าย: <strong style="color:#334155;">${item.distributor}</strong>)</span>` : ''}
+                                <span>รายการตัวอย่างที่ ${item.idx}</span>
                             </div>
                             <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 12px; border-radius:9999px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
                                 <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง (Lab No.): <strong style="font-family:monospace; font-size:13.5px;">${itemLabNo}</strong>
                             </span>
                         </div>
 
-                        <!-- ข้อมูลที่จะแสดงในใบรายงานผล RD-003 -->
-                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:13px; color:#334155;">
-                            <div style="font-weight:700; color:#475569; margin-bottom:6px; display:flex; align-items:center; gap:6px; font-size:12.5px;">
-                                <i class="fa-solid fa-file-invoice" style="color:#0284c7;"></i> ข้อมูลที่จะแสดงในใบรายงานผล (RD-003):
+                        <!-- ฟอร์มข้อมูลเหมือนตอนกรอกในแบบบันทึก (แก้ไขได้) -->
+                        <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:14px 16px; margin-bottom:16px;">
+                            <div style="font-weight:700; color:#334155; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+                                <span style="font-size:13.5px; display:inline-flex; align-items:center; gap:6px;">
+                                    <i class="fa-solid fa-pen-to-square" style="color:#0284c7;"></i>
+                                    <strong>ข้อมูลแบบบันทึกการเก็บตัวอย่าง (MU.10-003 / ข้อมูลที่จะออกในรายงาน RD-003)</strong>
+                                </span>
+                                <span style="font-size:12px; color:#64748b; font-weight:normal; background:#e2e8f0; padding:2px 8px; border-radius:4px;">
+                                    สามารถแก้ไขข้อมูลได้หากตรวจพบความคลาดเคลื่อน
+                                </span>
                             </div>
-                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px; font-size:12.5px;">
-                                <div><span style="color:#64748b;">ชนิดน้ำมัน:</span> <strong>${item.oil_type}</strong></div>
-                                <div><span style="color:#64748b;">ระยะเวลาใช้ทอด:</span> <strong>${item.fry_duration ? item.fry_duration + ' นาที' : '-'}</strong></div>
-                                <div><span style="color:#64748b;">ลักษณะการเปลี่ยน:</span> <strong>${item.replacement_type}</strong></div>
-                                <div><span style="color:#64748b;">ความถี่ในการเปลี่ยน:</span> <strong>${item.replacement_frequency ? item.replacement_frequency + ' วัน' : '-'}</strong></div>
-                                ${item.last_replacement_date ? `<div><span style="color:#64748b;">วันที่เปลี่ยนล่าสุด:</span> <strong>${repDateStr}</strong></div>` : ''}
-                                ${item.replacement_reason ? `<div><span style="color:#64748b;">เหตุผลที่เปลี่ยน:</span> <strong>${item.replacement_reason}</strong></div>` : ''}
-                                ${item.oil_disposal ? `<div><span style="color:#64748b;">วิธีกำจัดน้ำมัน:</span> <strong>${item.oil_disposal}</strong></div>` : ''}
+
+                            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 0;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-distributor-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">1. ชื่อผู้จำหน่าย / ร้านค้า</label>
+                                    <input type="text" id="analysis-distributor-${item.idx}" value="${item.distributor}" class="form-control" placeholder="ระบุชื่อร้านค้า/ผู้จำหน่าย" style="font-size:13.5px; padding:8px 10px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-sample-name-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">2. ชนิดอาหาร (ชื่อตัวอย่าง) <span class="required" style="color:#ef4444;">*</span></label>
+                                    <input type="text" id="analysis-sample-name-${item.idx}" value="${item.name}" required class="form-control" placeholder="เช่น ไก่ทอด, กล้วยแขก" style="font-size:13.5px; padding:8px 10px; font-weight:600;" oninput="app.syncMu10003SampleNames()">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-oil-type-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">3. ชนิดน้ำมัน</label>
+                                    <input type="text" id="analysis-oil-type-${item.idx}" list="oil-types-list-mu03" value="${item.oil_type && item.oil_type !== '-' ? item.oil_type : ''}" class="form-control" placeholder="เช่น น้ำมันปาล์ม" style="font-size:13.5px; padding:8px 10px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-fry-duration-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">4. ระยะเวลาใช้ทอด (นาที)</label>
+                                    <input type="number" id="analysis-fry-duration-${item.idx}" min="0" value="${item.fry_duration || ''}" class="form-control" placeholder="ระบุเป็นนาที" style="font-size:13.5px; padding:8px 10px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-replacement-type-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">5. ลักษณะการเปลี่ยน</label>
+                                    <select id="analysis-replacement-type-${item.idx}" class="form-control" style="font-size:13.5px; padding:8px 10px; height:40px;">
+                                        <option value="">-- เลือกลักษณะการเปลี่ยน --</option>
+                                        <option value="ไม่เปลี่ยนเลย" ${item.replacement_type === 'ไม่เปลี่ยนเลย' ? 'selected' : ''}>ไม่เปลี่ยนเลย</option>
+                                        <option value="เปลี่ยนบางส่วน" ${item.replacement_type === 'เปลี่ยนบางส่วน' ? 'selected' : ''}>เปลี่ยนบางส่วน</option>
+                                        <option value="เปลี่ยนใหม่ทั้งหมด" ${item.replacement_type === 'เปลี่ยนใหม่ทั้งหมด' ? 'selected' : ''}>เปลี่ยนใหม่ทั้งหมด</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-last-replacement-date-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">6. วันที่เปลี่ยนล่าสุด</label>
+                                    <input type="date" id="analysis-last-replacement-date-${item.idx}" value="${dateInputVal}" class="form-control" style="font-size:13.5px; padding:7px 10px; height:40px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-replacement-frequency-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">7. ความถี่ในการเปลี่ยน (วัน)</label>
+                                    <input type="number" id="analysis-replacement-frequency-${item.idx}" min="0" value="${item.replacement_frequency || ''}" class="form-control" placeholder="ระบุความถี่เป็นวัน" style="font-size:13.5px; padding:8px 10px;">
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-replacement-reason-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">8. เหตุผลที่เปลี่ยน</label>
+                                    <select id="analysis-replacement-reason-${item.idx}" class="form-control" style="font-size:13.5px; padding:8px 10px; height:40px;">
+                                        <option value="">-- เลือกเหตุผลที่เปลี่ยน --</option>
+                                        <option value="สภาพน้ำมันเปลี่ยน" ${item.replacement_reason === 'สภาพน้ำมันเปลี่ยน' ? 'selected' : ''}>สภาพน้ำมันเปลี่ยน</option>
+                                        <option value="สภาพอาหารเปลี่ยน" ${item.replacement_reason === 'สภาพอาหารเปลี่ยน' ? 'selected' : ''}>สภาพอาหารเปลี่ยน</option>
+                                        <option value="อื่นๆ" ${item.replacement_reason === 'อื่นๆ' ? 'selected' : ''}>อื่นๆ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="analysis-oil-disposal-${item.idx}" style="font-size:13px; font-weight:600; color:#334155;">9. การกำจัดน้ำมัน</label>
+                                    <select id="analysis-oil-disposal-${item.idx}" class="form-control" style="font-size:13.5px; padding:8px 10px; height:40px;">
+                                        <option value="">-- เลือกวิธีการกำจัด --</option>
+                                        <option value="เก็บรวบรวมขายต่อ" ${item.oil_disposal === 'เก็บรวบรวมขายต่อ' ? 'selected' : ''}>เก็บรวบรวมขายต่อ</option>
+                                        <option value="ทิ้งระบบสาธารณะ" ${item.oil_disposal === 'ทิ้งระบบสาธารณะ' ? 'selected' : ''}>ทิ้งระบบสาธารณะ</option>
+                                        <option value="อื่นๆ" ${item.oil_disposal === 'อื่นๆ' ? 'selected' : ''}>อื่นๆ</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -5193,7 +5260,7 @@ document.getElementById('formNameTitle').innerText = title;
                                 <label for="analysis-polar-${item.idx}" style="font-weight:700; color:#0f172a; font-size:14px; display:flex; align-items:center; justify-content:space-between;">
                                     <span>
                                         <i class="fa-solid fa-droplet" style="color:#b45309; margin-right:6px;"></i>
-                                        ค่าสารโพลาร์ (%) <span class="required" style="color:#ef4444;">*</span>
+                                        10. ค่าสารโพลาร์ (%) <span class="required" style="color:#ef4444;">*</span>
                                     </span>
                                     <span style="font-size:11.5px; color:#b45309; font-weight:normal; background:#fefce8; border:1px solid #fef08a; padding:2px 8px; border-radius:6px;">
                                         เกณฑ์มาตรฐาน: ไม่เกิน 25%
@@ -5244,6 +5311,12 @@ document.getElementById('formNameTitle').innerText = title;
             });
 
             html += `
+                <datalist id="oil-types-list-mu03">
+                    <option value="น้ำมันปาล์ม">
+                    <option value="น้ำมันถั่วเหลือง">
+                    <option value="น้ำมันหมู">
+                </datalist>
+
                 <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:14px 18px; margin-top:16px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div id="mu10003-stats-display" style="font-size:14px; color:#334155; font-weight:600;">
@@ -5773,26 +5846,57 @@ document.getElementById('formNameTitle').innerText = title;
                 let failCount = 0;
                 let totalCount = 0;
                 let polarDetails = [];
+                let sampleNamesList = [];
                 let idx = 1;
                 while ((sample['sample_name_' + idx] !== undefined || sample['polar_value_' + idx] !== undefined || sample['distributor_' + idx] !== undefined) && idx <= 500) {
-                    if ((sample['sample_name_' + idx] || sample['polar_value_' + idx]) && sample['item_status_' + idx] !== 'rejected') {
+                    if ((sample['sample_name_' + idx] || sample['polar_value_' + idx] || sample['distributor_' + idx]) && sample['item_status_' + idx] !== 'rejected') {
+                        totalCount++;
+
+                        // Save edited fields from the modal
+                        const distEl = document.getElementById('analysis-distributor-' + idx);
+                        if (distEl) sample['distributor_' + idx] = distEl.value.trim();
+
+                        const nameEl = document.getElementById('analysis-sample-name-' + idx);
+                        if (nameEl) sample['sample_name_' + idx] = nameEl.value.trim();
+
+                        const oilEl = document.getElementById('analysis-oil-type-' + idx);
+                        if (oilEl) sample['oil_type_' + idx] = oilEl.value.trim();
+
+                        const fryEl = document.getElementById('analysis-fry-duration-' + idx);
+                        if (fryEl) sample['fry_duration_' + idx] = fryEl.value.trim();
+
+                        const repTypeEl = document.getElementById('analysis-replacement-type-' + idx);
+                        if (repTypeEl) sample['replacement_type_' + idx] = repTypeEl.value.trim();
+
+                        const lastRepDateEl = document.getElementById('analysis-last-replacement-date-' + idx);
+                        if (lastRepDateEl) sample['last_replacement_date_' + idx] = lastRepDateEl.value.trim();
+
+                        const repFreqEl = document.getElementById('analysis-replacement-frequency-' + idx);
+                        if (repFreqEl) sample['replacement_frequency_' + idx] = repFreqEl.value.trim();
+
+                        const repReasonEl = document.getElementById('analysis-replacement-reason-' + idx);
+                        if (repReasonEl) sample['replacement_reason_' + idx] = repReasonEl.value.trim();
+
+                        const oilDispEl = document.getElementById('analysis-oil-disposal-' + idx);
+                        if (oilDispEl) sample['oil_disposal_' + idx] = oilDispEl.value.trim();
+
                         const polarEl = document.getElementById('analysis-polar-' + idx);
                         if (polarEl) {
-                            totalCount++;
                             const polarVal = polarEl.value.trim();
                             sample['polar_value_' + idx] = polarVal;
                             sample['analysis_polar_' + idx] = polarVal;
-                            const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
-                            sample['test_outcome_' + idx] = summary;
-                            sample['analysis_summary_' + idx] = summary;
-                            if (summary === 'ผ่าน') {
-                                passCount++;
-                            } else {
-                                failCount++;
-                            }
-                            const sName = sample['sample_name_' + idx] || ('ตัวอย่างที่ ' + idx);
-                            polarDetails.push(`${sName}: ${polarVal}% (${summary})`);
                         }
+                        const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
+                        sample['test_outcome_' + idx] = summary;
+                        sample['analysis_summary_' + idx] = summary;
+                        if (summary === 'ผ่าน') {
+                            passCount++;
+                        } else {
+                            failCount++;
+                        }
+                        const sName = sample['sample_name_' + idx] || ('ตัวอย่างที่ ' + idx);
+                        sampleNamesList.push(sName);
+                        polarDetails.push(`${sName}: ${sample['polar_value_' + idx] || '-'}% (${summary})`);
                     }
                     idx++;
                 }
@@ -5802,9 +5906,30 @@ document.getElementById('formNameTitle').innerText = title;
                     const polarEl = document.getElementById('analysis-polar-1');
                     if (polarEl) {
                         totalCount++;
+                        const distEl = document.getElementById('analysis-distributor-1');
+                        if (distEl) sample.distributor = distEl.value.trim();
+                        const nameEl = document.getElementById('analysis-sample-name-1');
+                        if (nameEl) sample.sample_name = nameEl.value.trim();
+                        const oilEl = document.getElementById('analysis-oil-type-1');
+                        if (oilEl) sample.oil_type = oilEl.value.trim();
+                        const fryEl = document.getElementById('analysis-fry-duration-1');
+                        if (fryEl) sample.fry_duration = fryEl.value.trim();
+                        const repTypeEl = document.getElementById('analysis-replacement-type-1');
+                        if (repTypeEl) sample.replacement_type = repTypeEl.value.trim();
+                        const lastRepDateEl = document.getElementById('analysis-last-replacement-date-1');
+                        if (lastRepDateEl) sample.last_replacement_date = lastRepDateEl.value.trim();
+                        const repFreqEl = document.getElementById('analysis-replacement-frequency-1');
+                        if (repFreqEl) sample.replacement_frequency = repFreqEl.value.trim();
+                        const repReasonEl = document.getElementById('analysis-replacement-reason-1');
+                        if (repReasonEl) sample.replacement_reason = repReasonEl.value.trim();
+                        const oilDispEl = document.getElementById('analysis-oil-disposal-1');
+                        if (oilDispEl) sample.oil_disposal = oilDispEl.value.trim();
+
                         const polarVal = polarEl.value.trim();
                         sample['polar_value_1'] = polarVal;
                         sample['analysis_polar_1'] = polarVal;
+                        sample.polar_value = polarVal;
+                        sample.analysis_polar = polarVal;
                         const summary = document.getElementById('analysis-summary-outcome-1')?.value || '';
                         sample['test_outcome_1'] = summary;
                         sample['analysis_summary_1'] = summary;
@@ -5815,6 +5940,18 @@ document.getElementById('formNameTitle').innerText = title;
                 }
 
                 if (totalCount > 0) {
+                    if (sampleNamesList.length > 0) {
+                        sample.sample_name = sampleNamesList.join(', ');
+                    }
+                    if (sample['distributor_1']) sample.distributor = sample['distributor_1'];
+                    if (sample['oil_type_1']) sample.oil_type = sample['oil_type_1'];
+                    if (sample['fry_duration_1']) sample.fry_duration = sample['fry_duration_1'];
+                    if (sample['replacement_type_1']) sample.replacement_type = sample['replacement_type_1'];
+                    if (sample['last_replacement_date_1']) sample.last_replacement_date = sample['last_replacement_date_1'];
+                    if (sample['replacement_frequency_1']) sample.replacement_frequency = sample['replacement_frequency_1'];
+                    if (sample['replacement_reason_1']) sample.replacement_reason = sample['replacement_reason_1'];
+                    if (sample['oil_disposal_1']) sample.oil_disposal = sample['oil_disposal_1'];
+
                     const firstPolar = sample['polar_value_1'] || sample.polar_value || '';
                     const firstSummary = sample['analysis_summary_1'] || sample['test_outcome_1'] || '';
                     sample.polar_value = firstPolar;
