@@ -2901,6 +2901,7 @@ document.getElementById('formNameTitle').innerText = title;
         else if (locType === 'โรงพยาบาล' || locType === 'โรงพยาบาล / สถานพยาบาล') locType = 'โรงพยาบาล/สถานพยาบาล';
         else if (locType === 'ตลาดสด / ตลาดนัด') locType = 'ตลาดสด';
         else if (locType === 'ร้านอาหาร / แผงลอยจำหน่ายอาหาร') locType = 'ร้านอาหาร';
+        else if (locType.includes('เรือนจำ') || locType.includes('ทัณฑสถาน')) locType = 'เรือนจำ';
         const locSelect = document.getElementById('field-location-type');
         if (locSelect) {
             locSelect.value = locType;
@@ -10937,6 +10938,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     else if (locName.includes('โรงงาน')) locType = 'โรงงาน/สถานที่ผลิตอาหาร';
                     else if (locName.includes('ห้าง') || locName.includes('ซุปเปอร์')) locType = 'ห้างสรรพสินค้า/ซุปเปอร์มาเก็ต';
                     else if (locName.includes('ห้องเย็น')) locType = 'ห้องเย็น';
+                    else if (locName.includes('เรือนจำ') || locName.includes('ทัณฑสถาน')) locType = 'เรือนจำ';
                     else locType = 'อื่นๆ';
                 }
 
