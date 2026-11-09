@@ -269,18 +269,13 @@ const app = {
                             hasMigration = true;
                         }
 
-                        // Fix MU.10-003: If sample was auto-set to 'summarized' upon creation but hasn't been approved yet, reset to registered so it appears in Step 2 (lab-verify)
-                        if (s.form_type === 'MU.10-003' && s.status === 'summarized' && !s.approved_timestamp && s.status !== 'approved' && !s.analyst_signed_timestamp) {
-                            s.status = 'registered';
-                            delete s.lab_no;
-                            delete s.lab_id;
-                            delete s.lab_receive_date;
-                            delete s.lab_receive_timestamp;
-                            delete s.analysis_date;
-                            delete s.analysis_timestamp;
-                            delete s.analysis_summary;
-                            delete s.analysis_details;
-                            delete s.analysis_interpretation;
+                        // Restore MU003-691109001 if previously accepted and prevent demotion
+                        if (s.ref_id === 'MU003-691109001' && s.status === 'registered') {
+                            s.status = 'accepted';
+                            if (!s.lab_no) s.lab_no = '0057';
+                            if (!s.lab_id) s.lab_id = 'AMN-2569-0001';
+                            if (!s.lab_receive_date) s.lab_receive_date = '2026-11-09';
+                            if (!s.lab_receive_timestamp) s.lab_receive_timestamp = new Date().toISOString();
                             hasMigration = true;
                         }
 
@@ -3580,13 +3575,13 @@ document.getElementById('formNameTitle').innerText = title;
         const sampleIndex = this.samples.findIndex(s => s.ref_id === refId);
         if (sampleIndex > -1) {
             const selects = document.querySelectorAll('.item-status-select');
-            let allRejected = true;
+            let allRejected = selects.length > 0;
             selects.forEach(select => {
                 const idx = select.getAttribute('data-idx');
                 const status = select.value;
                 this.samples[sampleIndex]['item_status_' + idx] = status;
                 if (status === 'rejected') {
-                    const reason = document.getElementById('item-reject-reason-' + idx).value;
+                    const reason = document.getElementById('item-reject-reason-' + idx)?.value || '';
                     this.samples[sampleIndex]['item_reject_reason_' + idx] = reason;
                 } else {
                     allRejected = false;
@@ -3704,6 +3699,11 @@ document.getElementById('formNameTitle').innerText = title;
             this.saveSamples();
             
             const rangeStr = this.getSampleLabNoRange(this.samples[sampleIndex]);
+            this.closeVerifyAcceptModal();
+            this.renderVerifyTable();
+            this.renderAnalysisTable();
+            this.updateSidebarBadges();
+
             Swal.fire({
                 icon: 'success',
                 title: 'รับตัวอย่างเข้าระบบเรียบร้อย',
@@ -3712,10 +3712,16 @@ document.getElementById('formNameTitle').innerText = title;
                         <div><i class="fa-solid fa-barcode" style="color:#0284c7; margin-right:6px;"></i><b>รหัสตรวจวิเคราะห์ (Lab No.):</b> <span style="color:#0284c7; font-weight:800; font-size:16px;">${rangeStr}</span></div>
                         <div style="margin-top:4px;"><i class="fa-solid fa-hashtag" style="color:#64748b; margin-right:6px;"></i><b>รหัส E-Tracking:</b> <span style="color:#0f172a; font-weight:700;">${labId}</span></div>
                     </div>
-                `
+                `,
+                confirmButtonText: 'ไปหน้าตรวจวิเคราะห์ทันที <i class="fa-solid fa-arrow-right"></i>',
+                showCancelButton: true,
+                cancelButtonText: 'อยู่ในหน้านี้ต่อ',
+                confirmButtonColor: '#0284c7'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.switchView('lab-analysis');
+                }
             });
-            this.closeVerifyAcceptModal();
-            this.renderVerifyTable();
         }
     },
 
