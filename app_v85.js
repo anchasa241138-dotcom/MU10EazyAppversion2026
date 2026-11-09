@@ -3858,7 +3858,7 @@ document.getElementById('formNameTitle').innerText = title;
         // Auto-populate ชื่อตัวอย่าง จากข้อมูลแบบฟอร์ม
         const sampleNames = [];
         let idx = 1;
-        while (sample[`sample_name_${idx}`] !== undefined && idx <= 50) {
+        while ((sample[`sample_name_${idx}`] !== undefined || sample[`polar_value_${idx}`] !== undefined) && idx <= 500) {
             if (sample[`sample_name_${idx}`]) sampleNames.push(sample[`sample_name_${idx}`]);
             idx++;
         }
@@ -3870,7 +3870,7 @@ document.getElementById('formNameTitle').innerText = title;
         // Auto-populate แหล่งที่มา จากข้อมูลแบบฟอร์ม
         const sources = [];
         idx = 1;
-        while (sample[`sample_name_${idx}`] !== undefined && idx <= 50) {
+        while ((sample[`sample_name_${idx}`] !== undefined || sample[`distributor_${idx}`] !== undefined) && idx <= 500) {
             const src = sample[`source_${idx}`] || '';
             const dist = sample[`distributor_${idx}`] || '';
             if (src || dist) {
@@ -3945,6 +3945,76 @@ document.getElementById('formNameTitle').innerText = title;
         const posElem = document.getElementById('analysis-analyst-position');
         if (posElem && val) {
             posElem.value = 'นักวิชาการสาธารณสุข';
+        }
+    },
+
+    calculateMu10003Polar(idx) {
+        const polarEl = document.getElementById('analysis-polar-' + idx);
+        const summaryEl = document.getElementById('analysis-summary-outcome-' + idx);
+        if (!polarEl || !summaryEl) return;
+
+        const valStr = polarEl.value.trim();
+        if (valStr === '') {
+            summaryEl.value = '';
+            summaryEl.style.color = '';
+            summaryEl.style.backgroundColor = '';
+            summaryEl.style.borderColor = '#cbd5e1';
+        } else {
+            const val = parseFloat(valStr);
+            if (isNaN(val)) {
+                summaryEl.value = 'ไม่ถูกต้อง';
+                summaryEl.style.color = '#dc2626';
+                summaryEl.style.backgroundColor = '#fef2f2';
+                summaryEl.style.borderColor = '#fecaca';
+            } else if (val <= 25) {
+                summaryEl.value = 'ผ่าน';
+                summaryEl.style.color = '#16a34a';
+                summaryEl.style.backgroundColor = '#f0fdf4';
+                summaryEl.style.borderColor = '#86efac';
+            } else {
+                summaryEl.value = 'ไม่ผ่าน';
+                summaryEl.style.color = '#dc2626';
+                summaryEl.style.backgroundColor = '#fef2f2';
+                summaryEl.style.borderColor = '#fca5a5';
+            }
+        }
+        this.updateMu10003OverallSummary();
+    },
+
+    updateMu10003OverallSummary() {
+        let passCount = 0;
+        let failCount = 0;
+        let totalCount = 0;
+
+        document.querySelectorAll('input[id^="analysis-polar-"]').forEach(el => {
+            const match = el.id.match(/\d+$/);
+            if (match) {
+                const i = match[0];
+                const sumEl = document.getElementById('analysis-summary-outcome-' + i);
+                if (sumEl && sumEl.value && sumEl.value !== 'ไม่ถูกต้อง') {
+                    totalCount++;
+                    if (sumEl.value === 'ผ่าน') passCount++;
+                    else failCount++;
+                }
+            }
+        });
+
+        const overallEl = document.getElementById('analysis-summary-outcome');
+        if (overallEl) {
+            if (totalCount > 0) {
+                if (failCount > 0) {
+                    overallEl.value = 'ไม่ผ่าน';
+                    overallEl.style.color = '#dc2626';
+                } else {
+                    overallEl.value = 'ผ่าน';
+                    overallEl.style.color = '#16a34a';
+                }
+            }
+        }
+
+        const statsEl = document.getElementById('mu10003-stats-display');
+        if (statsEl) {
+            statsEl.innerHTML = `ตรวจทั้งหมด <strong>${totalCount}</strong> ตัวอย่าง &nbsp;|&nbsp; ผ่าน <strong style="color:#16a34a;">${passCount}</strong> ตัวอย่าง &nbsp;|&nbsp; ไม่ผ่าน <strong style="color:#dc2626;">${failCount}</strong> ตัวอย่าง`;
         }
     },
 
@@ -5027,6 +5097,183 @@ document.getElementById('formNameTitle').innerText = title;
                     <p style="margin:0; color:#475569; font-size:14px;"><i class="fa-solid fa-circle-check" style="color:#16a34a; margin-right:6px;"></i>รายการตรวจฉลากอาหารได้รับการบันทึกผลการตรวจสอบเรียบร้อยแล้วในขั้นตอนเก็บตัวอย่าง</p>
                 </div>
             `;
+        } else if (sample.form_type === 'MU.10-003') {
+            const sampleItems = [];
+            let idx = 1;
+            while ((sample['sample_name_' + idx] !== undefined || sample['distributor_' + idx] !== undefined || sample['polar_value_' + idx] !== undefined) && idx <= 500) {
+                if ((sample['sample_name_' + idx] || sample['polar_value_' + idx]) && sample['item_status_' + idx] !== 'rejected') {
+                    sampleItems.push({
+                        idx: idx,
+                        name: sample['sample_name_' + idx] || ('ตัวอย่างที่ ' + idx),
+                        distributor: sample['distributor_' + idx] || sample.distributor || '',
+                        oil_type: sample['oil_type_' + idx] || '-',
+                        fry_duration: sample['fry_duration_' + idx] || '',
+                        replacement_type: sample['replacement_type_' + idx] || '-',
+                        last_replacement_date: sample['last_replacement_date_' + idx] || '',
+                        replacement_frequency: sample['replacement_frequency_' + idx] || '',
+                        replacement_reason: sample['replacement_reason_' + idx] || '',
+                        oil_disposal: sample['oil_disposal_' + idx] || '',
+                        polar_value: sample['polar_value_' + idx] !== undefined ? sample['polar_value_' + idx] : (sample['analysis_polar_' + idx] !== undefined ? sample['analysis_polar_' + idx] : ((idx === 1 && sample.polar_value !== undefined) ? sample.polar_value : '')),
+                        summary: sample['test_outcome_' + idx] || sample['analysis_summary_' + idx] || (idx === 1 ? (sample.test_outcome || sample.analysis_summary || '') : '')
+                    });
+                }
+                idx++;
+            }
+            if (sampleItems.length === 0) {
+                sampleItems.push({
+                    idx: 1,
+                    name: sample.sample_name || 'น้ำมันทอดซ้ำ',
+                    distributor: sample.distributor || '',
+                    oil_type: sample.oil_type || '-',
+                    fry_duration: sample.fry_duration || '',
+                    replacement_type: sample.replacement_type || '-',
+                    last_replacement_date: sample.last_replacement_date || '',
+                    replacement_frequency: sample.replacement_frequency || '',
+                    replacement_reason: sample.replacement_reason || '',
+                    oil_disposal: sample.oil_disposal || '',
+                    polar_value: sample.polar_value_1 !== undefined ? sample.polar_value_1 : (sample.analysis_polar_1 !== undefined ? sample.analysis_polar_1 : (sample.polar_value || sample.analysis_polar || '')),
+                    summary: sample.test_outcome_1 || sample.analysis_summary_1 || sample.test_outcome || sample.analysis_summary || ''
+                });
+            }
+
+            let html = `
+                <div class="form-section-divider">
+                    <i class="fa-solid fa-droplet" style="color: #eab308;"></i> ผลการตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ (MU.10-003 / รายงาน RD-003)
+                </div>
+            `;
+
+            sampleItems.forEach(item => {
+                const itemLabNo = this.getItemLabNo(sample, item.idx);
+                const curPolar = (item.polar_value !== '-' && item.polar_value !== null && item.polar_value !== undefined) ? item.polar_value : '';
+                const curSummary = (item.summary !== '-' && item.summary !== null && item.summary !== undefined) ? item.summary : '';
+
+                let repDateStr = '-';
+                if (item.last_replacement_date) {
+                    try {
+                        repDateStr = new Date(item.last_replacement_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+                    } catch(e) {
+                        repDateStr = item.last_replacement_date;
+                    }
+                }
+
+                html += `
+                    <div style="background:#ffffff; padding:18px 20px; border-radius:12px; border:1.5px solid #e2e8f0; margin-bottom:16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                        <!-- หัวข้อตัวอย่างและรหัสแลป -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #e2e8f0; padding-bottom:10px; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                            <div style="font-weight:700; color:#0f172a; font-size:15px; display:inline-flex; align-items:center; gap:8px;">
+                                <span style="background:#b45309; color:#fff; width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:bold;">${item.idx}</span>
+                                <span>ชื่อตัวอย่าง / ชนิดอาหาร: <strong style="color:#b45309; font-size:15.5px;">${item.name}</strong></span>
+                                ${item.distributor ? `<span style="font-size:13px; color:#64748b; font-weight:normal;">(ผู้จำหน่าย: <strong style="color:#334155;">${item.distributor}</strong>)</span>` : ''}
+                            </div>
+                            <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; padding:3px 12px; border-radius:9999px; font-weight:700; font-size:13px; display:inline-flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-barcode"></i> รหัสตัวอย่าง (Lab No.): <strong style="font-family:monospace; font-size:13.5px;">${itemLabNo}</strong>
+                            </span>
+                        </div>
+
+                        <!-- ข้อมูลที่จะแสดงในใบรายงานผล RD-003 -->
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:13px; color:#334155;">
+                            <div style="font-weight:700; color:#475569; margin-bottom:6px; display:flex; align-items:center; gap:6px; font-size:12.5px;">
+                                <i class="fa-solid fa-file-invoice" style="color:#0284c7;"></i> ข้อมูลที่จะแสดงในใบรายงานผล (RD-003):
+                            </div>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:8px; font-size:12.5px;">
+                                <div><span style="color:#64748b;">ชนิดน้ำมัน:</span> <strong>${item.oil_type}</strong></div>
+                                <div><span style="color:#64748b;">ระยะเวลาใช้ทอด:</span> <strong>${item.fry_duration ? item.fry_duration + ' นาที' : '-'}</strong></div>
+                                <div><span style="color:#64748b;">ลักษณะการเปลี่ยน:</span> <strong>${item.replacement_type}</strong></div>
+                                <div><span style="color:#64748b;">ความถี่ในการเปลี่ยน:</span> <strong>${item.replacement_frequency ? item.replacement_frequency + ' วัน' : '-'}</strong></div>
+                                ${item.last_replacement_date ? `<div><span style="color:#64748b;">วันที่เปลี่ยนล่าสุด:</span> <strong>${repDateStr}</strong></div>` : ''}
+                                ${item.replacement_reason ? `<div><span style="color:#64748b;">เหตุผลที่เปลี่ยน:</span> <strong>${item.replacement_reason}</strong></div>` : ''}
+                                ${item.oil_disposal ? `<div><span style="color:#64748b;">วิธีกำจัดน้ำมัน:</span> <strong>${item.oil_disposal}</strong></div>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- ช่องบันทึกค่าสารโพลาร์ (%) และสรุปผล -->
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <!-- ค่าสารโพลาร์ (%) -->
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="analysis-polar-${item.idx}" style="font-weight:700; color:#0f172a; font-size:14px; display:flex; align-items:center; justify-content:space-between;">
+                                    <span>
+                                        <i class="fa-solid fa-droplet" style="color:#b45309; margin-right:6px;"></i>
+                                        ค่าสารโพลาร์ (%) <span class="required" style="color:#ef4444;">*</span>
+                                    </span>
+                                    <span style="font-size:11.5px; color:#b45309; font-weight:normal; background:#fefce8; border:1px solid #fef08a; padding:2px 8px; border-radius:6px;">
+                                        เกณฑ์มาตรฐาน: ไม่เกิน 25%
+                                    </span>
+                                </label>
+                                <div style="position:relative; margin-top:4px;">
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="0" 
+                                           max="100" 
+                                           id="analysis-polar-${item.idx}" 
+                                           name="analysis_polar_${item.idx}" 
+                                           value="${curPolar}" 
+                                           placeholder="เช่น 24.5" 
+                                           required 
+                                           class="form-control" 
+                                           style="font-size:16px; font-weight:700; padding:10px 45px 10px 14px; border-radius:8px; border:1.5px solid #cbd5e1;" 
+                                           oninput="app.calculateMu10003Polar(${item.idx})">
+                                    <span style="position:absolute; right:14px; top:50%; transform:translateY(-50%); font-weight:700; color:#64748b; font-size:14px;">%</span>
+                                </div>
+                                <span class="input-helper" style="font-size:12px; color:#64748b; margin-top:4px; display:block;">
+                                    บันทึกค่าสารโพลาร์ที่ตรวจวัดได้จากเครื่องวัดน้ำมันทอดซ้ำ (Testo 270 / E-bro)
+                                </span>
+                            </div>
+
+                            <!-- สรุปผล -->
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="analysis-summary-outcome-${item.idx}" style="font-weight:700; color:#0f172a; font-size:14px;">
+                                    สรุปผล <span class="required" style="color:#ef4444;">*</span>
+                                </label>
+                                <div style="margin-top:4px;">
+                                    <input type="text" 
+                                           id="analysis-summary-outcome-${item.idx}" 
+                                           name="analysis_summary_outcome_${item.idx}" 
+                                           value="${curSummary}" 
+                                           readonly 
+                                           class="readonly-input" 
+                                           placeholder="คำนวณอัตโนมัติ" 
+                                           style="font-weight:700; font-size:15px; padding:10px 14px; border-radius:8px; border:1.5px solid #cbd5e1;">
+                                </div>
+                                <span class="input-helper" style="font-size:12px; color:#64748b; margin-top:4px; display:block;">
+                                    <i class="fa-solid fa-wand-magic-sparkles" style="color:#0284c7;"></i> ระบบประเมินอัตโนมัติ: ค่า ≤ 25% = ผ่าน (ค่า > 25% = ไม่ผ่าน)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:14px 18px; margin-top:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <div id="mu10003-stats-display" style="font-size:14px; color:#334155; font-weight:600;">
+                            <!-- แสดงผลสรุปจำนวนตัวอย่าง -->
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <label for="analysis-summary-outcome" style="margin:0; font-weight:700; color:#0f172a; font-size:14px; white-space:nowrap;">สรุปผลภาพรวม:</label>
+                            <select id="analysis-summary-outcome" style="padding:6px 14px; font-weight:bold; font-size:14px; border-radius:8px; border:1.5px solid #cbd5e1;">
+                                <option value="ผ่าน">ผ่าน</option>
+                                <option value="ไม่ผ่าน">ไม่ผ่าน</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 14px;">
+                    <label for="analysis-comment" style="font-weight: 600; color: #334155;">หมายเหตุเพิ่มเติม</label>
+                    <input type="text" id="analysis-comment" class="form-control" placeholder="คำชี้แจงเพิ่มเติมถ้ามี" value="${sample.analysis_comment || ''}">
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            sampleItems.forEach(item => {
+                const curPolar = (item.polar_value !== '-' && item.polar_value !== null && item.polar_value !== undefined) ? item.polar_value : '';
+                if (curPolar !== '') {
+                    this.calculateMu10003Polar(item.idx);
+                }
+            });
+            this.updateMu10003OverallSummary();
         } else if (sample.form_type === 'MU.10-005') {
             const sampleItems = [];
             let idx = 1;
@@ -5521,6 +5768,75 @@ document.getElementById('formNameTitle').innerText = title;
                     sample.analysis_interpretation = `ผ่าน ${passCount} จาก ${totalCount} รายการ`;
                 }
             }
+            } else if (sample.form_type === 'MU.10-003') {
+                let passCount = 0;
+                let failCount = 0;
+                let totalCount = 0;
+                let polarDetails = [];
+                let idx = 1;
+                while ((sample['sample_name_' + idx] !== undefined || sample['polar_value_' + idx] !== undefined || sample['distributor_' + idx] !== undefined) && idx <= 500) {
+                    if ((sample['sample_name_' + idx] || sample['polar_value_' + idx]) && sample['item_status_' + idx] !== 'rejected') {
+                        const polarEl = document.getElementById('analysis-polar-' + idx);
+                        if (polarEl) {
+                            totalCount++;
+                            const polarVal = polarEl.value.trim();
+                            sample['polar_value_' + idx] = polarVal;
+                            sample['analysis_polar_' + idx] = polarVal;
+                            const summary = document.getElementById('analysis-summary-outcome-' + idx)?.value || '';
+                            sample['test_outcome_' + idx] = summary;
+                            sample['analysis_summary_' + idx] = summary;
+                            if (summary === 'ผ่าน') {
+                                passCount++;
+                            } else {
+                                failCount++;
+                            }
+                            const sName = sample['sample_name_' + idx] || ('ตัวอย่างที่ ' + idx);
+                            polarDetails.push(`${sName}: ${polarVal}% (${summary})`);
+                        }
+                    }
+                    idx++;
+                }
+
+                // Fallback check if single item
+                if (totalCount === 0) {
+                    const polarEl = document.getElementById('analysis-polar-1');
+                    if (polarEl) {
+                        totalCount++;
+                        const polarVal = polarEl.value.trim();
+                        sample['polar_value_1'] = polarVal;
+                        sample['analysis_polar_1'] = polarVal;
+                        const summary = document.getElementById('analysis-summary-outcome-1')?.value || '';
+                        sample['test_outcome_1'] = summary;
+                        sample['analysis_summary_1'] = summary;
+                        if (summary === 'ผ่าน') passCount++;
+                        else failCount++;
+                        polarDetails.push(`${sample.sample_name || 'ตัวอย่างที่ 1'}: ${polarVal}% (${summary})`);
+                    }
+                }
+
+                if (totalCount > 0) {
+                    const firstPolar = sample['polar_value_1'] || sample.polar_value || '';
+                    const firstSummary = sample['analysis_summary_1'] || sample['test_outcome_1'] || '';
+                    sample.polar_value = firstPolar;
+                    sample.analysis_polar = firstPolar;
+
+                    const overallSum = document.getElementById('analysis-summary-outcome')?.value;
+                    if (overallSum) {
+                        sample.analysis_summary = overallSum;
+                    } else if (failCount > 0) {
+                        sample.analysis_summary = 'ไม่ผ่าน';
+                    } else {
+                        sample.analysis_summary = 'ผ่าน';
+                    }
+
+                    if (totalCount === 1) {
+                        sample.analysis_details = `ตรวจพบสารโพลาร์ ${firstPolar}% (${firstSummary})`;
+                        sample.analysis_interpretation = `ค่าโพลาร์ ${firstPolar}% (เกณฑ์มาตรฐาน ≤ 25%)`;
+                    } else {
+                        sample.analysis_details = `ตรวจทั้งหมด ${totalCount} ตัวอย่าง ผ่าน ${passCount} ตัวอย่าง ไม่ผ่าน ${failCount} ตัวอย่าง (${polarDetails.join(', ')})`;
+                        sample.analysis_interpretation = `ผ่าน ${passCount} จาก ${totalCount} รายการ (เกณฑ์มาตรฐาน ≤ 25%)`;
+                    }
+                }
             } else if (sample.form_type === 'MU.10-004') {
                 let passCount = 0;
                 let totalCount = 0;
@@ -6323,21 +6639,34 @@ document.getElementById('formNameTitle').innerText = title;
             
             const validItems = [];
             let idx = 1;
-            while (sample['polar_value_' + idx] !== undefined && idx <= 500) {
-                if (sample['polar_value_' + idx] && sample['item_status_' + idx] !== 'rejected') {
+            while ((sample['polar_value_' + idx] !== undefined || sample['sample_name_' + idx] !== undefined || sample['distributor_' + idx] !== undefined) && idx <= 500) {
+                if ((sample['sample_name_' + idx] || sample['polar_value_' + idx] || sample['distributor_' + idx]) && sample['item_status_' + idx] !== 'rejected') {
                     validItems.push({
                         idx: idx,
-                        labId: sample.lab_no ? String(parseInt(sample.lab_no, 10) + validItems.length).padStart(4, '0') : (sample.lab_id ? sample.lab_id + '-' + idx : '-'),
-                        distributor: sample['distributor_' + idx] || '-',
-                        food_type: sample['sample_name_' + idx] || '-',
-                        polar_value: sample['polar_value_' + idx] || '',
-                        oil_type: sample['oil_type_' + idx] || '-',
-                        fry_duration: sample['fry_duration_' + idx] || '',
-                        replacement_type: sample['replacement_type_' + idx] || '-',
-                        replacement_frequency: sample['replacement_frequency_' + idx] || ''
+                        labId: this.getItemLabNo(sample, idx),
+                        distributor: sample['distributor_' + idx] || sample.distributor || '-',
+                        food_type: sample['sample_name_' + idx] || sample.sample_name || '-',
+                        polar_value: sample['polar_value_' + idx] !== undefined ? sample['polar_value_' + idx] : (sample['analysis_polar_' + idx] !== undefined ? sample['analysis_polar_' + idx] : (sample.polar_value || '')),
+                        oil_type: sample['oil_type_' + idx] || sample.oil_type || '-',
+                        fry_duration: sample['fry_duration_' + idx] || sample.fry_duration || '',
+                        replacement_type: sample['replacement_type_' + idx] || sample.replacement_type || '-',
+                        replacement_frequency: sample['replacement_frequency_' + idx] || sample.replacement_frequency || ''
                     });
                 }
                 idx++;
+            }
+            if (validItems.length === 0 && (sample.sample_name || sample.distributor)) {
+                validItems.push({
+                    idx: 1,
+                    labId: this.getItemLabNo(sample, 1),
+                    distributor: sample.distributor || '-',
+                    food_type: sample.sample_name || '-',
+                    polar_value: sample.polar_value || sample.analysis_polar || '',
+                    oil_type: sample.oil_type || '-',
+                    fry_duration: sample.fry_duration || '',
+                    replacement_type: sample.replacement_type || '-',
+                    replacement_frequency: sample.replacement_frequency || ''
+                });
             }
             
             if (validItems.length === 0) {
