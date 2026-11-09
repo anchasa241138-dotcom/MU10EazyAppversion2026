@@ -3058,6 +3058,7 @@ function updateLocationRiskAndFoodMatrix(samples) {
         { name: 'ร้านอาหาร', icon: 'fa-utensils' },
         { name: 'แผงลอยจำหน่ายอาหาร', icon: 'fa-store' },
         { name: 'โรงงาน/สถานที่ผลิตอาหาร', icon: 'fa-industry' },
+        { name: 'เรือนจำ', icon: 'fa-building-shield' },
         { name: 'อื่นๆ', icon: 'fa-location-dot' }
     ];
 
@@ -3078,6 +3079,7 @@ function updateLocationRiskAndFoodMatrix(samples) {
         if (text.includes('ร้านอาหาร') || text.includes('ครัว')) return 'ร้านอาหาร';
         if (text.includes('แผงลอย') || text.includes('รถเร่')) return 'แผงลอยจำหน่ายอาหาร';
         if (text.includes('โรงงาน') || text.includes('ผลิต')) return 'โรงงาน/สถานที่ผลิตอาหาร';
+        if (text.includes('เรือนจำ') || text.includes('ทัณฑสถาน')) return 'เรือนจำ';
         return 'ตลาดสด';
     }
 
