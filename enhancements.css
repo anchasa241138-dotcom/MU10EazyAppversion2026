@@ -8253,3 +8253,134 @@ html, body {
   font-size: 13px !important;
 }
 
+/* ==========================================================================
+   MU.10-006 (RD-006) Official Report Styling (Matches Updated Official Reports)
+   ========================================================================== */
+#certificatePDFContainer .cert-pdf-header-mu10006 h4,
+.cert-pdf-header-mu10006 h4 {
+  font-size: 21.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
+  color: #000000 !important;
+  text-align: center !important;
+}
+
+#certificatePDFContainer .cert-pdf-header-mu10006 table,
+#certificatePDFContainer .cert-pdf-header-mu10006 td,
+#certificatePDFContainer .cert-pdf-header-mu10006 tr,
+#certificatePDFContainer .cert-meta-mu10006,
+#certificatePDFContainer .cert-meta-mu10006 td,
+#certificatePDFContainer .cert-meta-mu10006 tr,
+.cert-pdf-header-mu10006 table,
+.cert-pdf-header-mu10006 td,
+.cert-pdf-header-mu10006 tr,
+.cert-meta-mu10006,
+.cert-meta-mu10006 td,
+.cert-meta-mu10006 tr {
+  font-size: 16.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  padding: 1px 0 !important;
+  margin: 0 !important;
+  color: #000000 !important;
+  height: auto !important;
+}
+
+#certificatePDFContainer .cert-pdf-header-mu10006 td:first-child,
+#certificatePDFContainer .cert-meta-mu10006 td:first-child,
+.cert-pdf-header-mu10006 td:first-child,
+.cert-meta-mu10006 td:first-child {
+  width: 145px !important;
+  min-width: 145px !important;
+  max-width: 145px !important;
+  white-space: nowrap !important;
+  font-weight: 800 !important;
+  font-size: 16.5px !important;
+}
+
+#certificatePDFContainer .cert-table-mu10006,
+.cert-table-mu10006 {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border: 1.5px solid #000000 !important;
+  margin-top: 4px !important;
+  margin-bottom: 6px !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-table-mu10006 th,
+.cert-table-mu10006 th {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  padding: 2.5px 2px !important;
+  line-height: 1.15 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1.5px solid #000000 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+#certificatePDFContainer .cert-table-mu10006 td,
+.cert-table-mu10006 td {
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  padding: 3px 3px !important;
+  line-height: 1.2 !important;
+  color: #000000 !important;
+  border: 1.5px solid #000000 !important;
+  vertical-align: middle !important;
+}
+
+#certificatePDFContainer .cert-table-mu10006 td:nth-child(6),
+.cert-table-mu10006 td:nth-child(6) {
+  font-size: 14.5px !important;
+}
+
+#certificatePDFContainer .cert-criteria-title-mu10006,
+.cert-criteria-title-mu10006 {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  margin-top: 8px !important;
+  margin-bottom: 4px !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-criteria-table-mu10006,
+.cert-criteria-table-mu10006 {
+  width: 62% !important;
+  border-collapse: collapse !important;
+  border: 1.5px solid #000000 !important;
+  margin-top: 3px !important;
+  margin-bottom: 4px !important;
+  color: #000000 !important;
+}
+
+#certificatePDFContainer .cert-criteria-table-mu10006 th,
+.cert-criteria-table-mu10006 th {
+  font-size: 15.5px !important;
+  font-weight: 800 !important;
+  padding: 2.5px 6px !important;
+  line-height: 1.2 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1.5px solid #000000 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+#certificatePDFContainer .cert-criteria-table-mu10006 td,
+.cert-criteria-table-mu10006 td {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+  line-height: 1.2 !important;
+  color: #000000 !important;
+  border: 1.5px solid #000000 !important;
+  vertical-align: middle !important;
+}
+
+
