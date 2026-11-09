@@ -8562,7 +8562,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 return `
                     <tr style="height: 60px; page-break-inside: avoid; font-weight:bold !important; color:#000;">
                         <td style="padding:4px 2px; text-align:center; vertical-align:middle; font-size:14px; font-weight:bold; border:1px solid #555;">${hasItemData ? globalIdx : ''}</td>
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:13.5px; font-weight:bold; border:1px solid #555;">${item.distributor || ''}</td>
+                        <td style="padding:4px 6px; text-align:left; vertical-align:middle; font-size:13.5px; font-weight:bold; border:1px solid #555;">${item.distributor || ''}</td>
                         <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:13.5px; font-weight:bold; border:1px solid #555;">${item.food_type || ''}</td>
                         <td style="padding:4px 2px; text-align:center; vertical-align:middle; font-size:13.5px; font-weight:bold; border:1px solid #555;">${item.oil_type || ''}</td>
                         <td style="padding:4px 2px; text-align:center; vertical-align:middle; font-size:13.5px; font-weight:bold; border:1px solid #555;">${item.fry_duration || ''}</td>
