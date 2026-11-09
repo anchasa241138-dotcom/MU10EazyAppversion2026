@@ -9303,20 +9303,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 const mol = item.claim_molecule ? '✓' : (hasData ? '-' : '');
                 
                 tableRowsHTML += `
-                    <tr style="height: 30px; page-break-inside: avoid; text-align: center; font-size: 11px;">
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${i + 1}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${item.amphoe || ''}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:left;">${item.location || ''}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:left;">${item.sample_name || ''}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:left;">${item.company || ''}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${item.system || ''}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${advice}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${filter}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${warn}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${mag}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${mol}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:left;">${item.claim_other || ''}</td>
-                        <td style="padding:2px; border:1px solid #000; text-align:left;">${item.remark || ''}</td>
+                    <tr style="height: 41px; page-break-inside: avoid; text-align: center; font-size: 15.5px; font-weight: bold !important; color: #000;">
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${i + 1}</td>
+                        <td style="padding:3px 4px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${item.amphoe || ''}</td>
+                        <td style="padding:3px 5px; border:1px solid #000; text-align:left; vertical-align:middle; font-weight:bold !important; color:#000;">${item.location || ''}</td>
+                        <td style="padding:3px 5px; border:1px solid #000; text-align:left; vertical-align:middle; font-weight:bold !important; color:#000;">${item.sample_name || ''}</td>
+                        <td style="padding:3px 5px; border:1px solid #000; text-align:left; vertical-align:middle; font-weight:bold !important; color:#000;">${item.company || ''}</td>
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${item.system || ''}</td>
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${advice}</td>
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${filter}</td>
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${warn}</td>
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${mag}</td>
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${mol}</td>
+                        <td style="padding:3px 4px; border:1px solid #000; text-align:left; vertical-align:middle; font-weight:bold !important; color:#000;">${item.claim_other || ''}</td>
+                        <td style="padding:3px 4px; border:1px solid #000; text-align:left; vertical-align:middle; font-weight:bold !important; color:#000;">${item.remark || ''}</td>
                     </tr>
                 `;
             });
@@ -9324,8 +9324,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const currentCount = sampleItems.length;
             for (let r = currentCount; r < 10; r++) {
                 tableRowsHTML += `
-                    <tr style="height: 30px; page-break-inside: avoid; text-align: center; font-size: 11px;">
-                        <td style="padding:2px; border:1px solid #000; text-align:center;">${r + 1}</td>
+                    <tr style="height: 41px; page-break-inside: avoid; text-align: center; font-size: 15.5px; font-weight: bold !important; color: #000;">
+                        <td style="padding:3px 2px; border:1px solid #000; text-align:center; vertical-align:middle; font-weight:bold !important; color:#000;">${r + 1}</td>
                         <td style="border:1px solid #000;"></td>
                         <td style="border:1px solid #000;"></td>
                         <td style="border:1px solid #000;"></td>
@@ -9346,76 +9346,82 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <style>
                     * {
                         font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
+                        letter-spacing: normal !important;
+                        box-sizing: border-box !important;
                     }
-                    @page { size: A4 landscape; margin: 10mm; }
+                    @page { size: A4 landscape; margin: 0mm !important; }
+                    html, body {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        background: #fff !important;
+                    }
                     th, td { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; }
                 </style>
-                <div class="pdf-document" style="width: 1050px !important; margin: 0 auto; padding: 15px; color: #000; background: #fff;">
+                <div class="pdf-document" style="width: 100% !important; max-width: 100% !important; margin: 0 auto !important; padding: 8mm 10mm 6mm 10mm !important; color: #000; background: #fff; box-sizing: border-box !important;">
                     <!-- HEADER -->
-                    <table style="width:100%; margin:0 0 8px 0; border-collapse:collapse; border: 1.5px solid #000;">
+                    <table style="width:100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #000; table-layout: fixed;">
                         <tr>
-                            <td style="width:80px; padding:6px; text-align:center; border-right:1px solid #000; vertical-align:middle;">
-                                <img src="${logoBase64 ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : ''}" alt="Logo" style="max-width:70px; height:auto; display:block; margin:0 auto;">
+                            <td style="width:76px; padding:4px 6px; text-align:center; border-right:1px solid #000; vertical-align:middle;">
+                                <img src="logo.jpg" alt="Logo" style="width:56px; height:auto; display:block; margin:0 auto;">
                             </td>
-                            <td style="padding:6px 12px; border-right:1px solid #000; vertical-align:middle; line-height:1.5; font-size:13px; font-weight:bold;">
-                                <div>ประเภทเอกสาร : แบบบันทึก</div>
-                                <div>ชื่อเอกสาร : แบบบันทึกเก็บตัวอย่างน้ำบริโภคจากตู้น้ำดื่มหยอดเหรียญ</div>
-                                <div>วันที่เริ่มใช้ : 1 มกราคม พ.ศ. 2566</div>
-                                <div>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
+                            <td style="padding:4px 12px; border-right:1px solid #000; vertical-align:middle; line-height:1.35; font-size:16px; font-weight:bold !important; color:#000;">
+                                <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
+                                <div><strong>ชื่อเอกสาร : <span style="font-size:17.5px;">แบบบันทึกเก็บตัวอย่างน้ำบริโภคจากตู้น้ำดื่มหยอดเหรียญ</span></strong></div>
+                                <div><strong>วันที่เริ่มใช้ : 1 มกราคม พ.ศ. 2566</strong></div>
+                                <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div>
                             </td>
-                            <td style="width:220px; padding:6px 12px; vertical-align:top; text-align:left; line-height:1.5; font-size:13px; font-weight:bold;">
-                                <div>หมายเลขเอกสาร : MU.10-006</div>
-                                <div style="margin-top:6px;">แก้ไขครั้งที่ : 001</div>
+                            <td style="width:210px; padding:4px 12px; vertical-align:top; text-align:left; line-height:1.4; font-size:16px; font-weight:bold !important; color:#000;">
+                                <div><strong>หมายเลขเอกสาร : MU.10-006</strong></div>
+                                <div style="margin-top:4px;"><strong>แก้ไขครั้งที่ : 001</strong></div>
                             </td>
                         </tr>
                     </table>
 
                     <!-- META INFO LINE -->
-                    <div style="font-size:13px; margin: 8px 0 10px 0; line-height: 1.8; display:flex; justify-content:space-between; flex-wrap:wrap;">
-                        <div>สถานที่เก็บตัวอย่าง ....<u>${sample.location_name || '......................................................'}</u>....</div>
-                        <div>วันที่เก็บตัวอย่าง ....<u>${samplingDate || '........................................'}</u>....</div>
-                        <div>ตำบล ....<u>${sample.tambon || '........................'}</u>....</div>
-                        <div>อำเภอ ....<u>${sample.amphoe || '........................'}</u>....</div>
-                        <div>จังหวัด ....<u>${sample.province || '........................'}</u>....</div>
+                    <div style="font-size:16.5px; font-weight:bold !important; color:#000; margin: 6px 0 8px 0; line-height: 1.5; display:flex; justify-content:space-between; flex-wrap:wrap;">
+                        <div>สถานที่เก็บตัวอย่าง ${sample.location_name ? '....<u>' + sample.location_name + '</u>....' : '......................................................'}</div>
+                        <div>วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '........................................'}</div>
+                        <div>ตำบล ${sample.tambon ? '....<u>' + sample.tambon + '</u>....' : '........................'}</div>
+                        <div>อำเภอ ${sample.amphoe ? '....<u>' + sample.amphoe + '</u>....' : '........................'}</div>
+                        <div>จังหวัด ${sample.province ? '....<u>' + sample.province + '</u>....' : '........................'}</div>
                     </div>
 
                     <!-- TABLE -->
-                    <table style="width:100%; border-collapse:collapse; border:1.5px solid #000; font-size:12px;" border="1">
-                        <thead style="text-align:center; font-weight:bold; background:#fff;">
-                            <tr style="height: 28px;">
-                                <th rowspan="2" style="border:1px solid #000; width:4%;">ลำดับ</th>
-                                <th rowspan="2" style="border:1px solid #000; width:9%;">อำเภอ</th>
-                                <th rowspan="2" style="border:1px solid #000; width:12%;">สถานที่</th>
-                                <th rowspan="2" style="border:1px solid #000; width:11%;">ชื่อตู้/ยี่ห้อ</th>
-                                <th rowspan="2" style="border:1px solid #000; width:12%;">ชื่อบริษัท</th>
-                                <th rowspan="2" style="border:1px solid #000; width:7%;">ระบบ</th>
-                                <th colspan="3" style="border:1px solid #000; width:16%;">ฉลาก สคบ.</th>
-                                <th colspan="3" style="border:1px solid #000; width:18%;">การกล่าวอ้าง</th>
-                                <th rowspan="2" style="border:1px solid #000; width:11%;">หมายเหตุ</th>
+                    <table style="width:100%; table-layout:fixed; border-collapse:collapse; border:1.5px solid #000; font-size:15px; font-weight:bold !important; color:#000;" border="1">
+                        <thead style="text-align:center; font-weight:bold !important; background:#f5f5f5; color:#000;">
+                            <tr style="height: 32px; font-size: 15.5px; font-weight: bold !important; color: #000;">
+                                <th rowspan="2" style="border:1px solid #000; width:4%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">ลำดับ</th>
+                                <th rowspan="2" style="border:1px solid #000; width:9%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">อำเภอ</th>
+                                <th rowspan="2" style="border:1px solid #000; width:12%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">สถานที่</th>
+                                <th rowspan="2" style="border:1px solid #000; width:11%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">ชื่อตู้/ยี่ห้อ</th>
+                                <th rowspan="2" style="border:1px solid #000; width:11.5%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">ชื่อบริษัท</th>
+                                <th rowspan="2" style="border:1px solid #000; width:6.5%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">ระบบ</th>
+                                <th colspan="3" style="border:1px solid #000; width:17%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">ฉลาก สคบ.</th>
+                                <th colspan="3" style="border:1px solid #000; width:18%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">การกล่าวอ้าง</th>
+                                <th rowspan="2" style="border:1px solid #000; width:11%; padding:3px 2px; vertical-align:middle; font-weight:bold !important; color:#000;">หมายเหตุ</th>
                             </tr>
-                            <tr style="height: 28px;">
-                                <th style="border:1px solid #000; width:5.3%;">ข้อแนะนำ</th>
-                                <th style="border:1px solid #000; width:5.3%; font-size:10.5px;">ว/ด/ป ที่เปลี่ยนไส้กรอง</th>
-                                <th style="border:1px solid #000; width:5.4%;">คำเตือน</th>
-                                <th style="border:1px solid #000; width:6%; font-size:10.5px;">น้ำแร่พลังแม่เหล็ก</th>
-                                <th style="border:1px solid #000; width:6%; font-size:10.5px;">น้ำจัดเรียงโมเลกุล</th>
-                                <th style="border:1px solid #000; width:6%;">อื่นๆ ระบุ</th>
+                            <tr style="height: 34px; font-size: 14.5px; font-weight: bold !important; color: #000; line-height: 1.15;">
+                                <th style="border:1px solid #000; width:5.5%; padding:2px; vertical-align:middle; font-weight:bold !important; color:#000;">ข้อแนะนำ</th>
+                                <th style="border:1px solid #000; width:6%; padding:2px; vertical-align:middle; font-size:13.5px; font-weight:bold !important; color:#000;">ว/ด/ป ที่เปลี่ยน<br>ไส้กรอง</th>
+                                <th style="border:1px solid #000; width:5.5%; padding:2px; vertical-align:middle; font-weight:bold !important; color:#000;">คำเตือน</th>
+                                <th style="border:1px solid #000; width:6%; padding:2px; vertical-align:middle; font-size:13.5px; font-weight:bold !important; color:#000;">น้ำแร่พลังแม่เหล็ก</th>
+                                <th style="border:1px solid #000; width:6%; padding:2px; vertical-align:middle; font-size:13.5px; font-weight:bold !important; color:#000;">น้ำจัดเรียงโมเลกุล</th>
+                                <th style="border:1px solid #000; width:6%; padding:2px; vertical-align:middle; font-weight:bold !important; color:#000;">อื่นๆ ระบุ</th>
                             </tr>
                         </thead>
-                        <tbody>${tableRowsHTML}</tbody>
+                        <tbody style="font-weight:bold !important; color:#000;">${tableRowsHTML}</tbody>
                     </table>
 
                     <!-- FOOTER NOTES AND SIGNATURE -->
-                    <div style="display:flex; justify-content:space-between; margin-top:14px; font-size:11.5px; line-height:1.6;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:10px; font-size:15.5px; color:#000; line-height:1.55;">
                         <div>
                             <div><strong>หมายเหตุ</strong> - การลงข้อมูล ถ้ามีการแสดงข้อความ ให้ใส่เครื่องหมาย ✓ ในช่อง</div>
-                            <div style="margin-left: 45px;">- การกล่าวอ้าง หากมีข้อความอื่นให้ระบุในช่องหมายเหตุ</div>
-                            <div style="margin-left: 45px;">- ถ้าไม่พบการแสดงข้อความ ให้ใส่เครื่องหมาย - ในช่อง</div>
+                            <div style="margin-left: 52px;">- การกล่าวอ้าง หากมีข้อความอื่นให้ระบุในช่องหมายเหตุ</div>
+                            <div style="margin-left: 52px;">- ถ้าไม่พบการแสดงข้อความ ให้ใส่เครื่องหมาย - ในช่อง</div>
                         </div>
-                        <div style="text-align:right; min-width:320px; display:flex; flex-direction:column; align-items:flex-end;">
-                            <div>ผู้ทบทวนเอกสาร : ................................................(สำหรับผู้ตรวจวิเคราะห์)</div>
-                            <div style="margin-top:6px; margin-right: 120px;">วันที่ ............................................</div>
-                            
+                        <div style="text-align:right; min-width:360px; display:flex; flex-direction:column; align-items:flex-end;">
+                            <div>ผู้ทบทวนเอกสาร : ................................................ (สำหรับผู้ตรวจวิเคราะห์)</div>
+                            <div style="margin-top:4px; margin-right: 135px;">วันที่ ............................................</div>
                         </div>
                     </div>
                 </div>
