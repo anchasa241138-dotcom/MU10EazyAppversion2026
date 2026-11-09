@@ -269,6 +269,21 @@ const app = {
                             hasMigration = true;
                         }
 
+                        // Fix MU.10-003: If sample was auto-set to 'summarized' upon creation but hasn't been approved yet, reset to registered so it appears in Step 2 (lab-verify)
+                        if (s.form_type === 'MU.10-003' && s.status === 'summarized' && !s.approved_timestamp && s.status !== 'approved' && !s.analyst_signed_timestamp) {
+                            s.status = 'registered';
+                            delete s.lab_no;
+                            delete s.lab_id;
+                            delete s.lab_receive_date;
+                            delete s.lab_receive_timestamp;
+                            delete s.analysis_date;
+                            delete s.analysis_timestamp;
+                            delete s.analysis_summary;
+                            delete s.analysis_details;
+                            delete s.analysis_interpretation;
+                            hasMigration = true;
+                        }
+
                         if (s.form_type === 'MU.10-008' && (s.status === 'pending' || s.status === 'registered' || s.status === 'accepted' || s.status === 'analyzed')) {
                             s.status = 'summarized';
                             if (!s.lab_receive_date) s.lab_receive_date = new Date().toISOString().split('T')[0];
@@ -2463,7 +2478,7 @@ document.getElementById('formNameTitle').innerText = title;
 
                 // When edited in Step 1, advance/reset to Step 2 (registered) for lab verification
                 let nextStatus = 'registered';
-                if (sampleData.form_type === 'MU.10-003' || sampleData.form_type === 'MU.10-008') {
+                if (sampleData.form_type === 'MU.10-008') {
                     nextStatus = 'summarized';
                 }
 
@@ -2493,7 +2508,7 @@ document.getElementById('formNameTitle').innerText = title;
                 // If somehow index was not found, overwrite or insert using the exact same editingRefId (NEVER generateRefId)
                 delete sampleData.editing_ref_id;
                 sampleData.ref_id = editingRefId;
-                sampleData.status = (sampleData.form_type === 'MU.10-003' || sampleData.form_type === 'MU.10-008') ? 'summarized' : 'registered';
+                sampleData.status = (sampleData.form_type === 'MU.10-008') ? 'summarized' : 'registered';
                 sampleData.updated_at = new Date().toISOString();
                 sampleData.updated_by = this.currentUser ? this.currentUser.username : '';
                 this.samples.unshift(sampleData);
@@ -2533,7 +2548,7 @@ document.getElementById('formNameTitle').innerText = title;
             sampleData.created_at = new Date().toISOString();
             sampleData.created_by = this.currentUser.username; // Save creator!
             
-            if (sampleData.form_type === 'MU.10-003' || sampleData.form_type === 'MU.10-008') {
+            if (sampleData.form_type === 'MU.10-008') {
                 sampleData.status = 'summarized';
                 sampleData.lab_receive_date = new Date().toISOString().split('T')[0];
                 sampleData.lab_receive_timestamp = new Date().toISOString();
