@@ -878,7 +878,8 @@ const app = {
             'MU.10-004': 'RD-004',
             'MU.10-005': 'RD-005',
             'MU.10-006': 'RD-006',
-            'MU.10-007': 'RD-007'
+            'MU.10-007': 'RD-007',
+            'MU.10-008': 'RD-008'
         };
 
         const approvedSamples = this.getVisibleSamples()
@@ -901,8 +902,8 @@ const app = {
             if (!formType && s.ref_id && s.ref_id.startsWith('MU00')) {
                 formType = 'MU.10-' + s.ref_id.substring(2, 5);
             }
-            const rdCode = rdMap[formType] || '';
-            const formBadgeText = formType || '-';
+            const rdCode = rdMap[formType] || (formType ? formType.replace('MU.10-', 'RD-') : '');
+            const formBadgeText = rdCode || formType || '-';
 
             const addr = typeof this.resolveSampleAddress === 'function' ? this.resolveSampleAddress(s) : { province: s.province || '-' };
             const agencyVal = s.agency || (addr.province && addr.province !== '-' ? `สสจ.${addr.province}` : (s.province ? `สสจ.${s.province}` : '-'));
