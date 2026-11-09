@@ -33,7 +33,7 @@
             display: none !important;
         }
         
-        #authModal {
+        #authModal.active {
             background: #020b22 url('login_bg.png?v=1793678000000') no-repeat center center / cover fixed !important;
             z-index: 1001 !important;
             display: flex !important;
@@ -47,8 +47,10 @@
             -webkit-overflow-scrolling: touch !important;
             font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         }
+        #authModal:not(.active),
         #authModal.hidden {
             display: none !important;
+            pointer-events: none !important;
         }
 
         .auth-bg-video {
@@ -1207,7 +1209,7 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1793958500000">
+    <link rel="stylesheet" href="enhancements.css?v=1794218800000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -4216,21 +4218,21 @@
 
     <!-- Analysis Input Result Modal -->
     <div class="modal-overlay" id="analysisInputModal">
-        <div class="modal-card modal-large">
-            <div class="modal-header" style="background: linear-gradient(135deg, #0f766e, #14b8a6); color: #fff;">
+        <div class="modal-card modal-large" style="width: 1180px !important; max-width: 96vw !important;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #0f766e, #14b8a6); color: #fff; padding: 12px 22px !important;">
                 <h4 style="color:#fff;"><i class="fa-solid fa-flask-vial"></i> บันทึกผลการตรวจวิเคราะห์ทางห้องปฏิบัติการ</h4>
                 <button class="close-modal-btn" onclick="app.closeAnalysisInputModal()" style="color:#fff;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body" style="max-height: 72vh; overflow-y: auto;">
+            <div class="modal-body" style="max-height: 88vh; overflow-y: auto; padding: 14px 22px 18px !important;">
                 <form id="analysisResultForm">
                     <input type="hidden" id="analysis-sample-ref-id">
 
                     <!-- Return Banner Notification -->
-                    <div id="analysis-return-banner" style="display:none; margin-bottom: 16px;"></div>
+                    <div id="analysis-return-banner" style="display:none; margin-bottom: 12px;"></div>
 
                     <!-- Section 1: ข้อมูลผู้ตรวจวิเคราะห์ -->
-                    <div class="form-section-divider"><i class="fa-solid fa-user-doctor"></i> ข้อมูลผู้ตรวจวิเคราะห์</div>
-                    <div class="form-grid">
+                    <div class="form-section-divider" style="margin: 4px 0 8px 0 !important;"><i class="fa-solid fa-user-doctor"></i> ข้อมูลผู้ตรวจวิเคราะห์</div>
+                    <div class="form-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
                         <div class="form-group">
                             <label for="analysis-analyst">ผู้ตรวจวิเคราะห์</label>
                             <select id="analysis-analyst" class="form-control" onchange="app.handleAnalysisAnalystChange(this.value)">
@@ -4250,30 +4252,23 @@
                                 <option value="เจ้าหน้าที่ห้องปฏิบัติการ">เจ้าหน้าที่ห้องปฏิบัติการ</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-grid">
                         <div class="form-group">
                             <label for="analysis-date">วันที่ตรวจวิเคราะห์</label>
                             <input type="date" id="analysis-date">
                         </div>
-                        <div class="form-group">
-                            <!-- Empty to maintain layout grid -->
-                        </div>
                     </div>
 
                     <!-- Section 2: ข้อมูลตัวอย่าง -->
-                    <div class="form-section-divider"><i class="fa-solid fa-vial"></i> ข้อมูลตัวอย่าง</div>
-                    <div class="form-grid">
+                    <div class="form-section-divider" style="margin: 8px 0 8px 0 !important;"><i class="fa-solid fa-vial"></i> ข้อมูลตัวอย่าง</div>
+                    <div class="form-grid" style="grid-template-columns: 1.2fr 1.2fr 0.8fr 1.3fr; gap: 12px;">
                         <div class="form-group">
                             <label>ชื่อตัวอย่าง:</label>
                             <input type="text" id="analysis-sample-name-display" readonly class="readonly-input">
                         </div>
                         <div class="form-group">
                             <label>รหัสตัวอย่าง (Lab No. / Lab ID):</label>
-                            <input type="text" id="analysis-lab-id-display" readonly class="readonly-input" style="font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1.5px solid #bae6fd; font-size: 13.5px;">
+                            <input type="text" id="analysis-lab-id-display" readonly class="readonly-input" style="font-weight: 700; color: #0284c7 !important; background: #f0f9ff !important; border: 1.5px solid #bae6fd !important; font-size: 13px;">
                         </div>
-                    </div>
-                    <div class="form-grid">
                         <div class="form-group">
                             <label>ประเภทแบบฟอร์ม:</label>
                             <input type="text" id="analysis-form-type-display" readonly class="readonly-input">
@@ -4287,7 +4282,7 @@
                     <!-- Section 3: ผลการตรวจวิเคราะห์ (Dynamic based on form type) -->
                     <div id="analysis-dynamic-section"></div>
 
-                    <div class="form-actions margin-top">
+                    <div class="form-actions margin-top" style="margin-top: 10px !important; padding-top: 10px !important;">
                         <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> บันทึกผลวิเคราะห์</button>
                         <button type="button" class="btn btn-secondary" id="btnCancelAnalysisModal" onclick="app.closeAnalysisInputModal()" style="background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 10px 24px !important; font-weight: 700 !important; font-size: 14px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important; cursor: pointer !important; box-shadow: 0 4px 18px rgba(71, 85, 105, 0.35) !important; letter-spacing: 0.2px !important; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;"><i class="fa-solid fa-xmark" style="color: #ffffff !important;"></i> ยกเลิก</button>
                     </div>
@@ -4787,6 +4782,6 @@
             }
         });
     </script>
-    <script src="app_v85.js?v=1794218200000"></script>
+    <script src="app_v85.js?v=1794218800000"></script>
 </body>
 </html>
