@@ -269,14 +269,22 @@ const app = {
                             hasMigration = true;
                         }
 
-                        // Restore MU003-691109001 if previously accepted and prevent demotion
-                        if (s.ref_id === 'MU003-691109001' && s.status === 'registered') {
-                            s.status = 'accepted';
-                            if (!s.lab_no) s.lab_no = '0057';
-                            if (!s.lab_id) s.lab_id = 'AMN-2569-0001';
-                            if (!s.lab_receive_date) s.lab_receive_date = '2026-11-09';
-                            if (!s.lab_receive_timestamp) s.lab_receive_timestamp = new Date().toISOString();
-                            hasMigration = true;
+                        // Ensure MU003-691109001 has non-colliding Lab No. and valid lab metadata
+                        if (s.ref_id === 'MU003-691109001') {
+                            if (!s.form_type) s.form_type = 'MU.10-003';
+                            if (s.status === 'registered') s.status = 'accepted';
+                            if (!s.lab_no || s.lab_no === '0057') {
+                                s.lab_no = '0060';
+                                hasMigration = true;
+                            }
+                            if (!s.lab_id) {
+                                s.lab_id = 'AMN-2569-0001';
+                                hasMigration = true;
+                            }
+                            if (!s.lab_receive_date) {
+                                s.lab_receive_date = '2026-11-09';
+                                hasMigration = true;
+                            }
                         }
 
                         if (s.form_type === 'MU.10-008' && (s.status === 'pending' || s.status === 'registered' || s.status === 'accepted' || s.status === 'analyzed')) {
@@ -313,6 +321,18 @@ const app = {
                 }
                 if (typeof this.renderSavedRecords === 'function') {
                     try { this.renderSavedRecords(); } catch (e) { console.warn(e); }
+                }
+                if (typeof this.renderVerifyTable === 'function') {
+                    try { this.renderVerifyTable(); } catch (e) { console.warn(e); }
+                }
+                if (typeof this.renderAnalysisTable === 'function') {
+                    try { this.renderAnalysisTable(); } catch (e) { console.warn(e); }
+                }
+                if (typeof this.renderCertifyTable === 'function') {
+                    try { this.renderCertifyTable(); } catch (e) { console.warn(e); }
+                }
+                if (typeof this.renderDownloadTable === 'function') {
+                    try { this.renderDownloadTable(); } catch (e) { console.warn(e); }
                 }
                 this.updateBadges();
             });
@@ -851,7 +871,23 @@ const app = {
         const searchInput = document.getElementById('searchDownloadTable');
         const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         
-        const approvedSamples = this.getVisibleSamples().filter(s => s.status === 'approved');
+        const rdMap = {
+            'MU.10-001': 'RD-001',
+            'MU.10-002': 'RD-002',
+            'MU.10-003': 'RD-003',
+            'MU.10-004': 'RD-004',
+            'MU.10-005': 'RD-005',
+            'MU.10-006': 'RD-006',
+            'MU.10-007': 'RD-007'
+        };
+
+        const approvedSamples = this.getVisibleSamples()
+            .filter(s => s.status === 'approved')
+            .sort((a, b) => {
+                const timeA = new Date(a.approved_timestamp || a.analysis_timestamp || a.lab_receive_timestamp || a.created_at || 0).getTime();
+                const timeB = new Date(b.approved_timestamp || b.analysis_timestamp || b.lab_receive_timestamp || b.created_at || 0).getTime();
+                return timeB - timeA;
+            });
         
         tbody.innerHTML = '';
         
@@ -861,6 +897,13 @@ const app = {
         }
 
         approvedSamples.forEach(s => {
+            let formType = s.form_type || '';
+            if (!formType && s.ref_id && s.ref_id.startsWith('MU00')) {
+                formType = 'MU.10-' + s.ref_id.substring(2, 5);
+            }
+            const rdCode = rdMap[formType] || '';
+            const formBadgeText = rdCode ? `${formType} (${rdCode})` : (formType || '-');
+
             const addr = typeof this.resolveSampleAddress === 'function' ? this.resolveSampleAddress(s) : { province: s.province || '-' };
             const agencyVal = s.agency || (addr.province && addr.province !== '-' ? `สสจ.${addr.province}` : (s.province ? `สสจ.${s.province}` : '-'));
             let locName = s.location_name || '';
@@ -882,21 +925,25 @@ const app = {
                 }
             }
 
-            const searchHaystack = `${s.lab_no || s.lab_id || s.ref_id || ''} ${s.form_type || ''} ${agencyVal} ${locDisplay} ${provName} ${dateDisplay} ${s.sample_name || ''}`.toLowerCase();
+            const labRange = this.getSampleLabNoRange(s);
+            const searchHaystack = `${labRange} ${s.lab_no || ''} ${s.lab_id || ''} ${s.ref_id || ''} ${formType} ${rdCode} ${agencyVal} ${locDisplay} ${provName} ${dateDisplay} ${s.sample_name || ''}`.toLowerCase();
             if (searchTerm && !searchHaystack.includes(searchTerm)) return;
 
             const actionBtn = `<button class="btn btn-primary btn-text" onclick="app.openCertifyModal('${s.ref_id}', true)"><i class="fa-solid fa-download"></i> ดาวน์โหลดรายงาน PDF</button>`;
             
             const tr = document.createElement('tr');
-            const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
                 <td>
                     <strong style="color:#0f172a; font-size:13.5px; display:block;">${labRange}</strong>
                     ${s.lab_id ? `<div style="font-size:11px; color:#64748b; font-weight:500;">${s.lab_id}</div>` : ''}
+                    ${s.ref_id ? `<div style="font-size:10.5px; color:#94a3b8;">Ref: ${s.ref_id}</div>` : ''}
                 </td>
-                <td><span class="badge form-type-badge">${s.form_type}</span></td>
+                <td><span class="badge form-type-badge">${formBadgeText}</span></td>
                 <td>${agencyVal}</td>
-                <td>${locDisplay}</td>
+                <td>
+                    <div>${locDisplay}</div>
+                    ${s.sample_name ? `<div style="font-size:11.5px; color:#64748b; margin-top:2px;">ตัวอย่าง: ${s.sample_name}</div>` : ''}
+                </td>
                 <td style="text-align:center; white-space:nowrap;">${dateDisplay}</td>
                 <td style="text-align:center; white-space:nowrap;">${actionBtn}</td>
             `;
@@ -6113,12 +6160,35 @@ document.getElementById('formNameTitle').innerText = title;
         const searchInput = document.getElementById('searchCertifyTable');
         const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         
+        const rdMap = {
+            'MU.10-001': 'RD-001',
+            'MU.10-002': 'RD-002',
+            'MU.10-003': 'RD-003',
+            'MU.10-004': 'RD-004',
+            'MU.10-005': 'RD-005',
+            'MU.10-006': 'RD-006',
+            'MU.10-007': 'RD-007'
+        };
+
         const samplesList = (typeof this.getVisibleSamples === 'function' ? this.getVisibleSamples() : this.samples) || [];
-        const reportSamples = samplesList.filter(s => s.status === 'summarized' || s.status === 'analyst_signed' || s.status === 'analyzing');
+        const reportSamples = samplesList
+            .filter(s => s.status === 'summarized' || s.status === 'analyst_signed' || s.status === 'analyzing')
+            .sort((a, b) => {
+                const timeA = new Date(a.analyst_signed_timestamp || a.analysis_timestamp || a.lab_receive_timestamp || a.created_at || 0).getTime();
+                const timeB = new Date(b.analyst_signed_timestamp || b.analysis_timestamp || b.lab_receive_timestamp || b.created_at || 0).getTime();
+                return timeB - timeA;
+            });
         
         tbody.innerHTML = '';
         
         reportSamples.forEach(s => {
+            let formType = s.form_type || '';
+            if (!formType && s.ref_id && s.ref_id.startsWith('MU00')) {
+                formType = 'MU.10-' + s.ref_id.substring(2, 5);
+            }
+            const rdCode = rdMap[formType] || '';
+            const formBadgeText = rdCode ? `${formType} (${rdCode})` : (formType || '-');
+
             const addr = typeof this.resolveSampleAddress === 'function' ? this.resolveSampleAddress(s) : { province: s.province || '-' };
             const agencyVal = s.agency || (addr.province && addr.province !== '-' ? `สสจ.${addr.province}` : (s.province ? `สสจ.${s.province}` : '-'));
             let locName = s.location_name || '';
@@ -6150,7 +6220,8 @@ document.getElementById('formNameTitle').innerText = title;
                     ? 'status-warning' 
                     : (s.status === 'approved' ? 'status-approved' : (s.analysis_summary && s.analysis_summary.includes('ไม่ผ่าน') ? 'status-rejected' : 'status-approved')));
 
-            const searchHaystack = `${s.lab_no || s.lab_id || s.ref_id || ''} ${s.form_type || ''} ${s.sample_name || ''} ${agencyVal} ${locDisplay} ${provName} ${dateDisplay} ${displayStatus}`.toLowerCase();
+            const labRange = this.getSampleLabNoRange(s);
+            const searchHaystack = `${labRange} ${s.lab_no || ''} ${s.lab_id || ''} ${s.ref_id || ''} ${formType} ${rdCode} ${s.sample_name || ''} ${agencyVal} ${locDisplay} ${provName} ${dateDisplay} ${displayStatus}`.toLowerCase();
             if (searchTerm && !searchHaystack.includes(searchTerm)) return;
             
             const isApproved = s.status === 'approved';
@@ -6168,15 +6239,18 @@ document.getElementById('formNameTitle').innerText = title;
             }
 
             const tr = document.createElement('tr');
-            const labRange = this.getSampleLabNoRange(s);
             tr.innerHTML = `
                 <td>
                     <strong style="color:#0f172a; font-size:13.5px; display:block;">${labRange}</strong>
                     ${s.lab_id ? `<div style="font-size:11px; color:#64748b; font-weight:500;">${s.lab_id}</div>` : ''}
+                    ${s.ref_id ? `<div style="font-size:10.5px; color:#94a3b8;">Ref: ${s.ref_id}</div>` : ''}
                 </td>
-                <td><span class="status-badge form-type-badge">${s.form_type}</span></td>
+                <td><span class="status-badge form-type-badge">${formBadgeText}</span></td>
                 <td>${agencyVal}</td>
-                <td>${locDisplay}</td>
+                <td>
+                    <div>${locDisplay}</div>
+                    ${s.sample_name ? `<div style="font-size:11.5px; color:#64748b; margin-top:2px;">ตัวอย่าง: ${s.sample_name}</div>` : ''}
+                </td>
                 <td style="text-align:center; white-space:nowrap;">${dateDisplay}</td>
                 <td style="text-align:center;">
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
@@ -6768,12 +6842,11 @@ document.getElementById('formNameTitle').innerText = title;
             }
                         container.innerHTML = fullHtml;
         } else if (sample.form_type === 'MU.10-003') {
-            if (!sample.sel_analyst_1 || !sample.sel_analyst_2) {
-                sample.sel_analyst_1 = sample.sel_analyst_1 || 'anchasa';
-                sample.sel_analyst_2 = sample.sel_analyst_2 || 'surachai';
-                sample.sel_approver_1 = sample.sel_approver_1 || 'thitiporn';
-                sample.sel_approver_2 = sample.sel_approver_2 || 'mallika';
-                this.saveSamples();
+            if (!sample.sel_analyst_1) sample.sel_analyst_1 = 'anchasa';
+            if (!sample.sel_analyst_2) sample.sel_analyst_2 = 'surachai';
+            if (sample.status === 'analyst_signed' || sample.status === 'approved') {
+                if (!sample.sel_approver_1) sample.sel_approver_1 = 'thitiporn';
+                if (!sample.sel_approver_2) sample.sel_approver_2 = 'mallika';
             }
             const receiveDate = new Date(sample.lab_receive_date || sample.created_at).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'});
             const analysisDate = sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', {year: 'numeric', month: 'long', day: 'numeric'}) : '-';
@@ -6852,16 +6925,16 @@ document.getElementById('formNameTitle').innerText = title;
                         const failClass = isFail ? 'row-failed highlight-failed-row' : '';
                         const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
                         rowsHtml += `
-                            <tr class="${failClass}" style="${failStyle}">
-                                <td style="text-align: center; ${failStyle}">${page * ITEMS_PER_PAGE + i + 1}</td>
-                                <td style="${failStyle}">${item.distributor}</td>
-                                <td style="text-align: center; ${failStyle}">${item.food_type}</td>
-                                <td style="text-align: center; ${failStyle}">${item.oil_type}</td>
-                                <td style="text-align: center; ${failStyle}">${item.fry_duration ? item.fry_duration + ' นาที/ครั้ง' : '-'}</td>
-                                <td style="text-align: center; ${failStyle}">${item.replacement_type}</td>
-                                <td style="text-align: center; ${failStyle}">${item.replacement_frequency ? item.replacement_frequency + ' วัน/ครั้ง' : '-'}</td>
-                                <td style="text-align: center; ${failStyle}">${item.polar_value ? item.polar_value + '%' : '-'}</td>
-                                <td style="text-align: center; ${failStyle} ${marks.text === 'ไม่ผ่าน' ? 'color: #dc2626; font-weight: bold;' : ''}">${marks.text}</td>
+                            <tr class="${failClass}" style="height: 28px; ${failStyle}">
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle}">${page * ITEMS_PER_PAGE + i + 1}</td>
+                                <td style="text-align: left; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 6px; line-height: 1.2; ${failStyle}">${item.distributor}</td>
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle}">${item.food_type}</td>
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle}">${item.oil_type}</td>
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle}">${item.fry_duration ? item.fry_duration + ' นาที/ครั้ง' : '-'}</td>
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle}">${item.replacement_type}</td>
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle}">${item.replacement_frequency ? item.replacement_frequency + ' วัน/ครั้ง' : '-'}</td>
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle}">${item.polar_value ? item.polar_value + '%' : '-'}</td>
+                                <td style="text-align: center; border: 1.5px solid #000; color: #000; font-size: 15.5px; font-weight: bold; padding: 3px 4px; line-height: 1.2; ${failStyle} ${marks.text === 'ไม่ผ่าน' ? 'color: #dc2626; font-weight: bold;' : ''}">${marks.text}</td>
                             </tr>
                         `;
                     }
@@ -6872,7 +6945,7 @@ document.getElementById('formNameTitle').innerText = title;
                         <div style="position: absolute; top: 155px; left: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
                             RD-003
                         </div>
-                        <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; color: #000;">
+                        <div style="position: absolute; top: 155px; right: 60px; font-size: 15.5px; font-weight: bold; color: #000;">
                             หน้าที่ ${page + 1}/${totalPages}
                         </div>
                         <div class="cert-pdf-header-mu10" style="margin-top: 12px; margin-bottom: 8px;">
@@ -6897,21 +6970,22 @@ document.getElementById('formNameTitle').innerText = title;
                             </table>
                         </div>
                         
-                        <table class="cert-multi-table" style="font-size: 13.5px; margin-top:10px;">
+                        <style>.cert-multi-table-rd003 th, .cert-multi-table-rd003 td { border: 1.5px solid #000 !important; font-size: 15.5px !important; font-weight: bold !important; color: #000 !important; line-height: 1.2 !important; }</style>
+                        <table class="cert-multi-table cert-multi-table-rd003" style="font-size: 15.5px; font-weight: bold; width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 4px; margin-bottom: 6px;">
                             <thead>
-                                <tr>
-                                    <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center;"><div style="margin-top: 14px;">ลำดับ</div></th>
-                                    <th rowspan="2" style="width: 15%; text-align: center;"><div style="margin-top: 14px;">ชื่อผู้จำหน่าย</div></th>
-                                    <th rowspan="2" style="width: 12%; text-align: center;"><div style="margin-top: 14px;">ชนิดอาหาร</div></th>
-                                    <th colspan="4" style="text-align: center;"><div>น้ำมันที่ทอดอาหาร</div></th>
-                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">ค่าโพลาร์</div></th>
-                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center;"><div style="margin-top: 14px;">สรุปผล</div></th>
+                                <tr style="background-color: #ffffff;">
+                                    <th rowspan="2" style="white-space: nowrap; width: 5%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ลำดับ</th>
+                                    <th rowspan="2" style="width: 15%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ชื่อผู้จำหน่าย</th>
+                                    <th rowspan="2" style="width: 12%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ชนิดอาหาร</th>
+                                    <th colspan="4" style="text-align: center; border: 1.5px solid #000; padding: 4px 3px;">น้ำมันที่ทอดอาหาร</th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ค่าโพลาร์</th>
+                                    <th rowspan="2" style="white-space: nowrap; width: 8%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">สรุปผล</th>
                                 </tr>
-                                <tr>
-                                    <th style="width: 10%;">ชนิด<br>น้ำมัน</th>
-                                    <th style="width: 10%;">ระยะเวลาที่<br>ใช้ทอด</th>
-                                    <th style="width: 10%;">ลักษณะการ<br>เปลี่ยน</th>
-                                    <th style="width: 10%;">ความถี่ใน<br>การเปลี่ยน</th>
+                                <tr style="background-color: #ffffff;">
+                                    <th style="width: 10%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ชนิด<br>น้ำมัน</th>
+                                    <th style="width: 10%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ระยะเวลาที่<br>ใช้ทอด</th>
+                                    <th style="width: 10%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ลักษณะการ<br>เปลี่ยน</th>
+                                    <th style="width: 10%; text-align: center; border: 1.5px solid #000; padding: 4px 3px;">ความถี่ใน<br>การเปลี่ยน</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -6919,15 +6993,15 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
                         
-                        <div style="margin-top:12px; font-size:14.5px; line-height: 1.55; margin-bottom: 12px; color: #000;">
+                        <div style="margin-top: 6px; font-size: 16px; font-weight: bold; line-height: 1.35; margin-bottom: 6px; color: #000;">
                             <div style="display:flex;">
-                                <div style="width:65px; font-weight:bold;">หมายเหตุ :</div>
-                                <div>- การตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ เกณฑ์ผ่านมาตรฐานสารโพลาร์ในน้ำมันทอดซ้ำ คือ ไม่เกิน 25%<br>
+                                <div style="width:72px; font-weight:bold; flex-shrink:0;">หมายเหตุ :</div>
+                                <div style="font-weight:bold;">- การตรวจวัดค่าโพลาร์ในน้ำมันทอดซ้ำ เกณฑ์ผ่านมาตรฐานสารโพลาร์ในน้ำมันทอดซ้ำ คือ ไม่เกิน 25%<br>
                                 - น้ำมันทอดซ้ำที่มีค่าโพลาร์มากกว่า 25% เป็นน้ำมันเสื่อมสภาพแล้วไม่ควรใช้</div>
                             </div>
                         </div>
                         
-                        <div class="cert-signatures-grid" style="font-size: 14.5px; color: #000; margin-top: 10px; gap: 15px 40px;">
+                        <div class="cert-signatures-grid" style="font-size: 18.5px; font-weight: bold; color: #000; margin-top: 6px; gap: 6px 35px;">
                             ${renderSignatureSlot(sample.sel_analyst_1, 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                             ${renderSignatureSlot(sample.sel_analyst_2, 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                             ${renderSignatureSlot(sample.sel_approver_1, 'ผู้รับรอง', 'approver_1')}
@@ -7885,7 +7959,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const defA2_2 = (sample.form_type === 'MU.10-006' || sample.form_type === 'MU.10-007') ? "sakulkan" : "surachai";
                     s1.value = sample.sel_analyst_1 || defA1_2;
                     s2.value = sample.sel_analyst_2 || defA2_2;
-                    s3.value = (sample.status === 'approved') ? (sample.sel_approver_1 || "thitiporn") : (sample.sel_approver_1 || "");
+                    s3.value = sample.sel_approver_1 || "thitiporn";
                     s4.value = sample.sel_approver_2 || "mallika";
                     
                     document.getElementById('mode-analyst-1').value = sample.mode_analyst_1 || 'system';
@@ -8096,6 +8170,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 return;
             }
             const sample = this.samples[sampleIndex];
+            if (!sample.form_type && sample.ref_id && sample.ref_id.startsWith('MU00')) {
+                sample.form_type = 'MU.10-' + sample.ref_id.substring(2, 5);
+            }
             if (!sample.form_type || sample.form_type === 'MU.10.007' || sample.form_type === 'MU007' || sample.form_type === 'coliformFood' || (sample.ref_id && sample.ref_id.startsWith('MU007'))) {
                 sample.form_type = 'MU.10-007';
             }
@@ -8123,27 +8200,29 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
             if (sample.form_type === 'MU.10-001' || sample.form_type === 'MU.10-002' || sample.form_type === 'MU.10-003' || sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-005' || sample.form_type === 'MU.10-006' || sample.form_type === 'MU.10-007') {
                 if (sample.status === 'summarized') {
-                    sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
-                    sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
+                    sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value || 'anchasa';
+                    sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value || 'surachai';
                     sample.analyst_signed_timestamp = new Date().toISOString();
                     sample.status = 'analyst_signed';
                     this.saveSamples();
+                    this.closeCertifyModal();
+                    this.renderCertifyTable();
+                    this.renderDownloadTable();
+                    this.updateBadges();
                     Swal.fire({
                         icon: 'success',
                         title: 'บันทึกลายมือชื่อผู้ตรวจสำเร็จ',
-                        text: 'ส่งต่อไปยังผู้รับรองแล้ว',
+                        text: 'ส่งต่อไปยังผู้รับรองเพื่อกด "ลงนามผู้รับรอง" ในขั้นตอนถัดไป',
                         timer: 1500,
                         showConfirmButton: false
                     });
-                    this.closeCertifyModal();
-                    this.renderCertifyTable();
                     return;
-                } else if (sample.status === 'analyst_signed' || sample.status === 'approved') {
-                    sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value;
-                    sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value;
-                    sample.sel_approver_1 = document.getElementById('sel-approver-1').value;
-                    sample.sel_approver_2 = document.getElementById('sel-approver-2').value;
-                    sample.approver_name = "MU.10-001 System"; // placeholder
+                } else {
+                    sample.sel_analyst_1 = document.getElementById('sel-analyst-1').value || sample.sel_analyst_1 || 'anchasa';
+                    sample.sel_analyst_2 = document.getElementById('sel-analyst-2').value || sample.sel_analyst_2 || 'surachai';
+                    sample.sel_approver_1 = document.getElementById('sel-approver-1').value || sample.sel_approver_1 || 'thitiporn';
+                    sample.sel_approver_2 = document.getElementById('sel-approver-2').value || sample.sel_approver_2 || 'mallika';
+                    sample.approver_name = this.currentUser ? this.currentUser.fullname : 'ผู้รับรองผลตรวจวิเคราะห์';
                     sample.status = 'approved';
                     sample.approved_timestamp = new Date().toISOString();
                 }
@@ -8152,20 +8231,26 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if(!approverName) return;
                 sample.approver_name = approverName;
                 sample.status = 'approved';
-                    sample.approved_timestamp = new Date().toISOString();
+                sample.approved_timestamp = new Date().toISOString();
             }
 
             this.saveSamples();
+            this.renderCertifyTable();
+            this.renderDownloadTable();
+            this.updateBadges();
+            if (typeof this.updateDashboardStats === 'function') {
+                try { this.updateDashboardStats(); } catch (e) { console.warn(e); }
+            }
             
             Swal.fire({
                 icon: 'success',
                 title: 'ลงนามรับรองอิเล็กทรอนิกส์สำเร็จ',
-                text: 'สามารถดาวน์โหลดเอกสาร PDF ได้ทันที',
+                text: 'รายการถูกส่งไปยังหน้ารายการผลตรวจวิเคราะห์ที่ผ่านการรับรองแล้ว (พร้อมดาวน์โหลด)',
                 timer: 1500,
                 showConfirmButton: false
             }).then(() => {
+                this.switchView('download-results');
                 this.openCertifyModal(refId, true); // Re-open in view mode
-                this.renderCertifyTable();
             });
         } catch (err) {
             alert("Error in handleApproveReport: " + err.message + "\n" + err.stack);
