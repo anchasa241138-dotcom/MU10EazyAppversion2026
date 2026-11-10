@@ -8258,7 +8258,7 @@ html, body {
    ========================================================================== */
 #certificatePDFContainer .cert-pdf-header-mu10006 h4,
 .cert-pdf-header-mu10006 h4 {
-  font-size: 21.5px !important;
+  font-size: 23px !important;
   font-weight: 800 !important;
   line-height: 1.25 !important;
   margin-top: 0 !important;
@@ -8279,9 +8279,9 @@ html, body {
 .cert-meta-mu10006,
 .cert-meta-mu10006 td,
 .cert-meta-mu10006 tr {
-  font-size: 16.5px !important;
+  font-size: 19px !important;
   font-weight: 700 !important;
-  line-height: 1.35 !important;
+  line-height: 1.3 !important;
   padding: 1px 0 !important;
   margin: 0 !important;
   color: #000000 !important;
@@ -8292,12 +8292,12 @@ html, body {
 #certificatePDFContainer .cert-meta-mu10006 td:first-child,
 .cert-pdf-header-mu10006 td:first-child,
 .cert-meta-mu10006 td:first-child {
-  width: 145px !important;
-  min-width: 145px !important;
-  max-width: 145px !important;
+  width: 155px !important;
+  min-width: 155px !important;
+  max-width: 155px !important;
   white-space: nowrap !important;
   font-weight: 800 !important;
-  font-size: 16.5px !important;
+  font-size: 19px !important;
 }
 
 #certificatePDFContainer .cert-table-mu10006,
@@ -8312,7 +8312,7 @@ html, body {
 
 #certificatePDFContainer .cert-table-mu10006 th,
 .cert-table-mu10006 th {
-  font-size: 15px !important;
+  font-size: 15.5px !important;
   font-weight: 800 !important;
   padding: 2.5px 2px !important;
   line-height: 1.15 !important;
@@ -8325,18 +8325,13 @@ html, body {
 
 #certificatePDFContainer .cert-table-mu10006 td,
 .cert-table-mu10006 td {
-  font-size: 15.5px !important;
+  font-size: 16px !important;
   font-weight: 700 !important;
   padding: 3px 3px !important;
   line-height: 1.2 !important;
   color: #000000 !important;
   border: 1.5px solid #000000 !important;
   vertical-align: middle !important;
-}
-
-#certificatePDFContainer .cert-table-mu10006 td:nth-child(6),
-.cert-table-mu10006 td:nth-child(6) {
-  font-size: 14.5px !important;
 }
 
 #certificatePDFContainer .cert-criteria-title-mu10006,
