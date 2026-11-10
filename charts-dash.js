@@ -651,10 +651,14 @@ function updateDashboardCharts(samples) {
     resultRatioChartInstance.update();
 
     // Update Outcrowd Insights Card
+    const passPercent = (passed + failed) > 0 ? ((passed / (passed + failed)) * 100).toFixed(1) : '0.0';
     const insightRateEl = document.getElementById('dash-insight-rate');
     if (insightRateEl) {
-        const passPercent = (passed + failed) > 0 ? ((passed / (passed + failed)) * 100).toFixed(0) : 100;
         insightRateEl.innerText = `${passPercent}%`;
+    }
+    const bannerRateEl = document.getElementById('banner-safety-rate');
+    if (bannerRateEl) {
+        bannerRateEl.innerText = `${passPercent}%`;
     }
     const insightSubEl = document.querySelector('.outcrowd-insights-card .insights-sub');
     if (insightSubEl) {
