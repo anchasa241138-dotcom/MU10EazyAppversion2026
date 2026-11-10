@@ -1051,14 +1051,21 @@ const app = {
         const elPending = document.getElementById('stats-pending'); if (elPending) elPending.innerText = pending;
         const elAnalyzing = document.getElementById('stats-analyzing'); if (elAnalyzing) elAnalyzing.innerText = analyzing;
         const elCompleted = document.getElementById('stats-completed'); if (elCompleted) elCompleted.innerText = completed;
-        const passedPct = total > 0 ? ((passed / total) * 100).toFixed(1) : 0;
-        const failedPct = total > 0 ? ((failed / total) * 100).toFixed(1) : 0;
+        const evaluatedTotal = passed + failed;
+        const passedPct = evaluatedTotal > 0 ? ((passed / evaluatedTotal) * 100).toFixed(1) : '0.0';
+        const failedPct = evaluatedTotal > 0 ? ((failed / evaluatedTotal) * 100).toFixed(1) : '0.0';
         
         const elPassed = document.getElementById('stats-passed'); 
         if (elPassed) elPassed.innerHTML = `${passed} <span style="font-size: 16px; font-weight: normal; color: #64748b; margin-left: 5px;">(${passedPct}%)</span>`;
         
         const elFailed = document.getElementById('stats-failed'); 
         if (elFailed) elFailed.innerHTML = `${failed} <span style="font-size: 16px; font-weight: normal; color: #64748b; margin-left: 5px;">(${failedPct}%)</span>`;
+
+        const elInsightRate = document.getElementById('dash-insight-rate');
+        if (elInsightRate) elInsightRate.innerText = `${passedPct}%`;
+
+        const elBannerRate = document.getElementById('banner-safety-rate');
+        if (elBannerRate) elBannerRate.innerText = `${passedPct}%`;
     },
 
     // Authentication Logic
