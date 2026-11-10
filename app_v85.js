@@ -7970,7 +7970,7 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
 
                         ${isLastPage ? `
-                            <div class="cert-signatures-grid" style="font-size: 12px; color: #334155; margin-top: 5px; gap: 10px 40px;">
+                            <div class="cert-signatures-grid cert-signatures-mu10007" style="font-size: 16.5px !important; font-weight: 800 !important; color: #000000 !important; margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px; text-align: center;">
                                 ${renderSignatureSlot(sample.sel_analyst_1 || 'naphaphon', 'ผู้ตรวจวิเคราะห์', 'analyst_1')}
                                 ${renderSignatureSlot(sample.sel_analyst_2 || 'sakulkan', 'ผู้ตรวจวิเคราะห์', 'analyst_2')}
                                 ${renderSignatureSlot(sample.sel_approver_1 || 'thitiporn', 'ผู้รับรอง', 'approver_1')}
