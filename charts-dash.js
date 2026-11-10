@@ -1101,9 +1101,9 @@ function updateSafetyRankings(stats, samples, targetSubstance, curProv) {
             return;
         } else {
             // Case 1B: Specific Province AND All Substances -> Rank Substances in that Province
-            if (safeTitle) safeTitle.innerText = `TOP 3 สารที่ปลอดภัยที่สุดใน จ.${curProv}`;
+            if (safeTitle) safeTitle.innerText = `TOP 3 สารที่ผ่านเกณฑ์สูงสุดใน จ.${curProv}`;
             if (safeSubtitle) safeSubtitle.innerText = 'ร้อยละการตรวจผ่านเกณฑ์มาตรฐานสูงสุดในพื้นที่';
-            if (dangerTitle) dangerTitle.innerText = `TOP 3 สารที่ต้องเฝ้าระวังใน จ.${curProv}`;
+            if (dangerTitle) dangerTitle.innerText = `TOP 3 สารที่ต้องเฝ้าระวังสูงสุดใน จ.${curProv}`;
             if (dangerSubtitle) dangerSubtitle.innerText = 'ร้อยละการตรวจไม่ผ่านเกณฑ์ / พบความเสี่ยงสูงสุด';
 
             const active = Object.keys(stats).map(k => ({ key: k, ...stats[k] })).filter(item => item.total > 0);
@@ -1182,9 +1182,9 @@ function updateSafetyRankings(stats, samples, targetSubstance, curProv) {
     }
 
     // Case 2B: All Provinces AND All Substances -> Rank all 9 substances across region 10
-    if (safeTitle) safeTitle.innerText = 'TOP 3 สารที่ปลอดภัยที่สุด';
+    if (safeTitle) safeTitle.innerText = 'TOP 3 สารที่ผ่านเกณฑ์สูงสุด';
     if (safeSubtitle) safeSubtitle.innerText = 'ร้อยละการตรวจผ่านเกณฑ์มาตรฐานสูงสุด';
-    if (dangerTitle) dangerTitle.innerText = 'TOP 3 สารที่ปลอดภัยน้อยที่สุด';
+    if (dangerTitle) dangerTitle.innerText = 'TOP 3 สารที่ต้องเฝ้าระวังสูงสุด';
     if (dangerSubtitle) dangerSubtitle.innerText = 'ร้อยละการตรวจไม่ผ่านเกณฑ์ / พบความเสี่ยงสูงสุด';
 
     const active = Object.keys(stats).map(k => ({ key: k, ...stats[k] })).filter(item => item.total > 0);
