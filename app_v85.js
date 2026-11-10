@@ -1047,11 +1047,11 @@ const app = {
         const passed = cStats.passed;
         const failed = cStats.failed;
 
-        const elTotal = document.getElementById('stats-total'); if (elTotal) elTotal.innerText = total;
+        const evaluatedTotal = passed + failed;
+        const elTotal = document.getElementById('stats-total'); if (elTotal) elTotal.innerText = evaluatedTotal;
         const elPending = document.getElementById('stats-pending'); if (elPending) elPending.innerText = pending;
         const elAnalyzing = document.getElementById('stats-analyzing'); if (elAnalyzing) elAnalyzing.innerText = analyzing;
         const elCompleted = document.getElementById('stats-completed'); if (elCompleted) elCompleted.innerText = completed;
-        const evaluatedTotal = passed + failed;
         const passedPct = evaluatedTotal > 0 ? ((passed / evaluatedTotal) * 100).toFixed(1) : '0.0';
         const failedPct = evaluatedTotal > 0 ? ((failed / evaluatedTotal) * 100).toFixed(1) : '0.0';
         
