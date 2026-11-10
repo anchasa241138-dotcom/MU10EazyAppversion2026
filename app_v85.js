@@ -7491,20 +7491,20 @@ document.getElementById('formNameTitle').innerText = title;
                     const failStyle = isAnyFail ? 'background-color: #ffff00 !important;' : '';
 
                     const tdsSumText = item.tds_sum || (isTFail ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ');
-                    const tdsSumFontSize = tdsSumText.length > 10 ? '13.5px !important' : '16px !important';
+                    const tdsSumFontSize = tdsSumText.length > 10 ? '14px !important' : '17px !important';
 
                     pageRowsHTML += `
-                        <tr class="${failClass}" style="text-align: center; height: 28px; ${failStyle}">
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle}">${rowNum}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 6px; text-align: left; font-size: 16px !important; font-weight: bold; color: #000; line-height: 1.2; word-break: break-word; vertical-align: middle; box-sizing: border-box; ${failStyle}">${item.location}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cValStyle}">${cVal}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cSumStyle}">${item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tValStyle}">${tVal || '-'}</td>
+                        <tr class="${failClass}" style="text-align: center; height: 29px; ${failStyle}">
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle}">${rowNum}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 6px; text-align: left; font-size: 17px !important; font-weight: bold; color: #000; line-height: 1.2; word-break: break-word; vertical-align: middle; box-sizing: border-box; ${failStyle}">${item.location}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cValStyle}">${cVal}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cSumStyle}">${item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tValStyle}">${tVal || '-'}</td>
                             <td style="border: 1.5px solid #000; padding: 3px 2px; white-space: nowrap; font-size: ${tdsSumFontSize}; font-weight: bold; color: #000; text-align: center; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tSumStyle}">${tdsSumText}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hValStyle}">${hVal || '-'}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hSumStyle}">${item.hardness_sum || 'ผ่าน'}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pValStyle}">${pVal || '-'}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 16px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pSumStyle}">${item.ph_sum || 'ผ่าน'}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hValStyle}">${hVal || '-'}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hSumStyle}">${item.hardness_sum || 'ผ่าน'}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pValStyle}">${pVal || '-'}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pSumStyle}">${item.ph_sum || 'ผ่าน'}</td>
                         </tr>`;
                 });
 
@@ -7513,42 +7513,42 @@ document.getElementById('formNameTitle').innerText = title;
                       <style>.pdf-document * { font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; letter-spacing: normal !important; }</style> 
                       
                       <!-- RD-006 & Page No -->
-                      <div style="position: absolute; top: 152px; left: 60px; font-size: 15.5px !important; font-weight: bold; color: #000;">
+                      <div style="position: absolute; top: 152px; left: 60px; font-size: 16px !important; font-weight: bold; color: #000;">
                           RD-006
                       </div>
-                      <div style="position: absolute; top: 152px; right: 60px; font-size: 15.5px !important; font-weight: bold; color: #000;">
+                      <div style="position: absolute; top: 152px; right: 60px; font-size: 16px !important; font-weight: bold; color: #000;">
                           หน้าที่ ${page + 1}/${totalPages}
                       </div>
 
                       <!-- Header & Meta Details -->
                       <div class="cert-pdf-header-mu10006" style="margin-top: 8px; margin-bottom: 8px;">
-                          <h4 style="font-size: 23px !important; font-weight: 800 !important; text-align: center !important; margin-top: 0 !important; margin-bottom: 6px !important; line-height: 1.25 !important; color: #000 !important;">
+                          <h4 style="font-size: 24px !important; font-weight: 800 !important; text-align: center !important; margin-top: 0 !important; margin-bottom: 6px !important; line-height: 1.25 !important; color: #000 !important;">
                               รายงานผลการตรวจวิเคราะห์ น้ำบริโภค/น้ำบริโภคจากตู้น้ำดื่มอัตโนมัติ/น้ำแข็ง โดยชุดทดสอบเบื้องต้น${page > 0 ? ' (ต่อ)' : ''}
                           </h4>
                           
-                          <table class="cert-meta-mu10006" style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 19px !important; font-weight: 700 !important; line-height: 1.3 !important; margin: 0 0 6px 0; padding: 0; color: #000;">
+                          <table class="cert-meta-mu10006" style="width: 100%; table-layout: fixed; border: none !important; border-collapse: collapse; font-size: 20px !important; font-weight: 800 !important; line-height: 1.3 !important; margin: 0 0 6px 0; padding: 0; color: #000;">
                               <tr style="border: none !important; background: transparent !important; line-height: 1.3;">
-                                  <td style="width: 155px; font-weight: 800 !important; white-space: nowrap; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 19px !important;">สถานที่เก็บตัวอย่าง</td>
-                                  <td style="font-weight: 700 !important; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 19px !important;">${locationMain}</td>
+                                  <td style="width: 165px; font-weight: 800 !important; white-space: nowrap; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 20px !important;">สถานที่เก็บตัวอย่าง</td>
+                                  <td style="font-weight: 800 !important; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 20px !important;">${locationMain}</td>
                               </tr>
                               <tr style="border: none !important; background: transparent !important; line-height: 1.3;">
-                                  <td style="width: 155px; padding: 1.5px 0; border: none !important;"></td>
-                                  <td style="font-weight: 700 !important; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 19px !important;">${locationSub}</td>
+                                  <td style="width: 165px; padding: 1.5px 0; border: none !important;"></td>
+                                  <td style="font-weight: 800 !important; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 20px !important;">${locationSub}</td>
                               </tr>
                               <tr style="border: none !important; background: transparent !important; line-height: 1.3;">
-                                  <td style="width: 155px; font-weight: 800 !important; white-space: nowrap; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 19px !important;">วันที่ตรวจวิเคราะห์</td>
-                                  <td style="font-weight: 700 !important; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 19px !important;">${analysisDateThai}</td>
+                                  <td style="width: 165px; font-weight: 800 !important; white-space: nowrap; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 20px !important;">วันที่ตรวจวิเคราะห์</td>
+                                  <td style="font-weight: 800 !important; padding: 1.5px 0; vertical-align: top; border: none !important; color: #000; font-size: 20px !important;">${analysisDateThai}</td>
                               </tr>
                           </table>
                       </div>
 
                       <!-- Results Table -->
-                      <table class="cert-multi-table cert-table-mu10006" style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed; font-size: 16px; text-align: center; margin-top: 4px; margin-bottom: 6px; box-sizing: border-box; color: #000;">
+                      <table class="cert-multi-table cert-table-mu10006" style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed; font-size: 16.5px; text-align: center; margin-top: 4px; margin-bottom: 6px; box-sizing: border-box; color: #000;">
                           <colgroup>
                               <col style="width: 4.5%;">
-                              <col style="width: 19.5%;">
-                              <col style="width: 9.5%;">
-                              <col style="width: 9.5%;">
+                              <col style="width: 17.5%;">
+                              <col style="width: 10.5%;">
+                              <col style="width: 10.5%;">
                               <col style="width: 9.5%;">
                               <col style="width: 9.5%;">
                               <col style="width: 9.5%;">
@@ -7557,27 +7557,27 @@ document.getElementById('formNameTitle').innerText = title;
                               <col style="width: 9.5%;">
                           </colgroup>
                           <thead>
-                              <tr style="font-weight: bold; height: 27px; background-color: #ffffff;">
-                                  <th rowspan="3" style="border: 1.5px solid #000; width: 4.5%; padding: 2.5px 2px; font-size: 16px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">ที่</th>
-                                  <th rowspan="3" style="border: 1.5px solid #000; width: 19.5%; padding: 2.5px 4px; font-size: 16px !important; font-weight: 800 !important; background: #ffffff; color: #000; word-break: break-word; vertical-align: middle; box-sizing: border-box;">ชื่อสถานที่</th>
-                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2.5px 2px; font-size: 16px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางจุลชีววิทยา</th>
-                                  <th colspan="4" style="border: 1.5px solid #000; width: 38%; padding: 2.5px 2px; font-size: 16px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางเคมี</th>
-                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2.5px 2px; font-size: 16px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางกายภาพ</th>
+                              <tr style="font-weight: bold; height: 28px; background-color: #ffffff;">
+                                  <th rowspan="3" style="border: 1.5px solid #000; width: 4.5%; padding: 2.5px 2px; font-size: 16.5px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">ที่</th>
+                                  <th rowspan="3" style="border: 1.5px solid #000; width: 17.5%; padding: 2.5px 4px; font-size: 16.5px !important; font-weight: 800 !important; background: #ffffff; color: #000; word-break: break-word; vertical-align: middle; box-sizing: border-box;">ชื่อสถานที่</th>
+                                  <th colspan="2" style="border: 1.5px solid #000; width: 21%; padding: 2.5px 2px; font-size: 16.5px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางจุลชีววิทยา</th>
+                                  <th colspan="4" style="border: 1.5px solid #000; width: 38%; padding: 2.5px 2px; font-size: 16.5px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางเคมี</th>
+                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2.5px 2px; font-size: 16.5px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">วิเคราะห์ทางกายภาพ</th>
                               </tr>
-                              <tr style="font-weight: bold; height: 27px; background-color: #ffffff;">
-                                  <th rowspan="2" style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; line-height: 1.1; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">Coliform<br><span style="font-size: 14px !important; font-weight: 700 !important;">(ต้องไม่พบ)</span></th>
-                                  <th rowspan="2" style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">สรุปผล</th>
-                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2px 2px; background: #ffffff; color: #000; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">TDS ( ≤50 มก./ล.)</th>
-                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">Hardness (≤100 มก./ล.)</th>
-                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2px 2px; background: #ffffff; color: #000; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">pH (6.5-8.5)</th>
+                              <tr style="font-weight: bold; height: 28px; background-color: #ffffff;">
+                                  <th rowspan="2" style="border: 1.5px solid #000; width: 10.5%; padding: 2px 2px; font-size: 16px !important; font-weight: 800 !important; white-space: nowrap; line-height: 1.1; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">Coliform<br><span style="font-size: 14.5px !important; font-weight: 700 !important;">(ต้องไม่พบ)</span></th>
+                                  <th rowspan="2" style="border: 1.5px solid #000; width: 10.5%; padding: 2px 2px; font-size: 16px !important; font-weight: 800 !important; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">สรุปผล</th>
+                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2px 2px; background: #ffffff; color: #000; font-size: 16px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">TDS ( ≤50 มก./ล.)</th>
+                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2px 2px; font-size: 16px !important; font-weight: 800 !important; white-space: nowrap; background: #ffffff; color: #000; vertical-align: middle; box-sizing: border-box;">Hardness (≤100 มก./ล.)</th>
+                                  <th colspan="2" style="border: 1.5px solid #000; width: 19%; padding: 2px 2px; background: #ffffff; color: #000; font-size: 16px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; box-sizing: border-box;">pH (6.5-8.5)</th>
                               </tr>
-                              <tr style="font-weight: bold; height: 25px; background-color: #ffffff;">
-                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
-                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">สรุปผล</th>
-                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
-                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">สรุปผล</th>
-                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
-                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">สรุปผล</th>
+                              <tr style="font-weight: bold; height: 26px; background-color: #ffffff;">
+                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">สรุปผล</th>
+                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">สรุปผล</th>
+                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">ค่าที่ตรวจพบ</th>
+                                  <th style="border: 1.5px solid #000; width: 9.5%; padding: 2px 2px; font-size: 15.5px !important; font-weight: 800 !important; white-space: nowrap; vertical-align: middle; background: #ffffff; color: #000; box-sizing: border-box;">สรุปผล</th>
                               </tr>
                           </thead>
                           <tbody>
@@ -7587,37 +7587,37 @@ document.getElementById('formNameTitle').innerText = title;
 
                       ${!isLastPage ? `
                           <!-- Continuation Indicator -->
-                          <div style="text-align: right; font-size: 15.5px; font-weight: bold; margin-top: 12px; color: #000; padding-right: 10px;">
+                          <div style="text-align: right; font-size: 16.5px; font-weight: bold; margin-top: 12px; color: #000; padding-right: 10px;">
                               (มีต่อหน้าที่ ${page + 2})
                           </div>
                       ` : `
                           <!-- Criteria Standard Reference Table -->
-                          <div class="cert-criteria-title-mu10006" style="margin-top: 8px; margin-bottom: 4px; font-size: 16px !important; font-weight: 800 !important; text-align: left; color: #000; line-height: 1.25;">
+                          <div class="cert-criteria-title-mu10006" style="margin-top: 8px; margin-bottom: 4px; font-size: 18px !important; font-weight: 800 !important; text-align: left; color: #000; line-height: 1.25;">
                               ค่าการตรวจจากชุดทดสอบเบื้องต้น
                           </div>
-                          <table class="cert-criteria-table-mu10006" style="width: 62%; border-collapse: collapse; border: 1.5px solid #000; font-size: 15px !important; font-weight: bold; margin-top: 3px; text-align: center; color: #000;">
+                          <table class="cert-criteria-table-mu10006" style="width: 66%; border-collapse: collapse; border: 1.5px solid #000; font-size: 16.5px !important; font-weight: bold; margin-top: 3px; text-align: center; color: #000;">
                               <thead>
-                                  <tr style="font-weight: 800; background: #ffffff; height: 25px;">
-                                      <th style="border: 1.5px solid #000; width: 45%; padding: 2.5px 6px; font-size: 15.5px !important; font-weight: 800 !important; color: #000; background: #ffffff;">รายการ</th>
-                                      <th style="border: 1.5px solid #000; width: 55%; padding: 2.5px 6px; font-size: 15.5px !important; font-weight: 800 !important; color: #000; background: #ffffff;">เกณฑ์การตรวจผ่านด้วยชุดทดสอบเบื้องต้น</th>
+                                  <tr style="font-weight: 800; background: #ffffff; height: 26px;">
+                                      <th style="border: 1.5px solid #000; width: 45%; padding: 3px 6px; font-size: 17px !important; font-weight: 800 !important; color: #000; background: #ffffff;">รายการ</th>
+                                      <th style="border: 1.5px solid #000; width: 55%; padding: 3px 6px; font-size: 17px !important; font-weight: 800 !important; color: #000; background: #ffffff;">เกณฑ์การตรวจผ่านด้วยชุดทดสอบเบื้องต้น</th>
                                   </tr>
                               </thead>
                               <tbody>
-                                  <tr style="height: 23px;">
-                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2px 8px; font-size: 15px !important; font-weight: 700 !important; color: #000;">กรด - ด่าง (pH)</td>
-                                      <td style="border: 1.5px solid #000; padding: 2px 6px; font-size: 15px !important; font-weight: 700 !important; color: #000;">6.5 - 8.5</td>
+                                  <tr style="height: 24px;">
+                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2.5px 8px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">กรด - ด่าง (pH)</td>
+                                      <td style="border: 1.5px solid #000; padding: 2.5px 6px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">6.5 - 8.5</td>
                                   </tr>
-                                  <tr style="height: 23px;">
-                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2px 8px; font-size: 15px !important; font-weight: 700 !important; color: #000;">ความกระด้าง (Hardness)</td>
-                                      <td style="border: 1.5px solid #000; padding: 2px 6px; font-size: 15px !important; font-weight: 700 !important; color: #000;">Hardness( ≤100 มก./ล.)</td>
+                                  <tr style="height: 24px;">
+                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2.5px 8px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">ความกระด้าง (Hardness)</td>
+                                      <td style="border: 1.5px solid #000; padding: 2.5px 6px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">Hardness( ≤100 มก./ล.)</td>
                                   </tr>
-                                  <tr style="height: 23px;">
-                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2px 8px; font-size: 15px !important; font-weight: 700 !important; color: #000;">ปริมาณของแข็งละลายน้ำทั้งหมด (TDS)</td>
-                                      <td style="border: 1.5px solid #000; padding: 2px 6px; font-size: 15px !important; font-weight: 700 !important; color: #000;">TDS (≤50 มก./ล.)</td>
+                                  <tr style="height: 24px;">
+                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2.5px 8px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">ปริมาณของแข็งละลายน้ำทั้งหมด (TDS)</td>
+                                      <td style="border: 1.5px solid #000; padding: 2.5px 6px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">TDS (≤50 มก./ล.)</td>
                                   </tr>
-                                  <tr style="height: 23px;">
-                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2px 8px; font-size: 15px !important; font-weight: 700 !important; color: #000;">โคลิฟอร์ม (Coliform)</td>
-                                      <td style="border: 1.5px solid #000; padding: 2px 6px; font-size: 15px !important; font-weight: 700 !important; color: #000;">ไม่พบ</td>
+                                  <tr style="height: 24px;">
+                                      <td style="border: 1.5px solid #000; text-align: left; padding: 2.5px 8px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">โคลิฟอร์ม (Coliform)</td>
+                                      <td style="border: 1.5px solid #000; padding: 2.5px 6px; font-size: 16.5px !important; font-weight: 700 !important; color: #000;">ไม่พบ</td>
                                   </tr>
                               </tbody>
                           </table>
