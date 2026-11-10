@@ -1533,6 +1533,16 @@ const app = {
         // Clear search input on opening/switching form
         const searchInput = document.getElementById('searchSavedRecords');
         if (searchInput) searchInput.value = '';
+
+        // Reset form fields when opening a form (unless in edit mode)
+        if (!this.currentEditingRefId) {
+            const subForm = document.getElementById('sampleSubmissionForm');
+            if (subForm) subForm.reset();
+            ['field-location-type', 'field-location-name', 'field-shop-name', 'field-agency', 'field-province', 'field-amphoe', 'field-tambon', 'field-collector-name', 'field-collector-position'].forEach(fid => {
+                const el = document.getElementById(fid);
+                if (el) el.value = '';
+            });
+        }
         
         document.getElementById('field-form-type').value = formType;
         document.getElementById('formBadgeTitle').innerText = formType;
@@ -1633,16 +1643,16 @@ document.getElementById('formNameTitle').innerText = title;
             this.globalSampleIndex = 0;
             if (isMu10007) {
                 const defaultMu07Items = [
-                    { category: 'มือ1', name: 'มือผู้สัมผัสอาหาร 1 (คนปรุง)', hint: 'เช่น มือแม่ค้า / คนปรุง' },
-                    { category: 'มือ2', name: 'มือผู้สัมผัสอาหาร 2 (คนเสิร์ฟ/ล้าง)', hint: 'เช่น มือผู้ช่วย / คนเสิร์ฟ' },
-                    { category: 'ภาชนะ', name: 'จาน/ชาม', hint: 'เช่น จานใส่อาหาร' },
-                    { category: 'ภาชนะ', name: 'ช้อน-ส้อม/แก้วน้ำ', hint: 'เช่น ช้อนส้อมพร้อมใช้' },
-                    { category: 'ภาชนะ', name: 'เขียง/มีด', hint: 'เช่น เขียงหั่นอาหารสุก' },
-                    { category: 'อาหาร', name: 'อาหารปรุงสุก 1', hint: 'เช่น ส้มตำไทย, ข้าวมันไก่' },
-                    { category: 'อาหาร', name: 'อาหารปรุงสุก 2', hint: 'เช่น ลาบหมู, ต้มยำ' },
-                    { category: 'อาหาร', name: 'อาหารพร้อมบริโภค 3', hint: 'เช่น ยำรวมมิตร, แกงเขียวหวาน' },
-                    { category: 'อาหาร', name: 'น้ำแข็ง/เครื่องดื่ม', hint: 'เช่น น้ำแข็งบริโภค' },
-                    { category: 'อาหาร', name: 'น้ำจิ้ม/เครื่องปรุง', hint: 'เช่น น้ำจิ้มไก่, พริกน้ำปลา' }
+                    { category: 'มือ1', name: '', hint: 'เช่น มือผู้สัมผัสอาหาร 1 (คนปรุง)' },
+                    { category: 'มือ2', name: '', hint: 'เช่น มือผู้สัมผัสอาหาร 2 (คนเสิร์ฟ/ล้าง)' },
+                    { category: 'ภาชนะ', name: '', hint: 'เช่น จาน/ชาม' },
+                    { category: 'ภาชนะ', name: '', hint: 'เช่น ช้อน-ส้อม/แก้วน้ำ' },
+                    { category: 'ภาชนะ', name: '', hint: 'เช่น เขียง/มีด' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น อาหารปรุงสุก 1 (ส้มตำ, ข้าวมันไก่)' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น อาหารปรุงสุก 2 (ลาบหมู, ต้มยำ)' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น อาหารพร้อมบริโภค 3 (ยำ, แกง)' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น น้ำแข็ง/เครื่องดื่ม' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น น้ำจิ้ม/เครื่องปรุง' }
                 ];
                 defaultMu07Items.forEach(item => {
                     this.addGlobalSampleEntry(item);
@@ -2295,7 +2305,7 @@ document.getElementById('formNameTitle').innerText = title;
                     </div>
                     <div class="form-group">
                         <label>ตัวอย่าง</label>
-                        <input type="text" name="sample_detail_${this.globalSampleIndex}" placeholder="เช่น นาย ก, คนปรุงอาหาร, จาน, ข้าวสวย" style="font-size: 13.5px;">
+                        <input type="text" name="sample_detail_${this.globalSampleIndex}" placeholder="เช่น นาย ก, คนปรุงอาหาร, จาน, ข้าวสวย" style="font-size: 13.5px;" oninput="app.updateTotalGlobalSamples()">
                     </div>
                 </div>`;
         } else if (formType === 'MU.10-006') {
@@ -2403,12 +2413,16 @@ document.getElementById('formNameTitle').innerText = title;
         const formType = formTypeEl ? formTypeEl.value : '';
         if (container && qtyField) {
             if (formType === 'MU.10-007') {
-                const nameInputs = container.querySelectorAll('input[name^="sample_name_"]');
+                const sections = container.querySelectorAll('.sample-section');
                 let filled = 0;
-                nameInputs.forEach(inp => {
-                    if (inp.value && inp.value.trim() !== '') filled++;
+                sections.forEach(sec => {
+                    const nInp = sec.querySelector('input[name^="sample_name_"]');
+                    const dInp = sec.querySelector('input[name^="sample_detail_"]');
+                    if ((nInp && nInp.value.trim() !== '') || (dInp && dInp.value.trim() !== '')) {
+                        filled++;
+                    }
                 });
-                qtyField.value = filled > 0 ? filled : container.querySelectorAll('.sample-section').length;
+                qtyField.value = filled > 0 ? filled : sections.length;
             } else {
                 const count = container.querySelectorAll('.sample-section').length;
                 qtyField.value = count;
@@ -2674,9 +2688,66 @@ document.getElementById('formNameTitle').innerText = title;
             pdfBtn.dataset.refId = tempId;
         }
 
+        // Clear form inputs and sample rows so no data remains stuck after saving
+        this.resetFormFieldsAfterSubmit(sampleData.form_type);
+
         this.renderSavedRecords();
         this.updateDashboardStats();
         if (window.updateDashboardCharts) updateDashboardCharts(this.getVisibleSamples());
+    },
+
+    resetFormFieldsAfterSubmit(formType) {
+        const activeFormType = formType || document.getElementById('field-form-type')?.value || 'MU.10-001';
+        const formEl = document.getElementById('sampleSubmissionForm');
+        if (formEl) {
+            formEl.reset();
+            formEl.dataset.editingRefId = '';
+        }
+
+        ['field-location-type', 'field-location-name', 'field-shop-name', 'field-agency', 'field-province', 'field-amphoe', 'field-tambon', 'field-collector-name', 'field-collector-position', 'field-editing-ref-id'].forEach(fid => {
+            const el = document.getElementById(fid);
+            if (el) el.value = '';
+        });
+
+        const formTypeInp = document.getElementById('field-form-type');
+        if (formTypeInp) formTypeInp.value = activeFormType;
+
+        const sampDateInp = document.getElementById('field-sampling-date');
+        if (sampDateInp) sampDateInp.valueAsDate = new Date();
+
+        const dynContainer = document.getElementById('dynamicFormFields');
+        if (dynContainer) {
+            dynContainer.querySelectorAll('input[type="checkbox"]').forEach(chk => { chk.checked = false; });
+            dynContainer.querySelectorAll('input[type="text"], input[type="number"], select').forEach(inp => { inp.value = ''; });
+        }
+
+        const globalContainer = document.getElementById('globalSampleEntries');
+        if (globalContainer) {
+            globalContainer.innerHTML = '';
+            this.globalSampleIndex = 0;
+            if (activeFormType === 'MU.10-007') {
+                const defaultMu07Items = [
+                    { category: 'มือ1', name: '', hint: 'เช่น มือผู้สัมผัสอาหาร 1 (คนปรุง)' },
+                    { category: 'มือ2', name: '', hint: 'เช่น มือผู้สัมผัสอาหาร 2 (คนเสิร์ฟ/ล้าง)' },
+                    { category: 'ภาชนะ', name: '', hint: 'เช่น จาน/ชาม' },
+                    { category: 'ภาชนะ', name: '', hint: 'เช่น ช้อน-ส้อม/แก้วน้ำ' },
+                    { category: 'ภาชนะ', name: '', hint: 'เช่น เขียง/มีด' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น อาหารปรุงสุก 1 (ส้มตำ, ข้าวมันไก่)' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น อาหารปรุงสุก 2 (ลาบหมู, ต้มยำ)' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น อาหารพร้อมบริโภค 3 (ยำ, แกง)' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น น้ำแข็ง/เครื่องดื่ม' },
+                    { category: 'อาหาร', name: '', hint: 'เช่น น้ำจิ้ม/เครื่องปรุง' }
+                ];
+                defaultMu07Items.forEach(item => {
+                    this.addGlobalSampleEntry(item);
+                });
+            } else {
+                this.addGlobalSampleEntry();
+            }
+        }
+
+        this.updateAmphoeDatalist();
+        this.updateTambonDatalist();
     },
 
     canUserEditOrCancelSample(sample) {
@@ -8977,20 +9048,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             let rowsHtml = '';
             for (let i = 1; i <= 10; i++) {
                 const item = sampleItems.find(it => it.idx === i) || {};
-                const cat = item.category || defaultCats[i-1];
-                const name = item.name || sample['sample_name_' + i] || '';
-                const detail = item.detail || sample['sample_detail_' + i] || '';
-                const clean = item.cleanliness || sample['analysis_cleanliness_' + i] || '';
-                const sum = item.summary || sample['analysis_summary_' + i] || '';
+                const cat = item.category || sample['sample_category_' + i] || defaultCats[i-1];
+                const name = item.name !== undefined ? item.name : (sample['sample_name_' + i] || '');
+                const detail = item.detail !== undefined ? item.detail : (sample['sample_detail_' + i] || '');
+                const clean = item.cleanliness !== undefined ? item.cleanliness : (sample['analysis_cleanliness_' + i] || '');
+                const sum = item.summary !== undefined ? item.summary : (sample['analysis_summary_' + i] || '');
 
                 rowsHtml += `
-                    <tr style="height: 32px; text-align: center; font-size: 13.5px; page-break-inside: avoid;">
-                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold;">${i}</td>
-                        <td style="border: 1px solid #000; padding: 4px 6px; text-align: left;">${name}</td>
-                        <td style="border: 1px solid #000; padding: 4px; font-weight: 600;">${cat}</td>
-                        <td style="border: 1px solid #000; padding: 4px 6px; text-align: left;">${detail}</td>
-                        <td style="border: 1px solid #000; padding: 4px; font-weight: normal; color: #000;">${clean}</td>
-                        <td style="border: 1px solid #000; padding: 4px; font-weight: normal; color: #000;">${sum}</td>
+                    <tr style="height: 38px; text-align: center; font-size: 18px; font-weight: bold; color: #000; page-break-inside: avoid;">
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold; vertical-align: middle;">${i}</td>
+                        <td style="border: 1px solid #000; padding: 4px 8px; text-align: left; font-weight: bold; vertical-align: middle;">${name}</td>
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold; vertical-align: middle;">${cat}</td>
+                        <td style="border: 1px solid #000; padding: 4px 8px; text-align: left; font-weight: bold; vertical-align: middle;">${detail}</td>
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold; color: #000; vertical-align: middle;">${clean}</td>
+                        <td style="border: 1px solid #000; padding: 4px; font-weight: bold; color: #000; vertical-align: middle;">${sum}</td>
                     </tr>
                 `;
             }
@@ -9000,67 +9071,109 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const testKitLabel = sample.test_kit || 'ข. SI-2 กรมอนามัย';
             const isSciDept = testKitLabel.includes('กรมวิทยาศาสตร์การแพทย์');
             const isSi2 = testKitLabel.includes('SI-2');
+            const totalQty = sample.sample_qty || sampleItems.filter(it => (it.name || it.detail || '').trim() !== '').length || 10;
 
             htmlContent = `
-                <div class="pdf-page-container" style="padding: 16px 20px; font-family: 'TH SarabunPSK', 'SarabunPDF', 'Kanit', sans-serif; font-size: 14px; color: #000; line-height: 1.35; background: #fff;">
-                    <!-- Header with border matching Image 1 -->
-                    <div style="border: 1.5px solid #000; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 14px;">
-                            <img src="${logoBase64 ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : 'logo_mobi_new.jpg'}" style="height: 60px; width: 60px; object-fit: contain;">
-                            <div style="font-size: 13px; line-height: 1.3;">
-                                <div><b>ประเภทเอกสาร :</b> แบบบันทึก</div>
-                                <div><b>ชื่อเอกสาร :</b> แบบบันทึกเก็บตัวอย่างเชื้อโคลิฟอร์มแบคทีเรียขั้นต้น</div>
-                                <div><b>วันที่เริ่มใช้ :</b> 1 มกราคม พ.ศ. 2566</div>
-                                <div><b>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</b></div>
-                            </div>
+                <style>
+                    * {
+                        font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
+                        letter-spacing: normal !important;
+                        box-sizing: border-box !important;
+                    }
+                    @page { size: A4 portrait; margin: 0mm !important; }
+                    html, body {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        background: #fff !important;
+                    }
+                    th { text-align: center !important; }
+                    table { box-sizing: border-box !important; }
+                </style>
+                <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 10mm 12mm 8mm 12mm !important; color: #000; font-weight: bold; box-sizing: border-box;">
+                    <!-- Header with Logo & Border matching other official forms -->
+                    <table style="width: 100%; margin: 0 0 10px 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed;">
+                        <tr>
+                            <td style="width: 76px; padding: 6px; text-align: center; border-right: 1.5px solid #000; vertical-align: middle;">
+                                <img src="logo.jpg" style="display: block; margin: auto; width: 58px; height: auto;">
+                            </td>
+                            <td style="padding: 6px 12px; vertical-align: middle; line-height: 1.32; color: #000; font-size: 17.5px; font-weight: bold;">
+                                <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
+                                <div><strong>ชื่อเอกสาร : <span style="font-size: 18.5px;">แบบบันทึกเก็บตัวอย่างเชื้อโคลิฟอร์มแบคทีเรียขั้นต้น</span></strong></div>
+                                <div><strong>วันที่เริ่มใช้ : 1 มกราคม พ.ศ. 2566</strong></div>
+                                <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div>
+                            </td>
+                            <td style="width: 185px; padding: 6px 12px; border-left: 1.5px solid #000; vertical-align: middle; text-align: left; color: #000; font-size: 17.5px; font-weight: bold; line-height: 1.4;">
+                                <div><strong>หมายเลขเอกสาร :</strong> <span style="white-space: nowrap;">MU.10-007</span></div>
+                                <div style="margin-top: 3px;"><strong>แก้ไขครั้งที่ :</strong> 001</div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- General Info / Collector Fields -->
+                    <div style="font-size: 18px; font-weight: bold; line-height: 1.58; color: #000; margin-bottom: 10px;">
+                        <div><strong>หน่วยงานที่เก็บตัวอย่าง:</strong> <u>${sample.agency || '........................................................................................................................'}</u></div>
+                        <table style="width: 100%; border: none; border-collapse: collapse; font-size: 18px; font-weight: bold; color: #000; table-layout: fixed; margin-top: 2px;">
+                            <tr>
+                                <td style="border: none; padding: 1px 0; width: 37%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <strong>สถานที่เก็บตัวอย่าง:</strong> <u>${sample.location_name || '..............................'}</u>
+                                </td>
+                                <td style="border: none; padding: 1px 0; width: 21%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <strong>ตำบล:</strong> <u>${sample.tambon || '..................'}</u>
+                                </td>
+                                <td style="border: none; padding: 1px 0; width: 22%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <strong>อำเภอ:</strong> <u>${sample.amphoe || '..................'}</u>
+                                </td>
+                                <td style="border: none; padding: 1px 0; width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">
+                                    <strong>จังหวัด:</strong> <u>${sample.province || '..................'}</u>
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width: 100%; border: none; border-collapse: collapse; font-size: 18px; font-weight: bold; color: #000; table-layout: fixed; margin-top: 2px;">
+                            <tr>
+                                <td style="border: none; padding: 1px 0; width: 34%; white-space: nowrap;">
+                                    <strong>วันที่เก็บตัวอย่าง:</strong> <u>${samplingDate || '........................'}</u>
+                                </td>
+                                <td style="border: none; padding: 1px 0; width: 36%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <strong>ชื่อผู้เก็บตัวอย่าง:</strong> <u>${sample.collector_name || '..............................'}</u>
+                                </td>
+                                <td style="border: none; padding: 1px 0; width: 30%; white-space: nowrap; text-align: right;">
+                                    <strong>วันที่ตรวจวิเคราะห์:</strong> <u>${analysisDate || '........................'}</u>
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width: 100%; border: none; border-collapse: collapse; font-size: 18px; font-weight: bold; color: #000; table-layout: fixed; margin-top: 2px;">
+                            <tr>
+                                <td style="border: none; padding: 1px 0; width: 65%; white-space: nowrap;">
+                                    <strong>ผู้ตรวจวิเคราะห์:</strong> <u>${analystName || '......................................................'}</u>
+                                </td>
+                                <td style="border: none; padding: 1px 0; width: 35%; white-space: nowrap; text-align: right;">
+                                    <strong>จำนวนตัวอย่าง:</strong> <u>&nbsp;${totalQty}&nbsp;</u> ตัวอย่าง
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="margin-top: 3px;">
+                            <strong>ใช้ชุดทดสอบของ:</strong> &nbsp;&nbsp;&nbsp;
+                            <span style="font-size: 18px;">${isSciDept ? '[✓]' : '[ ]'} ก. กรมวิทยาศาสตร์การแพทย์</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span style="font-size: 18px;">${isSi2 ? '[✓]' : '[ ]'} ข. SI-2 กรมอนามัย</span>
                         </div>
-                        <div style="text-align: right; font-size: 13px; line-height: 1.4;">
-                            <div><b>หมายเลขเอกสาร :</b> MU.10-007</div>
-                            <div><b>แก้ไขครั้งที่ :</b> 001</div>
+                        <div style="margin-top: 3px;">
+                            <strong>ชื่อร้าน:</strong> <u>${sample.shop_name || sample.location_name || '........................................................................................................................'}</u>
                         </div>
                     </div>
 
-                    <!-- General Info Fields -->
-                    <div style="font-size: 13.5px; line-height: 1.7; margin-bottom: 10px;">
-                        <div><b>หน่วยงานที่เก็บตัวอย่าง:</b> ${sample.agency || '....................................................................................................................................................................'}</div>
-                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-                            <span><b>สถานที่เก็บตัวอย่าง:</b> ${sample.location_name || '...................................................'}</span>
-                            <span><b>ตำบล:</b> ${sample.tambon || '........................'}</span>
-                            <span><b>อำเภอ:</b> ${sample.amphoe || '........................'}</span>
-                            <span><b>จังหวัด:</b> ${sample.province || '........................'}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-                            <span><b>วันที่เก็บตัวอย่าง:</b> ${samplingDate || '..................................'}</span>
-                            <span><b>ชื่อผู้เก็บตัวอย่าง:</b> ${sample.collector_name || '...................................................'}</span>
-                            <span><b>วันที่ตรวจวิเคราะห์:</b> ${analysisDate || '..................................'}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-                            <span><b>ผู้ตรวจวิเคราะห์:</b> ${analystName || '...................................................'}</span>
-                            <span><b>จำนวนตัวอย่าง:</b> ${sample.sample_qty || sampleItems.filter(it => (it.name || '').trim() !== '').length || 10} ตัวอย่าง</span>
-                        </div>
-                        <div style="margin-top: 2px;">
-                            <b>ใช้ชุดทดสอบของ:</b> &nbsp;&nbsp;&nbsp;&nbsp;
-                            ${isSciDept ? '☑' : '☐'} ก. กรมวิทยาศาสตร์การแพทย์ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            ${isSi2 ? '☑' : '☐'} ข. SI-2 กรมอนามัย
-                        </div>
-                        <div style="margin-top: 2px;">
-                            <b>ชื่อร้าน:</b> ${sample.shop_name || sample.location_name || '...............................................................................................................................'}
-                        </div>
-                    </div>
-
-                    <!-- Table matching Image 1 -->
-                    <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; font-size: 13px; margin-bottom: 8px;" border="1">
+                    <!-- Main Sample Table -->
+                    <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; font-size: 18px; font-weight: bold; color: #000; margin-bottom: 10px; table-layout: fixed;" border="1">
                         <thead>
                             <tr style="background: #fff; text-align: center;">
-                                <th rowspan="2" style="padding: 4px; border: 1px solid #000; width: 7%;">ลำดับ</th>
-                                <th rowspan="2" style="padding: 4px 6px; border: 1px solid #000; width: 30%;">ชื่อ/รายละเอียด</th>
-                                <th rowspan="2" style="padding: 4px; border: 1px solid #000; width: 14%;">ตัวอย่าง</th>
-                                <th rowspan="2" style="padding: 4px 6px; border: 1px solid #000; width: 21%;">ตัวอย่าง</th>
-                                <th colspan="2" style="padding: 4px; border: 1px solid #000; width: 28%;">ผลการทดสอบ</th>
+                                <th rowspan="2" style="padding: 6px 4px; border: 1.5px solid #000; width: 7%; font-size: 18px; font-weight: bold; vertical-align: middle;">ลำดับ</th>
+                                <th rowspan="2" style="padding: 6px 8px; border: 1.5px solid #000; width: 31%; font-size: 18px; font-weight: bold; vertical-align: middle;">ชื่อ/รายละเอียด</th>
+                                <th rowspan="2" style="padding: 6px 4px; border: 1.5px solid #000; width: 13%; font-size: 18px; font-weight: bold; vertical-align: middle;">ตัวอย่าง</th>
+                                <th rowspan="2" style="padding: 6px 8px; border: 1.5px solid #000; width: 21%; font-size: 18px; font-weight: bold; vertical-align: middle;">ตัวอย่าง</th>
+                                <th colspan="2" style="padding: 5px 4px; border: 1.5px solid #000; width: 28%; font-size: 18px; font-weight: bold; vertical-align: middle;">ผลการทดสอบ</th>
                             </tr>
                             <tr style="background: #fff; text-align: center;">
-                                <th style="padding: 4px; border: 1px solid #000; width: 14%;">ระดับความสะอาด</th>
-                                <th style="padding: 4px; border: 1px solid #000; width: 14%;">สรุปผล</th>
+                                <th style="padding: 5px 4px; border: 1.5px solid #000; width: 14%; font-size: 17.5px; font-weight: bold; vertical-align: middle;">ระดับความสะอาด</th>
+                                <th style="padding: 5px 4px; border: 1.5px solid #000; width: 14%; font-size: 17.5px; font-weight: bold; vertical-align: middle;">สรุปผล</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -9068,21 +9181,21 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         </tbody>
                     </table>
 
-                    <!-- Bottom Summary -->
-                    <div style="border: 1px solid #000; padding: 6px 10px; margin-bottom: 8px; font-size: 13.5px; line-height: 1.6;">
-                        <div><b>คิดผ่านเป็นร้อยละ:</b> ${sample.analysis_pass_percent || '........................................................................................................................................'}</div>
-                        <div><b>สรุปผลการตรวจ:</b> ${sample.analysis_cfgt_outcome || (sample.analysis_summary ? (sample.analysis_summary === 'ผ่าน' ? 'ผ่านเกณฑ์ Clean Food Good Taste (≥90%)' : 'ไม่ผ่านเกณฑ์ Clean Food Good Taste (<90%)') : '........................................................................................................................................')}</div>
+                    <!-- Bottom Summary Box -->
+                    <div style="border: 1.5px solid #000; padding: 8px 12px; margin-bottom: 8px; font-size: 18px; font-weight: bold; line-height: 1.65; color: #000;">
+                        <div><strong>คิดผ่านเป็นร้อยละ:</strong> ${sample.analysis_pass_percent || '........................................................................................................................'}</div>
+                        <div><strong>สรุปผลการตรวจ:</strong> ${sample.analysis_cfgt_outcome || (sample.analysis_summary ? (sample.analysis_summary === 'ผ่าน' ? 'ผ่านเกณฑ์ Clean Food Good Taste (≥90%)' : 'ไม่ผ่านเกณฑ์ Clean Food Good Taste (<90%)') : '........................................................................................................................')}</div>
                     </div>
                     
-                    <div style="font-size: 12.5px; font-weight: bold; margin-bottom: 16px;">
-                        หมายเหตุ เกณฑ์มาตรฐาน Clean Food Taste เกณฑ์การผ่าน คือ > ร้อยละ 90
+                    <div style="font-size: 17.5px; font-weight: bold; color: #000; margin-bottom: 14px;">
+                        หมายเหตุ เกณฑ์มาตรฐาน Clean Food Good Taste เกณฑ์การผ่าน คือ &gt; ร้อยละ 90
                     </div>
 
                     <!-- Footer Signatures -->
-                    <div style="display: flex; justify-content: flex-end; font-size: 13px; margin-top: 10px;">
-                        <div style="text-align: right; line-height: 2; white-space: nowrap;">
+                    <div style="display: flex; justify-content: flex-end; font-size: 18px; font-weight: bold; color: #000; margin-top: 8px;">
+                        <div style="text-align: right; line-height: 1.9; white-space: nowrap;">
                             <div>ผู้ทบทวนเอกสาร : ................................................. (สำหรับผู้ตรวจวิเคราะห์)</div>
-                            <div style="padding-right: 120px;">วันที่ ...................................................</div>
+                            <div style="padding-right: 118px;">วันที่ ...................................................</div>
                         </div>
                     </div>
                 </div>
