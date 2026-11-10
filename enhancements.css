@@ -7854,15 +7854,25 @@ html, body {
 #certificatePDFContainer h4,
 #certificatePDFContainer .cert-pdf-header-mu10 h4,
 .cert-pdf-header-mu10 h4,
-.cert-pdf-border h4,
-.mu007-report-container > div[style*="font-weight: bold"][style*="text-align: center"],
-.mu007-report-container > div[style*="font-weight:bold"][style*="text-align:center"] {
+.cert-pdf-border h4 {
   font-size: 25px !important;
   font-weight: 800 !important;
   line-height: 1.2 !important;
   margin-top: 0 !important;
   margin-bottom: 3px !important;
   color: #000000 !important;
+}
+
+#certificatePDFContainer .mu007-report-title,
+.mu007-report-container .mu007-report-title {
+  font-size: 21px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+  color: #000000 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
 }
 
 /* Document Code & Page numbers */
@@ -7982,22 +7992,59 @@ html, body {
   vertical-align: middle !important;
 }
 
-.mu007-table th {
-  font-size: 16px !important;
+#certificatePDFContainer .mu007-meta-section,
+#certificatePDFContainer .mu007-meta-section div,
+.mu007-report-container .mu007-meta-section,
+.mu007-report-container .mu007-meta-section div {
+  font-size: 19.5px !important;
   font-weight: 800 !important;
-  padding: 3px 4px !important;
-  line-height: 1.15 !important;
+  line-height: 1.32 !important;
   color: #000000 !important;
+  height: auto !important;
+}
+
+#certificatePDFContainer .mu007-table th,
+.mu007-table th {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  padding: 4px 4px !important;
+  line-height: 1.2 !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
   border: 1.5px solid #000000 !important;
 }
 
+#certificatePDFContainer .mu007-table td,
 .mu007-table td {
-  font-size: 15.5px !important;
+  font-size: 18px !important;
   font-weight: 700 !important;
-  padding: 3px 4px !important;
-  line-height: 1.15 !important;
+  padding: 3.5px 5px !important;
+  line-height: 1.2 !important;
   color: #000000 !important;
+  background-color: #ffffff !important;
   border: 1.5px solid #000000 !important;
+}
+
+#certificatePDFContainer .mu007-table td.col-summary,
+.mu007-table td.col-summary {
+  font-size: 18.5px !important;
+  font-weight: 800 !important;
+}
+
+#certificatePDFContainer .mu007-table td.mu007-text-red,
+.mu007-report-container .mu007-table td.mu007-text-red,
+.mu007-table td.mu007-text-red {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+  background-color: #ffffff !important;
+}
+
+#certificatePDFContainer .mu007-remark,
+.mu007-report-container .mu007-remark {
+  font-size: 17.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  color: #000000 !important;
 }
 
 /* Remarks & Notes */
@@ -8101,18 +8148,14 @@ html, body {
 /* ==========================================================================
    Highlight Failed Sample Rows in Bright Yellow (#ffff00) in PDF Reports & Modals
    ========================================================================== */
-#certificatePDFContainer tr.row-failed,
-#certificatePDFContainer tr.row-failed td,
-#certificatePDFContainer tr.highlight-failed-row,
-#certificatePDFContainer tr.highlight-failed-row td,
+#certificatePDFContainer table:not(.mu007-table) tr.row-failed,
+#certificatePDFContainer table:not(.mu007-table) tr.row-failed td,
+#certificatePDFContainer table:not(.mu007-table) tr.highlight-failed-row,
+#certificatePDFContainer table:not(.mu007-table) tr.highlight-failed-row td,
 .cert-multi-table tr.row-failed,
 .cert-multi-table tr.row-failed td,
 .cert-multi-table tr.highlight-failed-row,
 .cert-multi-table tr.highlight-failed-row td,
-.mu007-table tr.row-failed,
-.mu007-table tr.row-failed td,
-.mu007-table tr.highlight-failed-row,
-.mu007-table tr.highlight-failed-row td,
 .pdf-document tr.row-failed,
 .pdf-document tr.row-failed td,
 .pdf-document tr.highlight-failed-row,
