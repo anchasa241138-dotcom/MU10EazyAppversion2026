@@ -7804,49 +7804,70 @@ document.getElementById('formNameTitle').innerText = title;
                 <style>
                     .mu007-report-container {
                         font-family: 'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', 'SarabunPDF', 'Leelawadee UI', sans-serif !important;
-                        color: #000 !important;
+                        color: #000000 !important;
                         box-sizing: border-box !important;
                     }
                     .mu007-report-container * {
                         box-sizing: border-box !important;
                     }
+                    .mu007-report-title {
+                        font-size: 21px !important;
+                        font-weight: 800 !important;
+                        color: #000000 !important;
+                        line-height: 1.25 !important;
+                        margin-bottom: 10px !important;
+                        text-align: center !important;
+                        white-space: nowrap !important;
+                    }
+                    .mu007-meta-section,
+                    .mu007-meta-section div {
+                        font-size: 19.5px !important;
+                        font-weight: 800 !important;
+                        line-height: 1.32 !important;
+                        color: #000000 !important;
+                    }
                     .mu007-table {
                         width: 100% !important;
                         border-collapse: collapse !important;
-                        border: 1.5px solid #000 !important;
-                        background-color: #fff !important;
+                        border: 1.5px solid #000000 !important;
+                        background-color: #ffffff !important;
                         table-layout: fixed !important;
                         margin-bottom: 8px !important;
                     }
                     .mu007-table th {
-                        border: 1px solid #000 !important;
-                        background-color: #fff !important;
-                        color: #000 !important;
-                        font-size: 13.5px !important;
-                        font-weight: bold !important;
-                        text-align: center !important;
-                        vertical-align: middle !important;
-                        padding: 5px 2px !important;
-                        line-height: 1.3 !important;
-                        height: 34px !important;
-                    }
-                    .mu007-table td {
-                        border: 1px solid #000 !important;
-                        background-color: #fff !important;
-                        color: #000 !important;
-                        font-size: 13px !important;
+                        border: 1.5px solid #000000 !important;
+                        background-color: #ffffff !important;
+                        color: #000000 !important;
+                        font-size: 18px !important;
+                        font-weight: 800 !important;
                         text-align: center !important;
                         vertical-align: middle !important;
                         padding: 4px 4px !important;
-                        line-height: 1.3 !important;
+                        line-height: 1.2 !important;
+                        height: 34px !important;
+                    }
+                    .mu007-table td {
+                        border: 1.5px solid #000000 !important;
+                        background-color: #ffffff !important;
+                        color: #000000 !important;
+                        font-size: 18px !important;
+                        font-weight: 700 !important;
+                        text-align: center !important;
+                        vertical-align: middle !important;
+                        padding: 3.5px 5px !important;
+                        line-height: 1.2 !important;
                         height: 29px !important;
                     }
                     .mu007-table td.col-summary {
-                        font-size: 13px !important;
-                        font-weight: bold !important;
+                        font-size: 18.5px !important;
+                        font-weight: 800 !important;
                         vertical-align: middle !important;
                         text-align: center !important;
                         letter-spacing: normal !important;
+                    }
+                    .mu007-table td.mu007-text-red {
+                        color: #dc2626 !important;
+                        font-weight: 800 !important;
                     }
                 </style>
             `;
@@ -7873,20 +7894,19 @@ document.getElementById('formNameTitle').innerText = title;
 
                     const si2Val = item.cleanliness === '-' ? 'ไม่พบ' : 'พบ';
                     const sumVal = item.summary;
+                    const isFound = si2Val === 'พบ';
                     const isFail = sumVal === 'ไม่ผ่าน';
-                    const failClass = isFail ? 'row-failed highlight-failed-row' : '';
-                    const failStyle = isFail ? 'background-color: #ffff00 !important;' : '';
 
                     rowsHtml += `
-                        <tr class="${failClass}" style="${failStyle}">
-                            <td style="${failStyle}">${item.idx}</td>
-                            <td style="${failStyle}">${catDisplay}</td>
-                            <td style="${failStyle}">${item.distributor || ''}</td>
-                            <td style="${failStyle}">${sName}</td>
-                            <td style="color: #000 !important; font-weight: normal !important; ${failStyle}">${si2Val}</td>
-                            <td style="color: #000 !important; font-weight: normal !important; ${failStyle}">${sumVal}</td>
+                        <tr style="background-color: #ffffff !important;">
+                            <td style="background-color: #ffffff !important; font-size: 18px !important; font-weight: 700 !important; color: #000000 !important;">${item.idx}</td>
+                            <td style="background-color: #ffffff !important; font-size: 18px !important; font-weight: 700 !important; color: #000000 !important;">${catDisplay}</td>
+                            <td style="background-color: #ffffff !important; font-size: 18px !important; font-weight: 700 !important; color: #000000 !important;">${item.distributor || ''}</td>
+                            <td style="background-color: #ffffff !important; font-size: 18px !important; font-weight: 700 !important; color: #000000 !important;">${sName}</td>
+                            <td class="${isFound ? 'mu007-text-red' : ''}" style="background-color: #ffffff !important; font-size: 18px !important; font-weight: 800 !important; color: ${isFound ? '#dc2626' : '#000000'} !important;">${si2Val}</td>
+                            <td class="${isFail ? 'mu007-text-red' : ''}" style="background-color: #ffffff !important; font-size: 18px !important; font-weight: 800 !important; color: ${isFail ? '#dc2626' : '#000000'} !important;">${sumVal}</td>
                             ${rIdx === 0 ? `
-                                <td rowspan="${chunk.length}" class="col-summary" style="font-size: 13px !important; font-weight: normal !important; color: #000 !important; ${!overallPass ? 'background-color: #ffff00 !important;' : ''}">
+                                <td rowspan="${chunk.length}" class="col-summary ${!overallPass ? 'mu007-text-red' : ''}" style="background-color: #ffffff !important; font-size: 18.5px !important; font-weight: 800 !important; color: ${!overallPass ? '#dc2626' : '#000000'} !important;">
                                     ${overallPass ? 'ผ่าน' : 'ไม่ผ่าน'}
                                 </td>
                             ` : ''}
@@ -7895,38 +7915,36 @@ document.getElementById('formNameTitle').innerText = title;
                 });
 
                 fullHtmlResult += `
-                    <div class="cert-pdf-border mu007-report-container" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; padding: 152px 45px 35px 45px; background-size: 100% 100%; background-position: top left;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px; margin-bottom: 6px;">
-                            <div style="font-size: 14px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
+                    <div class="cert-pdf-border mu007-report-container" style="width: 794px; height: 1122px; ${page < totalPages - 1 ? 'page-break-after: always;' : ''} position: relative; box-sizing: border-box; overflow: hidden; margin-left: auto; margin-right: auto; padding: 150px 42px 30px 42px; background-size: 100% 100%; background-position: top left;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0; margin-bottom: 4px;">
+                            <div style="font-size: 16.5px !important; font-weight: 800 !important; color: #000000 !important; line-height: 1.15 !important;">
                                 RD-007
                             </div>
-                            ${totalPages > 1 ? `
-                                <div style="font-size: 14px !important; font-weight: normal !important; color: #1e293b !important; line-height: 1 !important;">
-                                    หน้าที่ ${page + 1}/${totalPages}
-                                </div>
-                            ` : '<div></div>'}
+                            <div style="font-size: 16.5px !important; font-weight: 800 !important; color: #000000 !important; line-height: 1.15 !important;">
+                                หน้าที่ ${page + 1}/${totalPages}
+                            </div>
                         </div>
-                        <div style="text-align: center; font-weight: bold; font-size: 18.5px; color: #000; line-height: 1.4; margin-bottom: 14px; white-space: nowrap;">
+                        <div class="mu007-report-title" style="text-align: center; font-weight: 800 !important; font-size: 21px !important; color: #000000 !important; line-height: 1.25 !important; margin-bottom: 8px !important; white-space: nowrap !important;">
                             รายงานผลตรวจเชื้อโคลิฟอร์มแบคทีเรียขั้นต้นในอาหาร ภาชนะอุปกรณ์ และมือผู้สัมผัสอาหาร โดยชุดทดสอบ SI-2
                         </div>
 
-                        <div style="font-size: 15.5px; line-height: 1.6; color: #000; margin-bottom: 12px;">
-                            <div style="display: flex; margin-bottom: 4px;">
-                                <div style="width: 160px; font-weight: bold; white-space: nowrap;">สถานที่ตรวจวิเคราะห์ :</div>
-                                <div style="font-weight: 500;">${shopName}</div>
+                        <div class="mu007-meta-section" style="font-size: 19.5px !important; font-weight: 800 !important; line-height: 1.32 !important; color: #000000 !important; margin-bottom: 8px !important;">
+                            <div style="display: flex; margin-bottom: 2px;">
+                                <div style="width: 165px; font-weight: 800 !important; white-space: nowrap;">สถานที่ตรวจวิเคราะห์ :</div>
+                                <div style="font-weight: 800 !important;">${shopName}</div>
                             </div>
                             ${addressText ? `
-                                <div style="display: flex; margin-bottom: 4px; padding-left: 160px;">
-                                    <div>${addressText}</div>
+                                <div style="display: flex; margin-bottom: 2px; padding-left: 165px;">
+                                    <div style="font-weight: 800 !important;">${addressText}</div>
                                 </div>
                             ` : ''}
-                            <div style="display: flex; margin-bottom: 4px;">
-                                <div style="width: 160px; font-weight: bold; white-space: nowrap;">วันที่ตรวจวิเคราะห์ :</div>
-                                <div>${analysisDateThai}</div>
+                            <div style="display: flex; margin-bottom: 2px;">
+                                <div style="width: 165px; font-weight: 800 !important; white-space: nowrap;">วันที่ตรวจวิเคราะห์ :</div>
+                                <div style="font-weight: 800 !important;">${analysisDateThai}</div>
                             </div>
-                            <div style="display: flex; margin-bottom: 6px;">
-                                <div style="width: 160px; font-weight: bold; white-space: nowrap;">ผลตรวจวิเคราะห์ :</div>
-                                <div>ตรวจทั้งหมด ${items.length} ตัวอย่าง &nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp; ไม่ผ่าน ${failCount} ตัวอย่าง &nbsp; ผ่านร้อยละ ${passPercent}</div>
+                            <div style="display: flex; margin-bottom: 4px;">
+                                <div style="width: 165px; font-weight: 800 !important; white-space: nowrap;">ผลตรวจวิเคราะห์ :</div>
+                                <div style="font-weight: 800 !important;">ตรวจทั้งหมด ${items.length} ตัวอย่าง &nbsp; ผ่าน ${passCount} ตัวอย่าง &nbsp; ไม่ผ่าน ${failCount} ตัวอย่าง &nbsp; ผ่านร้อยละ ${passPercent}</div>
                             </div>
                         </div>
 
@@ -7947,7 +7965,7 @@ document.getElementById('formNameTitle').innerText = title;
                             </tbody>
                         </table>
 
-                        <div style="margin-top: 8px; margin-bottom: 12px; font-size: 13px; font-weight: normal; color: #000;">
+                        <div class="mu007-remark" style="margin-top: 6px !important; margin-bottom: 10px !important; font-size: 17.5px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #000000 !important;">
                             หมายเหตุ การตรวจประเมินด้านการสุขาภิบาลอาหาร ต้องผ่านการตรวจประเมินทางด้านแบคทีเรีย ให้ผ่านร้อยละ 90
                         </div>
 
