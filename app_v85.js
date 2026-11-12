@@ -1107,6 +1107,7 @@ const app = {
         const canAccessLab = Boolean(this.currentUser && ['lab', 'admin', 'certifier'].includes(role));
         const canAccessCertify = Boolean(this.currentUser && ['lab', 'admin', 'certifier'].includes(role));
         const isAdmin = Boolean(this.currentUser && (role === 'admin' || this.currentUser.username === 'admin'));
+        const isExecutive = Boolean(this.currentUser && role === 'executive');
 
         if (typeof document !== 'undefined' && document.body) {
             document.body.classList.toggle('role-admin', isAdmin);
@@ -1123,7 +1124,14 @@ const app = {
             userStatusCard.innerHTML = `<div class="user-status-name">ผู้เยี่ยมชมระบบ</div><div class="user-status-role">ยังไม่ได้เข้าสู่ระบบ</div>`;
         }
 
-        // Show/hide lab menus based on role (strictly hidden for collectors, hospitals, ssj, and general visitors)
+        // Show/hide sample collection menu for executive (executive is strategic read-only)
+        const sampleRecordMenu = document.getElementById('menu-sample-record');
+        if (sampleRecordMenu) {
+            sampleRecordMenu.style.setProperty('display', isExecutive ? 'none' : 'flex', 'important');
+            sampleRecordMenu.classList.toggle('role-hidden', isExecutive);
+        }
+
+        // Show/hide lab menus based on role (strictly hidden for collectors, hospitals, ssj, executives, and general visitors)
         // Certifier has the exact same visibility as lab
         document.querySelectorAll('#menu-lab-verify, #menu-lab-analysis, #menu-lab-certify').forEach(el => {
             el.style.setProperty('display', canAccessLab ? 'flex' : 'none', 'important');
@@ -1140,10 +1148,10 @@ const app = {
         this.updateProvEmailButtonVisibility();
         this.updateEditApprovalButtonVisibility();
 
-        // Enforce hiding of follow-up action button on dashboard for admin
+        // Enforce hiding of follow-up action button on dashboard for admin and executive
         const btnManageAction = document.querySelector('.btn-manage-actions');
         if (btnManageAction) {
-            if (isAdmin) {
+            if (isAdmin || isExecutive) {
                 btnManageAction.style.setProperty('display', 'none', 'important');
             } else if (!btnManageAction.style.display || btnManageAction.style.display === 'none') {
                 if (typeof window.updateCorrectiveActionGovernance === 'function' && window.currentCachedSamples) {
@@ -1161,6 +1169,8 @@ const app = {
             } else if (currentViewName === 'lab-certify' && !canAccessCertify) {
                 this.switchView('dashboard');
             } else if (currentViewName === 'manage-users' && !isAdmin) {
+                this.switchView('dashboard');
+            } else if (currentViewName === 'sample-record' && isExecutive) {
                 this.switchView('dashboard');
             }
         }
@@ -2461,6 +2471,16 @@ document.getElementById('formNameTitle').innerText = title;
 
     handleFormSubmit(e) {
         e.preventDefault();
+
+        // Security check: Executive is strictly read-only
+        if (this.currentUser && this.currentUser.role === 'executive') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'ไม่มีสิทธิ์บันทึกข้อมูล',
+                text: 'บัญชีผู้บริหารมีสิทธิ์ในการดูข้อมูลเท่านั้น (Read-Only) ไม่สามารถบันทึกตัวอย่างได้'
+            });
+            return;
+        }
         
         // Collect form data
         const formData = new FormData(e.target);
@@ -2755,6 +2775,7 @@ document.getElementById('formNameTitle').innerText = title;
         const role = (this.currentUser.role || '').toLowerCase();
         const username = (this.currentUser.username || '').toLowerCase();
         if (role === 'admin' || username === 'admin') return true;
+        if (role === 'executive') return false; // Executive is strictly read-only
         if (!sample) return true;
         const owner = (sample.created_by || '').toString().toLowerCase();
         const uName = (this.currentUser.username || '').toString().toLowerCase();
@@ -4230,6 +4251,12 @@ document.getElementById('formNameTitle').innerText = title;
     calculateMu10006Row(idx) {
         const styleSummarySelect = (sel, isPass) => {
             if (!sel) return;
+            if (sel.value === '-') {
+                sel.style.setProperty('color', '#64748b', 'important');
+                sel.style.setProperty('background', '#f8fafc', 'important');
+                sel.style.setProperty('border-color', '#cbd5e1', 'important');
+                return;
+            }
             sel.style.setProperty('color', isPass ? '#15803d' : '#dc2626', 'important');
             sel.style.setProperty('background', isPass ? '#f0fdf4' : '#fef2f2', 'important');
             sel.style.setProperty('border-color', isPass ? '#86efac' : '#fca5a5', 'important');
@@ -4238,51 +4265,75 @@ document.getElementById('formNameTitle').innerText = title;
         // Coliform
         const cEl = document.getElementById('analysis-coliform-' + idx);
         const cSumEl = document.getElementById('analysis-coliform-summary-' + idx);
-        if (cEl && cSumEl && cEl.value !== '') {
-            const val = parseFloat(cEl.value);
-            if (!isNaN(val)) {
-                const isPass = val === 0;
-                cSumEl.value = isPass ? 'ผ่าน' : 'ไม่ผ่าน';
-                styleSummarySelect(cSumEl, isPass);
+        if (cEl && cSumEl) {
+            const rawVal = (cEl.value || '').trim();
+            if (rawVal === '' || rawVal === '-') {
+                cSumEl.value = '-';
+                styleSummarySelect(cSumEl, true);
+            } else {
+                const val = parseFloat(rawVal);
+                if (!isNaN(val)) {
+                    const isPass = val === 0;
+                    cSumEl.value = isPass ? 'ผ่าน' : 'ไม่ผ่าน';
+                    styleSummarySelect(cSumEl, isPass);
+                }
             }
         }
 
         // TDS
         const tEl = document.getElementById('analysis-tds-' + idx);
         const tSumEl = document.getElementById('analysis-tds-summary-' + idx);
-        if (tEl && tSumEl && tEl.value !== '') {
-            const val = parseFloat(tEl.value);
-            if (!isNaN(val)) {
-                const isPass = val <= 50;
-                tSumEl.value = isPass ? 'เกณฑ์ปกติ' : 'ควรเปลี่ยนไส้กรอง';
-                styleSummarySelect(tSumEl, isPass);
+        if (tEl && tSumEl) {
+            const rawVal = (tEl.value || '').trim();
+            if (rawVal === '' || rawVal === '-') {
+                tSumEl.value = '-';
+                styleSummarySelect(tSumEl, true);
+            } else {
+                const val = parseFloat(rawVal);
+                if (!isNaN(val)) {
+                    const isPass = val <= 50;
+                    tSumEl.value = isPass ? 'เกณฑ์ปกติ' : 'ควรเปลี่ยนไส้กรอง';
+                    styleSummarySelect(tSumEl, isPass);
+                }
             }
         }
 
         // Hardness
         const hEl = document.getElementById('analysis-hardness-' + idx);
         const hSumEl = document.getElementById('analysis-hardness-summary-' + idx);
-        if (hEl && hSumEl && hEl.value !== '') {
-            let num = parseFloat(hEl.value.replace(/[^0-9.]/g, ''));
-            if (!isNaN(num)) {
-                const isPass = num <= 100;
-                hSumEl.value = isPass ? 'ผ่าน' : 'ไม่ผ่าน';
-                styleSummarySelect(hSumEl, isPass);
-            } else if (hEl.value.includes('<')) {
-                hSumEl.value = 'ผ่าน';
+        if (hEl && hSumEl) {
+            const rawVal = (hEl.value || '').trim();
+            if (rawVal === '' || rawVal === '-') {
+                hSumEl.value = '-';
                 styleSummarySelect(hSumEl, true);
+            } else {
+                let num = parseFloat(rawVal.replace(/[^0-9.]/g, ''));
+                if (!isNaN(num)) {
+                    const isPass = num <= 100;
+                    hSumEl.value = isPass ? 'ผ่าน' : 'ไม่ผ่าน';
+                    styleSummarySelect(hSumEl, isPass);
+                } else if (rawVal.includes('<')) {
+                    hSumEl.value = 'ผ่าน';
+                    styleSummarySelect(hSumEl, true);
+                }
             }
         }
 
         // pH
         const pEl = document.getElementById('analysis-ph-' + idx);
         const pSumEl = document.getElementById('analysis-ph-summary-' + idx);
-        if (pEl && pSumEl && pEl.value !== '') {
-            const val = parseFloat(pEl.value);
-            if (!isNaN(val)) {
-                const pass = val >= 6.5 && val <= 8.5;
-                pSumEl.value = pass ? 'ผ่าน' : 'ไม่ผ่าน';
-                styleSummarySelect(pSumEl, pass);
+        if (pEl && pSumEl) {
+            const rawVal = (pEl.value || '').trim();
+            if (rawVal === '' || rawVal === '-') {
+                pSumEl.value = '-';
+                styleSummarySelect(pSumEl, true);
+            } else {
+                const val = parseFloat(rawVal);
+                if (!isNaN(val)) {
+                    const pass = val >= 6.5 && val <= 8.5;
+                    pSumEl.value = pass ? 'ผ่าน' : 'ไม่ผ่าน';
+                    styleSummarySelect(pSumEl, pass);
+                }
             }
         }
 
@@ -4366,6 +4417,12 @@ document.getElementById('formNameTitle').innerText = title;
     updateMu10006OverallSummary() {
         const styleSummarySelect = (sel, isPass) => {
             if (!sel) return;
+            if (sel.value === '-') {
+                sel.style.setProperty('color', '#64748b', 'important');
+                sel.style.setProperty('background', '#f8fafc', 'important');
+                sel.style.setProperty('border-color', '#cbd5e1', 'important');
+                return;
+            }
             sel.style.setProperty('color', isPass ? '#15803d' : '#dc2626', 'important');
             sel.style.setProperty('background', isPass ? '#f0fdf4' : '#fef2f2', 'important');
             sel.style.setProperty('border-color', isPass ? '#86efac' : '#fca5a5', 'important');
@@ -4375,24 +4432,24 @@ document.getElementById('formNameTitle').innerText = title;
         let count = 0;
         document.querySelectorAll('[id^="analysis-coliform-summary-"]').forEach(sel => {
             count++;
-            const isPass = sel.value !== 'ไม่ผ่าน';
+            const isPass = sel.value === '-' ? true : (sel.value !== 'ไม่ผ่าน');
             styleSummarySelect(sel, isPass);
-            if (!isPass) allPass = false;
+            if (sel.value === 'ไม่ผ่าน') allPass = false;
         });
         document.querySelectorAll('[id^="analysis-tds-summary-"]').forEach(sel => {
-            const isPass = sel.value !== 'ควรเปลี่ยนไส้กรอง';
+            const isPass = sel.value === '-' ? true : (sel.value !== 'ควรเปลี่ยนไส้กรอง');
             styleSummarySelect(sel, isPass);
-            if (!isPass) allPass = false;
+            if (sel.value === 'ควรเปลี่ยนไส้กรอง') allPass = false;
         });
         document.querySelectorAll('[id^="analysis-hardness-summary-"]').forEach(sel => {
-            const isPass = sel.value !== 'ไม่ผ่าน';
+            const isPass = sel.value === '-' ? true : (sel.value !== 'ไม่ผ่าน');
             styleSummarySelect(sel, isPass);
-            if (!isPass) allPass = false;
+            if (sel.value === 'ไม่ผ่าน') allPass = false;
         });
         document.querySelectorAll('[id^="analysis-ph-summary-"]').forEach(sel => {
-            const isPass = sel.value !== 'ไม่ผ่าน';
+            const isPass = sel.value === '-' ? true : (sel.value !== 'ไม่ผ่าน');
             styleSummarySelect(sel, isPass);
-            if (!isPass) allPass = false;
+            if (sel.value === 'ไม่ผ่าน') allPass = false;
         });
 
         const overallSelect = document.getElementById('analysis-summary-outcome');
@@ -5192,15 +5249,30 @@ document.getElementById('formNameTitle').innerText = title;
             }
 
             let rowsHTML = machines.map(m => {
-                const cSum = m.coliform_sum || (m.coliform !== '' ? (parseFloat(m.coliform) === 0 ? 'ผ่าน' : 'ไม่ผ่าน') : 'ผ่าน');
-                const tSum = m.tds_sum || (m.tds !== '' ? (parseFloat(m.tds) <= 50 ? 'เกณฑ์ปกติ' : 'ควรเปลี่ยนไส้กรอง') : 'เกณฑ์ปกติ');
-                const hSum = m.hardness_sum || (m.hardness !== '' ? ((m.hardness.includes('<') || parseFloat(m.hardness) <= 100) ? 'ผ่าน' : 'ไม่ผ่าน') : 'ผ่าน');
-                const pSum = m.ph_sum || (m.ph !== '' ? ((parseFloat(m.ph) >= 6.5 && parseFloat(m.ph) <= 8.5) ? 'ผ่าน' : 'ไม่ผ่าน') : 'ผ่าน');
+                const rawC = (m.coliform !== undefined && m.coliform !== null) ? m.coliform.toString().trim() : '';
+                const isCNone = rawC === '' || rawC === '-';
+                const cSum = m.coliform_sum || (isCNone ? '-' : (parseFloat(rawC) === 0 ? 'ผ่าน' : 'ไม่ผ่าน'));
 
-                const cPass = cSum !== 'ไม่ผ่าน';
-                const tPass = tSum !== 'ควรเปลี่ยนไส้กรอง';
-                const hPass = hSum !== 'ไม่ผ่าน';
-                const pPass = pSum !== 'ไม่ผ่าน';
+                const rawT = (m.tds !== undefined && m.tds !== null) ? m.tds.toString().trim() : '';
+                const isTNone = rawT === '' || rawT === '-';
+                const tSum = m.tds_sum || (isTNone ? '-' : (parseFloat(rawT) <= 50 ? 'เกณฑ์ปกติ' : 'ควรเปลี่ยนไส้กรอง'));
+
+                const rawH = (m.hardness !== undefined && m.hardness !== null) ? m.hardness.toString().trim() : '';
+                const isHNone = rawH === '' || rawH === '-';
+                const hSum = m.hardness_sum || (isHNone ? '-' : ((rawH.includes('<') || parseFloat(rawH) <= 100) ? 'ผ่าน' : 'ไม่ผ่าน'));
+
+                const rawP = (m.ph !== undefined && m.ph !== null) ? m.ph.toString().trim() : '';
+                const isPNone = rawP === '' || rawP === '-';
+                const pSum = m.ph_sum || (isPNone ? '-' : ((parseFloat(rawP) >= 6.5 && parseFloat(rawP) <= 8.5) ? 'ผ่าน' : 'ไม่ผ่าน'));
+
+                const cPass = cSum === '-' ? true : (cSum !== 'ไม่ผ่าน');
+                const tPass = tSum === '-' ? true : (tSum !== 'ควรเปลี่ยนไส้กรอง');
+                const hPass = hSum === '-' ? true : (hSum !== 'ไม่ผ่าน');
+                const pPass = pSum === '-' ? true : (pSum !== 'ไม่ผ่าน');
+
+                const getBg = (sumVal, isPass) => sumVal === '-' ? '#f8fafc' : (isPass ? '#f0fdf4' : '#fef2f2');
+                const getBorder = (sumVal, isPass) => sumVal === '-' ? '#cbd5e1' : (isPass ? '#86efac' : '#fca5a5');
+                const getColor = (sumVal, isPass) => sumVal === '-' ? '#64748b' : (isPass ? '#15803d' : '#dc2626');
 
                 return `
                     <tr style="text-align:center; vertical-align:middle; background:#ffffff;">
@@ -5213,20 +5285,22 @@ document.getElementById('formNameTitle').innerText = title;
                         </td>
                         <!-- จุลชีววิทยา -->
                         <td style="padding:6px; border:1px solid #cbd5e1; background:#f0f9ff;">
-                            <input type="number" id="analysis-coliform-${m.idx}" value="${m.coliform}" placeholder="0" min="0" style="width:100% !important; height:36px !important; box-sizing:border-box !important; text-align:center !important; padding:4px 6px !important; background:#ffffff !important; color:#0f172a !important; font-size:14.5px !important; font-weight:700 !important; border:2px solid #38bdf8 !important; border-radius:8px !important; box-shadow:inset 0 1px 2px rgba(2,132,199,0.08) !important;" oninput="app.calculateMu10006Row(${m.idx})">
+                            <input type="text" id="analysis-coliform-${m.idx}" value="${m.coliform}" placeholder="0" style="width:100% !important; height:36px !important; box-sizing:border-box !important; text-align:center !important; padding:4px 6px !important; background:#ffffff !important; color:#0f172a !important; font-size:14.5px !important; font-weight:700 !important; border:2px solid #38bdf8 !important; border-radius:8px !important; box-shadow:inset 0 1px 2px rgba(2,132,199,0.08) !important;" oninput="app.calculateMu10006Row(${m.idx})">
                         </td>
                         <td style="padding:6px; border:1px solid #cbd5e1; background:#f0f9ff;">
-                            <select id="analysis-coliform-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${cPass ? '#f0fdf4' : '#fef2f2'} !important; border:1.5px solid ${cPass ? '#86efac' : '#fca5a5'} !important; color:${cPass ? '#15803d' : '#dc2626'} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                            <select id="analysis-coliform-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${getBg(cSum, cPass)} !important; border:1.5px solid ${getBorder(cSum, cPass)} !important; color:${getColor(cSum, cPass)} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                                <option value="-" ${cSum === '-' ? 'selected' : ''}>- (ไม่ได้ตรวจ)</option>
                                 <option value="ผ่าน" ${cSum === 'ผ่าน' ? 'selected' : ''}>ผ่าน</option>
                                 <option value="ไม่ผ่าน" ${cSum === 'ไม่ผ่าน' ? 'selected' : ''}>ไม่ผ่าน</option>
                             </select>
                         </td>
                         <!-- เคมี: TDS -->
                         <td style="padding:6px; border:1px solid #cbd5e1; background:#f0fdf4;">
-                            <input type="number" step="0.1" id="analysis-tds-${m.idx}" value="${m.tds}" placeholder="25.4" style="width:100% !important; height:36px !important; box-sizing:border-box !important; text-align:center !important; padding:4px 6px !important; background:#ffffff !important; color:#0f172a !important; font-size:14.5px !important; font-weight:700 !important; border:2px solid #34d399 !important; border-radius:8px !important; box-shadow:inset 0 1px 2px rgba(16,185,129,0.08) !important;" oninput="app.calculateMu10006Row(${m.idx})">
+                            <input type="text" id="analysis-tds-${m.idx}" value="${m.tds}" placeholder="25.4" style="width:100% !important; height:36px !important; box-sizing:border-box !important; text-align:center !important; padding:4px 6px !important; background:#ffffff !important; color:#0f172a !important; font-size:14.5px !important; font-weight:700 !important; border:2px solid #34d399 !important; border-radius:8px !important; box-shadow:inset 0 1px 2px rgba(16,185,129,0.08) !important;" oninput="app.calculateMu10006Row(${m.idx})">
                         </td>
                         <td style="padding:6px; border:1px solid #cbd5e1; background:#f0fdf4;">
-                            <select id="analysis-tds-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${tPass ? '#f0fdf4' : '#fef2f2'} !important; border:1.5px solid ${tPass ? '#86efac' : '#fca5a5'} !important; color:${tPass ? '#15803d' : '#dc2626'} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                            <select id="analysis-tds-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${getBg(tSum, tPass)} !important; border:1.5px solid ${getBorder(tSum, tPass)} !important; color:${getColor(tSum, tPass)} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                                <option value="-" ${tSum === '-' ? 'selected' : ''}>- (ไม่ได้ตรวจ)</option>
                                 <option value="เกณฑ์ปกติ" ${tSum === 'เกณฑ์ปกติ' ? 'selected' : ''}>เกณฑ์ปกติ</option>
                                 <option value="ควรเปลี่ยนไส้กรอง" ${tSum === 'ควรเปลี่ยนไส้กรอง' ? 'selected' : ''}>ควรเปลี่ยนไส้กรอง</option>
                             </select>
@@ -5236,17 +5310,19 @@ document.getElementById('formNameTitle').innerText = title;
                             <input type="text" id="analysis-hardness-${m.idx}" value="${m.hardness}" placeholder="<50" style="width:100% !important; height:36px !important; box-sizing:border-box !important; text-align:center !important; padding:4px 6px !important; background:#ffffff !important; color:#0f172a !important; font-size:14.5px !important; font-weight:700 !important; border:2px solid #34d399 !important; border-radius:8px !important; box-shadow:inset 0 1px 2px rgba(16,185,129,0.08) !important;" oninput="app.calculateMu10006Row(${m.idx})">
                         </td>
                         <td style="padding:6px; border:1px solid #cbd5e1; background:#f0fdf4;">
-                            <select id="analysis-hardness-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${hPass ? '#f0fdf4' : '#fef2f2'} !important; border:1.5px solid ${hPass ? '#86efac' : '#fca5a5'} !important; color:${hPass ? '#15803d' : '#dc2626'} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                            <select id="analysis-hardness-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${getBg(hSum, hPass)} !important; border:1.5px solid ${getBorder(hSum, hPass)} !important; color:${getColor(hSum, hPass)} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                                <option value="-" ${hSum === '-' ? 'selected' : ''}>- (ไม่ได้ตรวจ)</option>
                                 <option value="ผ่าน" ${hSum === 'ผ่าน' ? 'selected' : ''}>ผ่าน</option>
                                 <option value="ไม่ผ่าน" ${hSum === 'ไม่ผ่าน' ? 'selected' : ''}>ไม่ผ่าน</option>
                             </select>
                         </td>
                         <!-- กายภาพ: pH -->
                         <td style="padding:6px; border:1px solid #cbd5e1; background:#fefce8;">
-                            <input type="number" step="0.01" id="analysis-ph-${m.idx}" value="${m.ph}" placeholder="7.5" style="width:100% !important; height:36px !important; box-sizing:border-box !important; text-align:center !important; padding:4px 6px !important; background:#ffffff !important; color:#0f172a !important; font-size:14.5px !important; font-weight:700 !important; border:2px solid #fbbf24 !important; border-radius:8px !important; box-shadow:inset 0 1px 2px rgba(234,179,8,0.08) !important;" oninput="app.calculateMu10006Row(${m.idx})">
+                            <input type="text" id="analysis-ph-${m.idx}" value="${m.ph}" placeholder="7.5" style="width:100% !important; height:36px !important; box-sizing:border-box !important; text-align:center !important; padding:4px 6px !important; background:#ffffff !important; color:#0f172a !important; font-size:14.5px !important; font-weight:700 !important; border:2px solid #fbbf24 !important; border-radius:8px !important; box-shadow:inset 0 1px 2px rgba(234,179,8,0.08) !important;" oninput="app.calculateMu10006Row(${m.idx})">
                         </td>
                         <td style="padding:6px; border:1px solid #cbd5e1; background:#fefce8;">
-                            <select id="analysis-ph-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${pPass ? '#f0fdf4' : '#fef2f2'} !important; border:1.5px solid ${pPass ? '#86efac' : '#fca5a5'} !important; color:${pPass ? '#15803d' : '#dc2626'} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                            <select id="analysis-ph-summary-${m.idx}" style="width:100% !important; height:36px !important; box-sizing:border-box !important; padding:4px 6px !important; font-size:13px !important; font-weight:700 !important; border-radius:8px !important; background:${getBg(pSum, pPass)} !important; border:1.5px solid ${getBorder(pSum, pPass)} !important; color:${getColor(pSum, pPass)} !important; cursor:pointer !important;" onchange="app.updateMu10006OverallSummary()">
+                                <option value="-" ${pSum === '-' ? 'selected' : ''}>- (ไม่ได้ตรวจ)</option>
                                 <option value="ผ่าน" ${pSum === 'ผ่าน' ? 'selected' : ''}>ผ่าน</option>
                                 <option value="ไม่ผ่าน" ${pSum === 'ไม่ผ่าน' ? 'selected' : ''}>ไม่ผ่าน</option>
                             </select>
@@ -7476,33 +7552,53 @@ document.getElementById('formNameTitle').innerText = title;
             for (let idx = 1; idx <= 10; idx++) {
                 const loc = sample['location_' + idx] || (idx === 1 ? sample.location_name : '') || sample['sample_name_' + idx];
                 if (loc || sample['analysis_coliform_' + idx] !== undefined || sample['analysis_tds_' + idx] !== undefined) {
+                    const rawC = (sample['analysis_coliform_' + idx] !== undefined && sample['analysis_coliform_' + idx] !== null) ? sample['analysis_coliform_' + idx].toString().trim() : '';
+                    const rawT = (sample['analysis_tds_' + idx] !== undefined && sample['analysis_tds_' + idx] !== null) ? sample['analysis_tds_' + idx].toString().trim() : '';
+                    const rawH = (sample['analysis_hardness_' + idx] !== undefined && sample['analysis_hardness_' + idx] !== null) ? sample['analysis_hardness_' + idx].toString().trim() : '';
+                    const rawP = (sample['analysis_ph_' + idx] !== undefined && sample['analysis_ph_' + idx] !== null) ? sample['analysis_ph_' + idx].toString().trim() : '';
+
+                    const isCNone = rawC === '' || rawC === '-';
+                    const isTNone = rawT === '' || rawT === '-';
+                    const isHNone = rawH === '' || rawH === '-';
+                    const isPNone = rawP === '' || rawP === '-';
+
                     items.push({
                         idx: idx,
                         location: loc || ('จุดตรวจที่ ' + idx),
-                        coliform: (sample['analysis_coliform_' + idx] !== undefined && sample['analysis_coliform_' + idx] !== '') ? sample['analysis_coliform_' + idx] : '0',
-                        coliform_sum: sample['analysis_coliform_summary_' + idx] || (parseFloat(sample['analysis_coliform_' + idx]) > 0 ? 'ไม่ผ่าน' : 'ผ่าน'),
-                        tds: sample['analysis_tds_' + idx] || '',
-                        tds_sum: sample['analysis_tds_summary_' + idx] || (parseFloat(sample['analysis_tds_' + idx]) > 50 ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ'),
-                        hardness: sample['analysis_hardness_' + idx] || '<50',
-                        hardness_sum: sample['analysis_hardness_summary_' + idx] || 'ผ่าน',
-                        ph: sample['analysis_ph_' + idx] || '',
-                        ph_sum: sample['analysis_ph_summary_' + idx] || 'ผ่าน'
+                        coliform: isCNone ? '-' : rawC,
+                        coliform_sum: isCNone ? '-' : (sample['analysis_coliform_summary_' + idx] || (parseFloat(rawC) > 0 ? 'ไม่ผ่าน' : 'ผ่าน')),
+                        tds: isTNone ? '-' : rawT,
+                        tds_sum: isTNone ? '-' : (sample['analysis_tds_summary_' + idx] || (parseFloat(rawT) > 50 ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ')),
+                        hardness: isHNone ? '-' : rawH,
+                        hardness_sum: isHNone ? '-' : (sample['analysis_hardness_summary_' + idx] || 'ผ่าน'),
+                        ph: isPNone ? '-' : rawP,
+                        ph_sum: isPNone ? '-' : (sample['analysis_ph_summary_' + idx] || 'ผ่าน')
                     });
                 }
             }
 
             if (items.length === 0) {
+                const rawC = (sample.analysis_coliform_1 !== undefined && sample.analysis_coliform_1 !== null) ? sample.analysis_coliform_1.toString().trim() : '';
+                const rawT = (sample.analysis_tds_1 !== undefined && sample.analysis_tds_1 !== null) ? sample.analysis_tds_1.toString().trim() : '';
+                const rawH = (sample.analysis_hardness_1 !== undefined && sample.analysis_hardness_1 !== null) ? sample.analysis_hardness_1.toString().trim() : '';
+                const rawP = (sample.analysis_ph_1 !== undefined && sample.analysis_ph_1 !== null) ? sample.analysis_ph_1.toString().trim() : '';
+
+                const isCNone = rawC === '' || rawC === '-';
+                const isTNone = rawT === '' || rawT === '-';
+                const isHNone = rawH === '' || rawH === '-';
+                const isPNone = rawP === '' || rawP === '-';
+
                 items.push({
                     idx: 1,
                     location: sample.location_name || 'จุดตรวจที่ 1',
-                    coliform: sample.analysis_coliform_1 || '0',
-                    coliform_sum: sample.analysis_coliform_summary_1 || 'ผ่าน',
-                    tds: sample.analysis_tds_1 || '',
-                    tds_sum: sample.analysis_tds_summary_1 || 'เกณฑ์ปกติ',
-                    hardness: sample.analysis_hardness_1 || '<50',
-                    hardness_sum: sample.analysis_hardness_summary_1 || 'ผ่าน',
-                    ph: sample.analysis_ph_1 || '',
-                    ph_sum: sample.analysis_ph_summary_1 || 'ผ่าน'
+                    coliform: isCNone ? '-' : rawC,
+                    coliform_sum: isCNone ? '-' : (sample.analysis_coliform_summary_1 || 'ผ่าน'),
+                    tds: isTNone ? '-' : rawT,
+                    tds_sum: isTNone ? '-' : (sample.analysis_tds_summary_1 || 'เกณฑ์ปกติ'),
+                    hardness: isHNone ? '-' : rawH,
+                    hardness_sum: isHNone ? '-' : (sample.analysis_hardness_summary_1 || 'ผ่าน'),
+                    ph: isPNone ? '-' : rawP,
+                    ph_sum: isPNone ? '-' : (sample.analysis_ph_summary_1 || 'ผ่าน')
                 });
             }
 
@@ -7535,25 +7631,41 @@ document.getElementById('formNameTitle').innerText = title;
                 let pageRowsHTML = '';
                 pageItems.forEach((item, i) => {
                     const rowNum = (page * ITEMS_PER_PAGE) + i + 1;
-                    const cVal = item.coliform;
+                    
+                    // Coliform
+                    const cVal = (item.coliform || '-').toString().trim();
+                    const isCNotTested = cVal === '-' || cVal === '';
                     const cValNum = parseFloat(cVal);
-                    const isCFail = item.coliform_sum === 'ไม่ผ่าน' || (!isNaN(cValNum) && cValNum > 0);
+                    const isCFail = !isCNotTested && (item.coliform_sum === 'ไม่ผ่าน' || (!isNaN(cValNum) && cValNum > 0) || cVal === 'พบ');
+                    const cSumText = isCNotTested ? '-' : (item.coliform_sum === '-' ? '-' : (item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')));
                     const cValStyle = isCFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
                     const cSumStyle = isCFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
 
-                    const tVal = item.tds;
+                    // TDS
+                    const tVal = (item.tds || '-').toString().trim();
+                    const isTNotTested = tVal === '-' || tVal === '';
                     const tValNum = parseFloat(tVal);
-                    const isTFail = item.tds_sum === 'ควรเปลี่ยนไส้กรอง' || (!isNaN(tValNum) && tValNum > 50);
+                    const isTFail = !isTNotTested && (item.tds_sum === 'ควรเปลี่ยนไส้กรอง' || (!isNaN(tValNum) && tValNum > 50));
+                    let tdsSumText = isTNotTested ? '-' : (item.tds_sum === '-' ? '-' : (item.tds_sum || (isTFail ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ')));
+                    if (isTNotTested) tdsSumText = '-';
                     const tValStyle = isTFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
                     const tSumStyle = isTFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
 
-                    const hVal = item.hardness;
-                    const isHFail = item.hardness_sum === 'ไม่ผ่าน';
+                    // Hardness
+                    const hVal = (item.hardness || '-').toString().trim();
+                    const isHNotTested = hVal === '-' || hVal === '';
+                    const hValNum = parseFloat(hVal.replace(/[^0-9.]/g, ''));
+                    const isHFail = !isHNotTested && (item.hardness_sum === 'ไม่ผ่าน' || (!isNaN(hValNum) && hValNum > 100));
+                    const hSumText = isHNotTested ? '-' : (item.hardness_sum === '-' ? '-' : (item.hardness_sum || (isHFail ? 'ไม่ผ่าน' : 'ผ่าน')));
                     const hValStyle = isHFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
                     const hSumStyle = isHFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
 
-                    const pVal = item.ph;
-                    const isPFail = item.ph_sum === 'ไม่ผ่าน';
+                    // pH
+                    const pVal = (item.ph || '-').toString().trim();
+                    const isPNotTested = pVal === '-' || pVal === '';
+                    const pValNum = parseFloat(pVal);
+                    const isPFail = !isPNotTested && (item.ph_sum === 'ไม่ผ่าน' || (!isNaN(pValNum) && (pValNum < 6.5 || pValNum > 8.5)));
+                    const pSumText = isPNotTested ? '-' : (item.ph_sum === '-' ? '-' : (item.ph_sum || (isPFail ? 'ไม่ผ่าน' : 'ผ่าน')));
                     const pValStyle = isPFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
                     const pSumStyle = isPFail ? 'color: #dc2626 !important; font-weight: 800 !important;' : '';
 
@@ -7561,21 +7673,29 @@ document.getElementById('formNameTitle').innerText = title;
                     const failClass = isAnyFail ? 'row-failed highlight-failed-row' : '';
                     const failStyle = isAnyFail ? 'background-color: #ffff00 !important;' : '';
 
-                    const tdsSumText = item.tds_sum || (isTFail ? 'ควรเปลี่ยนไส้กรอง' : 'เกณฑ์ปกติ');
-                    const tdsSumFontSize = tdsSumText.length > 10 ? '14px !important' : '17px !important';
+                    // Format TDS summary text to wrap into 2 lines if long (e.g. ควรเปลี่ยนไส้กรอง -> ควรเปลี่ยน<br>ไส้กรอง)
+                    let tdsSumDisplay = tdsSumText;
+                    if (tdsSumDisplay.includes('ควรเปลี่ยนไส้กรอง')) {
+                        tdsSumDisplay = tdsSumDisplay.replace(/ควรเปลี่ยนไส้กรอง/g, 'ควรเปลี่ยน<br>ไส้กรอง');
+                    } else if (tdsSumDisplay.includes('ควรเปลี่ยน')) {
+                        tdsSumDisplay = tdsSumDisplay.replace(/ควรเปลี่ยน/g, 'ควรเปลี่ยน<br>');
+                    }
+                    const isTdsWrapped = tdsSumDisplay.includes('<br>');
+                    const tdsSumFontSize = isTdsWrapped ? '13px !important' : (tdsSumText.length > 7 ? '14px !important' : '17px !important');
+                    const tdsLineHeight = isTdsWrapped ? '1.15 !important' : '1.2 !important';
 
                     pageRowsHTML += `
                         <tr class="${failClass}" style="text-align: center; height: 29px; ${failStyle}">
                             <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle}">${rowNum}</td>
                             <td style="border: 1.5px solid #000; padding: 3px 6px; text-align: left; font-size: 17px !important; font-weight: bold; color: #000; line-height: 1.2; word-break: break-word; vertical-align: middle; box-sizing: border-box; ${failStyle}">${item.location}</td>
                             <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cValStyle}">${cVal}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cSumStyle}">${item.coliform_sum || (isCFail ? 'ไม่ผ่าน' : 'ผ่าน')}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tValStyle}">${tVal || '-'}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; white-space: nowrap; font-size: ${tdsSumFontSize}; font-weight: bold; color: #000; text-align: center; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tSumStyle}">${tdsSumText}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hValStyle}">${hVal || '-'}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hSumStyle}">${item.hardness_sum || 'ผ่าน'}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pValStyle}">${pVal || '-'}</td>
-                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pSumStyle}">${item.ph_sum || 'ผ่าน'}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${cSumStyle}">${cSumText}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tValStyle}">${tVal}</td>
+                            <td style="border: 1.5px solid #000; padding: 2px 2px; font-size: ${tdsSumFontSize}; font-weight: bold; color: #000; text-align: center; line-height: ${tdsLineHeight}; word-break: break-word; vertical-align: middle; box-sizing: border-box; ${failStyle} ${tSumStyle}">${tdsSumDisplay}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hValStyle}">${hVal}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${hSumStyle}">${hSumText}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pValStyle}">${pVal}</td>
+                            <td style="border: 1.5px solid #000; padding: 3px 2px; font-size: 17px !important; font-weight: bold; color: #000; white-space: nowrap; vertical-align: middle; box-sizing: border-box; ${failStyle} ${pSumStyle}">${pSumText}</td>
                         </tr>`;
                 });
 
