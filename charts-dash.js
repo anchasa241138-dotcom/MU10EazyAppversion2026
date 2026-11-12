@@ -1217,9 +1217,9 @@ window.canUserEditSample = function(sampleOrProvince) {
     }
     if (!user) return false;
 
-    // Admin has oversight across all 5 provinces, can view details, but CANNOT record on behalf of provincial officers:
-    // "ต้องการให้แอดมินติดตามผลการดำเนินงานหลังพบปัญหาทั้ง 5 จังหวัดได้ ดูรายละเอียดได้ แต่ไม่สามารถไปบันทึกแทนได้"
-    if (user.role === 'admin' || user.username === 'admin') return false;
+    // Admin and Executive have oversight across all 5 provinces, can view details, but CANNOT record on behalf of provincial officers:
+    // "ต้องการให้แอดมินและผู้บริหารติดตามผลการดำเนินงานหลังพบปัญหาทั้ง 5 จังหวัดได้ ดูรายละเอียดได้ แต่ไม่สามารถไปบันทึกแทนได้"
+    if (user.role === 'admin' || user.username === 'admin' || user.role === 'executive') return false;
 
     // Provincial officers (สสจ., รพ., สสอ.) can ONLY edit their own province
     const uWp = (user.workplace || '').trim();
@@ -2628,8 +2628,9 @@ window.saveCorrectiveActionDetail = function(identifier, data) {
             } catch(e){}
         }
         const isAdmin = user && (user.role === 'admin' || user.username === 'admin');
-        const warnMsg = isAdmin 
-            ? `สิทธิ์ผู้ดูแลระบบ (Admin) สามารถติดตามดูข้อมูลได้เท่านั้น ไม่สามารถบันทึกหรือแก้ไขข้อมูลแทนเจ้าหน้าที่ประจำจังหวัดได้`
+        const isExecutive = user && user.role === 'executive';
+        const warnMsg = (isAdmin || isExecutive)
+            ? `สิทธิ์${isExecutive ? 'ผู้บริหาร (Executive)' : 'ผู้ดูแลระบบ (Admin)'} สามารถติดตามดูข้อมูลได้เท่านั้น ไม่สามารถบันทึกหรือแก้ไขข้อมูลแทนเจ้าหน้าที่ประจำจังหวัดได้`
             : `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัดเท่านั้น)`;
         if (typeof Swal !== 'undefined') {
             Swal.fire({
@@ -2700,8 +2701,9 @@ window.updateSampleAction = function(identifier, newStatus) {
             } catch(e){}
         }
         const isAdmin = user && (user.role === 'admin' || user.username === 'admin');
-        const warnMsg = isAdmin 
-            ? `สิทธิ์ผู้ดูแลระบบ (Admin) สามารถติดตามดูข้อมูลได้เท่านั้น ไม่สามารถบันทึกหรือแก้ไขข้อมูลแทนเจ้าหน้าที่ประจำจังหวัดได้`
+        const isExecutive = user && user.role === 'executive';
+        const warnMsg = (isAdmin || isExecutive)
+            ? `สิทธิ์${isExecutive ? 'ผู้บริหาร (Executive)' : 'ผู้ดูแลระบบ (Admin)'} สามารถติดตามดูข้อมูลได้เท่านั้น ไม่สามารถบันทึกหรือแก้ไขข้อมูลแทนเจ้าหน้าที่ประจำจังหวัดได้`
             : `คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv} (สิทธิ์เฉพาะเจ้าหน้าที่ประจำจังหวัดเท่านั้น)`;
         if (typeof Swal !== 'undefined') {
             Swal.fire({
@@ -2798,7 +2800,8 @@ function updateCorrectiveActionGovernance(samples) {
             barEl.style.width = `${Math.min(parseFloat(closedPct), 100)}%`;
         }
 
-        if (btnManage) btnManage.style.display = isAdmin ? 'none' : 'inline-flex';
+        const isReadOnlyGovernance = Boolean(isAdmin || (user && user.role === 'executive'));
+        if (btnManage) btnManage.style.display = isReadOnlyGovernance ? 'none' : 'inline-flex';
         if (badgeAllPassed) badgeAllPassed.style.display = 'none';
         if (btnFailCount) btnFailCount.innerText = totalFailed;
         if (btnActionLabelTxt) {
@@ -2910,7 +2913,10 @@ window.openCorrectiveDetailModal = function(idKey, forceReadOnly) {
                 } catch(e){}
             }
             const isAdmin = user && (user.role === 'admin' || user.username === 'admin');
-            if (isAdmin) {
+            const isExecutive = user && user.role === 'executive';
+            if (isExecutive) {
+                readonlyBanner.innerHTML = `<i class="fa-solid fa-eye"></i> <strong>โหมดดูรายละเอียด (ผู้บริหาร):</strong> สามารถดูรายละเอียดผลการดำเนินงานของ จ.${targetProv || '-'} ได้ (โหมดอ่านอย่างเดียว ไม่อนุญาตให้บันทึกหรือแก้ไขข้อมูล)`;
+            } else if (isAdmin) {
                 readonlyBanner.innerHTML = `<i class="fa-solid fa-eye"></i> <strong>โหมดดูรายละเอียด (Admin):</strong> สามารถดูรายละเอียดผลการดำเนินงานของ จ.${targetProv || '-'} ได้ (ไม่อนุญาตให้บันทึกหรือแก้ไขแทนเจ้าหน้าที่ประจำจังหวัด)`;
             } else {
                 readonlyBanner.innerHTML = `<i class="fa-solid fa-lock"></i> <strong>โหมดดูข้อมูลอย่างเดียว:</strong> คุณไม่มีสิทธิ์แก้ไขข้อมูลของ จ.${targetProv || '-'} (สิทธิ์การบันทึกแก้ไขเฉพาะเจ้าหน้าที่ผู้รับผิดชอบ จ.${targetProv || '-'} เท่านั้น)`;
