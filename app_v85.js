@@ -1296,12 +1296,15 @@ const app = {
                         this.fetchUsers();
                         document.getElementById('loginForm').reset();
 
-                        const pendingHash = sessionStorage.getItem('pending_route_hash') || window.location.hash;
-                        if (pendingHash && (pendingHash.startsWith('#report-') || pendingHash.startsWith('#download'))) {
-                            this.handleUrlHashRouting();
-                        } else {
-                            this.switchView('dashboard');
+                        sessionStorage.removeItem('pending_route_hash');
+                        if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#dashboard') {
+                            try {
+                                history.replaceState(null, null, window.location.pathname + window.location.search);
+                            } catch (e) {
+                                window.location.hash = '';
+                            }
                         }
+                        this.switchView('dashboard');
                     } else {
                         Swal.fire({ icon: 'error', title: 'ไม่พบข้อมูลผู้ใช้ในระบบ', text: 'โปรดติดต่อผู้ดูแลระบบ' });
                         auth.signOut();
@@ -1323,12 +1326,15 @@ const app = {
                 this.updateAuthUI();
                 e.target.reset();
 
-                const pendingHash = sessionStorage.getItem('pending_route_hash') || window.location.hash;
-                if (pendingHash && (pendingHash.startsWith('#report-') || pendingHash.startsWith('#download'))) {
-                    this.handleUrlHashRouting();
-                } else {
-                    this.switchView('dashboard');
+                sessionStorage.removeItem('pending_route_hash');
+                if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#dashboard') {
+                    try {
+                        history.replaceState(null, null, window.location.pathname + window.location.search);
+                    } catch (e) {
+                        window.location.hash = '';
+                    }
                 }
+                this.switchView('dashboard');
             } else {
                 Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบล้มเหลว', text: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' });
             }
@@ -1487,26 +1493,29 @@ const app = {
     },
 
     logout() {
-        if (typeof auth !== 'undefined') {
-            auth.signOut().then(() => {
-                this.currentUser = null;
-                sessionStorage.removeItem('sskmoph_session');
-                document.body.classList.add('require-login-mode'); // Make sure background is locked
-                const closeBtn = document.querySelector('#authModal .close-modal-btn');
-                if (closeBtn) closeBtn.style.display = 'none'; // Prevent closing
-                this.switchView('dashboard'); // Redirect to dashboard first
-                this.updateAuthUI();
-                this.showLoginModal();
-            });
-        } else {
+        const cleanupSession = () => {
             this.currentUser = null;
-                sessionStorage.removeItem('sskmoph_session');
-                document.body.classList.add('require-login-mode'); // Make sure background is locked
-                const closeBtn = document.querySelector('#authModal .close-modal-btn');
-                if (closeBtn) closeBtn.style.display = 'none'; // Prevent closing
-                this.switchView('dashboard'); // Redirect to dashboard first
-                this.updateAuthUI();
-                this.showLoginModal();
+            sessionStorage.removeItem('sskmoph_session');
+            sessionStorage.removeItem('pending_route_hash');
+            if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#dashboard') {
+                try {
+                    history.replaceState(null, null, window.location.pathname + window.location.search);
+                } catch (e) {
+                    window.location.hash = '';
+                }
+            }
+            document.body.classList.add('require-login-mode'); // Make sure background is locked
+            const closeBtn = document.querySelector('#authModal .close-modal-btn');
+            if (closeBtn) closeBtn.style.display = 'none'; // Prevent closing
+            this.switchView('dashboard'); // Redirect to dashboard first
+            this.updateAuthUI();
+            this.showLoginModal();
+        };
+
+        if (typeof auth !== 'undefined') {
+            auth.signOut().then(() => cleanupSession());
+        } else {
+            cleanupSession();
         }
     },
 
