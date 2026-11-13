@@ -1575,10 +1575,16 @@ const app = {
                 title = 'แบบบันทึกการเก็บตัวอย่างผักและผลไม้';
                 dynamicHTML = `
                     <div class="form-group">
-                        <label>การตรวจหาสารพิษตกค้าง</label>
-                        <div class="checkbox-group-container">
-                            <div class="checkbox-item"><input type="checkbox" name="test_organo"> <label>ออร์กาโนฟอสเฟต</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_carbamate"> <label>คาร์บาเมต</label></div>
+                        <label style="font-weight: 700; color: #0f172a; margin-bottom: 6px; display: block;">การตรวจหาสารพิษตกค้าง</label>
+                        <div class="checkbox-group-container" style="display: flex; flex-wrap: wrap; gap: 28px; padding: 6px 0;">
+                            <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" name="test_gt_kit" id="chk-test-gt-kit" style="width: 18px; height: 18px; cursor: pointer;">
+                                <label for="chk-test-gt-kit" style="cursor: pointer; font-size: 13.5px; font-weight: 500; color: #1e293b; margin-bottom: 0;">กลุ่มออร์กาโนฟอสเฟตและคาร์บาเมต (ชุดทดสอบ GT kit)</label>
+                            </div>
+                            <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" name="test_tm_kit" id="chk-test-tm-kit" style="width: 18px; height: 18px; cursor: pointer;">
+                                <label for="chk-test-tm-kit" style="cursor: pointer; font-size: 13.5px; font-weight: 500; color: #1e293b; margin-bottom: 0;">กลุ่มออร์กาโนคลอรีนและไพเรทรอยด์ (ชุดทดสอบ TM/2 kit)</label>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -3115,6 +3121,8 @@ document.getElementById('formNameTitle').innerText = title;
                 formFieldsContainer.querySelectorAll('input[type="checkbox"]').forEach(chk => {
                     if (sample[chk.name] !== undefined) {
                         chk.checked = sample[chk.name] === 'on' || sample[chk.name] === true;
+                    } else if (chk.name === 'test_gt_kit' && (sample.test_organo === 'on' || sample.test_carbamate === 'on')) {
+                        chk.checked = true;
                     }
                 });
                 formFieldsContainer.querySelectorAll('input[type="text"], input[type="number"], select').forEach(input => {
@@ -4809,7 +4817,7 @@ document.getElementById('formNameTitle').innerText = title;
             sampleNames.forEach(item => {
                 let sub = sample['analysis_substance_' + item.idx] || sample.analysis_substance;
                 if (!sub) {
-                    const hasGT = sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true || sample.test_gt_kit === 'true';
+                    const hasGT = sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true || sample.test_gt_kit === 'true' || sample.test_organo === 'on' || sample.test_carbamate === 'on';
                     const hasTM2 = sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true || sample.test_tm_kit === 'true';
                     if (hasGT && hasTM2) sub = 'GT และ TM/2';
                     else if (hasGT) sub = 'GT';
@@ -9045,7 +9053,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     const interp2 = showChecked ? (sample['analysis_interpretation_2_' + (item.idx || 1)] || '') : '';
                     const res2 = showChecked ? (mapping2[interp2?.trim()] || sample['analysis_details_2_' + (item.idx || 1)] || '') : '';
 
-                    const isGtChecked = showChecked && (sub.includes('GT') || sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true);
+                    const isGtChecked = showChecked && (sub.includes('GT') || sample.test_gt_kit === 'on' || sample.test_gt_kit === 'ยาฆ่าแมลง (GT Kit)' || sample.test_gt_kit === true || sample.test_organo === 'on' || sample.test_carbamate === 'on');
                     const isTmChecked = showChecked && (sub.includes('TM/2') || sample.test_tm_kit === 'on' || sample.test_tm_kit === 'ยาฆ่าแมลง (TM/2 Kit)' || sample.test_tm_kit === true);
 
                     const isMu10001 = sample.form_type === 'MU.10-001' || !sample.form_type;
