@@ -8537,13 +8537,13 @@ body.presentation-mode .app-navbar {
 /* Storytelling Step Section Indicators, Header Pills & Long Banners */
 .story-section-banner {
   width: 100%;
-  border-radius: 16px;
-  padding: 12px 20px;
+  border-radius: 14px;
+  padding: 9px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 16px 0 12px 0;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  margin: 0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
   color: #ffffff;
   position: relative;
   overflow: hidden;
@@ -8553,6 +8553,7 @@ body.presentation-mode .app-navbar {
   background: linear-gradient(135deg, #1e40af 0%, #2563eb 55%, #0284c7 100%);
   border: 1px solid rgba(147, 197, 253, 0.3);
   box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+  margin: -8px 0 10px 0 !important;
 }
 .story-section-banner.banner-step-3 {
   background: linear-gradient(135deg, #c2410c 0%, #ea580c 55%, #f59e0b 100%);
@@ -8563,6 +8564,14 @@ body.presentation-mode .app-navbar {
   background: linear-gradient(135deg, #065f46 0%, #059669 55%, #10b981 100%);
   border: 1px solid rgba(110, 231, 183, 0.3);
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+}
+.dashboard-grid .story-section-banner {
+  margin-top: -6px !important;
+  margin-bottom: -6px !important;
+}
+.dashboard-grid .story-section-banner + .safety-ranking-container,
+.dashboard-grid .story-section-banner + .strategic-ops-grid {
+  margin-top: 0 !important;
 }
 .story-section-banner .banner-left {
   display: flex;
