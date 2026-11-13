@@ -2566,7 +2566,11 @@ document.getElementById('formNameTitle').innerText = title;
                 
                 // Security Check
                 if (!this.canUserEditOrCancelSample(oldSample)) {
-                    Swal.fire('ข้อผิดพลาด', 'คุณไม่มีสิทธิ์แก้ไขรายการนี้', 'error');
+                    const isLockedByLab = ['accepted', 'analyzing', 'in_analysis', 'summarized', 'analyst_signed', 'approved'].includes(oldSample.status);
+                    const msg = isLockedByLab
+                        ? 'ไม่สามารถบันทึกแก้ไขได้เนื่องจากตัวอย่างได้รับการตรวจรับหรืออนุมัติผลไปแล้ว เพื่อป้องกันการเซฟทับข้อมูลสะสม (สิทธิ์แก้ไขเฉพาะแอดมินหรือเจ้าหน้าที่แลป)'
+                        : 'คุณไม่มีสิทธิ์แก้ไขรายการนี้';
+                    Swal.fire('ข้อผิดพลาด', msg, 'error');
                     return;
                 }
 
@@ -2591,10 +2595,16 @@ document.getElementById('formNameTitle').innerText = title;
                 const originalCreatedBy = oldSample.created_by || (this.currentUser ? this.currentUser.username : 'user');
                 const originalLabId = oldSample.lab_id;
                 const originalLabNo = oldSample.lab_no;
+                const originalStatus = oldSample.status;
 
-                // When edited in Step 1, advance/reset to Step 2 (registered) for lab verification
-                let nextStatus = 'registered';
-                if (sampleData.form_type === 'MU.10-008') {
+                // When edited in Step 1:
+                // If it was already accepted/analyzed/approved (e.g. edited by admin or lab), keep its existing workflow status!
+                // Only reset to 'registered' if it was originally 'registered', 'pending', or 'rejected'.
+                let nextStatus = originalStatus || 'registered';
+                if (!originalStatus || originalStatus === 'registered' || originalStatus === 'pending' || originalStatus === 'rejected') {
+                    nextStatus = 'registered';
+                }
+                if (sampleData.form_type === 'MU.10-008' && nextStatus === 'registered') {
                     nextStatus = 'summarized';
                 }
 
@@ -2788,9 +2798,25 @@ document.getElementById('formNameTitle').innerText = title;
         if (!this.currentUser) return true;
         const role = (this.currentUser.role || '').toLowerCase();
         const username = (this.currentUser.username || '').toLowerCase();
-        if (role === 'admin' || username === 'admin') return true;
-        if (role === 'executive') return false; // Executive is strictly read-only
+        
+        // Executive role is strictly read-only across the system
+        if (role === 'executive') return false;
+
+        // Admin and Laboratory staff always have permission to edit or manage samples
+        if (role === 'admin' || username === 'admin' || role === 'lab' || role === 'certifier') {
+            return true;
+        }
+
         if (!sample) return true;
+
+        // For regular users / collectors:
+        // Lock sample once the laboratory has accepted it (status: accepted or higher)
+        const lockedStatuses = ['accepted', 'analyzing', 'in_analysis', 'summarized', 'analyst_signed', 'approved'];
+        if (lockedStatuses.includes(sample.status)) {
+            return false;
+        }
+
+        // Only allow if current user is the owner (creator) of this record
         const owner = (sample.created_by || '').toString().toLowerCase();
         const uName = (this.currentUser.username || '').toString().toLowerCase();
         const uid = (this.currentUser.uid || '').toString().toLowerCase();
@@ -2910,6 +2936,7 @@ document.getElementById('formNameTitle').innerText = title;
 
             // Security check for rendering actions
             const canEditOrCancel = this.canUserEditOrCancelSample(s);
+            const isLockedByLab = ['accepted', 'analyzing', 'in_analysis', 'summarized', 'analyst_signed', 'approved'].includes(s.status);
 
             let actionButtons = '';
             if (canEditOrCancel) {
@@ -2918,16 +2945,40 @@ document.getElementById('formNameTitle').innerText = title;
                     <button class="btn btn-sm btn-danger" onclick="app.cancelSavedRecord('${s.ref_id}')" style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #dc2626; border-color: #b91c1c; color: #ffffff;" title="ยกเลิกรายการ"><i class="fa-solid fa-trash"></i> ยกเลิก</button>
                 `;
             } else {
+                const lockTooltip = isLockedByLab 
+                    ? 'แลปรับตัวอย่างหรืออนุมัติผลแล้ว ล็อกไม่ให้แก้ไขเพื่อป้องกันการเซฟทับข้อมูลสะสม (สิทธิ์แก้ไขเฉพาะแอดมินหรือเจ้าหน้าที่แลป)' 
+                    : 'ไม่มีสิทธิ์แก้ไข (เฉพาะผู้บันทึก แอดมิน หรือเจ้าหน้าที่แลป)';
+                const cancelTooltip = isLockedByLab
+                    ? 'แลปรับตัวอย่างหรืออนุมัติผลแล้ว ไม่สามารถยกเลิกได้'
+                    : 'ไม่มีสิทธิ์ยกเลิก (เฉพาะผู้บันทึก แอดมิน หรือเจ้าหน้าที่แลป)';
                 actionButtons = `
-                    <button class="btn btn-sm" disabled style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #ccc; border-color: #ccc; color: #666; cursor: not-allowed;" title="ไม่มีสิทธิ์แก้ไข (เฉพาะผู้บันทึกและแอดมิน)"><i class="fa-solid fa-lock"></i> แก้ไข</button>
-                    <button class="btn btn-sm" disabled style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #ccc; border-color: #ccc; color: #666; cursor: not-allowed;" title="ไม่มีสิทธิ์ยกเลิก (เฉพาะผู้บันทึกและแอดมิน)"><i class="fa-solid fa-lock"></i> ยกเลิก</button>
+                    <button class="btn btn-sm" disabled style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;" title="${lockTooltip}"><i class="fa-solid fa-lock"></i> แก้ไข</button>
+                    <button class="btn btn-sm" disabled style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;" title="${cancelTooltip}"><i class="fa-solid fa-lock"></i> ยกเลิก</button>
                 `;
+            }
+
+            let statusBadgeHtml = '';
+            if (s.status === 'approved') {
+                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #10b981; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-check"></i> อนุมัติผลแล้ว</span></div>`;
+            } else if (s.status === 'analyst_signed') {
+                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #8b5cf6; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-signature"></i> รออนุมัติผล</span></div>`;
+            } else if (s.status === 'summarized') {
+                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #6366f1; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-square-poll-vertical"></i> สรุปผลแล้ว</span></div>`;
+            } else if (s.status === 'accepted' || s.status === 'analyzing') {
+                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #0284c7; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-vial"></i> แลปรับตรวจแล้ว</span></div>`;
+            } else if (s.status === 'rejected') {
+                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #ef4444; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-xmark"></i> ตีกลับแก้ไข</span></div>`;
+            } else {
+                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #f59e0b; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-clock"></i> รอรับตัวอย่าง</span></div>`;
             }
 
             const tr = document.createElement('tr');
             tr.style.borderBottom = '1px solid var(--border-color)';
             tr.innerHTML = `
-                <td style="padding: 12px 15px; font-weight: bold; color: var(--primary-color);">${s.ref_id}</td>
+                <td style="padding: 12px 15px; font-weight: bold; color: var(--primary-color);">
+                    <div>${s.ref_id}</div>
+                    ${statusBadgeHtml}
+                </td>
                 <td style="padding: 12px 15px;"><span class="badge form-type-badge" style="background-color: #0f274e !important; color: #ffffff !important; padding: 5px 12px !important; border-radius: 6px !important; font-size: 12px !important; font-weight: 700 !important; display: inline-block !important; box-shadow: 0 2px 6px rgba(15,39,78,0.3) !important;">${s.form_type || (s.ref_id && s.ref_id.startsWith("MU001") ? "MU.10-001" : (s.ref_id && s.ref_id.startsWith("MU002") ? "MU.10-002" : (s.ref_id && s.ref_id.startsWith("MU003") ? "MU.10-003" : (s.ref_id && s.ref_id.startsWith("MU004") ? "MU.10-004" : (s.ref_id && s.ref_id.startsWith("MU005") ? "MU.10-005" : (s.ref_id && s.ref_id.startsWith("MU006") ? "MU.10-006" : (s.ref_id && s.ref_id.startsWith("MU007") ? "MU.10-007" : (s.ref_id && s.ref_id.startsWith("MU008") ? "MU.10-008" : (document.getElementById("field-form-type") ? document.getElementById("field-form-type").value : "MU.10-001")))))))))}</span></td>
                 <td style="padding: 12px 15px; font-size: 13px; line-height: 1.4; word-break: break-word;">${sampleDesc}</td>
                 <td style="padding: 12px 15px; font-size: 12px; line-height: 1.4;">
@@ -2955,7 +3006,11 @@ document.getElementById('formNameTitle').innerText = title;
         if (!sample) return;
 
         if (!this.canUserEditOrCancelSample(sample)) {
-            Swal.fire('ข้อผิดพลาด', 'คุณไม่มีสิทธิ์ยกเลิกรายการนี้ (สิทธิ์เฉพาะผู้บันทึกข้อมูลและแอดมิน)', 'error');
+            const isLockedByLab = ['accepted', 'analyzing', 'in_analysis', 'summarized', 'analyst_signed', 'approved'].includes(sample.status);
+            const msg = isLockedByLab 
+                ? 'ไม่สามารถยกเลิกได้เนื่องจากห้องปฏิบัติการรับตัวอย่างหรืออนุมัติผลแล้ว (ติดต่อแอดมินหรือเจ้าหน้าที่แลปหากต้องการดำเนินการ)'
+                : 'คุณไม่มีสิทธิ์ยกเลิกรายการนี้ (สิทธิ์เฉพาะผู้บันทึก แอดมิน หรือเจ้าหน้าที่แลป)';
+            Swal.fire('ข้อผิดพลาด', msg, 'error');
             return;
         }
 
@@ -2999,7 +3054,11 @@ document.getElementById('formNameTitle').innerText = title;
         }
 
         if (!this.canUserEditOrCancelSample(sample)) {
-            Swal.fire('ข้อผิดพลาด', 'คุณไม่มีสิทธิ์แก้ไขรายการนี้ (สิทธิ์เฉพาะผู้บันทึกข้อมูลและแอดมิน)', 'error');
+            const isLockedByLab = ['accepted', 'analyzing', 'in_analysis', 'summarized', 'analyst_signed', 'approved'].includes(sample.status);
+            const msg = isLockedByLab 
+                ? 'ไม่สามารถแก้ไขได้เนื่องจากห้องปฏิบัติการรับตัวอย่างหรืออนุมัติผลแล้ว เพื่อป้องกันการบันทึกทับข้อมูลประวัติสะสม (ติดต่อแอดมินหรือเจ้าหน้าที่แลปหากต้องการแก้ไข)'
+                : 'คุณไม่มีสิทธิ์แก้ไขรายการนี้ (สิทธิ์เฉพาะผู้บันทึก แอดมิน หรือเจ้าหน้าที่แลป)';
+            Swal.fire('ข้อผิดพลาด', msg, 'error');
             return;
         }
 
