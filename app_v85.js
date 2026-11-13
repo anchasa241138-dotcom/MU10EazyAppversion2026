@@ -1066,6 +1066,212 @@ const app = {
 
         const elBannerRate = document.getElementById('banner-safety-rate');
         if (elBannerRate) elBannerRate.innerText = `${passedPct}%`;
+
+        // Update Executive Takeaways Card
+        this.updateExecutiveTakeaways(visible, cStats, passedPct, failedPct);
+    },
+
+    updateExecutiveTakeaways(visible, cStats, passedPct, failedPct) {
+        try {
+            const evaluatedTotal = (cStats.passed || 0) + (cStats.failed || 0);
+            
+            // Headline
+            const headlineEl = document.getElementById('execTakeawaysHeadline');
+            if (headlineEl) {
+                if (evaluatedTotal === 0) {
+                    headlineEl.innerHTML = `<i class="fa-solid fa-circle-info" style="color: #38bdf8;"></i> ยังไม่มีข้อมูลตัวอย่างที่ตรวจวิเคราะห์และอนุมัติผลเสร็จสิ้นในเงื่อนไขการค้นหานี้`;
+                } else if ((cStats.failed || 0) === 0) {
+                    headlineEl.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #34d399;"></i> สถานการณ์ความปลอดภัยด้านอาหารภาพรวม เขตสุขภาพที่ 10 ผ่านเกณฑ์มาตรฐานสมบูรณ์ <strong>100.0%</strong> ไม่พบสารตกค้าง`;
+                } else {
+                    headlineEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #fb7185;"></i> ตรวจพบตัวอย่างที่ไม่ผ่านมาตรฐานจำนวน <strong>${cStats.failed}</strong> รายการ (คิดเป็น ${failedPct}%) อยู่ระหว่างเร่งรัดติดตามผล`;
+                }
+            }
+
+            // Metric 1: Safety Rate
+            const rateEl = document.getElementById('execTakeawaySafetyRate');
+            if (rateEl) rateEl.innerText = `${passedPct}%`;
+            const rateSubEl = document.getElementById('execTakeawaySafetySub');
+            if (rateSubEl) rateSubEl.innerText = `ผ่าน ${cStats.passed || 0} จาก ${evaluatedTotal} ตัวอย่าง`;
+
+            // Metric 2: Top Hazard
+            const topHazardEl = document.getElementById('execTakeawayTopHazard');
+            const hazardSubEl = document.getElementById('execTakeawayHazardSub');
+            if (topHazardEl && hazardSubEl) {
+                if ((cStats.failed || 0) === 0) {
+                    topHazardEl.innerText = 'ไม่พบสารตกค้าง';
+                    topHazardEl.style.color = '#34d399';
+                    hazardSubEl.innerText = 'ผ่านเกณฑ์มาตรฐานครบ 100%';
+                } else {
+                    let topDangerName = '-';
+                    const dangerPanelEl = document.querySelector('#top-danger-list .ranking-item .item-name');
+                    if (dangerPanelEl) {
+                        topDangerName = dangerPanelEl.innerText.trim();
+                    } else {
+                        topDangerName = 'พบสารตกค้าง';
+                    }
+                    topHazardEl.innerText = topDangerName;
+                    topHazardEl.style.color = '#fb7185';
+                    hazardSubEl.innerText = `พบไม่ผ่าน ${cStats.failed} ตัวอย่าง`;
+                }
+            }
+
+            // Metric 3: Top Risk Location
+            const topLocEl = document.getElementById('execTakeawayTopLoc');
+            const locSubEl = document.getElementById('execTakeawayLocSub');
+            if (topLocEl && locSubEl) {
+                if ((cStats.failed || 0) === 0) {
+                    topLocEl.innerText = 'ปลอดภัยทุกแห่ง';
+                    topLocEl.style.color = '#38bdf8';
+                    locSubEl.innerText = 'ผ่านเกณฑ์ครบทุกแหล่งจำหน่าย';
+                } else {
+                    let topLocName = '-';
+                    const locItem = document.querySelector('#locationRiskListContainer .loc-risk-item');
+                    if (locItem) {
+                        const nameEl = locItem.querySelector('.loc-risk-name');
+                        if (nameEl) topLocName = nameEl.innerText.trim();
+                    }
+                    topLocEl.innerText = topLocName !== '-' ? topLocName : 'ตลาดสด / ร้านค้า';
+                    topLocEl.style.color = '#fb7185';
+                    locSubEl.innerText = 'พบความเสี่ยงปนเปื้อนสูงสุด';
+                }
+            }
+
+            // Metric 4: SLA Rate
+            const slaRateEl = document.getElementById('execTakeawaySlaRate');
+            const slaSubEl = document.getElementById('execTakeawaySlaSub');
+            const tatSlaEl = document.getElementById('tat-sla-rate');
+            if (slaRateEl) {
+                const slaVal = tatSlaEl ? tatSlaEl.innerText : '100.0%';
+                slaRateEl.innerText = slaVal;
+                slaRateEl.style.color = '#a78bfa';
+            }
+            if (slaSubEl) {
+                const tatAvgEl = document.getElementById('tat-avg-days');
+                const avgDays = tatAvgEl ? tatAvgEl.innerText : '0.0 วัน';
+                slaSubEl.innerText = `ระยะเวลาเฉลี่ย ${avgDays} (เกณฑ์ 72 ชม.)`;
+            }
+
+            // Timestamp
+            const timeEl = document.getElementById('execTakeawaysTimestamp');
+            if (timeEl) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                timeEl.innerHTML = `<i class="fa-regular fa-clock"></i> ปรับปรุงล่าสุด ${timeStr} น.`;
+            }
+        } catch (e) {
+            console.warn('Error in updateExecutiveTakeaways:', e);
+        }
+    },
+
+    togglePresentationMode() {
+        const isPres = document.body.classList.toggle('presentation-mode');
+        const floatBar = document.getElementById('presentationFloatingBar');
+        const btn = document.getElementById('btnTogglePresentationMode');
+        if (floatBar) floatBar.style.display = isPres ? 'block' : 'none';
+        if (btn) {
+            if (isPres) {
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fa-solid fa-compress"></i> <span>ออกจากโหมดนำเสนอ</span>';
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fa-solid fa-expand"></i> <span>โหมดนำเสนอ</span>';
+            }
+        }
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 150);
+    },
+
+    printExecutiveSummary() {
+        const modal = document.getElementById('executiveSummaryModal');
+        if (!modal) return;
+        
+        // Populate dynamic brief data
+        const now = new Date();
+        const thaiDate = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+        const metaEl = document.getElementById('execModalMeta');
+        if (metaEl) metaEl.innerText = `ประจำปีงบประมาณ พ.ศ. 2570 | ข้อมูล ณ วันที่ ${thaiDate} | ศูนย์วิทยาศาสตร์การแพทย์ที่ 10 อุบลราชธานี`;
+
+        // KPI Table
+        const tbody = document.getElementById('execModalKpiTbody');
+        if (tbody) {
+            const provTargets = [
+                { name: 'อุบลราชธานี', target: 1750, id: 'ubon' },
+                { name: 'ศรีสะเกษ', target: 1540, id: 'sisaket' },
+                { name: 'มุกดาหาร', target: 670, id: 'muk' },
+                { name: 'อำนาจเจริญ', target: 670, id: 'amnat' },
+                { name: 'ยโสธร', target: 615, id: 'yasothon' }
+            ];
+            let totalActual = 0;
+            let totalTarget = 5245;
+            let rowsHtml = '';
+            provTargets.forEach(p => {
+                const actualEl = document.getElementById(`pt-actual-${p.id}`);
+                const actual = actualEl ? parseInt(actualEl.innerText.replace(/,/g, ''), 10) || 0 : 0;
+                totalActual += actual;
+                const pct = p.target > 0 ? ((actual / p.target) * 100).toFixed(1) : '0.0';
+                const status = parseFloat(pct) >= 100 ? '<span style="color:#10b981;font-weight:700;">บรรลุเป้าหมาย</span>' : (parseFloat(pct) >= 50 ? '<span style="color:#0284c7;font-weight:700;">ตามเกณฑ์</span>' : '<span style="color:#ef4444;font-weight:700;">ต้องเร่งรัด</span>');
+                rowsHtml += `
+                    <tr>
+                        <td style="text-align: left;"><strong>${p.name}</strong></td>
+                        <td>${p.target.toLocaleString()}</td>
+                        <td><strong>${actual.toLocaleString()}</strong></td>
+                        <td>${pct}%</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            });
+            const totalPct = ((totalActual / totalTarget) * 100).toFixed(1);
+            rowsHtml += `
+                <tr style="background:#f1f5f9; font-weight:800;">
+                    <td style="text-align: left;">รวมเขตสุขภาพที่ 10</td>
+                    <td>${totalTarget.toLocaleString()}</td>
+                    <td><span style="color:#0284c7;">${totalActual.toLocaleString()}</span></td>
+                    <td>${totalPct}%</td>
+                    <td>${parseFloat(totalPct) >= 100 ? '<span style="color:#10b981;">บรรลุเป้าหมาย</span>' : '<span style="color:#f59e0b;">กำลังดำเนินการ</span>'}</td>
+                </tr>
+            `;
+            tbody.innerHTML = rowsHtml;
+        }
+
+        // Food Safety Metrics
+        const passRateEl = document.getElementById('dash-insight-rate');
+        const modalPassRate = document.getElementById('execModalPassRate');
+        if (modalPassRate && passRateEl) modalPassRate.innerText = passRateEl.innerText;
+
+        const statsCompletedEl = document.getElementById('stats-completed');
+        const modalTotalComp = document.getElementById('execModalTotalCompleted');
+        if (modalTotalComp && statsCompletedEl) modalTotalComp.innerText = `${statsCompletedEl.innerText} ตัวอย่าง`;
+
+        const topHazardEl = document.getElementById('execTakeawayTopHazard');
+        const modalTopHazard = document.getElementById('execModalTopHazard');
+        if (modalTopHazard && topHazardEl) modalTopHazard.innerText = topHazardEl.innerText;
+
+        // Operations
+        const tatAvgEl = document.getElementById('tat-avg-days');
+        const modalTatAvg = document.getElementById('execModalTatAvg');
+        if (modalTatAvg && tatAvgEl) modalTatAvg.innerText = tatAvgEl.innerText;
+
+        const tatSlaEl = document.getElementById('tat-sla-rate');
+        const modalTatSla = document.getElementById('execModalTatSla');
+        const modalTatSlaSub = document.getElementById('execModalTatSlaSub');
+        if (modalTatSla && tatSlaEl) modalTatSla.innerText = tatSlaEl.innerText;
+        if (modalTatSlaSub && tatSlaEl) modalTatSlaSub.innerText = tatSlaEl.innerText;
+
+        const failCountEl = document.getElementById('action-total-fail');
+        const modalFail = document.getElementById('execModalFailCount');
+        if (modalFail && failCountEl) modalFail.innerText = `${failCountEl.innerText} รายการ`;
+
+        const closedPctEl = document.getElementById('action-closed-pct');
+        const modalClosed = document.getElementById('execModalClosedRate');
+        if (modalClosed && closedPctEl) modalClosed.innerText = closedPctEl.innerText;
+
+        modal.style.display = 'flex';
+    },
+
+    closeExecutiveSummaryModal() {
+        const modal = document.getElementById('executiveSummaryModal');
+        if (modal) modal.style.display = 'none';
     },
 
     // Authentication Logic
@@ -12349,6 +12555,13 @@ window.app = app;
 // Start the app when DOM loads
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
+    
+    // Esc key to exit presentation mode
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.body.classList.contains('presentation-mode')) {
+            app.togglePresentationMode();
+        }
+    });
 });
 
 
