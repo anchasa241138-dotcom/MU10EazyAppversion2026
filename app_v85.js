@@ -1243,9 +1243,12 @@ const app = {
         const modalTotalComp = document.getElementById('execModalTotalCompleted');
         if (modalTotalComp && statsCompletedEl) modalTotalComp.innerText = `${statsCompletedEl.innerText} ตัวอย่าง`;
 
-        const topHazardEl = document.getElementById('execTakeawayTopHazard');
         const modalTopHazard = document.getElementById('execModalTopHazard');
-        if (modalTopHazard && topHazardEl) modalTopHazard.innerText = topHazardEl.innerText;
+        if (modalTopHazard) {
+            const dangerPanelEl = document.querySelector('#top-danger-list .ranking-item .item-name');
+            const topHazardEl = document.getElementById('execTakeawayTopHazard');
+            modalTopHazard.innerText = (dangerPanelEl ? dangerPanelEl.innerText.trim() : '') || (topHazardEl ? topHazardEl.innerText : 'ไม่พบสารตกค้าง');
+        }
 
         // Operations
         const tatAvgEl = document.getElementById('tat-avg-days');
