@@ -6779,8 +6779,8 @@ body.role-admin .btn-manage-actions {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
   gap: 20px;
-  margin-top: 15px;
-  margin-bottom: 25px;
+  margin-top: 10px;
+  margin-bottom: 0 !important;
   font-family: 'Prompt', sans-serif !important;
 }
 
@@ -8567,6 +8567,10 @@ body.presentation-mode .app-navbar {
 }
 .dashboard-grid .story-section-banner {
   margin-top: -6px !important;
+  margin-bottom: -6px !important;
+}
+.dashboard-grid .story-section-banner.banner-step-4 {
+  margin-top: -10px !important;
   margin-bottom: -6px !important;
 }
 .dashboard-grid .story-section-banner + .safety-ranking-container,
