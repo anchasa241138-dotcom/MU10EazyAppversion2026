@@ -2905,7 +2905,7 @@ document.getElementById('formNameTitle').innerText = title;
             const noDataMsg = searchVal ? 'ไม่มีรายการข้อมูลที่ตรงกับการค้นหา' : 'ไม่มีรายการข้อมูลที่บันทึกรอการตรวจสอบ';
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 20px; color: #888;">
+                    <td colspan="7" style="text-align: center; padding: 20px; color: #888;">
                         <i class="fa-solid fa-folder-open" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
                         ${noDataMsg}
                     </td>
@@ -2941,8 +2941,8 @@ document.getElementById('formNameTitle').innerText = title;
             let actionButtons = '';
             if (canEditOrCancel) {
                 actionButtons = `
-                    <button class="btn btn-sm btn-primary" onclick="app.editSavedRecord('${s.ref_id}')" style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px;"><i class="fa-solid fa-pen-to-square"></i> แก้ไข</button>
-                    <button class="btn btn-sm btn-danger" onclick="app.cancelSavedRecord('${s.ref_id}')" style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #dc2626; border-color: #b91c1c; color: #ffffff;" title="ยกเลิกรายการ"><i class="fa-solid fa-trash"></i> ยกเลิก</button>
+                    <button class="btn btn-sm btn-primary btn-record-action" onclick="app.editSavedRecord('${s.ref_id}')" style="padding: 3px 8px !important; font-size: 11px !important; border-radius: 5px !important; height: 26px !important; min-height: 26px !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; gap: 4px !important;" title="แก้ไขข้อมูลตัวอย่าง"><i class="fa-solid fa-pen-to-square" style="font-size: 10.5px;"></i> แก้ไข</button>
+                    <button class="btn btn-sm btn-danger btn-record-action" onclick="app.cancelSavedRecord('${s.ref_id}')" style="padding: 3px 8px !important; font-size: 11px !important; border-radius: 5px !important; height: 26px !important; min-height: 26px !important; background-color: #dc2626 !important; border-color: #b91c1c !important; color: #ffffff !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; gap: 4px !important;" title="ยกเลิกรายการ"><i class="fa-solid fa-trash" style="font-size: 10.5px;"></i> ยกเลิก</button>
                 `;
             } else {
                 const lockTooltip = isLockedByLab 
@@ -2952,44 +2952,42 @@ document.getElementById('formNameTitle').innerText = title;
                     ? 'แลปรับตัวอย่างหรืออนุมัติผลแล้ว ไม่สามารถยกเลิกได้'
                     : 'ไม่มีสิทธิ์ยกเลิก (เฉพาะผู้บันทึก แอดมิน หรือเจ้าหน้าที่แลป)';
                 actionButtons = `
-                    <button class="btn btn-sm" disabled style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;" title="${lockTooltip}"><i class="fa-solid fa-lock"></i> แก้ไข</button>
-                    <button class="btn btn-sm" disabled style="padding: 4px 10px; font-size: 11.5px; border-radius: 4px; background-color: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed;" title="${cancelTooltip}"><i class="fa-solid fa-lock"></i> ยกเลิก</button>
+                    <button class="btn btn-sm btn-record-action" disabled style="padding: 3px 8px !important; font-size: 11px !important; border-radius: 5px !important; height: 26px !important; min-height: 26px !important; background: #e2e8f0 !important; border: 1px solid #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; gap: 4px !important;" title="${lockTooltip}"><i class="fa-solid fa-lock" style="font-size: 10.5px;"></i> แก้ไข</button>
+                    <button class="btn btn-sm btn-record-action" disabled style="padding: 3px 8px !important; font-size: 11px !important; border-radius: 5px !important; height: 26px !important; min-height: 26px !important; background: #e2e8f0 !important; border: 1px solid #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; gap: 4px !important;" title="${cancelTooltip}"><i class="fa-solid fa-lock" style="font-size: 10.5px;"></i> ยกเลิก</button>
                 `;
             }
 
             let statusBadgeHtml = '';
             if (s.status === 'approved') {
-                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #10b981; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-check"></i> อนุมัติผลแล้ว</span></div>`;
+                statusBadgeHtml = `<span class="badge" style="background-color: #10b981; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; white-space: nowrap;"><i class="fa-solid fa-circle-check"></i> อนุมัติผลแล้ว</span>`;
             } else if (s.status === 'analyst_signed') {
-                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #8b5cf6; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-signature"></i> รออนุมัติผล</span></div>`;
+                statusBadgeHtml = `<span class="badge" style="background-color: #8b5cf6; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; white-space: nowrap;"><i class="fa-solid fa-signature"></i> รออนุมัติผล</span>`;
             } else if (s.status === 'summarized') {
-                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #6366f1; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-square-poll-vertical"></i> สรุปผลแล้ว</span></div>`;
+                statusBadgeHtml = `<span class="badge" style="background-color: #6366f1; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; white-space: nowrap;"><i class="fa-solid fa-square-poll-vertical"></i> สรุปผลแล้ว</span>`;
             } else if (s.status === 'accepted' || s.status === 'analyzing') {
-                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #0284c7; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-vial"></i> แลปรับตรวจแล้ว</span></div>`;
+                statusBadgeHtml = `<span class="badge" style="background-color: #0284c7; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; white-space: nowrap;"><i class="fa-solid fa-vial"></i> แลปรับตรวจแล้ว</span>`;
             } else if (s.status === 'rejected') {
-                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #ef4444; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-xmark"></i> ตีกลับแก้ไข</span></div>`;
+                statusBadgeHtml = `<span class="badge" style="background-color: #ef4444; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; white-space: nowrap;"><i class="fa-solid fa-circle-xmark"></i> ตีกลับแก้ไข</span>`;
             } else {
-                statusBadgeHtml = `<div style="margin-top: 5px;"><span class="badge" style="background-color: #f59e0b; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-clock"></i> รอรับตัวอย่าง</span></div>`;
+                statusBadgeHtml = `<span class="badge" style="background-color: #f59e0b; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; white-space: nowrap;"><i class="fa-solid fa-clock"></i> รอรับตัวอย่าง</span>`;
             }
 
             const tr = document.createElement('tr');
             tr.style.borderBottom = '1px solid var(--border-color)';
             tr.innerHTML = `
-                <td style="padding: 12px 15px; font-weight: bold; color: var(--primary-color);">
-                    <div>${s.ref_id}</div>
-                    ${statusBadgeHtml}
-                </td>
-                <td style="padding: 12px 15px;"><span class="badge form-type-badge" style="background-color: #0f274e !important; color: #ffffff !important; padding: 5px 12px !important; border-radius: 6px !important; font-size: 12px !important; font-weight: 700 !important; display: inline-block !important; box-shadow: 0 2px 6px rgba(15,39,78,0.3) !important;">${s.form_type || (s.ref_id && s.ref_id.startsWith("MU001") ? "MU.10-001" : (s.ref_id && s.ref_id.startsWith("MU002") ? "MU.10-002" : (s.ref_id && s.ref_id.startsWith("MU003") ? "MU.10-003" : (s.ref_id && s.ref_id.startsWith("MU004") ? "MU.10-004" : (s.ref_id && s.ref_id.startsWith("MU005") ? "MU.10-005" : (s.ref_id && s.ref_id.startsWith("MU006") ? "MU.10-006" : (s.ref_id && s.ref_id.startsWith("MU007") ? "MU.10-007" : (s.ref_id && s.ref_id.startsWith("MU008") ? "MU.10-008" : (document.getElementById("field-form-type") ? document.getElementById("field-form-type").value : "MU.10-001")))))))))}</span></td>
-                <td style="padding: 12px 15px; font-size: 13px; line-height: 1.4; word-break: break-word;">${sampleDesc}</td>
-                <td style="padding: 12px 15px; font-size: 12px; line-height: 1.4;">
+                <td style="padding: 10px 14px; font-weight: bold; color: var(--primary-color); white-space: nowrap;">${s.ref_id}</td>
+                <td style="padding: 10px 14px;"><span class="badge form-type-badge" style="background-color: #0f274e !important; color: #ffffff !important; padding: 4px 10px !important; border-radius: 6px !important; font-size: 11.5px !important; font-weight: 700 !important; display: inline-block !important; box-shadow: 0 2px 4px rgba(15,39,78,0.25) !important;">${s.form_type || (s.ref_id && s.ref_id.startsWith("MU001") ? "MU.10-001" : (s.ref_id && s.ref_id.startsWith("MU002") ? "MU.10-002" : (s.ref_id && s.ref_id.startsWith("MU003") ? "MU.10-003" : (s.ref_id && s.ref_id.startsWith("MU004") ? "MU.10-004" : (s.ref_id && s.ref_id.startsWith("MU005") ? "MU.10-005" : (s.ref_id && s.ref_id.startsWith("MU006") ? "MU.10-006" : (s.ref_id && s.ref_id.startsWith("MU007") ? "MU.10-007" : (s.ref_id && s.ref_id.startsWith("MU008") ? "MU.10-008" : (document.getElementById("field-form-type") ? document.getElementById("field-form-type").value : "MU.10-001")))))))))}</span></td>
+                <td style="padding: 10px 14px; font-size: 12.5px; line-height: 1.4; word-break: break-word;">${sampleDesc}</td>
+                <td style="padding: 10px 14px; font-size: 12px; line-height: 1.4;">
                    <div><b>สถานที่:</b> ${s.location_name || '-'}</div>
                    <div><b>ผู้เก็บ:</b> ${s.collector_name || '-'}</div>
                 </td>
-                <td style="padding: 12px 15px; font-size: 12px; color: #666;">${dateStr}</td>
-                <td style="padding: 12px 15px; text-align: center;">
-                    <div style="display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: nowrap;">
+                <td style="padding: 10px 14px; font-size: 12px; color: #666; white-space: nowrap;">${dateStr}</td>
+                <td style="padding: 10px 14px; text-align: center; vertical-align: middle; white-space: nowrap;">${statusBadgeHtml}</td>
+                <td style="padding: 10px 14px; text-align: center; vertical-align: middle; white-space: nowrap;">
+                    <div style="display: flex; gap: 5px; justify-content: center; align-items: center; flex-wrap: nowrap;">
                         ${actionButtons}
-                        <button class="btn btn-sm btn-pdf" onclick="app.generateSubmissionPDF('${s.ref_id}')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; background-color: #059669; border-color: #047857; color: #ffffff;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                        <button class="btn btn-sm btn-pdf btn-record-action" onclick="app.generateSubmissionPDF('${s.ref_id}')" style="padding: 3px 8px !important; font-size: 11px !important; border-radius: 5px !important; height: 26px !important; min-height: 26px !important; background: #059669 !important; border: 1px solid #047857 !important; color: #ffffff !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; gap: 4px !important;" title="ดาวน์โหลดเอกสาร PDF สำหรับยื่นตรวจ"><i class="fa-solid fa-file-pdf" style="font-size: 10.5px;"></i> PDF</button>
                     </div>
                 </td>
             `;
