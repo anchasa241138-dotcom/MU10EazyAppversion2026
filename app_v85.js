@@ -1883,13 +1883,6 @@ document.getElementById('formNameTitle').innerText = title;
 
         if (selProv && MU10_ADDRESS_DATA[selProv]) {
             const amphoes = Object.keys(MU10_ADDRESS_DATA[selProv]);
-            // Add 'เมือง' shortcut if not directly present
-            const hasMuang = amphoes.some(a => a.startsWith('เมือง'));
-            if (hasMuang) {
-                const optM = document.createElement('option');
-                optM.value = 'เมือง';
-                amphoeDatalist.appendChild(optM);
-            }
             amphoes.forEach(a => {
                 const opt = document.createElement('option');
                 opt.value = a;
