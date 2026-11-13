@@ -1871,6 +1871,26 @@ body {
   border: 1px solid #cbd5e1 !important;
 }
 
+/* Compact Table Action Buttons in Saved Records */
+#view-sample-record .responsive-table table .btn-record-action,
+#savedRecordsTableBody .btn-record-action,
+#savedRecordsTableBody .btn {
+  border-radius: 5px !important;
+  padding: 3px 8px !important;
+  font-size: 11px !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+  gap: 4px !important;
+  font-weight: 600 !important;
+  letter-spacing: normal !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+}
+#view-sample-record .responsive-table table .btn-record-action i,
+#savedRecordsTableBody .btn-record-action i,
+#savedRecordsTableBody .btn i {
+  font-size: 10.5px !important;
+}
 
 /* Auth Notice Card in Sample Record */
 #view-sample-record .auth-notice-card {
