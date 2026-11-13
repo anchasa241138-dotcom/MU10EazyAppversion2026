@@ -1578,7 +1578,7 @@ const app = {
                         <label style="font-weight: 700; color: #0f172a; margin-bottom: 6px; display: block;">การตรวจหาสารพิษตกค้าง</label>
                         <div class="checkbox-group-container" style="display: flex; flex-wrap: wrap; gap: 28px; padding: 6px 0;">
                             <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" name="test_gt_kit" id="chk-test-gt-kit" style="width: 18px; height: 18px; cursor: pointer;">
+                                <input type="checkbox" name="test_gt_kit" id="chk-test-gt-kit" checked style="width: 18px; height: 18px; cursor: pointer;">
                                 <label for="chk-test-gt-kit" style="cursor: pointer; font-size: 13.5px; font-weight: 500; color: #1e293b; margin-bottom: 0;">กลุ่มออร์กาโนฟอสเฟตและคาร์บาเมต (ชุดทดสอบ GT kit)</label>
                             </div>
                             <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
@@ -2745,7 +2745,13 @@ document.getElementById('formNameTitle').innerText = title;
 
         const dynContainer = document.getElementById('dynamicFormFields');
         if (dynContainer) {
-            dynContainer.querySelectorAll('input[type="checkbox"]').forEach(chk => { chk.checked = false; });
+            dynContainer.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+                if (chk.name === 'test_gt_kit' && activeFormType === 'MU.10-001') {
+                    chk.checked = true;
+                } else {
+                    chk.checked = false;
+                }
+            });
             dynContainer.querySelectorAll('input[type="text"], input[type="number"], select').forEach(inp => { inp.value = ''; });
         }
 
@@ -4822,6 +4828,7 @@ document.getElementById('formNameTitle').innerText = title;
                     if (hasGT && hasTM2) sub = 'GT และ TM/2';
                     else if (hasGT) sub = 'GT';
                     else if (hasTM2) sub = 'TM/2';
+                    else sub = 'GT'; // Default fallback for MU.10-001 vegetable/fruit screening
                 }
                 
                 if (sub) {
