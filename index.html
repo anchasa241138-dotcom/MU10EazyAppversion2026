@@ -1209,7 +1209,7 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="enhancements.css?v=1794561500000">
+    <link rel="stylesheet" href="enhancements.css?v=1794803000000">
     <style id="bloom-field-tracking-style">
         /* Bloom Field Gradient Background - Specifically for E-Tracking */
         body.tracking-view-active,
@@ -4698,7 +4698,7 @@
                 <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px 20px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                     <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 9px 14px; margin-bottom: 14px; font-size: 12.5px; color: #0369a1; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-circle-info" style="font-size: 15px;"></i>
-                        <span><strong>วิธีเลือกการส่ง:</strong> สามารถเลือกส่งแยกทีละประเภทรายงาน (เช่น ส่งเฉพาะ RD-001 หรือ RD-006 ให้ผู้รับผิดชอบงานนั้นๆ) หรือเลือก <strong>"ทุกประเภทรายงานในรอบนี้"</strong> เพื่อส่งสรุปภาพรวมครบทุกงานของจังหวัดในฉบับเดียว</span>
+                        <span><strong>วิธีเลือกการส่ง:</strong> สามารถเลือกส่งทีละประเภท หรือ<strong>ติ๊กเลือกหลายประเภทพร้อมกัน</strong> (เช่น RD-001 + RD-002 + RD-006) หรือกด <strong>"เลือกทั้งหมด"</strong> เพื่อสรุปรายงานครบทุกงานส่งจังหวัดในฉบับเดียว</span>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 12px;">
                         <div>
@@ -4715,18 +4715,70 @@
                         </div>
                         <div>
                             <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
-                                <i class="fa-solid fa-file-lines" style="color: #2563eb;"></i> ประเภทรายงาน:
+                                <i class="fa-solid fa-file-lines" style="color: #2563eb;"></i> ประเภทรายงาน (เลือกได้หลายประเภท):
                             </label>
-                            <select id="provEmailSelectForm" class="form-control" onchange="app.onProvEmailFilterChanged()" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 13.5px;">
-                                <option value="MU.10-001" selected>🥬 RD-001 (ยาฆ่าแมลงในผักสด ผลไม้สด)</option>
-                                <option value="MU.10-002">🥩 RD-002 (สารปนเปื้อน 5 ชนิด)</option>
-                                <option value="MU.10-003">🍳 RD-003 (สารโพลาร์ในน้ำมันทอดซ้ำ)</option>
-                                <option value="MU.10-004">🍳 RD-004 (สารโพลาร์ในน้ำมันทอดซ้ำ)</option>
-                                <option value="MU.10-005">🧂 RD-005 (ไอโอดีนในเกลือบริโภค)</option>
-                                <option value="MU.10-006">💧 RD-006 (น้ำดื่ม/ตู้น้ำดื่ม)</option>
-                                <option value="MU.10-007">🍲 RD-007 (โคลิฟอร์มในอาหาร)</option>
-                                <option value="all">🌐 ทุกประเภทรายงานในรอบนี้ (สรุปภาพรวมครบทุกงาน)</option>
-                            </select>
+                            <div class="prov-form-multiselect-container" id="provEmailFormMultiSelectContainer">
+                                <button type="button" class="prov-form-dropdown-btn" id="provEmailFormDropdownBtn" onclick="app.toggleProvEmailFormDropdown(event)">
+                                    <span class="prov-form-btn-label" id="provEmailFormDropdownLabel">
+                                        <span>🥬 RD-001 (ยาฆ่าแมลงในผักสด ผลไม้สด)</span>
+                                    </span>
+                                    <span class="prov-form-btn-counter" id="provEmailFormDropdownCounter">1 ประเภท</span>
+                                    <i class="fa-solid fa-chevron-down" style="font-size: 11px; color: #64748b; margin-left: 6px;"></i>
+                                </button>
+                                <div class="prov-form-dropdown-menu" id="provEmailFormDropdownMenu">
+                                    <div class="prov-form-actions-bar">
+                                        <span style="color: #64748b; font-weight: 600;">เลือกประเภทรายงาน:</span>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button type="button" class="prov-form-action-btn" onclick="app.setAllProvEmailForms(true)">เลือกทั้งหมด</button>
+                                            <span style="color: #cbd5e1;">|</span>
+                                            <button type="button" class="prov-form-action-btn" onclick="app.setAllProvEmailForms(false)" style="color: #ef4444;">ล้าง</button>
+                                        </div>
+                                    </div>
+                                    <div class="prov-form-items-list" id="provEmailFormCheckboxes">
+                                        <label class="prov-form-chk-label is-checked">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-001" checked onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">🥬 RD-001</span>
+                                            <span>ยาฆ่าแมลงในผักสด ผลไม้สด</span>
+                                        </label>
+                                        <label class="prov-form-chk-label">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-002" onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">🥩 RD-002</span>
+                                            <span>สารปนเปื้อน 5 ชนิด</span>
+                                        </label>
+                                        <label class="prov-form-chk-label">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-003" onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">🍳 RD-003</span>
+                                            <span>สารโพลาร์ในน้ำมันทอดซ้ำ</span>
+                                        </label>
+                                        <label class="prov-form-chk-label">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-004" onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">🍳 RD-004</span>
+                                            <span>สารโพลาร์ในน้ำมันทอดซ้ำ</span>
+                                        </label>
+                                        <label class="prov-form-chk-label">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-005" onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">🧂 RD-005</span>
+                                            <span>ไอโอดีนในเกลือบริโภค</span>
+                                        </label>
+                                        <label class="prov-form-chk-label">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-006" onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">💧 RD-006</span>
+                                            <span>น้ำดื่ม/ตู้น้ำดื่ม</span>
+                                        </label>
+                                        <label class="prov-form-chk-label">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-007" onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">🍲 RD-007</span>
+                                            <span>โคลิฟอร์มในอาหาร</span>
+                                        </label>
+                                        <label class="prov-form-chk-label">
+                                            <input type="checkbox" class="prov-form-chk" value="MU.10-008" onchange="app.onProvFormCheckboxChanged()">
+                                            <span class="prov-form-badge-pill">🏷️ RD-008</span>
+                                            <span>การแสดงฉลากอาหาร</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="provEmailSelectForm" value="MU.10-001">
+                            </div>
                         </div>
                         <div>
                             <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 5px;">
@@ -4940,6 +4992,6 @@
         </div>
     </div>
 
-    <script src="app_v85.js?v=1794561500000"></script>
+    <script src="app_v85.js?v=1794803000000"></script>
 </body>
 </html>
