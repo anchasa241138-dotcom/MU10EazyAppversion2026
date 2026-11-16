@@ -8932,13 +8932,14 @@ body.presentation-mode .app-navbar {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  width: 100%;
-  min-width: 290px;
+  width: max-content;
+  min-width: 100%;
+  max-width: min(420px, 92vw);
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
-  padding: 8px;
+  padding: 8px 10px;
   z-index: 1050;
   display: none;
 }
@@ -8980,8 +8981,9 @@ body.presentation-mode .app-navbar {
 }
 
 .prov-form-items-list {
-  max-height: 250px;
+  max-height: 270px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -8991,14 +8993,15 @@ body.presentation-mode .app-navbar {
 .prov-form-chk-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
+  gap: 10px;
+  padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
-  font-size: 12.5px;
+  font-size: 13px;
   color: #334155;
   user-select: none;
+  white-space: nowrap;
 }
 
 .prov-form-chk-label:hover {
@@ -9017,21 +9020,31 @@ body.presentation-mode .app-navbar {
   border-radius: 4px;
   cursor: pointer;
   accent-color: #0284c7;
+  flex-shrink: 0;
 }
 
 .prov-form-badge-pill {
-  display: inline-block;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
   font-weight: 700;
   background: #e2e8f0;
   color: #334155;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
 }
 
 .prov-form-chk-label.is-checked .prov-form-badge-pill {
   background: #bae6fd;
   color: #0369a1;
+}
+
+.prov-form-item-text {
+  white-space: nowrap;
 }
 
 @media print {
