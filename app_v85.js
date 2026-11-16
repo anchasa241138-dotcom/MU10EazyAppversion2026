@@ -11754,14 +11754,14 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const hiddenInput = document.getElementById('provEmailSelectForm');
 
         const shortMap = {
-            'MU.10-001': '🥬 RD-001',
-            'MU.10-002': '🥩 RD-002',
-            'MU.10-003': '🍳 RD-003',
-            'MU.10-004': '🍳 RD-004',
-            'MU.10-005': '🧂 RD-005',
-            'MU.10-006': '💧 RD-006',
-            'MU.10-007': '🍲 RD-007',
-            'MU.10-008': '🏷️ RD-008'
+            'MU.10-001': 'RD-001',
+            'MU.10-002': 'RD-002',
+            'MU.10-003': 'RD-003',
+            'MU.10-004': 'RD-004',
+            'MU.10-005': 'RD-005',
+            'MU.10-006': 'RD-006',
+            'MU.10-007': 'RD-007',
+            'MU.10-008': 'RD-008'
         };
 
         const nameMap = {
@@ -11791,7 +11791,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             counterEl.style.background = '#fee2e2';
             counterEl.style.color = '#b91c1c';
         } else if (selected.length === totalCount) {
-            labelEl.innerHTML = '<span>🌐 <strong>ทุกประเภทรายงาน</strong> (ครบทั้ง 8 งาน)</span>';
+            labelEl.innerHTML = '<span><strong>ทุกประเภทรายงาน</strong> (ครบทั้ง 8 งาน)</span>';
             counterEl.innerText = `${totalCount} ประเภท`;
             counterEl.style.background = '#e0f2fe';
             counterEl.style.color = '#0369a1';
@@ -11965,49 +11965,49 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const formMeta = {
             'MU.10-001': {
                 code: 'RD-001',
-                badge: '🥬 RD-001',
+                badge: 'RD-001',
                 title: 'ตรวจเฝ้าระวังสารตกค้างยาฆ่าแมลงในผักสด ผลไม้สด (MU.10-001)',
                 subjectTopic: 'แจ้งผลการตรวจวิเคราะห์สารตกค้างยาฆ่าแมลงในผักสด ผลไม้สด โดยใช้ชุดทดสอบเบื้องต้น (Test kit)'
             },
             'MU.10-002': {
                 code: 'RD-002',
-                badge: '🥩 RD-002',
+                badge: 'RD-002',
                 title: 'ตรวจเฝ้าระวังสารปนเปื้อน 5 ชนิด (MU.10-002)',
                 subjectTopic: 'แจ้งผลการตรวจวิเคราะห์สารปนเปื้อนในอาหาร 5 ชนิด (บอแรกซ์, ฟอร์มาลิน, สารฟอกขาว, สารกันรา, สารเร่งเนื้อแดง)'
             },
             'MU.10-003': {
                 code: 'RD-003',
-                badge: '🍳 RD-003',
+                badge: 'RD-003',
                 title: 'ตรวจวัดปริมาณสารโพลาร์ในน้ำมันทอดซ้ำ (MU.10-003)',
                 subjectTopic: 'แจ้งผลการตรวจวัดปริมาณสารโพลาร์ในน้ำมันทอดซ้ำ'
             },
             'MU.10-004': {
                 code: 'RD-004',
-                badge: '🍳 RD-004',
+                badge: 'RD-004',
                 title: 'ตรวจวัดปริมาณสารโพลาร์ในน้ำมันทอดซ้ำ (MU.10-004)',
                 subjectTopic: 'แจ้งผลการตรวจวัดปริมาณสารโพลาร์ในน้ำมันทอดซ้ำ'
             },
             'MU.10-005': {
                 code: 'RD-005',
-                badge: '🧂 RD-005',
+                badge: 'RD-005',
                 title: 'ตรวจเฝ้าระวังไอโอดีนในเกลือบริโภค (MU.10-005)',
                 subjectTopic: 'แจ้งผลการตรวจวิเคราะห์ไอโอดีนในเกลือบริโภค'
             },
             'MU.10-006': {
                 code: 'RD-006',
-                badge: '💧 RD-006',
+                badge: 'RD-006',
                 title: 'ตรวจเฝ้าระวังคุณภาพน้ำดื่ม/ตู้น้ำดื่ม (MU.10-006)',
                 subjectTopic: 'แจ้งผลการตรวจวิเคราะห์คุณภาพน้ำดื่ม/ตู้น้ำดื่ม'
             },
             'MU.10-007': {
                 code: 'RD-007',
-                badge: '🍲 RD-007',
+                badge: 'RD-007',
                 title: 'ตรวจเฝ้าระวังโคลิฟอร์มในอาหาร (MU.10-007)',
                 subjectTopic: 'แจ้งผลการตรวจวิเคราะห์เชื้อโคลิฟอร์มในอาหาร'
             },
             'MU.10-008': {
                 code: 'RD-008',
-                badge: '🏷️ RD-008',
+                badge: 'RD-008',
                 title: 'ตรวจสอบความถูกต้องของการแสดงฉลากอาหาร (MU.10-008)',
                 subjectTopic: 'แจ้งผลการตรวจสอบความถูกต้องของการแสดงฉลากอาหารตามมาตรฐาน'
             }
