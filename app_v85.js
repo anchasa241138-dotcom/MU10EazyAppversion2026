@@ -12209,8 +12209,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             });
         }
 
-        // Active items (only those checked)
-        const activeItems = reportItems.filter(item => item.checked);
+        // Active items (all report items for selected forms)
+        const activeItems = reportItems;
         const totalReports = activeItems.length;
         const failedReports = activeItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').length;
         const passedReports = totalReports - failedReports;
@@ -12281,7 +12281,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (subjectInput) subjectInput.value = subject;
 
         if (countBadge) {
-            countBadge.innerText = `เลือกส่ง ${totalReports} / ${reportItems.length} ใบงาน`;
+            countBadge.innerText = `สรุป ${totalReports} ใบงาน`;
         }
 
         const getBaseUrl = () => {
@@ -12300,17 +12300,12 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         let rowsHtml = '';
         reportItems.forEach((item, index) => {
             const isFail = item.failed > 0 || item.status === 'ไม่ผ่าน';
-            const isChecked = item.checked;
-            const opacityStyle = isChecked ? '' : 'opacity: 0.45; background-color: #f1f5f9; text-decoration: line-through;';
             const rowBg = isFail ? 'background-color: #fef2f2;' : (index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;');
             const failTextColor = isFail ? 'color: #b91c1c; font-weight: bold; background-color: #fee2e2;' : 'color: #166534; font-weight: 600;';
             const pdfLink = `${baseUrl}#report-${encodeURIComponent(item.ref_id || (index + 1))}`;
 
             rowsHtml += `
-                <tr style="${rowBg} ${opacityStyle}">
-                    <td style="border: 1px solid #cbd5e1; padding: 7px 6px; text-align: center;">
-                        <input type="checkbox" class="prov-email-item-chk" data-ref-id="${item.ref_id}" ${isChecked ? 'checked' : ''} onchange="app.toggleProvEmailItem('${item.ref_id}')" style="width: 15px; height: 15px; cursor: pointer;" title="เลือก/ยกเลิกใบงานนี้">
-                    </td>
+                <tr style="${rowBg}">
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">${index + 1}</td>
                     ${isMultiMode ? `<td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;"><span style="display:inline-block; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; background: #e0f2fe; color: #0369a1;">${item.formCode}</span></td>` : ''}
                     <td style="border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; font-weight: 500; ${isFail ? 'color: #991b1b; font-weight: 700;' : ''}">${item.name}</td>
@@ -12421,19 +12416,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                 <!-- Detailed Breakdown Table -->
                 <div style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: bold; font-size: 13.5px; color: #334155;">ตารางแจกแจงผลการตรวจ${isMultiMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'} (เลือกส่งได้):</span>
-                        <label style="font-size: 12px; color: #0284c7; cursor: pointer;">
-                            <input type="checkbox" onchange="app.toggleSelectAllEmailItems(this.checked)" checked style="margin-right: 4px;"> เลือกทั้งหมด
-                        </label>
+                    <div style="margin-bottom: 6px;">
+                        <span style="font-weight: bold; font-size: 13.5px; color: #334155;">ตารางแจกแจงผลการตรวจ${isMultiMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'}:</span>
                     </div>
                     <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: center;">
                         <thead>
                             <tr style="background-color: #e2e8f0; color: #0f172a;">
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 6%;">เลือก</th>
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 7%;">ลำดับ</th>
-                                ${isMultiMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 15%;">ประเภท</th>' : ''}
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; text-align: left; width: ${isMultiMode ? '43%' : '58%'};">อำเภอ / หน่วยงาน / สถานที่</th>
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 8%;">ลำดับ</th>
+                                ${isMultiMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 16%;">ประเภท</th>' : ''}
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; text-align: left; width: ${isMultiMode ? '44%' : '60%'};">อำเภอ / หน่วยงาน / สถานที่</th>
                                 <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 18%;">ผลการตรวจ</th>
                                 <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">เอกสาร</th>
                             </tr>
