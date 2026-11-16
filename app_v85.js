@@ -11664,6 +11664,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (sDateInput) sDateInput.dataset.manualEdited = 'false';
         if (aDateInput) aDateInput.dataset.manualEdited = 'false';
 
+        // Ensure report dropdown menu is closed and summary is refreshed
+        const formDropdownMenu = document.getElementById('provEmailFormDropdownMenu');
+        if (formDropdownMenu) formDropdownMenu.classList.remove('show');
+        const formDropdownBtn = document.getElementById('provEmailFormDropdownBtn');
+        if (formDropdownBtn) formDropdownBtn.classList.remove('is-active');
+        this.updateProvEmailFormSummary();
+
         this.populateProvEmailRounds();
         this.updateProvincialEmailPreview();
         this.updateGasStatusUI();
@@ -11676,6 +11683,138 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (!modal) return;
         modal.classList.remove('active');
         modal.style.display = 'none';
+        const formDropdownMenu = document.getElementById('provEmailFormDropdownMenu');
+        if (formDropdownMenu) formDropdownMenu.classList.remove('show');
+        const formDropdownBtn = document.getElementById('provEmailFormDropdownBtn');
+        if (formDropdownBtn) formDropdownBtn.classList.remove('is-active');
+    },
+
+    getProvEmailSelectedForms() {
+        const checkboxes = document.querySelectorAll('.prov-form-chk:checked');
+        if (checkboxes && checkboxes.length > 0) {
+            return Array.from(checkboxes).map(c => c.value);
+        }
+        // Fallback: check hidden input or default to MU.10-001
+        const hiddenInput = document.getElementById('provEmailSelectForm');
+        if (hiddenInput && hiddenInput.value) {
+            if (hiddenInput.value === 'all') {
+                return ['MU.10-001', 'MU.10-002', 'MU.10-003', 'MU.10-004', 'MU.10-005', 'MU.10-006', 'MU.10-007', 'MU.10-008'];
+            }
+            return hiddenInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        }
+        return ['MU.10-001'];
+    },
+
+    toggleProvEmailFormDropdown(e) {
+        if (e && e.stopPropagation) e.stopPropagation();
+        const menu = document.getElementById('provEmailFormDropdownMenu');
+        const btn = document.getElementById('provEmailFormDropdownBtn');
+        if (!menu) return;
+        const isOpen = menu.classList.contains('show');
+        if (isOpen) {
+            menu.classList.remove('show');
+            if (btn) btn.classList.remove('is-active');
+        } else {
+            menu.classList.add('show');
+            if (btn) btn.classList.add('is-active');
+        }
+    },
+
+    setAllProvEmailForms(selectAll = true) {
+        const checkboxes = document.querySelectorAll('.prov-form-chk');
+        checkboxes.forEach(chk => {
+            chk.checked = selectAll;
+            const label = chk.closest('.prov-form-chk-label');
+            if (label) {
+                if (selectAll) label.classList.add('is-checked');
+                else label.classList.remove('is-checked');
+            }
+        });
+        this.updateProvEmailFormSummary();
+        this.onProvEmailFilterChanged();
+    },
+
+    onProvFormCheckboxChanged() {
+        const checkboxes = document.querySelectorAll('.prov-form-chk');
+        checkboxes.forEach(chk => {
+            const label = chk.closest('.prov-form-chk-label');
+            if (label) {
+                if (chk.checked) label.classList.add('is-checked');
+                else label.classList.remove('is-checked');
+            }
+        });
+        this.updateProvEmailFormSummary();
+        this.onProvEmailFilterChanged();
+    },
+
+    updateProvEmailFormSummary() {
+        const selected = this.getProvEmailSelectedForms();
+        const labelEl = document.getElementById('provEmailFormDropdownLabel');
+        const counterEl = document.getElementById('provEmailFormDropdownCounter');
+        const hiddenInput = document.getElementById('provEmailSelectForm');
+
+        const shortMap = {
+            'MU.10-001': '🥬 RD-001',
+            'MU.10-002': '🥩 RD-002',
+            'MU.10-003': '🍳 RD-003',
+            'MU.10-004': '🍳 RD-004',
+            'MU.10-005': '🧂 RD-005',
+            'MU.10-006': '💧 RD-006',
+            'MU.10-007': '🍲 RD-007',
+            'MU.10-008': '🏷️ RD-008'
+        };
+
+        const nameMap = {
+            'MU.10-001': 'ผักสด ผลไม้สด',
+            'MU.10-002': 'สารปนเปื้อน 5 ชนิด',
+            'MU.10-003': 'น้ำมันทอดซ้ำ',
+            'MU.10-004': 'น้ำมันทอดซ้ำ',
+            'MU.10-005': 'เกลือบริโภค',
+            'MU.10-006': 'น้ำดื่ม/ตู้น้ำดื่ม',
+            'MU.10-007': 'โคลิฟอร์มในอาหาร',
+            'MU.10-008': 'การแสดงฉลากอาหาร'
+        };
+
+        const totalCount = document.querySelectorAll('.prov-form-chk').length || 8;
+
+        if (hiddenInput) {
+            if (selected.length === totalCount) hiddenInput.value = 'all';
+            else if (selected.length === 1) hiddenInput.value = selected[0];
+            else hiddenInput.value = selected.join(',');
+        }
+
+        if (!labelEl || !counterEl) return;
+
+        if (selected.length === 0) {
+            labelEl.innerHTML = '<span style="color:#ef4444;"><i class="fa-solid fa-circle-exclamation"></i> โปรดเลือกอย่างน้อย 1 ประเภท</span>';
+            counterEl.innerText = '0 ประเภท';
+            counterEl.style.background = '#fee2e2';
+            counterEl.style.color = '#b91c1c';
+        } else if (selected.length === totalCount) {
+            labelEl.innerHTML = '<span>🌐 <strong>ทุกประเภทรายงาน</strong> (ครบทั้ง 8 งาน)</span>';
+            counterEl.innerText = `${totalCount} ประเภท`;
+            counterEl.style.background = '#e0f2fe';
+            counterEl.style.color = '#0369a1';
+        } else if (selected.length === 1) {
+            const tag = shortMap[selected[0]] || selected[0];
+            const name = nameMap[selected[0]] || '';
+            labelEl.innerHTML = `<span><strong>${tag}</strong> (${name})</span>`;
+            counterEl.innerText = '1 ประเภท';
+            counterEl.style.background = '#e0f2fe';
+            counterEl.style.color = '#0369a1';
+        } else if (selected.length <= 3) {
+            const tags = selected.map(f => shortMap[f] || f).join(', ');
+            labelEl.innerHTML = `<span><strong>${tags}</strong></span>`;
+            counterEl.innerText = `${selected.length} ประเภท`;
+            counterEl.style.background = '#e0f2fe';
+            counterEl.style.color = '#0369a1';
+        } else {
+            const firstTwo = selected.slice(0, 2).map(f => shortMap[f] || f).join(', ');
+            labelEl.innerHTML = `<span><strong>${firstTwo}</strong> และอีก ${selected.length - 2} งาน</span>`;
+            counterEl.innerText = `${selected.length} ประเภท`;
+            counterEl.style.background = '#e0f2fe';
+            counterEl.style.color = '#0369a1';
+        }
     },
 
     onProvEmailFilterChanged() {
@@ -11701,18 +11840,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
     populateProvEmailRounds() {
         const provSelect = document.getElementById('provEmailSelectProv');
-        const formSelect = document.getElementById('provEmailSelectForm');
         const roundSelect = document.getElementById('provEmailSelectRound');
         if (!provSelect || !roundSelect) return;
 
         const selectedProv = provSelect.value;
-        const selectedForm = formSelect ? formSelect.value : 'all';
+        const selectedForms = this.getProvEmailSelectedForms();
+        const isAllMode = (selectedForms.length === 8 || selectedForms.length === 0);
 
         const approved = (this.samples || []).filter(s => {
             if (s.status !== 'approved') return false;
             const matchProv = !s.province || s.province === selectedProv || (s.location_main && s.location_main.includes(selectedProv)) || (!s.province && selectedProv === 'อุบลราชธานี');
             if (!matchProv) return false;
-            if (selectedForm !== 'all') return s.form_type === selectedForm;
+            if (!isAllMode) {
+                return selectedForms.includes(s.form_type);
+            }
             return true;
         });
 
@@ -11791,7 +11932,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
     updateProvincialEmailPreview() {
         const provSelect = document.getElementById('provEmailSelectProv');
-        const formSelect = document.getElementById('provEmailSelectForm');
         const roundSelect = document.getElementById('provEmailSelectRound');
         const subjectInput = document.getElementById('provEmailSubject');
         const previewContainer = document.getElementById('provEmailPreviewBody');
@@ -11802,8 +11942,24 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (!provSelect || !previewContainer) return;
 
         const selectedProv = provSelect.value;
-        const selectedForm = formSelect ? formSelect.value : 'all';
+        const selectedForms = this.getProvEmailSelectedForms();
         const selectedRound = roundSelect ? roundSelect.value : 'latest';
+
+        if (selectedForms.length === 0) {
+            if (countBadge) countBadge.innerText = 'เลือกส่ง 0 / 0 ใบงาน';
+            if (subjectInput) subjectInput.value = `[ขอส่งรายงานผลตรวจวิเคราะห์ - จังหวัด${selectedProv}]`;
+            previewContainer.innerHTML = `
+                <div style="text-align: center; padding: 45px 20px; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; margin: 20px 0;">
+                    <i class="fa-solid fa-list-check" style="font-size: 38px; color: #0284c7; margin-bottom: 12px; display: inline-block;"></i>
+                    <h4 style="color: #1e293b; margin-bottom: 8px; font-size: 16px;">ยังไม่ได้เลือกประเภทรายงาน</h4>
+                    <p style="font-size: 13.5px; color: #64748b; margin-bottom: 16px;">กรุณาคลิกเลือกประเภทรายงานอย่างน้อย 1 ประเภท เพื่อสร้างและดูตัวอย่างรายงานสรุปส่งจังหวัด</p>
+                    <button type="button" class="btn btn-primary" onclick="app.setAllProvEmailForms(true)" style="background: #0284c7; color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">
+                        <i class="fa-solid fa-check-double"></i> เลือกทุกประเภทรายงาน
+                    </button>
+                </div>
+            `;
+            return;
+        }
 
         // Metadata map for each report form type
         const formMeta = {
@@ -11854,17 +12010,32 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 badge: '🏷️ RD-008',
                 title: 'ตรวจสอบความถูกต้องของการแสดงฉลากอาหาร (MU.10-008)',
                 subjectTopic: 'แจ้งผลการตรวจสอบความถูกต้องของการแสดงฉลากอาหารตามมาตรฐาน'
-            },
-            'all': {
-                code: 'ภาพรวมทุกประเภท',
-                badge: '🌐 ทุกประเภท',
-                title: 'ตรวจเฝ้าระวังความปลอดภัยด้านอาหารทุกประเภท ประจำรอบ (สรุปภาพรวมครบทุกงาน)',
-                subjectTopic: 'แจ้งสรุปภาพรวมผลการตรวจวิเคราะห์ความปลอดภัยด้านอาหารทุกประเภท โดยหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10'
             }
         };
 
-        const currentMeta = formMeta[selectedForm] || formMeta['all'];
-        const isAllMode = (selectedForm === 'all');
+        const totalAvailableForms = 8;
+        const isAllMode = (selectedForms.length === totalAvailableForms);
+        const isMultiMode = (selectedForms.length > 1);
+
+        let collectiveCode = '';
+        let collectiveTitle = '';
+        let collectiveTopic = '';
+
+        if (isAllMode) {
+            collectiveCode = 'ทุกประเภทรายงาน';
+            collectiveTitle = 'ตรวจเฝ้าระวังความปลอดภัยด้านอาหารทุกประเภท ประจำรอบ (สรุปภาพรวมครบทุกงาน)';
+            collectiveTopic = 'แจ้งสรุปภาพรวมผลการตรวจวิเคราะห์ความปลอดภัยด้านอาหารทุกประเภท โดยหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10';
+        } else if (isMultiMode) {
+            const codes = selectedForms.map(f => (formMeta[f] ? formMeta[f].code : f.replace('MU.10-', 'RD-'))).join(', ');
+            collectiveCode = codes;
+            collectiveTitle = `ตรวจเฝ้าระวังความปลอดภัยด้านอาหาร (${codes}) รวม ${selectedForms.length} ประเภทรายงาน`;
+            collectiveTopic = `แจ้งผลการตรวจวิเคราะห์ความปลอดภัยด้านอาหาร (${codes}) รวม ${selectedForms.length} ประเภทรายงาน โดยชุดทดสอบเบื้องต้น (Test kit)`;
+        } else {
+            const single = formMeta[selectedForms[0]] || formMeta['MU.10-001'];
+            collectiveCode = single.code;
+            collectiveTitle = single.title;
+            collectiveTopic = single.subjectTopic;
+        }
 
         // 25 default districts of Ubon Ratchathani (reference list)
         const ubonDistricts = [
@@ -11902,7 +12073,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const matchProv = !s.province || s.province === selectedProv || (s.location_main && s.location_main.includes(selectedProv)) || (!s.province && selectedProv === 'อุบลราชธานี');
             if (!matchProv) return false;
             if (!isAllMode) {
-                return s.form_type === selectedForm;
+                return selectedForms.includes(s.form_type);
             }
             return true;
         });
@@ -11985,14 +12156,15 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     checked: isChecked
                 };
             });
-        } else if (selectedProv === 'อุบลราชธานี' && (selectedForm === 'MU.10-001' || isAllMode)) {
-            // Use standard 25 districts for Ubon
+        } else if (selectedProv === 'อุบลราชธานี' && !isMultiMode && selectedForms[0] === 'MU.10-001') {
+            // Use standard 25 districts for single RD-001 in Ubon
             reportItems = ubonDistricts.map((item, idx) => {
                 const ref = 'TEMP-UBN-' + (idx + 1);
                 const isChecked = !(this.provEmailExcludedRefs && this.provEmailExcludedRefs.has(ref));
                 return {
                     ...item,
                     formCode: 'RD-001',
+                    formType: 'MU.10-001',
                     ref_id: ref,
                     samplingDateDisplay: item.samplingDate,
                     analysisDateDisplay: item.analysisDate,
@@ -12000,14 +12172,41 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 };
             });
         } else {
-            // Representative samples for other province or empty form
-            reportItems = [
-                { ref_id: 'TEMP-OTHER-1', name: 'รพ.ศูนย์ / รพ.ทั่วไป', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
-                { ref_id: 'TEMP-OTHER-2', name: 'รพ.ชุมชนแห่งที่ 1', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
-                { ref_id: 'TEMP-OTHER-3', name: 'รพ.ชุมชนแห่งที่ 2', formCode: currentMeta.code, tested: 10, failed: 1, status: 'ไม่ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
-                { ref_id: 'TEMP-OTHER-4', name: 'รพ.ชุมชนแห่งที่ 3', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true },
-                { ref_id: 'TEMP-OTHER-5', name: 'รพ.สต. ในพื้นที่เป้าหมาย', formCode: currentMeta.code, tested: 10, failed: 0, status: 'ผ่าน', samplingDateDisplay: '4 ตุลาคม 2569', analysisDateDisplay: '4 ตุลาคม 2569', checked: true }
+            // Multi-mode simulation or other province: display representative samples per selected report type
+            const sampleHospitals = [
+                'รพ.สรรพสิทธิประสงค์', 'รพ.วารินชำราบ', 'รพ.เดชอุดม', 'รพ.ตระการพืชผล',
+                'รพ.เขมราฐ', 'รพ.พิบูลมังสาหาร', 'รพ.บุณฑริก', 'รพ.น้ำยืน',
+                'รพ.เขื่องใน', 'รพ.ม่วงสามสิบ', 'รพ.โขงเจียม', 'รพ.ศรีเมืองใหม่',
+                'รพ.กุดข้าวปุ้น', 'รพ.สิรินธร', 'รพ.โพธิ์ไทร', 'รพ.สำโรง'
             ];
+            reportItems = [];
+            let itemCounter = 0;
+            const itemsPerType = isMultiMode ? (selectedForms.length <= 3 ? 3 : 2) : 5;
+
+            selectedForms.forEach((formKey) => {
+                const meta = formMeta[formKey] || { code: formKey.replace('MU.10-', 'RD-') };
+                for (let i = 0; i < itemsPerType; i++) {
+                    itemCounter++;
+                    const baseName = sampleHospitals[(itemCounter - 1) % sampleHospitals.length];
+                    const placeName = (selectedProv === 'อุบลราชธานี') ? baseName : `${baseName.replace('รพ.สรรพสิทธิประสงค์', 'รพ.ศูนย์/รพ.ทั่วไป')} (จ.${selectedProv})`;
+                    const isFail = (itemCounter === 3 || (isMultiMode && itemCounter % 5 === 0));
+                    const ref = `TEMP-${meta.code}-${itemCounter}`;
+                    const isChecked = !(this.provEmailExcludedRefs && this.provEmailExcludedRefs.has(ref));
+
+                    reportItems.push({
+                        ref_id: ref,
+                        name: placeName,
+                        formCode: meta.code,
+                        formType: formKey,
+                        tested: 10,
+                        failed: isFail ? 1 : 0,
+                        status: isFail ? 'ไม่ผ่าน' : 'ผ่าน',
+                        samplingDateDisplay: '17 ตุลาคม 2569',
+                        analysisDateDisplay: '18 ตุลาคม 2569',
+                        checked: isChecked
+                    });
+                }
+            });
         }
 
         // Active items (only those checked)
@@ -12077,7 +12276,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (isAllMode) {
             subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ภาพรวม : ทุกประเภทรายงาน - จังหวัด${selectedProv}] (ผ่าน ${passSamples} / ไม่ผ่าน ${failSamples}) วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
         } else {
-            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${currentMeta.code} - จังหวัด${selectedProv}] (ผ่าน ${passSamples} / ไม่ผ่าน ${failSamples}) วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
+            subject = `[ขอส่งรายงานผลตรวจวิเคราะห์ : ${collectiveCode} - จังหวัด${selectedProv}] (ผ่าน ${passSamples} / ไม่ผ่าน ${failSamples}) วันที่รับตัวอย่าง ${shortSubjectDateStr}`;
         }
         if (subjectInput) subjectInput.value = subject;
 
@@ -12113,7 +12312,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <input type="checkbox" class="prov-email-item-chk" data-ref-id="${item.ref_id}" ${isChecked ? 'checked' : ''} onchange="app.toggleProvEmailItem('${item.ref_id}')" style="width: 15px; height: 15px; cursor: pointer;" title="เลือก/ยกเลิกใบงานนี้">
                     </td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;">${index + 1}</td>
-                    ${isAllMode ? `<td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;"><span style="display:inline-block; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; background: #e0f2fe; color: #0369a1;">${item.formCode}</span></td>` : ''}
+                    ${isMultiMode ? `<td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center;"><span style="display:inline-block; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; background: #e0f2fe; color: #0369a1;">${item.formCode}</span></td>` : ''}
                     <td style="border: 1px solid #cbd5e1; padding: 7px 10px; text-align: left; font-weight: 500; ${isFail ? 'color: #991b1b; font-weight: 700;' : ''}">${item.name}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; font-weight: 600;">${item.tested}</td>
                     <td style="border: 1px solid #cbd5e1; padding: 7px 8px; text-align: center; ${failTextColor}">${item.failed}</td>
@@ -12165,7 +12364,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <!-- Salutation & Subject -->
                 <div style="margin-bottom: 18px; font-size: 14.5px;">
                     <p style="margin: 4px 0;"><strong>เรียน:</strong> หัวหน้ากลุ่มงานคุ้มครองผู้บริโภคและเภสัชสาธารณสุข สำนักงานสาธารณสุขจังหวัด${selectedProv} และผู้รับผิดชอบงานอาหารปลอดภัย</p>
-                    <p style="margin: 4px 0;"><strong>เรื่อง:</strong> ${currentMeta.subjectTopic}</p>
+                    <p style="margin: 4px 0;"><strong>เรื่อง:</strong> ${collectiveTopic}</p>
                 </div>
 
                 <!-- Meta Summary Box -->
@@ -12174,7 +12373,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <table style="width: 100%; border: none; font-size: 13.5px; line-height: 1.85;">
                         <tr>
                             <td style="width: 160px; font-weight: bold; color: #475569;">กิจกรรม :</td>
-                            <td>${currentMeta.title}</td>
+                            <td>${collectiveTitle}</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #475569;">พื้นที่ตรวจ:</td>
@@ -12223,7 +12422,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <!-- Detailed Breakdown Table -->
                 <div style="margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: bold; font-size: 13.5px; color: #334155;">ตารางแจกแจงผลการตรวจ${isAllMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'} (เลือกส่งได้):</span>
+                        <span style="font-weight: bold; font-size: 13.5px; color: #334155;">ตารางแจกแจงผลการตรวจ${isMultiMode ? 'แยกตามประเภทรายงานและหน่วยงาน' : 'รายอำเภอ/โรงพยาบาล'} (เลือกส่งได้):</span>
                         <label style="font-size: 12px; color: #0284c7; cursor: pointer;">
                             <input type="checkbox" onchange="app.toggleSelectAllEmailItems(this.checked)" checked style="margin-right: 4px;"> เลือกทั้งหมด
                         </label>
@@ -12233,8 +12432,8 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                             <tr style="background-color: #e2e8f0; color: #0f172a;">
                                 <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 6%;">เลือก</th>
                                 <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 7%;">ลำดับ</th>
-                                ${isAllMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 15%;">ประเภท</th>' : ''}
-                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; text-align: left; width: ${isAllMode ? '43%' : '58%'};">อำเภอ / หน่วยงาน / สถานที่</th>
+                                ${isMultiMode ? '<th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 15%;">ประเภท</th>' : ''}
+                                <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; text-align: left; width: ${isMultiMode ? '43%' : '58%'};">อำเภอ / หน่วยงาน / สถานที่</th>
                                 <th colspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 18%;">ผลการตรวจ</th>
                                 <th rowspan="2" style="border: 1px solid #cbd5e1; padding: 6px; width: 14%;">เอกสาร</th>
                             </tr>
@@ -12563,6 +12762,17 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && document.body.classList.contains('presentation-mode')) {
             app.togglePresentationMode();
+        }
+    });
+
+    // Close provincial email form dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const container = document.getElementById('provEmailFormMultiSelectContainer');
+        const menu = document.getElementById('provEmailFormDropdownMenu');
+        const btn = document.getElementById('provEmailFormDropdownBtn');
+        if (container && menu && !container.contains(e.target)) {
+            menu.classList.remove('show');
+            if (btn) btn.classList.remove('is-active');
         }
     });
 });
