@@ -11622,6 +11622,28 @@ const btnApprove = document.getElementById('btnApproveAndSign');
     formatThaiDate(dateStr, format = 'long') {
         if (!dateStr) return '-';
         try {
+            const thaiMonths = [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ];
+
+            // 1. Check if string matches Thai date format: e.g. "29 ตุลาคม 2569" or "6 ตุลาคม 2569"
+            const thaiMatch = String(dateStr).match(/(\d{1,2})\s+([^\s\d]+)\s+(\d{4})/);
+            if (thaiMatch) {
+                const day = parseInt(thaiMatch[1], 10);
+                const mIdx = thaiMonths.indexOf(thaiMatch[2].trim());
+                const yearThai = parseInt(thaiMatch[3], 10);
+                if (mIdx !== -1) {
+                    if (format === 'short') {
+                        const dd = String(day).padStart(2, '0');
+                        const mm = String(mIdx + 1).padStart(2, '0');
+                        return `${dd}/${mm}/${yearThai}`;
+                    }
+                    return `${day} ${thaiMonths[mIdx]} ${yearThai}`;
+                }
+            }
+
+            // 2. Standard Date object parsing
             const d = new Date(dateStr);
             if (isNaN(d.getTime())) return dateStr;
             const day = d.getDate();
@@ -11631,10 +11653,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 const mm = String(d.getMonth() + 1).padStart(2, '0');
                 return `${dd}/${mm}/${yearThai}`;
             }
-            const thaiMonths = [
-                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-                'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-            ];
             const monthName = thaiMonths[d.getMonth()] || '';
             return `${day} ${monthName} ${yearThai}`;
         } catch(e) {
@@ -12209,6 +12227,44 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             });
         }
 
+        // Helper to convert date string (ISO YYYY-MM-DD or Thai "D MMMM YYYY") into epoch timestamp for reliable sorting
+        const parseDateToEpoch = (dStr) => {
+            if (!dStr) return 0;
+            const thaiMonths = [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ];
+            // 1. Check Thai long format: "29 ตุลาคม 2569" or "6 ตุลาคม 2569"
+            const thaiMatch = String(dStr).match(/(\d{1,2})\s+([^\s\d]+)\s+(\d{4})/);
+            if (thaiMatch) {
+                const day = parseInt(thaiMatch[1], 10);
+                const mIdx = thaiMonths.indexOf(thaiMatch[2].trim());
+                let year = parseInt(thaiMatch[3], 10);
+                if (year > 2400) year -= 543;
+                if (mIdx !== -1) return new Date(year, mIdx, day).getTime();
+            }
+            // 2. Check DD/MM/YYYY or DD-MM-YYYY
+            const slashMatch = String(dStr).match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+            if (slashMatch) {
+                const day = parseInt(slashMatch[1], 10);
+                const month = parseInt(slashMatch[2], 10) - 1;
+                let year = parseInt(slashMatch[3], 10);
+                if (year > 2400) year -= 543;
+                return new Date(year, month, day).getTime();
+            }
+            // 3. Standard date string
+            const d = new Date(dStr);
+            if (!isNaN(d.getTime())) return d.getTime();
+            return 0;
+        };
+
+        // Sort table report items chronologically by sampling date (earliest to latest)
+        reportItems.sort((a, b) => {
+            const timeA = parseDateToEpoch(a.samplingDateRaw || a.samplingDateDisplay);
+            const timeB = parseDateToEpoch(b.samplingDateRaw || b.samplingDateDisplay);
+            return timeA - timeB;
+        });
+
         // Active items (all report items for selected forms)
         const activeItems = reportItems;
         const totalReports = activeItems.length;
@@ -12224,27 +12280,44 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
         const failedHospitals = activeItems.filter(item => item.failed > 0 || item.status === 'ไม่ผ่าน').map(item => item.name);
 
-        // Calculate dynamic sampling and analysis dates from active items
+        // Calculate dynamic sampling and analysis dates from active items (sorted strictly chronological)
         let calcSamplingDateStr = '';
         let calcAnalysisDateStr = '';
         let shortSubjectDateStr = '';
 
         if (activeItems.length > 0) {
-            const uniqueSDates = Array.from(new Set(activeItems.map(item => item.samplingDateRaw || item.samplingDateDisplay).filter(Boolean)));
-            const uniqueADates = Array.from(new Set(activeItems.map(item => item.analysisDateRaw || item.analysisDateDisplay).filter(Boolean)));
+            const rawSDates = Array.from(new Set(activeItems.map(item => item.samplingDateRaw || item.samplingDateDisplay).filter(Boolean)));
+            const rawADates = Array.from(new Set(activeItems.map(item => item.analysisDateRaw || item.analysisDateDisplay).filter(Boolean)));
 
-            if (uniqueSDates.length === 1) {
-                calcSamplingDateStr = this.formatThaiDate(uniqueSDates[0], 'long');
-                shortSubjectDateStr = this.formatThaiDate(uniqueSDates[0], 'short');
-            } else if (uniqueSDates.length > 1) {
-                calcSamplingDateStr = `${this.formatThaiDate(uniqueSDates[0], 'long')} ถึง ${this.formatThaiDate(uniqueSDates[uniqueSDates.length - 1], 'long')}`;
-                shortSubjectDateStr = this.formatThaiDate(uniqueSDates[uniqueSDates.length - 1], 'short');
+            // Sort chronologically ascending (earliest to latest)
+            const sortedSDates = rawSDates.sort((a, b) => parseDateToEpoch(a) - parseDateToEpoch(b));
+            const sortedADates = rawADates.sort((a, b) => parseDateToEpoch(a) - parseDateToEpoch(b));
+
+            if (sortedSDates.length === 1) {
+                calcSamplingDateStr = this.formatThaiDate(sortedSDates[0], 'long');
+                shortSubjectDateStr = this.formatThaiDate(sortedSDates[0], 'short');
+            } else if (sortedSDates.length > 1) {
+                const earliestDate = sortedSDates[0];
+                const latestDate = sortedSDates[sortedSDates.length - 1];
+                if (parseDateToEpoch(earliestDate) === parseDateToEpoch(latestDate)) {
+                    calcSamplingDateStr = this.formatThaiDate(earliestDate, 'long');
+                    shortSubjectDateStr = this.formatThaiDate(earliestDate, 'short');
+                } else {
+                    calcSamplingDateStr = `${this.formatThaiDate(earliestDate, 'long')} ถึง ${this.formatThaiDate(latestDate, 'long')}`;
+                    shortSubjectDateStr = `${this.formatThaiDate(earliestDate, 'short')} - ${this.formatThaiDate(latestDate, 'short')}`;
+                }
             }
 
-            if (uniqueADates.length === 1) {
-                calcAnalysisDateStr = this.formatThaiDate(uniqueADates[0], 'long');
-            } else if (uniqueADates.length > 1) {
-                calcAnalysisDateStr = `${this.formatThaiDate(uniqueADates[0], 'long')} ถึง ${this.formatThaiDate(uniqueADates[uniqueADates.length - 1], 'long')}`;
+            if (sortedADates.length === 1) {
+                calcAnalysisDateStr = this.formatThaiDate(sortedADates[0], 'long');
+            } else if (sortedADates.length > 1) {
+                const earliestDate = sortedADates[0];
+                const latestDate = sortedADates[sortedADates.length - 1];
+                if (parseDateToEpoch(earliestDate) === parseDateToEpoch(latestDate)) {
+                    calcAnalysisDateStr = this.formatThaiDate(earliestDate, 'long');
+                } else {
+                    calcAnalysisDateStr = `${this.formatThaiDate(earliestDate, 'long')} ถึง ${this.formatThaiDate(latestDate, 'long')}`;
+                }
             }
         }
 
