@@ -10062,15 +10062,13 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <hr style="width: 100%; border: none; border-top: 1.5px solid #000; margin: 3px 0 4px 0;">
 
                     <!-- NOTE BOX -->
-                    <div style="padding: 2px 0; margin-bottom: 5px; font-size: 12.5px; font-weight: bold; line-height: 1.35; color: #000;">
+                    <div style="padding: 1px 0; margin-bottom: 4px; font-size: 12.5px; font-weight: bold; line-height: 1.35; color: #000;">
                         <div style="margin-bottom: 2px; font-size: 13px;"><strong>การเก็บตัวอย่างน้ำมัน</strong></div>
-                        <div style="display: flex; gap: 18px;">
-                            <div style="flex: 1;">
-                                <strong>1. การนับวันเก็บตัวอย่างน้ำมัน:</strong> ให้นับวันที่เริ่มใช้น้ำมันใหม่เป็นวันที่ 1 เก็บตัวอย่างน้ำมันหลังจากการทอดทุกวันจนกว่าจะเปลี่ยนน้ำมันใหม่
-                            </div>
-                            <div style="flex: 1.25;">
-                                <strong>2. วิธีการเก็บตัวอย่างน้ำมัน:</strong> ตั้งน้ำมันทิ้งไว้ให้เย็น ใช้ช้อนตักประมาณ 10-20 มิลลิลิตร เทใส่ภาชนะกันร้อน เก็บไว้ในที่เย็นให้พ้นแสง เขียนวันที่เก็บตัวอย่างที่ข้างภาชนะโดยใช้ปากกาชนิดกันน้ำ
-                            </div>
+                        <div style="margin-bottom: 1px; padding-left: 10px;">
+                            <strong>1. การนับวันเก็บตัวอย่างน้ำมัน:</strong> ให้นับวันที่เริ่มใช้น้ำมันใหม่เป็นวันที่ 1 เก็บตัวอย่างน้ำมันหลังจากการทอดทุกวันจนกว่าจะเปลี่ยนน้ำมันใหม่
+                        </div>
+                        <div style="padding-left: 10px;">
+                            <strong>2. วิธีการเก็บตัวอย่างน้ำมัน:</strong> ตั้งน้ำมันทิ้งไว้ให้เย็น ใช้ช้อนตักประมาณ 10-20 มิลลิลิตร เทใส่ภาชนะกันร้อน เก็บไว้ในที่เย็นให้พ้นแสง เขียนวันที่เก็บตัวอย่างที่ข้างภาชนะโดยใช้ปากกาชนิดกันน้ำ
                         </div>
                     </div>
 
