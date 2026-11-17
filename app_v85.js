@@ -9625,7 +9625,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const firstItem = sampleItems[0] || {};
             
             // Map food categories
-            const foodCatStr = firstItem.food_category || '';
+            const foodCatStr = firstItem.food_category || sample.food_category_1 || sample.sample_category_1 || sample.food_category || '';
+            const foodTypeStr = firstItem.food_type || sample.sample_name_1 || sample.sample_name || '';
+
             const isFlour = foodCatStr.includes('พวกแป้ง');
             const isMeatProduct = foodCatStr.includes('ผลิตภัณฑ์จากเนื้อสัตว์');
             const isMeat = foodCatStr.includes('เนื้อสัตว์') && !isMeatProduct;
@@ -9633,58 +9635,107 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const isOtherFood = Boolean(foodCatStr && !isFlour && !isMeat && !isMeatProduct && !isMix);
 
             // Map oil types
-            const isPalm = firstItem.oil_type === 'น้ำมันปาล์ม';
-            const isLard = firstItem.oil_type === 'น้ำมันหมู';
-            const isSoy = firstItem.oil_type === 'น้ำมันถั่วเหลือง';
-            const isOtherOil = firstItem.oil_type && !isPalm && !isLard && !isSoy;
+            const oilType = firstItem.oil_type || sample.oil_type_1 || sample.oil_type || '';
+            const isPalm = oilType.includes('ปาล์ม');
+            const isLard = oilType.includes('หมู');
+            const isSoy = oilType.includes('ถั่วเหลือง');
+            const isOtherOil = Boolean(oilType && !isPalm && !isLard && !isSoy);
 
-            // Map replacement types
-            const isRepNone = firstItem.replacement_type === 'ไม่เปลี่ยนเลย';
-            const isRepPart = firstItem.replacement_type === 'เปลี่ยนบางส่วน';
-            const isRepAll = firstItem.replacement_type === 'เปลี่ยนใหม่ทั้งหมด';
-            const isRepOther = firstItem.replacement_type && !isRepNone && !isRepPart && !isRepAll;
+            // Fry duration
+            const fryDuration = firstItem.fry_duration || sample.fry_duration_1 || sample.fry_duration || '';
 
-            // Generate 7 table rows
+            // Replacement types
+            const repType = firstItem.replacement_type || sample.replacement_type_1 || sample.replacement_type || '';
+            const isRepNone = repType.includes('ไม่เปลี่ยนเลย');
+            const isRepPart = repType.includes('เปลี่ยนบางส่วน');
+            const isRepAll = repType.includes('เปลี่ยนใหม่ทั้งหมด');
+            const isRepOther = Boolean(repType && !isRepNone && !isRepPart && !isRepAll);
+
+            // Last replacement date & frequency
+            const lastRepDate = firstItem.last_replacement_date || sample.last_replacement_date_1 || sample.last_replacement_date || '';
+            let formattedLastRepDate = '';
+            if (lastRepDate) {
+                try {
+                    formattedLastRepDate = new Date(lastRepDate).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric' });
+                } catch(e) {
+                    formattedLastRepDate = lastRepDate;
+                }
+            }
+            const repFreq = firstItem.replacement_frequency || sample.replacement_frequency_1 || sample.replacement_frequency || '';
+
+            // Reason for replacement
+            const repReason = firstItem.replacement_reason || sample.replacement_reason_1 || sample.replacement_reason || '';
+            const isReasonOil = repReason.includes('สภาพน้ำมันเปลี่ยน');
+            const isReasonFood = repReason.includes('สภาพอาหารเปลี่ยน');
+
+            // Oil disposal
+            const oilDisposal = firstItem.oil_disposal || sample.oil_disposal_1 || sample.oil_disposal || '';
+            const isDisposalSell = oilDisposal.includes('รวบรวมขายต่อ');
+            const isDisposalDump = oilDisposal.includes('ทิ้งเองในระบบสาธารณะ');
+
+            // Test kit
+            const testKit = sample.test_kit || 'สารโพลาร์ในน้ำมันทอดซ้ำ Polar Blue Test';
+            const isSciDeptKit = testKit.includes('กรมวิทยาศาสตร์การแพทย์');
+            const isPolarBlueKit = testKit.includes('Polar Blue') || testKit.includes('สารโพลาร์') || (!isSciDeptKit);
+
+            // Distributor / Shop name
+            const distributorName = sample.distributor || sample.distributor_1 || sample.owner_name || sample.shop_name || sample.location_name || '';
+
+            // 7 Table rows for sampling rounds 1-7
             let tableRowsHTML = '';
             for (let i = 0; i < 7; i++) {
+                const roundNum = i + 1;
                 const item = sampleItems[i];
-                if (item && (item.food_category || item.food_type || item.oil_type || item.sample_name || sample['analysis_interpretation_4_' + (i + 1)])) {
-                    const interp = sample['analysis_interpretation_4_' + (i + 1)] || '';
-                    const isLessThan20 = interp === '<20%';
-                    const is20to25 = interp === '20-25%';
-                    const isGreaterThan25 = interp === '>25%';
-                    
-                    const isGood = isLessThan20 || is20to25;
-                    const isBad = isGreaterThan25;
-                    const isPass = isGood;
-                    const isFail = isBad;
-                    
-                    let rowDate = item.item_sampling_date ? new Date(item.item_sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric'}) : (samplingDate || '');
+                const interp = sample['analysis_interpretation_4_' + roundNum] || (item && item.polar_value ? item.polar_value : '') || '';
+                const hasRoundData = Boolean(
+                    sample['item_sampling_date_' + roundNum] || 
+                    interp || 
+                    sample['polar_color_' + roundNum] || 
+                    (item && (item.item_sampling_date || item.polar_value)) ||
+                    (i === 0 && (distributorName || foodCatStr || oilType))
+                );
 
-                    tableRowsHTML += `
-                        <tr style="height: 30px; text-align:left; font-weight:bold; color:#000;">
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${i + 1}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${rowDate}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:19px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${isLessThan20 ? '✓' : ''}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:19px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${is20to25 ? '✓' : ''}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:19px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${isGreaterThan25 ? '✓' : ''}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:19px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${isBad ? '✓' : ''}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:19px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${isGood ? '✓' : ''}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : '')}</td>
-                        </tr>`;
-                } else {
-                    tableRowsHTML += `
-                        <tr style="height: 30px; text-align:left; font-weight:bold; color:#000;">
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;">${i + 1}</td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15;"></td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;"></td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;"></td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;"></td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;"></td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15; text-align:center;"></td>
-                            <td style="border:1px solid #000; vertical-align:middle; font-size:17.5px; font-weight:bold; padding:2px 4px; line-height:1.15;"></td>
-                        </tr>`;
+                const isLessThan20 = interp === '<20%' || interp.includes('<20') || interp.includes('< 20');
+                const is20to25 = interp === '20-25%' || interp.includes('20-25') || interp.includes('20 - 25');
+                const isGreaterThan25 = interp === '>25%' || interp.includes('>25') || interp.includes('> 25');
+
+                const isGood = isLessThan20 || is20to25;
+                const isBad = isGreaterThan25;
+                const isPass = isGood;
+                const isFail = isBad;
+
+                let rowDate = '';
+                if (sample['item_sampling_date_' + roundNum]) {
+                    try {
+                        rowDate = new Date(sample['item_sampling_date_' + roundNum]).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric'});
+                    } catch(e) {
+                        rowDate = sample['item_sampling_date_' + roundNum];
+                    }
+                } else if (item && item.item_sampling_date) {
+                    try {
+                        rowDate = new Date(item.item_sampling_date).toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric'});
+                    } catch(e) {
+                        rowDate = item.item_sampling_date;
+                    }
+                } else if (i === 0 && hasRoundData) {
+                    rowDate = samplingDate || '';
                 }
+
+                const explicitColor = sample['polar_color_' + roundNum] || sample['analysis_color_' + roundNum] || '';
+                const detectedColor = explicitColor || (isLessThan20 ? 'สีชมพู' : (is20to25 ? 'สีชมพูจาง' : (isGreaterThan25 ? 'ไม่มีสี' : '')));
+
+                const summaryOutcome = sample['analysis_summary_4_' + roundNum] || (isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : ''));
+
+                tableRowsHTML += `
+                    <tr style="height: 24px; text-align: center; font-weight: bold; color: #000;">
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 14.5px; padding: 2px 4px; line-height: 1.15;">${roundNum}</td>
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 14px; padding: 2px 4px; line-height: 1.15;">${rowDate}</td>
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 14px; padding: 2px 4px; line-height: 1.15;">${detectedColor}</td>
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 16px; padding: 2px 4px; line-height: 1.15;">${isLessThan20 ? '✓' : ''}</td>
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 16px; padding: 2px 4px; line-height: 1.15;">${is20to25 ? '✓' : ''}</td>
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 16px; padding: 2px 4px; line-height: 1.15;">${isGreaterThan25 ? '✓' : ''}</td>
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 14px; padding: 2px 4px; line-height: 1.15;">${summaryOutcome}</td>
+                    </tr>`;
             }
 
             htmlContent = `
@@ -9694,166 +9745,190 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     letter-spacing: normal !important;
                     box-sizing: border-box !important;
                 }
-                @page { size: A4 portrait; margin: 0mm !important; }
+                @page { size: A4 landscape; margin: 5mm 8mm !important; }
                 html, body {
                     margin: 0 !important;
                     padding: 0 !important;
                     background: #fff !important;
+                    width: 100% !important;
                 }
-                th { text-align: center !important; }
-                table { box-sizing: border-box !important; }
+                .pdf-document {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin: 0 auto !important;
+                    padding: 2mm 3mm !important;
+                    box-sizing: border-box !important;
+                    page-break-after: avoid !important;
+                    page-break-inside: avoid !important;
+                    font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important;
+                }
+                table {
+                    box-sizing: border-box !important;
+                    border-collapse: collapse !important;
+                }
+                th, td {
+                    box-sizing: border-box !important;
+                }
             </style>
-            <div class="pdf-document" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 8mm 11mm 6mm 11mm !important; box-sizing: border-box;">
-                <div style="width: 100%; margin: 0; display: block; font-size: 17px; font-weight: bold; color: #000;">
+            <div class="pdf-document">
+                <div style="width: 100%; margin: 0; display: block; font-size: 14px; font-weight: bold; color: #000;">
                     <!-- HEADER -->
-                    <table style="width: 100%; margin: 0 0 5px 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed;">
+                    <table style="width: 100%; margin: 0 0 4px 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed;">
                         <tr>
-                            <td style="width: 68px; padding: 4px; text-align: center; border-right: 1px solid #000; vertical-align: middle;">
-                                <img src="logo.jpg" style="display: block; margin: auto; width: 52px; height: auto;">
+                            <td style="width: 72px; padding: 4px; text-align: center; border-right: 1.5px solid #000; vertical-align: middle;">
+                                <img src="logo.jpg" style="display: block; margin: auto; width: 54px; height: auto;">
                             </td>
-                            <td style="padding: 4px 10px; vertical-align: middle; line-height: 1.3; color: #000; font-size: 16.5px; font-weight: bold;">
+                            <td style="padding: 4px 12px; vertical-align: middle; line-height: 1.32; color: #000; font-size: 15px; font-weight: bold;">
                                 <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
-                                <div><strong>ชื่อเอกสาร : <span style="font-size: 18px;">แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div>
+                                <div><strong>ชื่อเอกสาร : <span style="font-size: 16px;">แบบบันทึกการสุ่มตัวอย่างน้ำมันทอดซ้ำ (Test Kit)</span></strong></div>
                                 <div><strong>วันที่เริ่มใช้ :</strong> </div>
                                 <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div>
                             </td>
-                            <td style="width: 185px; padding: 4px 10px; border-left: 1px solid #000; vertical-align: middle; text-align: left; color: #000; font-weight: bold;">
-                                <div style="font-size: 16.5px;"><strong>หมายเลขเอกสาร :</strong> <span style="white-space: nowrap; font-weight: bold;">MU.10-004</span></div>
-                                <div style="margin-top: 2px; font-size: 16.5px;"><strong>แก้ไขครั้งที่ :</strong> <span style="font-weight: bold;">002</span></div>
-                                <div style="margin-top: 2px; font-size: 16.5px;"><strong>หน้า :</strong> <span style="font-weight: bold;">1/1</span></div>
+                            <td style="width: 220px; padding: 4px 12px; border-left: 1.5px solid #000; vertical-align: middle; text-align: left; color: #000; font-weight: bold; font-size: 15px; line-height: 1.38;">
+                                <div><strong>หมายเลขเอกสาร :</strong> <span style="white-space: nowrap; font-weight: bold;">MU.10-004</span></div>
+                                <div style="margin-top: 2px;"><strong>แก้ไขครั้งที่ :</strong> <span style="font-weight: bold;">002</span></div>
+                                <div style="margin-top: 2px;"><strong>หน้า :</strong> </div>
                             </td>
                         </tr>
                     </table>
 
-                    <!-- META FIELDS -->
-                    <table style="width: 100%; margin: 4px 0; border: none; border-collapse: collapse; font-size: 17px; font-weight: bold; line-height: 1.42; color: #000; table-layout: fixed;">
+                    <!-- METADATA ROWS -->
+                    <table style="width: 100%; margin: 4px 0 2px 0; border: none; border-collapse: collapse; font-size: 14px; font-weight: bold; line-height: 1.45; color: #000; table-layout: fixed;">
                         <tr>
-                            <td style="border: none; padding: 1.5px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                                (เจ้าหน้าที่) หน่วยงาน: <u>${sample.agency || '................................'}</u>
+                            <td style="border: none; padding: 1px 0; width: 48%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                หน่วยงานที่เก็บตัวอย่าง${sample.agency || sample.collector_agency || sample.location_main ? `<u>&nbsp;${sample.agency || sample.collector_agency || sample.location_main}&nbsp;</u>` : '................................................................................'}
                             </td>
-                            <td style="border: none; padding: 1.5px 0; width: 22%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                                อำเภอ: <u>${sample.amphoe || '................'}</u>
-                            </td>
-                            <td style="border: none; padding: 1.5px 0; width: 22%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                                จังหวัด: <u>${sample.province || '................'}</u>
+                            <td style="border: none; padding: 1px 0; width: 52%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                สถานที่เก็บตัวอย่าง${sample.location_name || sample.location ? `<u>&nbsp;${sample.location_name || sample.location}&nbsp;</u>` : '....................................................................................................'}
                             </td>
                         </tr>
                         <tr>
-                            <td style="border: none; padding: 1.5px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                                (ผู้ประกอบการ) ชื่อสถานที่: <u>${sample.location_name || '................................'}</u>
+                            <td style="border: none; padding: 1px 0; width: 48%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                อำเภอ${sample.amphoe ? `<u>&nbsp;${sample.amphoe}&nbsp;</u>` : '.............................................'}จังหวัด${sample.province ? `<u>&nbsp;${sample.province}&nbsp;</u>` : '.............................................'}
                             </td>
-                            <td colspan="2" style="border: none; padding: 1.5px 0; width: 44%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                                เจ้าของร้าน/ผู้ดูแล: <u>${sample.owner_name || '................................................'}</u>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: none; padding: 1.5px 0; width: 56%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                                ที่อยู่: <u>${sample.owner_address || '............................................................'}</u>
-                            </td>
-                            <td colspan="2" style="border: none; padding: 1.5px 0; width: 44%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                                เบอร์โทร: <u>${sample.owner_phone || '................................................'}</u>
+                            <td style="border: none; padding: 1px 0; width: 52%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ชื่อผู้จำหน่าย/ชื่อร้าน${distributorName ? `<u>&nbsp;${distributorName}&nbsp;</u>` : '....................................................................................................'}
                             </td>
                         </tr>
                     </table>
                     <hr style="width: 100%; border: none; border-top: 1.5px solid #000; margin: 3px 0 4px 0;">
 
-                    <!-- QUESTIONNAIRE -->
-                    <div style="width: 100%; line-height: 1.38; color: #000; font-size: 17px; font-weight: bold; margin-bottom: 5px;">
-                        <div><strong>ประเภท</strong> ${isFlour ? '[✓]' : '[ ]'} พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ</div>
-                        <div style="margin-top: 1px; padding-left: 55px;">ระบุชนิดอาหาร ....<u>${isFlour ? (firstItem.food_type || '......................................................') : '......................................................'}</u>....</div>
-                        <div style="margin-top: 1px; padding-left: 35px;">${isMeat ? '[✓]' : '[ ]'} เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด ฯลฯ</div>
-                        <div style="margin-top: 1px; padding-left: 55px;">ระบุชนิดอาหาร ....<u>${isMeat ? (firstItem.food_type || '......................................................') : '......................................................'}</u>....</div>
-                        <div style="margin-top: 1px; padding-left: 35px;">${isMeatProduct ? '[✓]' : '[ ]'} ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ</div>
-                        <div style="margin-top: 1px; padding-left: 55px;">ระบุชนิดอาหาร ....<u>${isMeatProduct ? (firstItem.food_type || '......................................................') : '......................................................'}</u>....</div>
-                        <div style="margin-top: 1px; padding-left: 35px;">${isMix ? '[✓]' : '[ ]'} พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ</div>
-                        <div style="margin-top: 1px; padding-left: 55px;">ระบุชนิดอาหาร ....<u>${isMix ? (firstItem.food_type || '......................................................') : '......................................................'}</u>....</div>
-                        <div style="margin-top: 1px; padding-left: 35px;">${isOtherFood ? '[✓]' : '[ ]'} อื่นๆ ระบุ ....<u>${isOtherFood ? (firstItem.food_category + (firstItem.food_type ? ' - ' + firstItem.food_type : '')) : '....................................................................................................'}</u>....</div>
-                        <div style="margin-top: 2px;">
-                            <strong>ชนิดน้ำมัน</strong> ${isPalm ? '[✓]' : '[ ]'} น้ำมันปาล์ม &nbsp;&nbsp;
-                            ${isLard ? '[✓]' : '[ ]'} น้ำมันหมู &nbsp;&nbsp;
-                            ${isSoy ? '[✓]' : '[ ]'} น้ำมันถั่วเหลือง &nbsp;&nbsp;
-                            ${isOtherOil ? '[✓]' : '[ ]'} อื่น ๆ ระบุ ....<u>${isOtherOil ? firstItem.oil_type : '................................................'}</u>....
+                    <!-- 2-COLUMN SECTION -->
+                    <div style="display: flex; width: 100%; margin-bottom: 4px; gap: 15px;">
+                        <!-- Left Column -->
+                        <div style="flex: 1.05; font-size: 13.5px; font-weight: bold; line-height: 1.4; color: #000;">
+                            <div><strong>ประเภท</strong>&nbsp;&nbsp;${chk('พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ', isFlour)}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isFlour && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">${chk('เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด', isMeat)}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isMeat && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">${chk('ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ', isMeatProduct)}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isMeatProduct && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">${chk('พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ', isMix)}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isMix && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                            <div style="padding-left: 36px; margin-top: 1px;">${chk('อื่น ๆ ระบุชนิดอาหาร' + (isOtherFood ? ` <u>&nbsp;${foodTypeStr || foodCatStr}&nbsp;</u>` : '........................................................'), isOtherFood)}</div>
                         </div>
-                        <div style="margin-top: 2px;">
-                            <strong>ระยะเวลาใช้ทอด</strong>....<u>${firstItem.fry_duration || '............'}</u>.... นาที/ครั้ง &nbsp;&nbsp;&nbsp;&nbsp;
-                            <strong>จำนวนครั้งที่ทอด</strong>....<u>${firstItem.fry_count || '............'}</u>.... ครั้ง/วัน
-                        </div>
-                        <div style="margin-top: 2px;">
-                            <strong>ลักษณะการเปลี่ยนน้ำมัน</strong> ${isRepNone ? '[✓]' : '[ ]'} ไม่เปลี่ยนเลย &nbsp;&nbsp;
-                            ${isRepPart ? '[✓]' : '[ ]'} เปลี่ยนบางส่วน &nbsp;&nbsp;
-                            ${isRepAll ? '[✓]' : '[ ]'} เปลี่ยนใหม่ทั้งหมด &nbsp;&nbsp;
-                            ${isRepOther ? '[✓]' : '[ ]'} อื่น ๆ ระบุ ....<u>${isRepOther ? firstItem.replacement_type : '........................'}</u>....
-                        </div>
-                        <div style="margin-top: 2px;">
-                            <strong>ความถี่ในการเปลี่ยนน้ำมัน</strong>....<u>${firstItem.replacement_frequency || '............'}</u>.... วัน
+
+                        <!-- Right Column -->
+                        <div style="flex: 1.15; font-size: 13.5px; font-weight: bold; line-height: 1.4; color: #000;">
+                            <div>
+                                <strong>ชนิดน้ำมัน</strong>&nbsp;&nbsp;
+                                ${chk('น้ำมันปาล์ม', isPalm)}&nbsp;&nbsp;
+                                ${chk('น้ำมันหมู', isLard)}&nbsp;&nbsp;
+                                ${chk('น้ำมันถั่วเหลือง', isSoy)}&nbsp;&nbsp;
+                                ${chk('อื่น ๆ ระบุ' + (isOtherOil ? ` <u>&nbsp;${oilType}&nbsp;</u>` : '...................'), isOtherOil)}
+                            </div>
+                            <div style="margin-top: 1px;">
+                                <strong>พฤติกรรมการใช้น้ำมัน</strong>&nbsp;&nbsp;
+                                ระยะเวลาใช้ทอด ${fryDuration ? `<u>&nbsp;${fryDuration}&nbsp;</u>` : '................'} นาที/ครั้ง
+                            </div>
+                            <div style="margin-top: 1px;">
+                                <strong>ลักษณะการเปลี่ยน</strong>&nbsp;&nbsp;
+                                ${chk('ไม่เปลี่ยนเลย', isRepNone)}&nbsp;&nbsp;
+                                ${chk('เปลี่ยนบางส่วน', isRepPart)}&nbsp;&nbsp;
+                                ${chk('เปลี่ยนใหม่ทั้งหมด', isRepAll)}
+                            </div>
+                            <div style="margin-top: 1px; padding-left: 88px;">
+                                ${chk('อื่น ๆ ระบุ' + (isRepOther ? ` <u>&nbsp;${repType}&nbsp;</u>` : '...................................................'), isRepOther)}
+                            </div>
+                            <div style="margin-top: 1px;">
+                                วันที่เปลี่ยนล่าสุด ${formattedLastRepDate ? `<u>&nbsp;${formattedLastRepDate}&nbsp;</u>` : '..................'} &nbsp;&nbsp;&nbsp;&nbsp;
+                                ความถี่ในการเปลี่ยน ${repFreq ? `<u>&nbsp;${repFreq}&nbsp;</u>` : '..................'} วัน
+                            </div>
+                            <div style="margin-top: 1px;">
+                                <strong>เหตุผลที่เปลี่ยน</strong>&nbsp;&nbsp;
+                                ${chk('สภาพน้ำมันเปลี่ยน', isReasonOil)}&nbsp;&nbsp;&nbsp;&nbsp;
+                                ${chk('สภาพอาหารเปลี่ยน', isReasonFood)}
+                            </div>
+                            <div style="margin-top: 1px;">
+                                <strong>การกำจัดน้ำมัน</strong>&nbsp;&nbsp;
+                                ${chk('รวบรวมขายต่อ', isDisposalSell)}&nbsp;&nbsp;&nbsp;&nbsp;
+                                ${chk('ทิ้งเองในระบบสาธารณะ', isDisposalDump)}
+                            </div>
+                            <div style="margin-top: 1px;">
+                                <strong>ชุดทดสอบที่ใช้</strong>&nbsp;&nbsp;
+                                ${chk('กรมวิทยาศาสตร์การแพทย์', isSciDeptKit)}
+                            </div>
+                            <div style="margin-top: 1px; padding-left: 80px;">
+                                ${chk('สารโพลาร์ในน้ำมันทอดซ้ำ Polar Blue Test', isPolarBlueKit)}
+                            </div>
                         </div>
                     </div>
 
-                    <!-- MAIN TABLE -->
-                    <table style="width: 100%; margin: 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed; font-size: 17px; font-weight: bold; color: #000;" border="1">
+                    <!-- TABLE -->
+                    <table style="width: 100%; margin: 2px 0 3px 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed; font-size: 13.5px; font-weight: bold; color: #000;" border="1">
                         <thead style="text-align: center;">
-                            <tr style="background: #f5f5f5; text-align: center; vertical-align: middle; page-break-inside: avoid;">
-                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 9%; font-size: 16.5px; font-weight: bold; padding: 3px 2px; line-height: 1.15;">ครั้งที่<br>เก็บตัวอย่าง</th>
-                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 17%; font-size: 16.5px; font-weight: bold; padding: 3px 2px; line-height: 1.15;">วันที่เก็บตัวอย่าง<br>(ว/ด/ป)</th>
-                                <th colspan="3" style="text-align: center; border: 1px solid #000; width: 36%; font-size: 16.5px; font-weight: bold; padding: 3px 2px; line-height: 1.15;">ผลการตรวจสารโพลาร์</th>
-                                <th colspan="2" style="text-align: center; border: 1px solid #000; width: 27%; font-size: 16.5px; font-weight: bold; padding: 3px 2px; line-height: 1.15;">การแปลผล</th>
-                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 11%; font-size: 16.5px; font-weight: bold; padding: 3px 2px; line-height: 1.15;">สรุปผล</th>
+                            <tr style="background: #fff; text-align: center; vertical-align: middle; page-break-inside: avoid; height: 24px;">
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 8.5%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">ครั้งที่<br>เก็บตัวอย่าง</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 14%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">วันที่เก็บตัวอย่าง<br>(ว/ด/ป)</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 15.5%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">สีที่พบ</th>
+                                <th colspan="3" style="text-align: center; border: 1px solid #000; width: 50%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">การแปลผล</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 12%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">สรุปผล</th>
                             </tr>
-                            <tr style="background: #f5f5f5; text-align: center; vertical-align: middle; font-size: 16.5px; font-weight: bold;">
-                                <th style="text-align: center; border: 1px solid #000; width: 12%; padding: 3px 2px; line-height: 1.15;">สีชมพู<br>&lt; 20%</th>
-                                <th style="text-align: center; border: 1px solid #000; width: 12%; padding: 3px 2px; line-height: 1.15;">สีชมพูจาง<br>20 - 25%</th>
-                                <th style="text-align: center; border: 1px solid #000; width: 12%; padding: 3px 2px; line-height: 1.15;">ไม่มีสี<br>&gt; 25%</th>
-                                <th style="text-align: center; border: 1px solid #000; width: 14%; padding: 3px 2px; line-height: 1.15;">น้ำมันเสื่อมแล้ว</th>
-                                <th style="text-align: center; border: 1px solid #000; width: 13%; padding: 3px 2px; line-height: 1.15;">น้ำมันยังใช้ได้</th>
+                            <tr style="background: #fff; text-align: center; vertical-align: middle; font-size: 13px; font-weight: bold; height: 22px;">
+                                <th style="text-align: center; border: 1px solid #000; width: 16.66%; padding: 2px 2px; line-height: 1.15;">ยังไม่เสื่อมคุณภาพ<br>&lt; 20%</th>
+                                <th style="text-align: center; border: 1px solid #000; width: 16.66%; padding: 2px 2px; line-height: 1.15;">ใกล้เสื่อมคุณภาพ<br>20 - 25%</th>
+                                <th style="text-align: center; border: 1px solid #000; width: 16.66%; padding: 2px 2px; line-height: 1.15;">น้ำมันเสื่อมคุณภาพ<br>&gt; 25%</th>
                             </tr>
                         </thead>
                         <tbody>${tableRowsHTML}</tbody>
                     </table>
 
-                    <!-- SUMMARY (WITH EXTRA DOTTED LINE) -->
-                    <div style="width: 100%; margin: 6px 0 6px 0; font-size: 17px; font-weight: bold; color: #000; line-height: 1.55;">
-                        <div style="white-space: nowrap; overflow: hidden;"><strong>สรุปผล</strong> ควรเปลี่ยนน้ำมันใหม่หลังทอดเสร็จในวันที่ ................................................................................................................................................</div>
-                        <div style="white-space: nowrap; overflow: hidden;">....................................................................................................................................................................................................................................</div>
+                    <!-- SUMMARY -->
+                    <div style="width: 100%; margin: 3px 0 2px 0; font-size: 13.5px; font-weight: bold; color: #000; line-height: 1.35;">
+                        <div style="white-space: nowrap; overflow: hidden;"><strong>สรุปผล</strong> ควรเปลี่ยนน้ำมันใหม่หลังทอดเสร็จในวันที่ ${sample.oil_change_date ? `<u>&nbsp;${sample.oil_change_date}&nbsp;</u>` : '................................................................................................................................................................................................................................'}</div>
                     </div>
-
-                    <hr style="width: 100%; border: none; border-top: 1.5px solid #000; margin: 4px 0 6px 0;">
+                    <hr style="width: 100%; border: none; border-top: 1.5px solid #000; margin: 3px 0 4px 0;">
 
                     <!-- NOTE BOX -->
-                    <table style="width: 100%; border: 1.5px solid #000; border-collapse: collapse; table-layout: fixed; font-size: 16px; font-weight: bold; line-height: 1.38; color: #000; margin-bottom: 10px;">
-                        <tr>
-                            <td style="padding: 5px 8px; border-right: 1px solid #000; width: 50%; vertical-align: top; font-weight: bold;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 2px; font-size: 17px;">การเก็บตัวอย่างน้ำมัน</div>
-                                <strong>๑. การนับวันเก็บตัวอย่างน้ำมัน</strong><br>
-                                - ให้นับวันที่เริ่มใช้น้ำมันใหม่เป็นวันที่ ๑<br>
-                                - เก็บตัวอย่างน้ำมันหลังจากการทอดทุกวัน จนกว่าจะเปลี่ยนน้ำมันใหม่
-                            </td>
-                            <td style="padding: 5px 8px; width: 50%; vertical-align: top; font-weight: bold;">
-                                <div style="font-weight: bold; visibility: hidden; margin-bottom: 2px; font-size: 17px;">การเก็บตัวอย่างน้ำมัน</div>
-                                <strong>๒. วิธีการเก็บตัวอย่างน้ำมัน</strong><br>
-                                - ตั้งน้ำมันทิ้งไว้ให้เย็น<br>
-                                - ใช้ช้อนตักประมาณ ๒ ช้อนโต๊ะ เทใส่ภาชนะกันร้อน เก็บไว้ในที่เย็นให้พ้นแสง<br>
-                                - เขียนวันที่เก็บตัวอย่างที่ข้างภาชนะโดยใช้ปากกากันสีกันน้ำ
-                            </td>
-                        </tr>
-                    </table>
+                    <div style="border: 1.5px solid #000; padding: 4px 8px; margin-bottom: 5px; font-size: 12.5px; font-weight: bold; line-height: 1.35; color: #000;">
+                        <div style="margin-bottom: 2px; font-size: 13px;"><strong>การเก็บตัวอย่างน้ำมัน</strong></div>
+                        <div style="display: flex; gap: 18px;">
+                            <div style="flex: 1;">
+                                <strong>1. การนับวันเก็บตัวอย่างน้ำมัน:</strong> ให้นับวันที่เริ่มใช้น้ำมันใหม่เป็นวันที่ 1 เก็บตัวอย่างน้ำมันหลังจากการทอดทุกวันจนกว่าจะเปลี่ยนน้ำมันใหม่
+                            </div>
+                            <div style="flex: 1.25;">
+                                <strong>2. วิธีการเก็บตัวอย่างน้ำมัน:</strong> ตั้งน้ำมันทิ้งไว้ให้เย็น ใช้ช้อนตักประมาณ 10-20 มิลลิลิตร เทใส่ภาชนะกันร้อน เก็บไว้ในที่เย็นให้พ้นแสง เขียนวันที่เก็บตัวอย่างที่ข้างภาชนะโดยใช้ปากกาชนิดกันน้ำ
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- FOOTER SIGNATURES -->
-                    <table style="width: 100%; margin: 8px 0 0 0; border-collapse: collapse; table-layout: fixed; font-size: 15.5px; font-weight: bold; color: #000; line-height: 1.5;">
+                    <table style="width: 100%; margin: 4px 0 0 0; border: none; border-collapse: collapse; table-layout: fixed; font-size: 13px; font-weight: bold; color: #000; line-height: 1.45;">
                         <tr>
-                            <td style="width: 32%; vertical-align: top; text-align: left; padding-right: 4px; font-weight: bold;">
-                                <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ลงชื่อผู้เก็บตัวอย่าง ....<u>${sample.collector_name || '...................................'}</u>....</div>
-                                <div style="margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ตำแหน่ง ....<u>${sample.collector_position || '...........................................'}</u>....</div>
-                                <div style="margin-top: 3px; white-space: nowrap;">วันที่เก็บตัวอย่าง ....<u>${samplingDate || '...............................'}</u>....</div>
+                            <td style="width: 33%; vertical-align: top; text-align: left; padding-right: 5px; border: none;">
+                                <div>ลงชื่อผู้เก็บตัวอย่าง ${sample.collector_name ? `<u>&nbsp;${sample.collector_name}&nbsp;</u>` : '.......................................................'}</div>
+                                <div style="margin-top: 2px;">ตำแหน่ง ${sample.collector_position ? `<u>&nbsp;${sample.collector_position}&nbsp;</u>` : '.......................................................'}</div>
+                                <div style="margin-top: 2px;">วันที่เก็บตัวอย่าง ${samplingDate && samplingDate !== '-' ? `<u>&nbsp;${samplingDate}&nbsp;</u>` : '.......................................................'}</div>
                             </td>
-                            <td style="width: 32%; vertical-align: top; text-align: left; padding: 0 4px; font-weight: bold;">
-                                <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ลงชื่อผู้ตรวจวิเคราะห์ ....<u>${sample.analysis_analyst || '...................................'}</u>....</div>
-                                <div style="margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ตำแหน่ง ....<u>${sample.analysis_analyst ? (sample.analysis_analyst_position || '...........................................') : '...........................................'}</u>....</div>
-                                <div style="margin-top: 3px; white-space: nowrap;">วันที่ตรวจวิเคราะห์ ....<u>${sample.analysis_date ? new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) : '...............................'}</u>....</div>
+                            <td style="width: 33%; vertical-align: top; text-align: left; padding: 0 5px; border: none;">
+                                <div>ลงชื่อผู้ตรวจวิเคราะห์ ${sample.analysis_analyst ? `<u>&nbsp;${sample.analysis_analyst}&nbsp;</u>` : '.......................................................'}</div>
+                                <div style="margin-top: 2px;">ตำแหน่ง ${sample.analysis_analyst ? (sample.analysis_analyst_position ? `<u>&nbsp;${sample.analysis_analyst_position}&nbsp;</u>` : '.......................................................') : '.......................................................'}</div>
+                                <div style="margin-top: 2px;">วันที่ตรวจวิเคราะห์ ${sample.analysis_date ? `<u>&nbsp;${new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'})}&nbsp;</u>` : '.......................................................'}</div>
                             </td>
-                            <td style="width: 36%; vertical-align: top; text-align: right; font-weight: bold;">
-                                <div style="white-space: nowrap;">ลงชื่อผู้ทบทวนเอกสาร ................................................</div>
-                                <div style="margin-top: 3px; white-space: nowrap; font-size: 15px;">ตำแหน่ง ผจก.ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div>
-                                <div style="margin-top: 3px; white-space: nowrap;">วันที่ทบทวนเอกสาร ............................................</div>
+                            <td style="width: 34%; vertical-align: top; text-align: left; padding-left: 5px; border: none;">
+                                <div>ลงชื่อผู้ทบทวนเอกสาร .......................................................</div>
+                                <div style="margin-top: 2px;">ตำแหน่ง ผจก.ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div>
+                                <div style="margin-top: 2px;">วันที่ทบทวนเอกสาร .......................................................</div>
                             </td>
                         </tr>
                     </table>
@@ -10190,7 +10265,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
             const doc = iframe.contentWindow.document;
             doc.open();
-            const pageOrientation = (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape';
+            const pageOrientation = (sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape';
             doc.write('<html><head><base href="' + window.location.href + '"><title>' + opt.filename + '</title><link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="style_v3.css">' + this.getStandardPdfStyles(pageOrientation) + '</head><body>');
             doc.write(htmlContent);
             doc.write('</body></html>');
