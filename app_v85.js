@@ -2331,6 +2331,28 @@ document.getElementById('formNameTitle').innerText = title;
                             <label>7. ความถี่ในการเปลี่ยนน้ำมัน (วัน) *</label>
                             <input type="number" name="replacement_frequency_1" required min="0" placeholder="ระบุจำนวนวัน">
                         </div>
+                        <div class="form-group">
+                            <label>8. วันที่เปลี่ยนล่าสุด *</label>
+                            <input type="date" name="last_replacement_date_1" required style="height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 14px;">
+                        </div>
+                        <div class="form-group">
+                            <label>9. เหตุผลที่เปลี่ยน *</label>
+                            <select name="replacement_reason_1" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                                <option value="">-- เลือกเหตุผลที่เปลี่ยน --</option>
+                                <option value="สภาพน้ำมันเปลี่ยน">สภาพน้ำมันเปลี่ยน</option>
+                                <option value="สภาพอาหารเปลี่ยน">สภาพอาหารเปลี่ยน</option>
+                                <option value="อื่นๆ">อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>10. การกำจัดน้ำมัน *</label>
+                            <select name="oil_disposal_1" required style="width: 100%; height: 42px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-family: inherit; font-size: 14px;">
+                                <option value="">-- เลือกวิธีการกำจัด --</option>
+                                <option value="รวบรวมขายต่อ">รวบรวมขายต่อ</option>
+                                <option value="ทิ้งเองในระบบสาธารณะ">ทิ้งเองในระบบสาธารณะ</option>
+                                <option value="อื่นๆ">อื่นๆ</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
@@ -9029,6 +9051,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     fry_count: sample[`fry_count_${idx}`] || sample[`fry_count_1`] || '',
                     replacement_type: sample[`replacement_type_${idx}`] || sample[`replacement_type_1`] || '',
                     replacement_frequency: sample[`replacement_frequency_${idx}`] || sample[`replacement_frequency_1`] || '',
+                    last_replacement_date: sample[`last_replacement_date_${idx}`] || sample[`last_replacement_date_1`] || sample.last_replacement_date || '',
+                    replacement_reason: sample[`replacement_reason_${idx}`] || sample[`replacement_reason_1`] || sample.replacement_reason || '',
+                    oil_disposal: sample[`oil_disposal_${idx}`] || sample[`oil_disposal_1`] || sample.oil_disposal || '',
                     item_sampling_date: sample[`item_sampling_date_${idx}`] || ''
                 });
             } else if (sample.form_type === 'MU.10-006') {
@@ -11426,7 +11451,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         'ชนิดน้ำมัน': s['oil_type_1'] || s['oil_type_' + idx] || '-',
                         'ระยะเวลาที่ใช้ทอด': s['fry_duration_1'] || s['fry_duration_' + idx] || '-',
                         'ลักษณะการเปลี่ยน': s['replacement_type_1'] || s['replacement_type_' + idx] || '-',
+                        'วันที่เปลี่ยนล่าสุด': s['last_replacement_date_1'] || s['last_replacement_date_' + idx] || '-',
                         'ความถี่ในการเปลี่ยน': s['replacement_frequency_1'] || s['replacement_frequency_' + idx] || '-',
+                        'เหตุผลที่เปลี่ยน': s['replacement_reason_1'] || s['replacement_reason_' + idx] || '-',
+                        'การกำจัดน้ำมัน': s['oil_disposal_1'] || s['oil_disposal_' + idx] || '-',
                         'ค่าโพลาร์': interp
                     };
                 } else if (s.form_type === 'MU.10-003') {
