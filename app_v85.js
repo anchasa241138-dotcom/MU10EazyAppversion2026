@@ -10062,7 +10062,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <hr style="width: 100%; border: none; border-top: 1.5px solid #000; margin: 3px 0 4px 0;">
 
                     <!-- NOTE BOX -->
-                    <div style="border: 1.5px solid #000; padding: 4px 8px; margin-bottom: 5px; font-size: 12.5px; font-weight: bold; line-height: 1.35; color: #000;">
+                    <div style="padding: 2px 0; margin-bottom: 5px; font-size: 12.5px; font-weight: bold; line-height: 1.35; color: #000;">
                         <div style="margin-bottom: 2px; font-size: 13px;"><strong>การเก็บตัวอย่างน้ำมัน</strong></div>
                         <div style="display: flex; gap: 18px;">
                             <div style="flex: 1;">
