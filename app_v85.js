@@ -9815,6 +9815,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 const explicitColor = sample['polar_color_' + roundNum] || sample['analysis_color_4_' + roundNum] || sample['analysis_color_' + roundNum] || '';
                 const detectedColor = explicitColor || (isLessThan20 ? 'สีชมพู' : (is20to25 ? 'สีชมพูจาง' : (isGreaterThan25 ? 'ไม่มีสี' : '')));
 
+                let polarValText = '';
+                if (isLessThan20) {
+                    polarValText = '< 20%';
+                } else if (is20to25) {
+                    polarValText = '20 - 25%';
+                } else if (isGreaterThan25) {
+                    polarValText = '> 25%';
+                } else if (interp) {
+                    polarValText = interp;
+                }
+
                 const summaryOutcome = sample['analysis_summary_4_' + roundNum] || (isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : ''));
 
                 tableRowsHTML += `
@@ -9822,6 +9833,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <td style="border: 1px solid #000; vertical-align: middle; font-size: 14.5px; padding: 2px 4px; line-height: 1.15;">${roundNum}</td>
                         <td style="border: 1px solid #000; vertical-align: middle; font-size: 14px; padding: 2px 4px; line-height: 1.15;">${rowDate}</td>
                         <td style="border: 1px solid #000; vertical-align: middle; font-size: 14px; padding: 2px 4px; line-height: 1.15;">${detectedColor}</td>
+                        <td style="border: 1px solid #000; vertical-align: middle; font-size: 14px; padding: 2px 4px; line-height: 1.15;">${polarValText}</td>
                         <td style="border: 1px solid #000; vertical-align: middle; font-size: 16px; padding: 2px 4px; line-height: 1.15;">${isLessThan20 ? '✓' : ''}</td>
                         <td style="border: 1px solid #000; vertical-align: middle; font-size: 16px; padding: 2px 4px; line-height: 1.15;">${is20to25 ? '✓' : ''}</td>
                         <td style="border: 1px solid #000; vertical-align: middle; font-size: 16px; padding: 2px 4px; line-height: 1.15;">${isGreaterThan25 ? '✓' : ''}</td>
@@ -9978,16 +9990,17 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <table style="width: 100%; margin: 2px 0 3px 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed; font-size: 13.5px; font-weight: bold; color: #000;" border="1">
                         <thead style="text-align: center;">
                             <tr style="background: #fff; text-align: center; vertical-align: middle; page-break-inside: avoid; height: 24px;">
-                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 8.5%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">ครั้งที่<br>เก็บตัวอย่าง</th>
-                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 14%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">วันที่เก็บตัวอย่าง<br>(ว/ด/ป)</th>
-                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 15.5%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">สีที่พบ</th>
-                                <th colspan="3" style="text-align: center; border: 1px solid #000; width: 50%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">การแปลผล</th>
-                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 12%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">สรุปผล</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 7.5%; font-size: 13px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">ครั้งที่<br>เก็บตัวอย่าง</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 13.5%; font-size: 13px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">วันที่เก็บตัวอย่าง<br>(ว/ด/ป)</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 12%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">สีที่พบ</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 11%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">ค่าโพลาร์</th>
+                                <th colspan="3" style="text-align: center; border: 1px solid #000; width: 45%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">การแปลผล</th>
+                                <th rowspan="2" style="text-align: center; border: 1px solid #000; width: 11%; font-size: 13.5px; font-weight: bold; padding: 2px 2px; line-height: 1.15;">สรุปผล</th>
                             </tr>
                             <tr style="background: #fff; text-align: center; vertical-align: middle; font-size: 13px; font-weight: bold; height: 22px;">
-                                <th style="text-align: center; border: 1px solid #000; width: 16.66%; padding: 2px 2px; line-height: 1.15;">ยังไม่เสื่อมคุณภาพ<br>&lt; 20%</th>
-                                <th style="text-align: center; border: 1px solid #000; width: 16.66%; padding: 2px 2px; line-height: 1.15;">ใกล้เสื่อมคุณภาพ<br>20 - 25%</th>
-                                <th style="text-align: center; border: 1px solid #000; width: 16.66%; padding: 2px 2px; line-height: 1.15;">น้ำมันเสื่อมคุณภาพ<br>&gt; 25%</th>
+                                <th style="text-align: center; border: 1px solid #000; width: 15%; padding: 2px 2px; line-height: 1.15; font-size: 13px;">น้ำมันยังไม่เสื่อมคุณภาพ</th>
+                                <th style="text-align: center; border: 1px solid #000; width: 15%; padding: 2px 2px; line-height: 1.15; font-size: 13px;">น้ำมันใกล้เสื่อมคุณภาพ</th>
+                                <th style="text-align: center; border: 1px solid #000; width: 15%; padding: 2px 2px; line-height: 1.15; font-size: 13px;">น้ำมันเสื่อมคุณภาพ</th>
                             </tr>
                         </thead>
                         <tbody>${tableRowsHTML}</tbody>
@@ -10335,10 +10348,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 scrollY: 0,
                 x: 0,
                 y: 0,
-                width: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 780 : 1100,
-                windowWidth: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 780 : 1200
+                width: sample.form_type === 'MU.10-007' ? 780 : 1100,
+                windowWidth: sample.form_type === 'MU.10-007' ? 780 : 1200
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: (sample.form_type === 'MU.10-004' || sample.form_type === 'MU.10-007') ? 'portrait' : 'landscape' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: sample.form_type === 'MU.10-007' ? 'portrait' : 'landscape' },
             pagebreak: { mode: ['css', 'legacy'] }
         };
 
