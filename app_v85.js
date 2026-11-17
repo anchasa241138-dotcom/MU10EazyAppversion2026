@@ -4762,29 +4762,31 @@ document.getElementById('formNameTitle').innerText = title;
         }
     },
 
-    selectMu10004Polar(idx, value) {
-        const hiddenEl = document.getElementById('analysis-interpretation-4-' + idx);
-        if (hiddenEl) {
-            hiddenEl.value = value;
+    highlightMu10004Button(idx, matchedKey) {
+        let normKey = null;
+        if (matchedKey) {
+            const compact = matchedKey.replace(/\s+/g, '');
+            if (compact === '<20%' || compact === '<20') normKey = '<20%';
+            else if (compact === '20-25%' || compact === '20-25') normKey = '20-25%';
+            else if (compact === '>25%' || compact === '>25') normKey = '>25%';
         }
 
-        // Set radio input checked state
-        const radios = document.querySelectorAll(`input[name="polar_radio_${idx}"]`);
-        radios.forEach(r => {
-            r.checked = (r.value === value);
-        });
-
-        // Highlight selected button card
         const cards = {
             '<20%': document.getElementById(`polar-opt-${idx}-lt20`),
             '20-25%': document.getElementById(`polar-opt-${idx}-2025`),
             '>25%': document.getElementById(`polar-opt-${idx}-gt25`)
         };
 
+        const radios = document.querySelectorAll(`input[name="polar_radio_${idx}"]`);
+        radios.forEach(r => {
+            const rCompact = (r.value || '').replace(/\s+/g, '');
+            r.checked = (rCompact === normKey);
+        });
+
         Object.keys(cards).forEach(k => {
             const el = cards[k];
             if (!el) return;
-            if (k === value) {
+            if (k === normKey) {
                 if (k === '>25%') {
                     el.style.borderColor = '#ef4444';
                     el.style.background = '#fef2f2';
@@ -4800,7 +4802,17 @@ document.getElementById('formNameTitle').innerText = title;
                 el.style.boxShadow = 'none';
             }
         });
+    },
 
+    selectMu10004Polar(idx, value) {
+        const inputEl = document.getElementById('analysis-interpretation-4-' + idx);
+        if (inputEl) {
+            inputEl.value = value;
+        }
+        this.handleMu10004InterpretationChange(idx);
+    },
+
+    handleMu10004PolarInput(idx) {
         this.handleMu10004InterpretationChange(idx);
     },
 
@@ -4810,27 +4822,47 @@ document.getElementById('formNameTitle').innerText = title;
         const summaryInput = document.getElementById('analysis-summary-outcome-4-' + idx);
         if(!el || !resultInput || !summaryInput) return;
         
-        const val = el.value;
-        if (val === '<20%') {
+        const rawVal = (el.value || '').trim();
+        const compact = rawVal.replace(/\s+/g, '');
+        
+        // Check numeric if present
+        const numMatch = rawVal.match(/(\d+(\.\d+)?)/);
+        const num = numMatch ? parseFloat(numMatch[1]) : NaN;
+
+        const isLt20 = compact === '<20%' || compact === '<20' || compact.includes('<20') || (!isNaN(num) && num < 20 && !compact.includes('>') && !compact.includes('-'));
+        const is2025 = compact === '20-25%' || compact === '20-25' || compact.includes('20-25') || (!isNaN(num) && num >= 20 && num <= 25 && !compact.includes('<') && !compact.includes('>'));
+        const isGt25 = compact === '>25%' || compact === '>25' || compact.includes('>25') || (!isNaN(num) && num > 25);
+
+        if (isLt20) {
             resultInput.value = 'น้ำมันยังไม่เสื่อมคุณภาพ';
             summaryInput.value = 'ผ่าน';
             resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
             summaryInput.style.color = '#16a34a'; summaryInput.style.background = '#f0fdf4';
-        } else if (val === '20-25%') {
+            this.highlightMu10004Button(idx, '<20%');
+        } else if (is2025) {
             resultInput.value = 'น้ำมันใกล้เสื่อมคุณภาพ';
             summaryInput.value = 'ผ่าน';
             resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
             summaryInput.style.color = '#16a34a'; summaryInput.style.background = '#f0fdf4';
-        } else if (val === '>25%') {
+            this.highlightMu10004Button(idx, '20-25%');
+        } else if (isGt25) {
             resultInput.value = 'น้ำมันเสื่อมคุณภาพ';
             summaryInput.value = 'ไม่ผ่าน';
             resultInput.style.color = '#dc2626'; resultInput.style.background = '#fef2f2';
             summaryInput.style.color = '#dc2626'; summaryInput.style.background = '#fef2f2';
+            this.highlightMu10004Button(idx, '>25%');
+        } else if (rawVal !== '') {
+            resultInput.value = rawVal;
+            summaryInput.value = 'ผ่าน';
+            resultInput.style.color = '#0284c7'; resultInput.style.background = '#f0f9ff';
+            summaryInput.style.color = '#0284c7'; summaryInput.style.background = '#f0f9ff';
+            this.highlightMu10004Button(idx, null);
         } else {
             resultInput.value = '';
             summaryInput.value = '';
             resultInput.style.color = ''; resultInput.style.background = '';
             summaryInput.style.color = ''; summaryInput.style.background = '';
+            this.highlightMu10004Button(idx, null);
         }
     },
 
@@ -5273,9 +5305,10 @@ document.getElementById('formNameTitle').innerText = title;
                     }
                 });
             });
-            if (sample.analysis_comment) {
+            const commentVal = sample.oil_change_date || sample.analysis_comment || '';
+            if (commentVal) {
                 const commentEl = document.getElementById('analysis-comment');
-                if (commentEl) commentEl.value = sample.analysis_comment;
+                if (commentEl) commentEl.value = commentVal;
             }
         } else if (sample.form_type === 'MU.10-004') {
             const sampleNames = [];
@@ -5342,13 +5375,16 @@ document.getElementById('formNameTitle').innerText = title;
                             </datalist>
                         </div>
 
-                        <!-- ตัวเลือกแบบปุ่มให้ติ๊ก (Polar result clickable choices) -->
-                        <div style="margin-bottom: 14px;">
-                            <label style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 8px; display: block;">
-                                ผลการตรวจสารโพลาร์ <span class="required" style="color: #ef4444;">*</span>:
+                        <!-- ค่าโพลาร์ (พิมพ์เองได้ หรือคลิกเลือกจากปุ่มลัด) -->
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="analysis-interpretation-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 6px; display: block;">
+                                <i class="fa-solid fa-chart-line" style="color: #0284c7; margin-right: 5px;"></i> ค่าโพลาร์ (พิมพ์ระบุเอง หรือคลิกเลือกจากตัวเลือกด้านล่าง) <span class="required" style="color: #ef4444;">*</span>:
                             </label>
+                            <input type="text" id="analysis-interpretation-4-${item.idx}" name="analysis_interpretation_4_${item.idx}" class="form-control" style="width: 100%; height: 42px; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 600; background-color: #ffffff; margin-bottom: 8px;" placeholder="-- พิมพ์ค่าโพลาร์ เช่น < 20%, 20 - 25%, > 25% หรือระบุตัวเลข --" oninput="app.handleMu10004PolarInput('${item.idx}')" required>
+
+                            <!-- ตัวเลือกแบบปุ่มให้คลิกเลือกด่วน -->
                             <div style="display: flex; gap: 12px; flex-wrap: wrap;" id="polar-btn-group-${item.idx}">
-                                <label class="polar-btn-option" id="polar-opt-${item.idx}-lt20" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '<20%')">
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-lt20" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '< 20%')">
                                     <input type="radio" name="polar_radio_${item.idx}" value="<20%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
                                     <div>
                                         <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&lt; 20%</div>
@@ -5356,7 +5392,7 @@ document.getElementById('formNameTitle').innerText = title;
                                     </div>
                                 </label>
 
-                                <label class="polar-btn-option" id="polar-opt-${item.idx}-2025" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '20-25%')">
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-2025" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '20 - 25%')">
                                     <input type="radio" name="polar_radio_${item.idx}" value="20-25%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
                                     <div>
                                         <div style="font-weight: 700; font-size: 14px; color: #0f172a;">20 - 25%</div>
@@ -5364,7 +5400,7 @@ document.getElementById('formNameTitle').innerText = title;
                                     </div>
                                 </label>
 
-                                <label class="polar-btn-option" id="polar-opt-${item.idx}-gt25" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '>25%')">
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-gt25" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '> 25%')">
                                     <input type="radio" name="polar_radio_${item.idx}" value=">25%" style="width: 18px; height: 18px; accent-color: #dc2626; cursor: pointer; margin: 0;">
                                     <div>
                                         <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&gt; 25%</div>
@@ -5372,7 +5408,6 @@ document.getElementById('formNameTitle').innerText = title;
                                     </div>
                                 </label>
                             </div>
-                            <input type="hidden" id="analysis-interpretation-4-${item.idx}" value="" required>
                         </div>
 
                         <!-- ผลการแปลผล และ สรุปผล -->
@@ -5392,9 +5427,11 @@ document.getElementById('formNameTitle').innerText = title;
             });
 
             html += `
-                <div class="form-group">
-                    <label for="analysis-comment">หมายเหตุเพิ่มเติม</label>
-                    <input type="text" id="analysis-comment" placeholder="คำชี้แจงเพิ่มเติมถ้ามี">
+                <div class="form-group" style="margin-top: 10px;">
+                    <label for="analysis-comment" style="font-weight: 700; color: #0f274e; font-size: 13.5px; display: block; margin-bottom: 6px;">
+                        <i class="fa-solid fa-calendar-check" style="color: #0284c7; margin-right: 5px;"></i> สรุปผล ควรเปลี่ยนน้ำมันใหม่หลังทอดเสร็จในวันที่:
+                    </label>
+                    <input type="text" id="analysis-comment" class="form-control" placeholder="ระบุวันที่ เช่น 9 พ.ย. 2569 หรือข้อความสรุปผล" style="width: 100%; height: 42px; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-weight: 600; font-size: 13.5px;">
                 </div>
             `;
 
@@ -5416,9 +5453,10 @@ document.getElementById('formNameTitle').innerText = title;
                     app.selectMu10004Polar(item.idx, interp);
                 }
             });
-            if (sample.analysis_comment) {
+            const commentVal = sample.oil_change_date || sample.analysis_comment || '';
+            if (commentVal) {
                 const commentEl = document.getElementById('analysis-comment');
-                if (commentEl) commentEl.value = sample.analysis_comment;
+                if (commentEl) commentEl.value = commentVal;
             }
         } else if (sample.form_type === 'MU.10-007') {
             const items = [];
@@ -6617,17 +6655,18 @@ document.getElementById('formNameTitle').innerText = title;
                     if (sample['item_sampling_date_' + idx] !== undefined || sample['sample_name_' + idx] !== undefined || (idx === 1 && defaultName)) {
                         const interpEl = document.getElementById('analysis-interpretation-4-' + idx);
                         if (interpEl) {
-                            if (!interpEl.value) {
+                            const interpVal = interpEl.value.trim();
+                            if (!interpVal) {
                                 Swal.fire({
                                     icon: 'warning',
-                                    title: 'กรุณาเลือกผลการตรวจสารโพลาร์',
-                                    text: `กรุณาติ๊กเลือกผลการตรวจสารโพลาร์ สำหรับครั้งที่เก็บ ${idx}`,
+                                    title: 'กรุณาระบุค่าโพลาร์',
+                                    text: `กรุณากรอกหรือเลือกค่าโพลาร์ สำหรับครั้งที่เก็บ ${idx}`,
                                     confirmButtonColor: '#0284c7'
                                 });
                                 return;
                             }
                             totalCount++;
-                            sample['analysis_interpretation_4_' + idx] = interpEl.value;
+                            sample['analysis_interpretation_4_' + idx] = interpVal;
                             sample['analysis_details_4_' + idx] = document.getElementById('analysis-detail-results-4-' + idx)?.value || '';
                             const summary = document.getElementById('analysis-summary-outcome-4-' + idx)?.value || '';
                             sample['analysis_summary_4_' + idx] = summary;
@@ -6642,6 +6681,13 @@ document.getElementById('formNameTitle').innerText = title;
                             if (summary === 'ผ่าน') passCount++;
                         }
                     }
+                }
+
+                const commentEl = document.getElementById('analysis-comment');
+                if (commentEl) {
+                    const cVal = commentEl.value.trim();
+                    sample.analysis_comment = cVal;
+                    sample.oil_change_date = cVal;
                 }
 
                 if (totalCount > 0) {
@@ -10008,7 +10054,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
 
                     <!-- SUMMARY -->
                     <div style="width: 100%; margin: 3px 0 2px 0; font-size: 13.5px; font-weight: bold; color: #000; line-height: 1.35;">
-                        <div style="white-space: nowrap; overflow: hidden;"><strong>สรุปผล</strong> ควรเปลี่ยนน้ำมันใหม่หลังทอดเสร็จในวันที่ ${sample.oil_change_date ? `<u>&nbsp;${sample.oil_change_date}&nbsp;</u>` : '................................................................................................................................................................................................................................'}</div>
+                        <div style="white-space: nowrap; overflow: hidden;"><strong>สรุปผล</strong> ควรเปลี่ยนน้ำมันใหม่หลังทอดเสร็จในวันที่ ${(sample.oil_change_date || sample.analysis_comment) ? `<u>&nbsp;${sample.oil_change_date || sample.analysis_comment}&nbsp;</u>` : '................................................................................................................................................................................................................................'}</div>
                     </div>
                     <hr style="width: 100%; border: none; border-top: 1.5px solid #000; margin: 3px 0 4px 0;">
 
