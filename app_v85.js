@@ -5286,6 +5286,20 @@ document.getElementById('formNameTitle').innerText = title;
             }
 
             let html = '<div class="form-section-divider"><i class="fa-solid fa-microscope"></i> ผลการตรวจวิเคราะห์ (' + sample.form_type + ')</div>';
+            html += `
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:14px 16px; margin-bottom:16px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="analysis-test-kit-mu04" style="font-weight:700; color:#1e293b; font-size:13.5px; margin-bottom:6px; display:block;">
+                            <i class="fa-solid fa-vial" style="color:#0284c7; margin-right:5px;"></i> ชุดทดสอบที่ใช้ตรวจวิเคราะห์ (บันทึกโดยเจ้าหน้าที่แลป) <span class="required" style="color:#ef4444;">*</span>:
+                        </label>
+                        <select id="analysis-test-kit-mu04" class="form-control" style="width:100%; height:40px; padding:8px 12px; border:1.5px solid #94a3b8; border-radius:8px; font-size:13.5px; font-weight:600; background-color:#ffffff;" required>
+                            <option value="">-- เลือกชุดทดสอบที่ใช้ --</option>
+                            <option value="สารโพลาร์ในน้ำมันทอดซ้ำ Polar Blue Test">สารโพลาร์ในน้ำมันทอดซ้ำ Polar Blue Test</option>
+                            <option value="กรมวิทยาศาสตร์การแพทย์">กรมวิทยาศาสตร์การแพทย์</option>
+                        </select>
+                    </div>
+                </div>
+            `;
 
             sampleNames.forEach(item => {
                 const itemLabNo = this.getItemLabNo(sample, item.idx);
@@ -5364,6 +5378,11 @@ document.getElementById('formNameTitle').innerText = title;
             `;
 
             container.innerHTML = html;
+
+            const kitEl = document.getElementById('analysis-test-kit-mu04');
+            if (kitEl && sample.test_kit) {
+                kitEl.value = sample.test_kit;
+            }
 
             sampleNames.forEach(item => {
                 const interp = sample[`analysis_interpretation_4_${item.idx}`];
@@ -6552,6 +6571,19 @@ document.getElementById('formNameTitle').innerText = title;
                     }
                 }
             } else if (sample.form_type === 'MU.10-004') {
+                const kitEl = document.getElementById('analysis-test-kit-mu04');
+                if (kitEl) {
+                    if (!kitEl.value) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'กรุณาเลือกชุดทดสอบที่ใช้',
+                            text: 'กรุณาระบุชุดทดสอบที่ใช้ตรวจวิเคราะห์น้ำมันทอดซ้ำ',
+                            confirmButtonColor: '#0284c7'
+                        });
+                        return;
+                    }
+                    sample.test_kit = kitEl.value;
+                }
                 let passCount = 0;
                 let totalCount = 0;
                 const defaultName = sample['sample_name_1'] || sample.sample_name || '';
@@ -9698,10 +9730,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const isDisposalSell = oilDisposal.includes('รวบรวมขายต่อ');
             const isDisposalDump = oilDisposal.includes('ทิ้งเองในระบบสาธารณะ');
 
-            // Test kit
-            const testKit = sample.test_kit || 'สารโพลาร์ในน้ำมันทอดซ้ำ Polar Blue Test';
-            const isSciDeptKit = testKit.includes('กรมวิทยาศาสตร์การแพทย์');
-            const isPolarBlueKit = testKit.includes('Polar Blue') || testKit.includes('สารโพลาร์') || (!isSciDeptKit);
+            // Test kit (บันทึกโดยเจ้าหน้าที่แลป ในขั้นตอนตรวจวิเคราะห์ ไม่ได้ถูกบันทึกโดยผู้เก็บตัวอย่าง)
+            const testKit = sample.test_kit || '';
+            const isSciDeptKit = Boolean(testKit && testKit.includes('กรมวิทยาศาสตร์การแพทย์'));
+            const isPolarBlueKit = Boolean(testKit && (testKit.includes('Polar Blue') || testKit.includes('สารโพลาร์')));
 
             // Distributor / Shop name
             const distributorName = sample.distributor || sample.distributor_1 || sample.owner_name || sample.shop_name || sample.location_name || '';
