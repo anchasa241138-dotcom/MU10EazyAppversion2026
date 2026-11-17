@@ -4811,13 +4811,18 @@ document.getElementById('formNameTitle').innerText = title;
         if(!el || !resultInput || !summaryInput) return;
         
         const val = el.value;
-        if (val === '<20%' || val === '20-25%') {
-            resultInput.value = 'น้ำมันยังใช้ได้';
+        if (val === '<20%') {
+            resultInput.value = 'น้ำมันยังไม่เสื่อมคุณภาพ';
+            summaryInput.value = 'ผ่าน';
+            resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
+            summaryInput.style.color = '#16a34a'; summaryInput.style.background = '#f0fdf4';
+        } else if (val === '20-25%') {
+            resultInput.value = 'น้ำมันใกล้เสื่อมคุณภาพ';
             summaryInput.value = 'ผ่าน';
             resultInput.style.color = '#16a34a'; resultInput.style.background = '#f0fdf4';
             summaryInput.style.color = '#16a34a'; summaryInput.style.background = '#f0fdf4';
         } else if (val === '>25%') {
-            resultInput.value = 'น้ำมันเสื่อมสภาพแล้ว';
+            resultInput.value = 'น้ำมันเสื่อมคุณภาพ';
             summaryInput.value = 'ไม่ผ่าน';
             resultInput.style.color = '#dc2626'; resultInput.style.background = '#fef2f2';
             summaryInput.style.color = '#dc2626'; summaryInput.style.background = '#fef2f2';
@@ -5321,6 +5326,22 @@ document.getElementById('formNameTitle').innerText = title;
                             </div>
                         </div>
 
+                        <!-- 1. ช่องบันทึก สีที่พบ -->
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="analysis-color-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 6px; display: block;">
+                                <i class="fa-solid fa-palette" style="color: #0284c7; margin-right: 5px;"></i> สีที่พบ (เลือกจากรายการหรือพิมพ์เอง):
+                            </label>
+                            <input type="text" id="analysis-color-4-${item.idx}" name="analysis_color_4_${item.idx}" list="polar-color-options-${item.idx}" class="form-control" style="width: 100%; height: 42px; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 600; background-color: #ffffff;" placeholder="-- เลือกหรือพิมพ์สีที่พบ เช่น สีน้ำเงิน, สีเขียว, สีชมพูม่วง --">
+                            <datalist id="polar-color-options-${item.idx}">
+                                <option value="สีน้ำเงิน">สีน้ำเงิน</option>
+                                <option value="สีเขียว">สีเขียว</option>
+                                <option value="สีเหลือง">สีเหลือง</option>
+                                <option value="สีชมพูม่วง">สีชมพูม่วง</option>
+                                <option value="สีชมพูแดง">สีชมพูแดง</option>
+                                <option value="สีชมพู-ชมพูจาง">สีชมพู-ชมพูจาง</option>
+                            </datalist>
+                        </div>
+
                         <!-- ตัวเลือกแบบปุ่มให้ติ๊ก (Polar result clickable choices) -->
                         <div style="margin-bottom: 14px;">
                             <label style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 8px; display: block;">
@@ -5331,7 +5352,7 @@ document.getElementById('formNameTitle').innerText = title;
                                     <input type="radio" name="polar_radio_${item.idx}" value="<20%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
                                     <div>
                                         <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&lt; 20%</div>
-                                        <div style="font-size: 11.5px; color: #64748b;">(สีชมพู / ผ่าน)</div>
+                                        <div style="font-size: 11.5px; color: #64748b;">(ยังไม่เสื่อมคุณภาพ / ผ่าน)</div>
                                     </div>
                                 </label>
 
@@ -5339,7 +5360,7 @@ document.getElementById('formNameTitle').innerText = title;
                                     <input type="radio" name="polar_radio_${item.idx}" value="20-25%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
                                     <div>
                                         <div style="font-weight: 700; font-size: 14px; color: #0f172a;">20 - 25%</div>
-                                        <div style="font-size: 11.5px; color: #64748b;">(สีชมพูจาง / ผ่าน)</div>
+                                        <div style="font-size: 11.5px; color: #64748b;">(ใกล้เสื่อมคุณภาพ / ผ่าน)</div>
                                     </div>
                                 </label>
 
@@ -5347,7 +5368,7 @@ document.getElementById('formNameTitle').innerText = title;
                                     <input type="radio" name="polar_radio_${item.idx}" value=">25%" style="width: 18px; height: 18px; accent-color: #dc2626; cursor: pointer; margin: 0;">
                                     <div>
                                         <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&gt; 25%</div>
-                                        <div style="font-size: 11.5px; color: #64748b;">(ไม่มีสี / ไม่ผ่าน)</div>
+                                        <div style="font-size: 11.5px; color: #64748b;">(น้ำมันเสื่อมคุณภาพ / ไม่ผ่าน)</div>
                                     </div>
                                 </label>
                             </div>
@@ -5385,6 +5406,11 @@ document.getElementById('formNameTitle').innerText = title;
             }
 
             sampleNames.forEach(item => {
+                const colorEl = document.getElementById('analysis-color-4-' + item.idx);
+                if (colorEl) {
+                    const existingColor = sample['polar_color_' + item.idx] || sample['analysis_color_4_' + item.idx] || '';
+                    if (existingColor) colorEl.value = existingColor;
+                }
                 const interp = sample[`analysis_interpretation_4_${item.idx}`];
                 if (interp) {
                     app.selectMu10004Polar(item.idx, interp);
@@ -6605,6 +6631,14 @@ document.getElementById('formNameTitle').innerText = title;
                             sample['analysis_details_4_' + idx] = document.getElementById('analysis-detail-results-4-' + idx)?.value || '';
                             const summary = document.getElementById('analysis-summary-outcome-4-' + idx)?.value || '';
                             sample['analysis_summary_4_' + idx] = summary;
+
+                            const colorEl = document.getElementById('analysis-color-4-' + idx);
+                            if (colorEl) {
+                                const cVal = colorEl.value.trim();
+                                sample['polar_color_' + idx] = cVal;
+                                sample['analysis_color_4_' + idx] = cVal;
+                            }
+
                             if (summary === 'ผ่าน') passCount++;
                         }
                     }
@@ -9778,7 +9812,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     rowDate = samplingDate || '';
                 }
 
-                const explicitColor = sample['polar_color_' + roundNum] || sample['analysis_color_' + roundNum] || '';
+                const explicitColor = sample['polar_color_' + roundNum] || sample['analysis_color_4_' + roundNum] || sample['analysis_color_' + roundNum] || '';
                 const detectedColor = explicitColor || (isLessThan20 ? 'สีชมพู' : (is20to25 ? 'สีชมพูจาง' : (isGreaterThan25 ? 'ไม่มีสี' : '')));
 
                 const summaryOutcome = sample['analysis_summary_4_' + roundNum] || (isPass ? 'ผ่าน' : (isFail ? 'ไม่ผ่าน' : ''));
