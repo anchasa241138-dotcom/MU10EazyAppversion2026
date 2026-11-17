@@ -5359,30 +5359,33 @@ document.getElementById('formNameTitle').innerText = title;
                             </div>
                         </div>
 
-                        <!-- 1. ช่องบันทึก สีที่พบ -->
-                        <div class="form-group" style="margin-bottom: 14px;">
-                            <label for="analysis-color-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 6px; display: block;">
-                                <i class="fa-solid fa-palette" style="color: #0284c7; margin-right: 5px;"></i> สีที่พบ (เลือกจากรายการหรือพิมพ์เอง):
-                            </label>
-                            <input type="text" id="analysis-color-4-${item.idx}" name="analysis_color_4_${item.idx}" list="polar-color-options-${item.idx}" class="form-control" style="width: 100%; height: 42px; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 600; background-color: #ffffff;" placeholder="-- เลือกหรือพิมพ์สีที่พบ เช่น สีน้ำเงิน, สีเขียว, สีชมพูม่วง --">
-                            <datalist id="polar-color-options-${item.idx}">
-                                <option value="สีน้ำเงิน">สีน้ำเงิน</option>
-                                <option value="สีเขียว">สีเขียว</option>
-                                <option value="สีเหลือง">สีเหลือง</option>
-                                <option value="สีชมพูม่วง">สีชมพูม่วง</option>
-                                <option value="สีชมพูแดง">สีชมพูแดง</option>
-                                <option value="สีชมพู-ชมพูจาง">สีชมพู-ชมพูจาง</option>
-                            </datalist>
+                        <!-- แถวที่ 1: สีที่พบ (ซ้าย) + ค่าโพลาร์ (ขวา) อยู่แถวเดียวกัน และขนาดพอดี -->
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 10px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="analysis-color-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13px; margin-bottom: 5px; display: block;">
+                                    <i class="fa-solid fa-palette" style="color: #0284c7; margin-right: 5px;"></i> สีที่พบ (เลือกจากรายการหรือพิมพ์เอง):
+                                </label>
+                                <input type="text" id="analysis-color-4-${item.idx}" name="analysis_color_4_${item.idx}" list="polar-color-options-${item.idx}" class="form-control" style="width: 100%; height: 38px; padding: 6px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #ffffff;" placeholder="-- เลือกหรือพิมพ์สีที่พบ --">
+                                <datalist id="polar-color-options-${item.idx}">
+                                    <option value="สีน้ำเงิน">สีน้ำเงิน</option>
+                                    <option value="สีเขียว">สีเขียว</option>
+                                    <option value="สีเหลือง">สีเหลือง</option>
+                                    <option value="สีชมพูม่วง">สีชมพูม่วง</option>
+                                    <option value="สีชมพูแดง">สีชมพูแดง</option>
+                                    <option value="สีชมพู-ชมพูจาง">สีชมพู-ชมพูจาง</option>
+                                </datalist>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="analysis-interpretation-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13px; margin-bottom: 5px; display: block;">
+                                    <i class="fa-solid fa-chart-line" style="color: #0284c7; margin-right: 5px;"></i> ค่าโพลาร์ (พิมพ์ระบุเอง หรือคลิกเลือกจากตัวเลือกด้านล่าง) <span class="required" style="color: #ef4444;">*</span>:
+                                </label>
+                                <input type="text" id="analysis-interpretation-4-${item.idx}" name="analysis_interpretation_4_${item.idx}" class="form-control" style="width: 100%; height: 38px; padding: 6px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #ffffff;" placeholder="-- พิมพ์ค่าโพลาร์ เช่น < 20%, 20-25% --" oninput="app.handleMu10004PolarInput('${item.idx}')" required>
+                            </div>
                         </div>
 
-                        <!-- ค่าโพลาร์ (พิมพ์เองได้ หรือคลิกเลือกจากปุ่มลัด) -->
-                        <div class="form-group" style="margin-bottom: 12px;">
-                            <label for="analysis-interpretation-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13px; margin-bottom: 5px; display: block;">
-                                <i class="fa-solid fa-chart-line" style="color: #0284c7; margin-right: 5px;"></i> ค่าโพลาร์ (พิมพ์ระบุเอง หรือคลิกเลือกจากปุ่มด้านล่าง) <span class="required" style="color: #ef4444;">*</span>:
-                            </label>
-                            <input type="text" id="analysis-interpretation-4-${item.idx}" name="analysis_interpretation_4_${item.idx}" class="form-control" style="width: 100%; height: 38px; padding: 6px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #ffffff; margin-bottom: 8px;" placeholder="-- พิมพ์ค่าโพลาร์ เช่น < 20%, 20 - 25%, > 25% หรือระบุตัวเลข --" oninput="app.handleMu10004PolarInput('${item.idx}')" required>
-
-                            <!-- ตัวเลือกแบบปุ่มให้คลิกเลือกด่วน ขนาดกะทัดรัด ตัวหนังสืออยู่ข้างปุ่ม -->
+                        <!-- ตัวเลือกแบบปุ่มให้คลิกเลือกด่วน ขนาดกะทัดรัด ตัวหนังสืออยู่ข้างปุ่ม -->
+                        <div style="margin-bottom: 12px;">
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="polar-btn-group-${item.idx}">
                                 <label class="polar-btn-option" id="polar-opt-${item.idx}-lt20" style="flex: 1; min-width: 150px; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 8px !important; padding: 6px 12px !important; min-height: 38px !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; cursor: pointer !important; background: #ffffff !important; box-sizing: border-box !important; margin: 0 !important; transition: all 0.2s ease;" onclick="app.selectMu10004Polar('${item.idx}', '< 20%')">
                                     <input type="radio" name="polar_radio_${item.idx}" value="<20%" style="all: unset !important; appearance: auto !important; -webkit-appearance: auto !important; width: 16px !important; height: 16px !important; padding: 0 !important; margin: 0 !important; border: none !important; border-radius: 50% !important; flex-shrink: 0 !important; accent-color: #16a34a !important; cursor: pointer !important; display: inline-block !important;">
