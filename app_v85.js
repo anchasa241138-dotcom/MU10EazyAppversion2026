@@ -9874,15 +9874,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <div style="display: flex; width: 100%; margin-bottom: 4px; gap: 15px;">
                         <!-- Left Column -->
                         <div style="flex: 1.05; font-size: 13.5px; font-weight: bold; line-height: 1.4; color: #000;">
-                            <div><strong>ประเภท</strong>&nbsp;&nbsp;${chk('พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ', isFlour)}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isFlour && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">${chk('เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด', isMeat)}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isMeat && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">${chk('ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ', isMeatProduct)}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isMeatProduct && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">${chk('พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ', isMix)}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">ระบุชนิดอาหาร ${isMix && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
-                            <div style="padding-left: 36px; margin-top: 1px;">${chk('อื่น ๆ ระบุชนิดอาหาร' + (isOtherFood ? ` <u>&nbsp;${foodTypeStr || foodCatStr}&nbsp;</u>` : '........................................................'), isOtherFood)}</div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <span style="white-space: nowrap; margin-right: 6px;"><strong>ประเภท</strong></span>
+                                <div>
+                                    <div>${chk('พวกแป้ง เช่น ปาท่องโก๋ กล้วยแขก มันทอด ขนมไข่นกกระทา ฯลฯ', isFlour)}</div>
+                                    <div style="margin-top: 1px;">ระบุชนิดอาหาร ${isFlour && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                                    <div style="margin-top: 1px;">${chk('เนื้อสัตว์ เช่น ไก่ทอด ปลาทอด หมูทอด', isMeat)}</div>
+                                    <div style="margin-top: 1px;">ระบุชนิดอาหาร ${isMeat && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                                    <div style="margin-top: 1px;">${chk('ผลิตภัณฑ์จากเนื้อสัตว์ เช่น ลูกชิ้น ไส้กรอก ฯลฯ', isMeatProduct)}</div>
+                                    <div style="margin-top: 1px;">ระบุชนิดอาหาร ${isMeatProduct && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                                    <div style="margin-top: 1px;">${chk('พวกผสม เช่น ไก่ชุบแป้งทอด ปลาชุบแป้งทอด ฯลฯ', isMix)}</div>
+                                    <div style="margin-top: 1px;">ระบุชนิดอาหาร ${isMix && foodTypeStr ? `<u>&nbsp;${foodTypeStr}&nbsp;</u>` : '....................................................................'}</div>
+                                    <div style="margin-top: 1px;">${chk('อื่น ๆ ระบุชนิดอาหาร' + (isOtherFood ? ` <u>&nbsp;${foodTypeStr || foodCatStr}&nbsp;</u>` : '........................................................'), isOtherFood)}</div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Right Column -->
@@ -9898,14 +9903,18 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                                 <strong>พฤติกรรมการใช้น้ำมัน</strong>&nbsp;&nbsp;
                                 ระยะเวลาใช้ทอด ${fryDuration ? `<u>&nbsp;${fryDuration}&nbsp;</u>` : '................'} นาที/ครั้ง
                             </div>
-                            <div style="margin-top: 1px;">
-                                <strong>ลักษณะการเปลี่ยน</strong>&nbsp;&nbsp;
-                                ${chk('ไม่เปลี่ยนเลย', isRepNone)}&nbsp;&nbsp;
-                                ${chk('เปลี่ยนบางส่วน', isRepPart)}&nbsp;&nbsp;
-                                ${chk('เปลี่ยนใหม่ทั้งหมด', isRepAll)}
-                            </div>
-                            <div style="margin-top: 1px; padding-left: 88px;">
-                                ${chk('อื่น ๆ ระบุ' + (isRepOther ? ` <u>&nbsp;${repType}&nbsp;</u>` : '...................................................'), isRepOther)}
+                            <div style="display: flex; align-items: flex-start; margin-top: 1px;">
+                                <span style="white-space: nowrap; margin-right: 6px;"><strong>ลักษณะการเปลี่ยน</strong></span>
+                                <div>
+                                    <div>
+                                        ${chk('ไม่เปลี่ยนเลย', isRepNone)}&nbsp;&nbsp;
+                                        ${chk('เปลี่ยนบางส่วน', isRepPart)}&nbsp;&nbsp;
+                                        ${chk('เปลี่ยนใหม่ทั้งหมด', isRepAll)}
+                                    </div>
+                                    <div style="margin-top: 1px;">
+                                        ${chk('อื่น ๆ ระบุ' + (isRepOther ? ` <u>&nbsp;${repType}&nbsp;</u>` : '...................................................'), isRepOther)}
+                                    </div>
+                                </div>
                             </div>
                             <div style="margin-top: 1px;">
                                 วันที่เปลี่ยนล่าสุด ${formattedLastRepDate ? `<u>&nbsp;${formattedLastRepDate}&nbsp;</u>` : '..................'} &nbsp;&nbsp;&nbsp;&nbsp;
@@ -9921,12 +9930,12 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                                 ${chk('รวบรวมขายต่อ', isDisposalSell)}&nbsp;&nbsp;&nbsp;&nbsp;
                                 ${chk('ทิ้งเองในระบบสาธารณะ', isDisposalDump)}
                             </div>
-                            <div style="margin-top: 1px;">
-                                <strong>ชุดทดสอบที่ใช้</strong>&nbsp;&nbsp;
-                                ${chk('กรมวิทยาศาสตร์การแพทย์', isSciDeptKit)}
-                            </div>
-                            <div style="margin-top: 1px; padding-left: 80px;">
-                                ${chk('สารโพลาร์ในน้ำมันทอดซ้ำ Polar Blue Test', isPolarBlueKit)}
+                            <div style="display: flex; align-items: flex-start; margin-top: 1px;">
+                                <span style="white-space: nowrap; margin-right: 6px;"><strong>ชุดทดสอบที่ใช้</strong></span>
+                                <div>
+                                    <div>${chk('กรมวิทยาศาสตร์การแพทย์', isSciDeptKit)}</div>
+                                    <div style="margin-top: 1px;">${chk('สารโพลาร์ในน้ำมันทอดซ้ำ Polar Blue Test', isPolarBlueKit)}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
