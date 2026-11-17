@@ -4788,16 +4788,16 @@ document.getElementById('formNameTitle').innerText = title;
             if (!el) return;
             if (k === normKey) {
                 if (k === '>25%') {
-                    el.style.borderColor = '#ef4444';
+                    el.style.border = '1.5px solid #ef4444';
                     el.style.background = '#fef2f2';
-                    el.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+                    el.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
                 } else {
-                    el.style.borderColor = '#10b981';
+                    el.style.border = '1.5px solid #10b981';
                     el.style.background = '#ecfdf5';
-                    el.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.2)';
+                    el.style.boxShadow = '0 0 0 2px rgba(16, 185, 129, 0.2)';
                 }
             } else {
-                el.style.borderColor = '#cbd5e1';
+                el.style.border = '1.5px solid #cbd5e1';
                 el.style.background = '#ffffff';
                 el.style.boxShadow = 'none';
             }
@@ -5376,35 +5376,35 @@ document.getElementById('formNameTitle').innerText = title;
                         </div>
 
                         <!-- ค่าโพลาร์ (พิมพ์เองได้ หรือคลิกเลือกจากปุ่มลัด) -->
-                        <div class="form-group" style="margin-bottom: 14px;">
-                            <label for="analysis-interpretation-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13.5px; margin-bottom: 6px; display: block;">
-                                <i class="fa-solid fa-chart-line" style="color: #0284c7; margin-right: 5px;"></i> ค่าโพลาร์ (พิมพ์ระบุเอง หรือคลิกเลือกจากตัวเลือกด้านล่าง) <span class="required" style="color: #ef4444;">*</span>:
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label for="analysis-interpretation-4-${item.idx}" style="font-weight: 700; color: #334155; font-size: 13px; margin-bottom: 5px; display: block;">
+                                <i class="fa-solid fa-chart-line" style="color: #0284c7; margin-right: 5px;"></i> ค่าโพลาร์ (พิมพ์ระบุเอง หรือคลิกเลือกจากปุ่มด้านล่าง) <span class="required" style="color: #ef4444;">*</span>:
                             </label>
-                            <input type="text" id="analysis-interpretation-4-${item.idx}" name="analysis_interpretation_4_${item.idx}" class="form-control" style="width: 100%; height: 42px; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 600; background-color: #ffffff; margin-bottom: 8px;" placeholder="-- พิมพ์ค่าโพลาร์ เช่น < 20%, 20 - 25%, > 25% หรือระบุตัวเลข --" oninput="app.handleMu10004PolarInput('${item.idx}')" required>
+                            <input type="text" id="analysis-interpretation-4-${item.idx}" name="analysis_interpretation_4_${item.idx}" class="form-control" style="width: 100%; height: 38px; padding: 6px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-weight: 600; background-color: #ffffff; margin-bottom: 8px;" placeholder="-- พิมพ์ค่าโพลาร์ เช่น < 20%, 20 - 25%, > 25% หรือระบุตัวเลข --" oninput="app.handleMu10004PolarInput('${item.idx}')" required>
 
-                            <!-- ตัวเลือกแบบปุ่มให้คลิกเลือกด่วน -->
-                            <div style="display: flex; gap: 12px; flex-wrap: wrap;" id="polar-btn-group-${item.idx}">
-                                <label class="polar-btn-option" id="polar-opt-${item.idx}-lt20" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '< 20%')">
-                                    <input type="radio" name="polar_radio_${item.idx}" value="<20%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
-                                    <div>
-                                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&lt; 20%</div>
-                                        <div style="font-size: 11.5px; color: #64748b;">(ยังไม่เสื่อมคุณภาพ / ผ่าน)</div>
+                            <!-- ตัวเลือกแบบปุ่มให้คลิกเลือกด่วน ขนาดกะทัดรัด ตัวหนังสืออยู่ข้างปุ่ม -->
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="polar-btn-group-${item.idx}">
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-lt20" style="flex: 1; min-width: 150px; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 8px !important; padding: 6px 12px !important; min-height: 38px !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; cursor: pointer !important; background: #ffffff !important; box-sizing: border-box !important; margin: 0 !important; transition: all 0.2s ease;" onclick="app.selectMu10004Polar('${item.idx}', '< 20%')">
+                                    <input type="radio" name="polar_radio_${item.idx}" value="<20%" style="all: unset !important; appearance: auto !important; -webkit-appearance: auto !important; width: 16px !important; height: 16px !important; padding: 0 !important; margin: 0 !important; border: none !important; border-radius: 50% !important; flex-shrink: 0 !important; accent-color: #16a34a !important; cursor: pointer !important; display: inline-block !important;">
+                                    <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap; line-height: 1.2;">
+                                        <span style="font-weight: 700; font-size: 13px; color: #0f172a;">&lt; 20%</span>
+                                        <span style="font-size: 11px; color: #16a34a; font-weight: 600;">(ยังไม่เสื่อมคุณภาพ / ผ่าน)</span>
                                     </div>
                                 </label>
 
-                                <label class="polar-btn-option" id="polar-opt-${item.idx}-2025" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '20 - 25%')">
-                                    <input type="radio" name="polar_radio_${item.idx}" value="20-25%" style="width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; margin: 0;">
-                                    <div>
-                                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">20 - 25%</div>
-                                        <div style="font-size: 11.5px; color: #64748b;">(ใกล้เสื่อมคุณภาพ / ผ่าน)</div>
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-2025" style="flex: 1; min-width: 150px; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 8px !important; padding: 6px 12px !important; min-height: 38px !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; cursor: pointer !important; background: #ffffff !important; box-sizing: border-box !important; margin: 0 !important; transition: all 0.2s ease;" onclick="app.selectMu10004Polar('${item.idx}', '20 - 25%')">
+                                    <input type="radio" name="polar_radio_${item.idx}" value="20-25%" style="all: unset !important; appearance: auto !important; -webkit-appearance: auto !important; width: 16px !important; height: 16px !important; padding: 0 !important; margin: 0 !important; border: none !important; border-radius: 50% !important; flex-shrink: 0 !important; accent-color: #16a34a !important; cursor: pointer !important; display: inline-block !important;">
+                                    <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap; line-height: 1.2;">
+                                        <span style="font-weight: 700; font-size: 13px; color: #0f172a;">20 - 25%</span>
+                                        <span style="font-size: 11px; color: #16a34a; font-weight: 600;">(ใกล้เสื่อมคุณภาพ / ผ่าน)</span>
                                     </div>
                                 </label>
 
-                                <label class="polar-btn-option" id="polar-opt-${item.idx}-gt25" style="flex: 1; min-width: 140px; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: #ffffff;" onclick="app.selectMu10004Polar('${item.idx}', '> 25%')">
-                                    <input type="radio" name="polar_radio_${item.idx}" value=">25%" style="width: 18px; height: 18px; accent-color: #dc2626; cursor: pointer; margin: 0;">
-                                    <div>
-                                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">&gt; 25%</div>
-                                        <div style="font-size: 11.5px; color: #64748b;">(น้ำมันเสื่อมคุณภาพ / ไม่ผ่าน)</div>
+                                <label class="polar-btn-option" id="polar-opt-${item.idx}-gt25" style="flex: 1; min-width: 150px; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 8px !important; padding: 6px 12px !important; min-height: 38px !important; border: 1.5px solid #cbd5e1 !important; border-radius: 8px !important; cursor: pointer !important; background: #ffffff !important; box-sizing: border-box !important; margin: 0 !important; transition: all 0.2s ease;" onclick="app.selectMu10004Polar('${item.idx}', '> 25%')">
+                                    <input type="radio" name="polar_radio_${item.idx}" value=">25%" style="all: unset !important; appearance: auto !important; -webkit-appearance: auto !important; width: 16px !important; height: 16px !important; padding: 0 !important; margin: 0 !important; border: none !important; border-radius: 50% !important; flex-shrink: 0 !important; accent-color: #dc2626 !important; cursor: pointer !important; display: inline-block !important;">
+                                    <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap; line-height: 1.2;">
+                                        <span style="font-weight: 700; font-size: 13px; color: #0f172a;">&gt; 25%</span>
+                                        <span style="font-size: 11px; color: #dc2626; font-weight: 600;">(น้ำมันเสื่อมคุณภาพ / ไม่ผ่าน)</span>
                                     </div>
                                 </label>
                             </div>
