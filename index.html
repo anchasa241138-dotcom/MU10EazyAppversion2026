@@ -3658,9 +3658,49 @@
                                     <p>จัดการข้อมูลผู้ใช้งานและปรับเปลี่ยนประเภทบทบาทในระบบ (4 ประเภท)</p>
                                 </div>
                             </div>
-                            <div class="user-search-wrapper">
-                                <i class="fa-solid fa-magnifying-glass user-search-icon"></i>
-                                <input type="text" id="searchApprovedUsers" placeholder="ค้นหาชื่อ, Username, หน่วยงาน, จังหวัด..." oninput="app.renderManageUsers()">
+                        </div>
+
+                        <!-- User Filter Card (Province, District & Search) -->
+                        <div class="user-filter-card">
+                            <div class="user-filter-header">
+                                <span class="user-filter-title"><i class="fa-solid fa-sliders"></i> ค้นหาและกรองผู้ใช้งาน</span>
+                                <button type="button" class="btn-user-reset-filter" onclick="app.resetUserFilters()" title="ล้างค่าตัวกรองทั้งหมด">
+                                    <i class="fa-solid fa-arrow-rotate-left"></i> ล้างค่าตัวกรอง
+                                </button>
+                            </div>
+                            <div class="user-filter-grid">
+                                <div class="user-filter-col">
+                                    <label for="filterUserProvince"><i class="fa-solid fa-map-location-dot"></i> จังหวัด</label>
+                                    <div class="user-filter-select-wrapper">
+                                        <select id="filterUserProvince" class="user-filter-select" onchange="app.onUserProvinceFilterChange()">
+                                            <option value="">- ทุกจังหวัด -</option>
+                                            <option value="ศรีสะเกษ">ศรีสะเกษ</option>
+                                            <option value="อุบลราชธานี">อุบลราชธานี</option>
+                                            <option value="ยโสธร">ยโสธร</option>
+                                            <option value="อำนาจเจริญ">อำนาจเจริญ</option>
+                                            <option value="มุกดาหาร">มุกดาหาร</option>
+                                        </select>
+                                        <i class="fa-solid fa-chevron-down select-chevron"></i>
+                                    </div>
+                                </div>
+
+                                <div class="user-filter-col">
+                                    <label for="filterUserDistrict"><i class="fa-solid fa-tree-city"></i> อำเภอ</label>
+                                    <div class="user-filter-select-wrapper">
+                                        <select id="filterUserDistrict" class="user-filter-select" onchange="app.onUserDistrictFilterChange()">
+                                            <option value="">- ทุกอำเภอ -</option>
+                                        </select>
+                                        <i class="fa-solid fa-chevron-down select-chevron"></i>
+                                    </div>
+                                </div>
+
+                                <div class="user-filter-col user-filter-col-search">
+                                    <label for="searchApprovedUsers"><i class="fa-solid fa-magnifying-glass"></i> คำค้นหา</label>
+                                    <div class="user-search-wrapper">
+                                        <i class="fa-solid fa-magnifying-glass user-search-icon"></i>
+                                        <input type="text" id="searchApprovedUsers" placeholder="ค้นหาชื่อ-สกุล, Username, หน่วยงาน, เลขบัตร..." oninput="app.renderManageUsers()">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -4996,6 +5036,6 @@
         </div>
     </div>
 
-    <script src="app_v85.js?v=1794977639475"></script>
+    <script src="app_v85.js?v=1794978327293"></script>
 </body>
 </html>
