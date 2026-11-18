@@ -9927,7 +9927,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <!-- HEADER -->
                     <table style="width: 100%; margin: 0 0 4px 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed;">
                         <tr>
-                            <td style="width: 72px; padding: 4px; text-align: center; border-right: 1.5px solid #000; vertical-align: middle;">
+                            <td style="width: 72px; padding: 4px; text-align: center; vertical-align: middle;">
                                 <img src="logo.jpg" style="display: block; margin: auto; width: 54px; height: auto;">
                             </td>
                             <td style="padding: 4px 12px; vertical-align: middle; line-height: 1.32; color: #000; font-size: 15px; font-weight: bold;">
@@ -9936,7 +9936,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                                 <div><strong>วันที่เริ่มใช้ :</strong> </div>
                                 <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div>
                             </td>
-                            <td style="width: 220px; padding: 4px 12px; border-left: 1.5px solid #000; vertical-align: middle; text-align: left; color: #000; font-weight: bold; font-size: 15px; line-height: 1.38;">
+                            <td style="width: 220px; padding: 4px 12px; vertical-align: middle; text-align: left; color: #000; font-weight: bold; font-size: 15px; line-height: 1.38;">
                                 <div><strong>หมายเลขเอกสาร :</strong> <span style="white-space: nowrap; font-weight: bold;">MU.10-004</span></div>
                                 <div style="margin-top: 2px;"><strong>แก้ไขครั้งที่ :</strong> <span style="font-weight: bold;">002</span></div>
                                 <div style="margin-top: 2px;"><strong>หน้า :</strong> </div>
