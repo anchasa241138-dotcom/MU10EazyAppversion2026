@@ -10788,7 +10788,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 return `
                 <tr>
                     <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-                    <td><strong style="color: #0f172a;">${u.fullname || '-'}</strong> <br><small style="color: #64748b;">(@${u.username})</small></td>
+                    <td><span style="color: #0f172a; font-weight: normal;">${u.fullname || '-'}</span> <br><small style="color: #64748b;">(@${u.username})</small></td>
                     <td>${info.workplace}</td>
                     <td>${info.province}</td>
                     <td>${getRoleBadge(u.role)}</td>
@@ -10821,7 +10821,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             const info = extractWorkplaceAndProvince(u);
             return `
             <tr>
-                <td><strong style="color: #0f172a;">${u.fullname || '-'}</strong></td>
+                <td><span style="color: #0f172a; font-weight: normal;">${u.fullname || '-'}</span></td>
                 <td><code>@${u.username}</code></td>
                 <td>${info.workplace}</td>
                 <td>${info.province}</td>
