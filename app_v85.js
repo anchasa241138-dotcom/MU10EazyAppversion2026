@@ -6371,19 +6371,19 @@ document.getElementById('formNameTitle').innerText = title;
             
             htmlContent = `
                 <div class="pdf-container" style="background:white; color:black; font-family:'TH SarabunPSK', 'TH Sarabun New', 'Sarabun', sans-serif; max-width: 100%; margin: 0 auto; box-sizing:border-box;">
-                    <div style="border:1.5px solid #333; margin-bottom: 0;">
+                    <div style="border:1.5px solid #000; margin-bottom: 0;">
                         <table style="width:100%; border-collapse:collapse; margin:0; border:none; font-size:14px; color:#000;">
                             <tr>
-                                <td style="width:100px; text-align:center; padding:10px; border-right:1px solid #333; border-bottom:1px solid #333;">
+                                <td style="width:100px; text-align:center; padding:10px; border-bottom:1px solid #000;">
                                     <img src="${typeof logoBase64 !== 'undefined' ? (logoBase64.startsWith('data:') ? logoBase64 : 'data:image/jpeg;base64,' + logoBase64) : ''}" alt="Logo" style="max-width:80px; height:auto; display:block; margin:0 auto;">
                                 </td>
-                                <td style="padding:10px 15px; border-right:1px solid #333; border-bottom:1px solid #333; font-weight:bold; line-height:1.5;">
+                                <td style="padding:10px 15px; border-bottom:1px solid #000; font-weight:bold; line-height:1.5;">
                                     <div>ประเภทเอกสาร : แบบบันทึก</div>
                                     <div>ชื่อเอกสาร : แบบบันทึกตรวจฉลากอาหาร</div>
                                     <div>วันที่เริ่มใช้ :</div>
                                     <div>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</div>
                                 </td>
-                                <td style="width:250px; text-align:right; padding:10px 15px; border-bottom:1px solid #333; font-weight:bold; vertical-align:top; line-height:1.5;">
+                                <td style="width:250px; text-align:right; padding:10px 15px; border-bottom:1px solid #000; font-weight:bold; vertical-align:top; line-height:1.5;">
                                     <div>หมายเลขเอกสาร : MU.10-008</div>
                                     <div>แก้ไขครั้งที่ : 002</div>
                                 </td>
@@ -9654,7 +9654,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <!-- Header with Logo & Border matching other official forms -->
                     <table style="width: 100%; margin: 0 0 10px 0; border-collapse: collapse; border: 1.5px solid #000; table-layout: fixed;">
                         <tr>
-                            <td style="width: 76px; padding: 6px; text-align: center; border-right: 1.5px solid #000; vertical-align: middle;">
+                            <td style="width: 76px; padding: 6px; text-align: center; vertical-align: middle;">
                                 <img src="logo.jpg" style="display: block; margin: auto; width: 58px; height: auto;">
                             </td>
                             <td style="padding: 6px 12px; vertical-align: middle; line-height: 1.32; color: #000; font-size: 17.5px; font-weight: bold;">
@@ -9663,7 +9663,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                                 <div><strong>วันที่เริ่มใช้ : 1 มกราคม พ.ศ. 2566</strong></div>
                                 <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div>
                             </td>
-                            <td style="width: 185px; padding: 6px 12px; border-left: 1.5px solid #000; vertical-align: middle; text-align: left; color: #000; font-size: 17.5px; font-weight: bold; line-height: 1.4;">
+                            <td style="width: 185px; padding: 6px 12px; vertical-align: middle; text-align: left; color: #000; font-size: 17.5px; font-weight: bold; line-height: 1.4;">
                                 <div><strong>หมายเลขเอกสาร :</strong> <span style="white-space: nowrap;">MU.10-007</span></div>
                                 <div style="margin-top: 3px;"><strong>แก้ไขครั้งที่ :</strong> 001</div>
                             </td>
@@ -10163,10 +10163,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <!-- HEADER -->
                     <table style="width:100%; margin:0 0 6px 0; border-collapse:collapse; border: 1.5px solid #000; table-layout: fixed;">
                         <tr>
-                            <td style="width:76px; padding:4px 6px; text-align:center; border-right:1px solid #000; vertical-align:middle;">
+                            <td style="width:76px; padding:4px 6px; text-align:center; vertical-align:middle;">
                                 <img src="logo.jpg" alt="Logo" style="width:56px; height:auto; display:block; margin:0 auto;">
                             </td>
-                            <td style="padding:4px 12px; border-right:1px solid #000; vertical-align:middle; line-height:1.35; font-size:16px; font-weight:bold !important; color:#000;">
+                            <td style="padding:4px 12px; vertical-align:middle; line-height:1.35; font-size:16px; font-weight:bold !important; color:#000;">
                                 <div><strong>ประเภทเอกสาร : แบบบันทึก</strong></div>
                                 <div><strong>ชื่อเอกสาร : <span style="font-size:17.5px;">แบบบันทึกเก็บตัวอย่างน้ำบริโภคจากตู้น้ำดื่มหยอดเหรียญ</span></strong></div>
                                 <div><strong>วันที่เริ่มใช้ : 1 มกราคม พ.ศ. 2566</strong></div>
@@ -10319,9 +10319,9 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <div class="pdf-document pdf-page" style="font-family: 'TH SarabunPSK', 'SarabunPDF', 'Sarabun', sans-serif !important; width: 100% !important; max-width: 100% !important; background: #fff; display: block; position: relative; margin: 0 auto; padding: 0 !important; box-sizing: border-box; ${pageBreakStyle}">
                     <div style="width: 100%; margin: 0; display: block; font-size: ${isStandardDoc ? '15px' : '10.5px'}; color: #1a1a1a;">
                         <!-- HEADER -->
-                        <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #333; table-layout: fixed;">
+                        <table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; border: 1.5px solid #000; table-layout: fixed;">
                             <tr>
-                                <td style="width:72px; padding:3px 6px; text-align:center; border-right:1px solid #aaa; vertical-align:middle;">
+                                <td style="width:72px; padding:3px 6px; text-align:center; vertical-align:middle;">
                                     <img src="logo.jpg" style="display:block; margin:auto; width:54px; height:auto;">
                                 </td>
                                 <td style="padding:3px 10px; vertical-align:middle; line-height:1.35; color:#000; font-size:${headerTextFont};">
@@ -10330,7 +10330,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                                     <div><strong>วันที่เริ่มใช้ :</strong> </div>
                                     <div><strong>แผนก : ห้องปฏิบัติการหน่วยเคลื่อนที่เพื่อความปลอดภัยด้านอาหาร เขตสุขภาพที่ 10</strong></div>
                                 </td>
-                                <td style="width:200px; padding:3px 10px; border-left:1px solid #aaa; vertical-align:top; text-align:left; color:#000; font-weight:bold;">
+                                <td style="width:200px; padding:3px 10px; vertical-align:top; text-align:left; color:#000; font-weight:bold;">
                                     <div style="font-size:${headerDocNumFont};"><strong>หมายเลขเอกสาร :</strong> <span style="white-space:nowrap; font-weight:bold;">${documentNum}</span></div>
                                     <div style="margin-top:2px; font-size:${headerDocNumFont};"><strong>แก้ไขครั้งที่ :</strong> <span style="font-weight:bold;">002</span></div>
                                     <div style="margin-top:2px; font-size:${headerDocNumFont}; font-weight:bold;"><strong>หน้า :</strong> <span>${pageIdx + 1}/${totalPages}</span></div>
