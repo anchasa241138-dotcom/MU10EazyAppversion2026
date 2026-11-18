@@ -9387,18 +9387,18 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             } else if (sample.form_type === 'MU.10-005') {
                 const hasItem = !!(item.food_type || item.distributor || item.food_serial_no || item.name);
                 return `
-                    <tr style="height: 60px; page-break-inside: avoid; font-weight:bold !important; color:#000;"> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:15.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${hasItem ? globalIdx : ''}</td> 
-                        <td style="padding:4px 5px; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.distributor || ''}</td> 
-                        <td style="padding:4px 5px; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.food_type || item.name || ''}</td> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.food_serial_no || ''}</td> 
-                        <td style="padding:4px 5px; vertical-align:middle; font-size:14px; font-weight:bold !important; color:#000; line-height:1.22; border:1px solid #000;">${item.manufacturer_info || ''}</td> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.has_mfg_exp || ''}</td> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.net_weight || ''}</td> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.has_storage_warning || ''}</td> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.label_summary || ''}</td> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.iodate_value || ''}</td> 
-                        <td style="padding:4px 3px; text-align:center; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.test_outcome || ''}</td> 
+                    <tr style="height: 52px; page-break-inside: avoid; font-weight:bold !important; color:#000;"> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:15px; font-weight:bold !important; color:#000; border:1px solid #000;">${hasItem ? globalIdx : ''}</td> 
+                        <td style="padding:3px 5px; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.distributor || ''}</td> 
+                        <td style="padding:3px 5px; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.food_type || item.name || ''}</td> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:14px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.food_serial_no || ''}</td> 
+                        <td style="padding:3px 5px; vertical-align:middle; font-size:13.5px; font-weight:bold !important; color:#000; line-height:1.2; border:1px solid #000;">${item.manufacturer_info || ''}</td> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.has_mfg_exp || ''}</td> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.net_weight || ''}</td> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.has_storage_warning || ''}</td> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.label_summary || ''}</td> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.iodate_value || ''}</td> 
+                        <td style="padding:3px 3px; text-align:center; vertical-align:middle; font-size:14.5px; font-weight:bold !important; color:#000; border:1px solid #000;">${item.test_outcome || ''}</td> 
                     </tr>`;
             } else if (sample.form_type === 'MU.10-008') {
                 return `
@@ -10314,29 +10314,29 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 </table>`
                 : `<table style="width:100%; margin:0 0 5px 0; border-collapse:collapse; color:#000; font-size:${metaInfoFont}; font-weight:bold; line-height:1.4;"> <tr> <td style="width:50%; padding:1px 0;">หน่วยงานที่เก็บตัวอย่าง: <u>${sample.agency || ''}</u></td> <td style="padding:1px 0;">สถานที่เก็บตัวอย่าง: <u>${sample.location_name || ''}</u></td> </tr> <tr> <td colspan="2" style="padding:1px 0;">ตำบล: <u>${sample.tambon || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;อำเภอ: <u>${sample.amphoe || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;จังหวัด: <u>${sample.province || ''}</u>&nbsp;&nbsp;&nbsp;&nbsp;วันที่เก็บตัวอย่าง: <u>${samplingDate}</u></td> </tr> </table>`;
 
-            const footerSignaturesMargin = isMu10005Doc ? '20px' : (isStandardDoc ? '12px' : '6px');
+            const footerSignaturesMargin = isStandardDoc ? '12px' : '6px';
             const footerSignaturesHtml = `
-            <table style="width:100%; margin:${footerSignaturesMargin} 0 0 0; border-collapse:collapse; font-size:${footerFont}; color: #000; line-height:1.5; table-layout:fixed; font-weight:normal !important;"> 
+            <table style="width:100%; margin:${footerSignaturesMargin} 0 0 0; border-collapse:collapse; font-size:${footerFont}; color: #000; line-height:1.45; table-layout:fixed; font-weight:normal !important; page-break-inside:avoid; break-inside:avoid;"> 
                 <tr> 
                     <td style="width:32%; vertical-align:top; padding-right:6px; text-align:left; font-weight:normal !important;"> 
                         <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้เก็บตัวอย่าง ${sample.collector_name ? '....<u>' + sample.collector_name + '</u>....' : '................................................'}</div> 
-                        <div style="margin-top:${isMu10005Doc ? '5px' : '3px'}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ${sample.collector_position ? '....<u>' + sample.collector_position + '</u>....' : '........................................................'}</div> 
-                        <div style="margin-top:${isMu10005Doc ? '5px' : '3px'}; white-space:nowrap;">วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '............................................'}</div> 
+                        <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ${sample.collector_position ? '....<u>' + sample.collector_position + '</u>....' : '........................................................'}</div> 
+                        <div style="margin-top:3px; white-space:nowrap;">วันที่เก็บตัวอย่าง ${samplingDate ? '....<u>' + samplingDate + '</u>....' : '............................................'}</div> 
                     </td> 
                     <td style="width:32%; vertical-align:top; text-align:left; padding:0 6px; font-weight:normal !important;"> 
                         <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ลงชื่อผู้ตรวจวิเคราะห์ ${sample.analysis_analyst ? '....<u>' + sample.analysis_analyst + '</u>....' : '..............................................'}</div> 
-                        <div style="margin-top:${isMu10005Doc ? '5px' : '3px'}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ${(sample.analysis_analyst && sample.analysis_analyst_position) ? '....<u>' + sample.analysis_analyst_position + '</u>....' : '........................................................'}</div> 
-                        <div style="margin-top:${isMu10005Doc ? '5px' : '3px'}; white-space:nowrap;">วันที่ตรวจวิเคราะห์ ${sample.analysis_date ? '....<u>' + new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) + '</u>....' : '............................................'}</div> 
+                        <div style="margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">ตำแหน่ง ${(sample.analysis_analyst && sample.analysis_analyst_position) ? '....<u>' + sample.analysis_analyst_position + '</u>....' : '........................................................'}</div> 
+                        <div style="margin-top:3px; white-space:nowrap;">วันที่ตรวจวิเคราะห์ ${sample.analysis_date ? '....<u>' + new Date(sample.analysis_date).toLocaleDateString('th-TH', { year:'numeric', month:'long', day:'numeric'}) + '</u>....' : '............................................'}</div> 
                     </td> 
                     <td style="width:36%; vertical-align:top; text-align:right; font-weight:normal !important;"> 
                         <div style="white-space:nowrap;">ลงชื่อผู้ทบทวนเอกสาร ................................................</div> 
-                        <div style="margin-top:${isMu10005Doc ? '5px' : '3px'}; white-space:nowrap; font-size:${footerFont};">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> 
-                        <div style="margin-top:${isMu10005Doc ? '5px' : '3px'}; white-space:nowrap;">วันที่ทบทวนเอกสาร ............................................</div> 
+                        <div style="margin-top:3px; white-space:nowrap; font-size:${footerFont};">ตำแหน่ง ผจก. ห้องปฏิบัติการหน่วยเคลื่อนที่ฯ เขตสุขภาพที่ 10</div> 
+                        <div style="margin-top:3px; white-space:nowrap;">วันที่ทบทวนเอกสาร ............................................</div> 
                     </td> 
                 </tr> 
             </table>`;
 
-            const ITEMS_PER_PAGE = (sample.form_type === 'MU.10-005') ? 7 : 5;
+            const ITEMS_PER_PAGE = 5;
             const totalPages = Math.ceil(sampleItems.length / ITEMS_PER_PAGE) || 1;
             let pagesHtml = '';
 
