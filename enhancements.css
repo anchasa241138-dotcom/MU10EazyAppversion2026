@@ -5634,7 +5634,35 @@ body.followup-view-active #currentViewTitle {
 }
 
 #userDetailsModal .modal-header .close-modal-btn {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
   color: #ffffff !important;
+  border: 1.5px solid #991b1b !important;
+  border-radius: 50% !important;
+  width: 34px !important;
+  height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.45) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#userDetailsModal .modal-header .close-modal-btn i {
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+#userDetailsModal .modal-header .close-modal-btn:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%) !important;
+  color: #ffffff !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 4px 14px rgba(153, 27, 27, 0.6) !important;
+}
+
+#userDetailsModal .modal-header .close-modal-btn:active {
+  transform: scale(0.96) !important;
 }
 
 #userDetailsModal .modal-body {
