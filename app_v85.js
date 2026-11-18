@@ -10829,8 +10829,6 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <td><span class="user-status-pill user-status-active"><i class="fa-solid fa-circle-check"></i> ใช้งานได้</span></td>
                 <td style="white-space: nowrap;">
                     <button class="btn btn-primary" onclick="app.viewUserDetails('${u.username}')"><i class="fa-solid fa-circle-info"></i> ดูข้อมูล</button>
-                    <button class="btn btn-warning" onclick="app.changeUserRole('${u.username}')" title="เปลี่ยนประเภทบทบาท"><i class="fa-solid fa-user-gear"></i> เปลี่ยนบทบาท</button>
-                    <button class="btn btn-danger" onclick="app.deleteUser('${u.username}')"><i class="fa-solid fa-trash"></i> ลบ</button>
                 </td>
             </tr>
         `;};
@@ -11082,10 +11080,10 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             } else {
                 actionsEl.innerHTML = `
                     <button type="button" class="btn btn-warning" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px; background: #f59e0b; color: white; border: none;" onclick="app.closeUserDetailsModal(); app.changeUserRole('${user.username}')">
-                        <i class="fa-solid fa-user-gear"></i> เปลี่ยนบทบาท
+                        <i class="fa-solid fa-user-gear"></i> เปลี่ยนแปลงสิทธิ์ / บทบาท
                     </button>
                     <button type="button" class="btn btn-danger" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.deleteUser('${user.username}')">
-                        <i class="fa-solid fa-trash"></i> ลบบัญชี
+                        <i class="fa-solid fa-trash"></i> ลบผู้ใช้งาน
                     </button>
                     <button type="button" class="btn btn-secondary" style="padding: 8px 20px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
                         ปิด
