@@ -10751,21 +10751,20 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         const pendingUsers = (this.users || []).filter(u => u && u.status === 'pending');
         const allApproved = (this.users || []).filter(u => u && u.status === 'approved' && u.username !== 'admin');
         
+        // Ensure District Dropdown is initialized
+        const distSelect = document.getElementById('filterUserDistrict');
+        const provSelect = document.getElementById('filterUserProvince');
+        if (distSelect && distSelect.options.length <= 1) {
+            const currentProv = (provSelect && provSelect.value) ? provSelect.value.trim() : '';
+            this.populateUserDistrictDropdown(currentProv);
+        }
+
+        const selectedProv = (provSelect && provSelect.value) ? provSelect.value.trim() : '';
+        const selectedDist = (distSelect && distSelect.value) ? distSelect.value.trim() : '';
+
         // Search filter for approved users
         const searchInput = document.getElementById('searchApprovedUsers');
         const q = (searchInput && searchInput.value) ? searchInput.value.trim().toLowerCase() : '';
-        
-        let approvedUsers = allApproved;
-        if (q) {
-            approvedUsers = approvedUsers.filter(u => {
-                const name = (u.fullname || '').toLowerCase();
-                const uname = (u.username || '').toLowerCase();
-                const wp = (u.workplace || '').toLowerCase();
-                const prov = (u.province || '').toLowerCase();
-                const cid = (u.cid || '').toLowerCase();
-                return name.includes(q) || uname.includes(q) || wp.includes(q) || prov.includes(q) || cid.includes(q);
-            });
-        }
         
         const extractWorkplaceAndProvince = (u) => {
             let wp = (u.workplace || '').trim();
@@ -10780,6 +10779,47 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 province: prov || '-'
             };
         };
+
+        const matchProvince = (u, prov) => {
+            if (!prov) return true;
+            const info = extractWorkplaceAndProvince(u);
+            const uProv = (u.province || '').trim();
+            const uWp = (u.workplace || '').trim();
+            const uAddr = [u.subdistrict, u.district, u.province].filter(Boolean).join(' ');
+            return uProv.includes(prov) || 
+                   info.province.includes(prov) || 
+                   uWp.includes(prov) || 
+                   uAddr.includes(prov);
+        };
+
+        const matchDistrict = (u, dist) => {
+            if (!dist) return true;
+            const cleanDist = dist.replace(/^(อ\.|อำเภอ)/, '').trim();
+            const uDist = (u.district || u.amphoe || '').trim();
+            const cleanUDist = uDist.replace(/^(อ\.|อำเภอ)/, '').trim();
+            const uWp = (u.workplace || '').trim();
+            const uAddr = [u.subdistrict, u.district, u.province].filter(Boolean).join(' ');
+
+            return cleanUDist.includes(cleanDist) ||
+                   uDist.includes(cleanDist) ||
+                   uWp.includes(cleanDist) ||
+                   uAddr.includes(cleanDist);
+        };
+
+        const matchQuery = (u, query) => {
+            if (!query) return true;
+            const name = (u.fullname || '').toLowerCase();
+            const uname = (u.username || '').toLowerCase();
+            const wp = (u.workplace || '').toLowerCase();
+            const prov = (u.province || '').toLowerCase();
+            const dist = (u.district || u.amphoe || '').toLowerCase();
+            const cid = (u.cid || '').toLowerCase();
+            return name.includes(query) || uname.includes(query) || wp.includes(query) || prov.includes(query) || dist.includes(query) || cid.includes(query);
+        };
+
+        let approvedUsers = allApproved.filter(u => {
+            return matchProvince(u, selectedProv) && matchDistrict(u, selectedDist) && matchQuery(u, q);
+        });
 
         pendingTbody.innerHTML = pendingUsers.length === 0 
             ? '<tr><td colspan="8" class="text-center" style="padding: 30px; color: #64748b;"><i class="fa-solid fa-circle-check" style="font-size: 24px; color: #10b981; display: block; margin-bottom: 8px;"></i>ไม่มีผู้ใช้งานรออนุมัติในระบบ</td></tr>'
@@ -10900,6 +10940,92 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 btn.style.color = textColors[btnRole] || '#475569';
             }
         });
+        this.renderManageUsers();
+    },
+
+    populateUserDistrictDropdown(selectedProv, preserveSelectedDist) {
+        const distSelect = document.getElementById('filterUserDistrict');
+        if (!distSelect || typeof MU10_ADDRESS_DATA === 'undefined') return;
+
+        const currentVal = preserveSelectedDist || distSelect.value;
+        distSelect.innerHTML = '<option value="">- ทุกอำเภอ -</option>';
+
+        if (selectedProv && MU10_ADDRESS_DATA[selectedProv]) {
+            const districts = Object.keys(MU10_ADDRESS_DATA[selectedProv]);
+            districts.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d;
+                if (d === currentVal) opt.selected = true;
+                distSelect.appendChild(opt);
+            });
+        } else {
+            // Grouped by Province when "- ทุกจังหวัด -" is selected
+            Object.keys(MU10_ADDRESS_DATA).forEach(prov => {
+                const grp = document.createElement('optgroup');
+                grp.label = 'จังหวัด' + prov;
+                const districts = Object.keys(MU10_ADDRESS_DATA[prov]);
+                districts.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d;
+                    opt.textContent = d;
+                    opt.setAttribute('data-province', prov);
+                    if (d === currentVal) opt.selected = true;
+                    grp.appendChild(opt);
+                });
+                distSelect.appendChild(grp);
+            });
+        }
+    },
+
+    onUserProvinceFilterChange() {
+        const provSelect = document.getElementById('filterUserProvince');
+        const selectedProv = provSelect ? provSelect.value : '';
+        this.populateUserDistrictDropdown(selectedProv);
+        this.renderManageUsers();
+    },
+
+    onUserDistrictFilterChange() {
+        const provSelect = document.getElementById('filterUserProvince');
+        const distSelect = document.getElementById('filterUserDistrict');
+        if (provSelect && distSelect && distSelect.selectedOptions && distSelect.selectedOptions[0]) {
+            const opt = distSelect.selectedOptions[0];
+            const autoProv = opt.getAttribute('data-province');
+            if (autoProv && !provSelect.value) {
+                provSelect.value = autoProv;
+                this.populateUserDistrictDropdown(autoProv, opt.value);
+            }
+        }
+        this.renderManageUsers();
+    },
+
+    resetUserFilters() {
+        const provSelect = document.getElementById('filterUserProvince');
+        const distSelect = document.getElementById('filterUserDistrict');
+        const searchInput = document.getElementById('searchApprovedUsers');
+
+        if (provSelect) provSelect.value = '';
+        if (distSelect) {
+            this.populateUserDistrictDropdown('');
+            distSelect.value = '';
+        }
+        if (searchInput) searchInput.value = '';
+
+        this.currentApprovedRoleFilter = 'all';
+        document.querySelectorAll('.btn-role-tab').forEach(btn => {
+            const isAll = btn.getAttribute('data-role') === 'all';
+            btn.classList.toggle('active', isAll);
+            if (isAll) {
+                btn.style.background = '#0284c7';
+                btn.style.borderColor = '#0284c7';
+                btn.style.color = '#ffffff';
+            } else {
+                btn.style.background = '#ffffff';
+                btn.style.borderColor = '#cbd5e1';
+                btn.style.color = '#475569';
+            }
+        });
+
         this.renderManageUsers();
     },
 
