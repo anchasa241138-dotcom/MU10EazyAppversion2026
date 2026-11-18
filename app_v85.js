@@ -11049,29 +11049,23 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         if (actionsEl) {
             if (user.status === 'pending') {
                 actionsEl.innerHTML = `
-                    <button type="button" class="btn btn-success" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.approveUser('${user.username}')">
-                        <i class="fa-solid fa-check"></i> อนุมัติบัญชีนี้
+                    <button type="button" class="btn btn-success" style="background: linear-gradient(135deg, #10b981, #059669) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 9px 20px !important; font-weight: 600 !important; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35) !important; display: inline-flex !important; align-items: center !important; gap: 7px !important; cursor: pointer !important;" onclick="app.closeUserDetailsModal(); app.approveUser('${user.username}')">
+                        <i class="fa-solid fa-check" style="color: #ffffff !important;"></i> อนุมัติบัญชีนี้
                     </button>
-                    <button type="button" class="btn btn-warning" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px; background: #f59e0b; color: white; border: none;" onclick="app.closeUserDetailsModal(); app.changeUserRole('${user.username}')">
-                        <i class="fa-solid fa-user-gear"></i> เปลี่ยนบทบาท
+                    <button type="button" class="btn btn-warning" style="background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 9px 20px !important; font-weight: 600 !important; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35) !important; display: inline-flex !important; align-items: center !important; gap: 7px !important; cursor: pointer !important;" onclick="app.closeUserDetailsModal(); app.changeUserRole('${user.username}')">
+                        <i class="fa-solid fa-user-gear" style="color: #ffffff !important;"></i> เปลี่ยนบทบาท
                     </button>
-                    <button type="button" class="btn btn-danger" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.rejectUser('${user.username}')">
-                        <i class="fa-solid fa-xmark"></i> ปฏิเสธ
-                    </button>
-                    <button type="button" class="btn btn-secondary" style="padding: 8px 16px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
-                        ปิด
+                    <button type="button" class="btn btn-danger" style="background: linear-gradient(135deg, #ef4444, #dc2626) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 9px 20px !important; font-weight: 600 !important; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35) !important; display: inline-flex !important; align-items: center !important; gap: 7px !important; cursor: pointer !important;" onclick="app.closeUserDetailsModal(); app.rejectUser('${user.username}')">
+                        <i class="fa-solid fa-xmark" style="color: #ffffff !important;"></i> ปฏิเสธ
                     </button>
                 `;
             } else {
                 actionsEl.innerHTML = `
-                    <button type="button" class="btn btn-warning" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px; background: #f59e0b; color: white; border: none;" onclick="app.closeUserDetailsModal(); app.changeUserRole('${user.username}')">
-                        <i class="fa-solid fa-user-gear"></i> เปลี่ยนแปลงสิทธิ์ / บทบาท
+                    <button type="button" class="btn btn-warning" style="background: linear-gradient(135deg, #f59e0b, #d97706) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 9px 22px !important; font-weight: 600 !important; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35) !important; display: inline-flex !important; align-items: center !important; gap: 7px !important; cursor: pointer !important;" onclick="app.closeUserDetailsModal(); app.changeUserRole('${user.username}')">
+                        <i class="fa-solid fa-user-gear" style="color: #ffffff !important;"></i> เปลี่ยนบทบาท
                     </button>
-                    <button type="button" class="btn btn-danger" style="padding: 8px 16px; margin-right: 6px; border-radius: 6px;" onclick="app.closeUserDetailsModal(); app.deleteUser('${user.username}')">
-                        <i class="fa-solid fa-trash"></i> ลบผู้ใช้งาน
-                    </button>
-                    <button type="button" class="btn btn-secondary" style="padding: 8px 20px; border-radius: 6px;" onclick="app.closeUserDetailsModal()">
-                        ปิด
+                    <button type="button" class="btn btn-danger" style="background: linear-gradient(135deg, #ef4444, #dc2626) !important; color: #ffffff !important; border: none !important; border-radius: 9999px !important; padding: 9px 22px !important; font-weight: 600 !important; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35) !important; display: inline-flex !important; align-items: center !important; gap: 7px !important; cursor: pointer !important;" onclick="app.closeUserDetailsModal(); app.deleteUser('${user.username}')">
+                        <i class="fa-solid fa-trash" style="color: #ffffff !important;"></i> ลบผู้ใช้งาน
                     </button>
                 `;
             }
