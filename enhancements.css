@@ -5454,6 +5454,42 @@ body.followup-view-active #currentViewTitle {
   font-weight: 600 !important;
 }
 
+/* User Management Table - Clean MOPH/FDA Alignment */
+#view-manage-users #approved-users-table,
+#view-manage-users #pending-users-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+}
+
+#view-manage-users #approved-users-table tbody tr.row-odd,
+#view-manage-users #pending-users-table tbody tr.row-odd {
+  background-color: #ffffff !important;
+}
+
+#view-manage-users #approved-users-table tbody tr.row-even,
+#view-manage-users #pending-users-table tbody tr.row-even {
+  background-color: #f8fafc !important;
+}
+
+#view-manage-users #approved-users-table tbody tr:hover,
+#view-manage-users #pending-users-table tbody tr:hover {
+  background-color: #eff6ff !important;
+}
+
+#view-manage-users #approved-users-table td,
+#view-manage-users #pending-users-table td {
+  padding: 12px 14px !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid #eef2f6 !important;
+}
+
+#view-manage-users #approved-users-table th,
+#view-manage-users #pending-users-table th {
+  padding: 13px 14px !important;
+  vertical-align: middle !important;
+}
+
 /* User Details Modal styling */
 #userDetailsModal .modal-card {
   background: #ffffff !important;
