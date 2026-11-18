@@ -10767,13 +10767,30 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             });
         }
         
+        const extractWorkplaceAndProvince = (u) => {
+            let wp = (u.workplace || '').trim();
+            let prov = (u.province || '').trim();
+            if ((!prov || prov === '-') && wp.includes('/')) {
+                const parts = wp.split('/');
+                wp = parts[0].trim();
+                prov = parts.slice(1).join('/').trim();
+            }
+            return {
+                workplace: wp || '-',
+                province: prov || '-'
+            };
+        };
+
         pendingTbody.innerHTML = pendingUsers.length === 0 
-            ? '<tr><td colspan="6" class="text-center" style="padding: 30px; color: #64748b;"><i class="fa-solid fa-circle-check" style="font-size: 24px; color: #10b981; display: block; margin-bottom: 8px;"></i>ไม่มีผู้ใช้งานรออนุมัติในระบบ</td></tr>'
-            : pendingUsers.map(u => `
+            ? '<tr><td colspan="7" class="text-center" style="padding: 30px; color: #64748b;"><i class="fa-solid fa-circle-check" style="font-size: 24px; color: #10b981; display: block; margin-bottom: 8px;"></i>ไม่มีผู้ใช้งานรออนุมัติในระบบ</td></tr>'
+            : pendingUsers.map(u => {
+                const info = extractWorkplaceAndProvince(u);
+                return `
                 <tr>
                     <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                     <td><strong style="color: #0f172a;">${u.fullname || '-'}</strong> <br><small style="color: #64748b;">(@${u.username})</small></td>
-                    <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
+                    <td>${info.workplace}</td>
+                    <td>${info.province}</td>
                     <td>${getRoleBadge(u.role)}</td>
                     <td><span class="user-status-pill user-status-pending"><i class="fa-solid fa-clock"></i> รออนุมัติ</span></td>
                     <td style="white-space: nowrap;">
@@ -10782,7 +10799,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                         <button class="btn btn-danger" onclick="app.rejectUser('${u.username}')"><i class="fa-solid fa-xmark"></i> ปฏิเสธ</button>
                     </td>
                 </tr>
-            `).join('');
+            `;}).join('');
             
         // 4 User Categories breakdown
         const collectorUsers = approvedUsers.filter(u => u.role === 'collector');
@@ -10800,11 +10817,14 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         setBadge('count-role-certifier', allApproved.filter(u => u.role === 'certifier').length);
         setBadge('count-role-executive', allApproved.filter(u => u.role === 'executive').length);
 
-        const renderUserRow = (u) => `
+        const renderUserRow = (u) => {
+            const info = extractWorkplaceAndProvince(u);
+            return `
             <tr>
                 <td><strong style="color: #0f172a;">${u.fullname || '-'}</strong></td>
                 <td><code>@${u.username}</code></td>
-                <td>${u.workplace || '-'} ${u.province ? ' / ' + u.province : ''}</td>
+                <td>${info.workplace}</td>
+                <td>${info.province}</td>
                 <td>${getRoleBadge(u.role)}</td>
                 <td><span class="user-status-pill user-status-active"><i class="fa-solid fa-circle-check"></i> ใช้งานได้</span></td>
                 <td style="white-space: nowrap;">
@@ -10813,12 +10833,12 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     <button class="btn btn-danger" onclick="app.deleteUser('${u.username}')"><i class="fa-solid fa-trash"></i> ลบ</button>
                 </td>
             </tr>
-        `;
+        `;};
 
         const activeFilter = this.currentApprovedRoleFilter || 'all';
 
         if (approvedUsers.length === 0) {
-            approvedTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 30px; color: #64748b;"><i class="fa-solid fa-magnifying-glass" style="font-size: 24px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>ไม่พบรายชื่อผู้ใช้งานที่ตรงตามเงื่อนไข</td></tr>';
+            approvedTbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 30px; color: #64748b;"><i class="fa-solid fa-magnifying-glass" style="font-size: 24px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>ไม่พบรายชื่อผู้ใช้งานที่ตรงตามเงื่อนไข</td></tr>';
         } else if (activeFilter === 'all') {
             const categories = [
                 { role: 'collector', name: 'ผู้เก็บตัวอย่าง', icon: 'fa-vial', color: '#475569', list: collectorUsers },
@@ -10832,7 +10852,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 if (cat.list.length > 0) {
                     html += `
                         <tr style="background: #f8fafc; border-top: 2px solid #e2e8f0; border-bottom: 1.5px solid #e2e8f0;">
-                            <td colspan="6" style="padding: 11px 16px; font-size: 13.5px; font-weight: 700; color: #0f172a;">
+                            <td colspan="7" style="padding: 11px 16px; font-size: 13.5px; font-weight: 700; color: #0f172a;">
                                 <i class="fa-solid ${cat.icon}" style="color: ${cat.color}; margin-right: 8px;"></i> ${cat.name} 
                                 <span class="badge" style="background: ${cat.color}; color: #fff; font-size: 11.5px; margin-left: 8px; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">${cat.list.length} คน</span>
                             </td>
@@ -10846,7 +10866,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
             if (otherUsers.length > 0) {
                 html += `
                     <tr style="background: #f8fafc; border-top: 2px solid #e2e8f0;">
-                        <td colspan="6" style="padding: 11px 16px; font-size: 13.5px; font-weight: 700; color: #0f172a;">
+                        <td colspan="7" style="padding: 11px 16px; font-size: 13.5px; font-weight: 700; color: #0f172a;">
                             <i class="fa-solid fa-users" style="color: #64748b; margin-right: 8px;"></i> บทบาทอื่นๆ 
                             <span class="badge" style="background: #64748b; color: #fff; font-size: 11.5px; margin-left: 8px; padding: 2px 10px; border-radius: 9999px; font-weight: 600;">${otherUsers.length} คน</span>
                         </td>
@@ -10859,7 +10879,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
         } else {
             const filtered = approvedUsers.filter(u => u.role === activeFilter);
             if (filtered.length === 0) {
-                approvedTbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 30px; color: #64748b;"><i class="fa-solid fa-user-slash" style="font-size: 24px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>ไม่มีผู้ใช้งานประเภทนี้ในระบบ</td></tr>';
+                approvedTbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 30px; color: #64748b;"><i class="fa-solid fa-user-slash" style="font-size: 24px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>ไม่มีผู้ใช้งานประเภทนี้ในระบบ</td></tr>';
             } else {
                 approvedTbody.innerHTML = filtered.map(renderUserRow).join('');
             }
