@@ -3774,6 +3774,10 @@ document.getElementById('formNameTitle').innerText = title;
                 const pVal = parseFloat(polarStr);
                 if (!isNaN(pVal) && pVal > 25) return true;
             }
+            const polarInterp4 = sample['analysis_interpretation_4_' + i];
+            if (polarInterp4 && String(polarInterp4).replace(/\s+/g, '').includes('>25')) {
+                return true;
+            }
 
             // Form MU.10-006: water dispenser coliform, tds, hardness, ph
             if (sample['analysis_coliform_summary_' + i] && String(sample['analysis_coliform_summary_' + i]).includes('ไม่ผ่าน')) return true;
@@ -7668,16 +7672,48 @@ document.getElementById('formNameTitle').innerText = title;
             for (let i = 1; i <= 7; i++) {
                 const interp = sample['analysis_interpretation_4_' + i];
                 if (interp) {
+                    const interpStr = String(interp).trim();
+                    const compact = interpStr.replace(/\s+/g, '');
+                    const sumOutcome = sample['analysis_summary_4_' + i];
+
+                    let isPass = false;
+                    if (compact === '>25%' || compact === '>25' || compact.includes('>25')) {
+                        isPass = false;
+                    } else if (compact === '<20%' || compact === '<20' || compact.includes('<20') ||
+                               compact === '20-25%' || compact === '20-25' || compact.includes('20-25') ||
+                               compact === '<25%' || compact === '<25' || compact.includes('<25')) {
+                        isPass = true;
+                    } else if (sumOutcome === 'ผ่าน' || sumOutcome === 'ผ่านเกณฑ์มาตรฐาน') {
+                        isPass = true;
+                    } else if (sumOutcome === 'ไม่ผ่าน' || sumOutcome === 'ไม่ผ่านเกณฑ์มาตรฐาน') {
+                        isPass = false;
+                    } else {
+                        const numMatch = interpStr.match(/(\d+(\.\d+)?)/);
+                        if (numMatch) {
+                            const val = parseFloat(numMatch[1]);
+                            if (!isNaN(val)) {
+                                isPass = compact.includes('>') ? (val < 25) : (val <= 25);
+                            }
+                        }
+                    }
+
+                    // Auto-sync summary property if needed
+                    if (isPass && sample['analysis_summary_4_' + i] !== 'ผ่าน') {
+                        sample['analysis_summary_4_' + i] = 'ผ่าน';
+                    } else if (!isPass && sample['analysis_summary_4_' + i] !== 'ไม่ผ่าน') {
+                        sample['analysis_summary_4_' + i] = 'ไม่ผ่าน';
+                    }
+
                     validItems.push({
                         idx: i,
-                        owner_name: sample.owner_name || sample.location_name || '-',
-                        food_category: sample['sample_name_1'] || '-',
-                        oil_type: sample['oil_type_1'] || '-',
-                        fry_duration: sample['fry_duration_1'] ? sample['fry_duration_1'] + ' นาที/ครั้ง' : '-',
-                        replacement_type: sample['replacement_type_1'] || '-',
-                        replacement_frequency: sample['replacement_frequency_1'] ? sample['replacement_frequency_1'] + ' วัน' : '-',
+                        owner_name: sample.owner_name || sample.location_name || sample.distributor || '-',
+                        food_category: sample['sample_name_1'] || sample.sample_name || '-',
+                        oil_type: sample['oil_type_1'] || sample.oil_type || '-',
+                        fry_duration: (sample['fry_duration_1'] || sample.fry_duration) ? (sample['fry_duration_1'] || sample.fry_duration) + ' นาที/ครั้ง' : '-',
+                        replacement_type: sample['replacement_type_1'] || sample.replacement_type || '-',
+                        replacement_frequency: (sample['replacement_frequency_1'] || sample.replacement_frequency) ? (sample['replacement_frequency_1'] || sample.replacement_frequency) + ' วัน' : '-',
                         polar_value: interp,
-                        isPass: (interp === '<20%' || interp === '20-25%')
+                        isPass: isPass
                     });
                 }
             }
@@ -7696,6 +7732,18 @@ document.getElementById('formNameTitle').innerText = title;
             const totalItemsCount = validItems.length;
             const passItemsCount = passCount;
             const passItemsPercent = totalItemsCount > 0 ? ((passCount / totalItemsCount) * 100).toFixed(2) : '0.00';
+
+            // Sync sample overall summary if needed
+            if (totalItemsCount > 0) {
+                if (passCount === totalItemsCount) {
+                    sample.analysis_summary = 'ผ่าน';
+                } else if (passCount === 0) {
+                    sample.analysis_summary = 'ไม่ผ่าน';
+                } else {
+                    sample.analysis_summary = `ผ่าน ${passCount} / ไม่ผ่าน ${totalItemsCount - passCount}`;
+                }
+                this.saveSamples();
+            }
 
             const ITEMS_PER_PAGE = 5;
             const totalPages = Math.ceil(validItems.length / ITEMS_PER_PAGE);
@@ -11575,7 +11623,11 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                     substances.push('สารโพลาร์ในน้ำมันทอดซ้ำ');
                     const interp = s['analysis_interpretation_4_' + idx] || (!isFallback ? '' : s.analysis_interpretation_4_1) || '-';
                     const det = s['analysis_details_4_' + idx] || (!isFallback ? '' : s.analysis_details_4_1) || '';
-                    const sum = s['analysis_summary_4_' + idx] || (!isFallback ? '' : s.analysis_summary_4_1) || (interp === '>25%' ? 'ไม่ผ่าน' : (interp !== '-' ? 'ผ่าน' : '-'));
+                    const interpStr = String(interp || '').trim();
+                    const compactInterp = interpStr.replace(/\s+/g, '');
+                    const isFailInterp = compactInterp === '>25%' || compactInterp.includes('>25');
+                    const defaultSum = isFailInterp ? 'ไม่ผ่าน' : (interp !== '-' ? 'ผ่าน' : '-');
+                    const sum = s['analysis_summary_4_' + idx] || (!isFallback ? '' : s.analysis_summary_4_1) || defaultSum;
                     if (interp !== '-') interpretations.push(`ค่าโพลาร์: ${interp}`);
                     if (det) details.push(det); else if (interp !== '-') details.push(`สารโพลาร์ ${interp}`);
                     if (sum !== '-') summaries.push(sum);
