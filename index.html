@@ -874,12 +874,15 @@
             display: flex !important;
             flex-direction: column !important;
         }
-        #forgotForm label {
-            color: #e2e8f0 !important;
-            font-size: 12.5px !important;
+        #forgotForm label,
+        #forgotForm .input-icon-wrapper label {
+            color: #ffffff !important;
+            font-size: 13px !important;
             font-weight: 600 !important;
-            margin-bottom: 4px !important;
+            margin-bottom: 5px !important;
             display: block !important;
+            letter-spacing: 0.2px !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
         }
         #forgotForm input {
             background: #ffffff !important;
@@ -4169,22 +4172,22 @@
                             <p class="auth-form-subtitle">กรุณากรอกข้อมูลเพื่อขอรีเซ็ตรหัสผ่านใหม่</p>
                         </div>
                         <div class="input-icon-wrapper">
-                            <label for="forgot-username">ชื่อผู้ใช้งาน (Username)</label>
+                            <label for="forgot-username" style="color: #ffffff !important; font-weight: 600; font-size: 13px; margin-bottom: 5px; display: block;">ชื่อผู้ใช้งาน (Username)</label>
                             <input type="text" id="forgot-username" required placeholder="Username ที่ลงทะเบียนไว้">
                             <i class="fa-solid fa-user"></i>
                         </div>
                         <div class="input-icon-wrapper">
-                            <label for="forgot-cid">เลขบัตรประชาชน (เพื่อยืนยันตัวตน)</label>
+                            <label for="forgot-cid" style="color: #ffffff !important; font-weight: 600; font-size: 13px; margin-bottom: 5px; display: block;">เลขบัตรประชาชน (เพื่อยืนยันตัวตน)</label>
                             <input type="text" id="forgot-cid" required placeholder="เลขบัตรประชาชน 13 หลัก" maxlength="13">
                             <i class="fa-solid fa-id-card-clip"></i>
                         </div>
                         <div class="input-icon-wrapper">
-                            <label for="forgot-new-password">รหัสผ่านใหม่</label>
+                            <label for="forgot-new-password" style="color: #ffffff !important; font-weight: 600; font-size: 13px; margin-bottom: 5px; display: block;">รหัสผ่านใหม่</label>
                             <input type="password" id="forgot-new-password" required placeholder="รหัสผ่านใหม่อย่างน้อย 6 หลัก" minlength="6" style="padding-right: 40px;">
                             <i class="fa-solid fa-key"></i>
                         </div>
                         <div class="input-icon-wrapper">
-                            <label for="forgot-confirm-password">ยืนยันรหัสผ่านใหม่</label>
+                            <label for="forgot-confirm-password" style="color: #ffffff !important; font-weight: 600; font-size: 13px; margin-bottom: 5px; display: block;">ยืนยันรหัสผ่านใหม่</label>
                             <input type="password" id="forgot-confirm-password" required placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" style="padding-right: 40px;">
                             <i class="fa-solid fa-check-double"></i>
                         </div>
@@ -5042,6 +5045,6 @@
         </div>
     </div>
 
-    <script src="app_v85.js?v=1795056198624"></script>
+    <script src="app_v85.js?v=1795056556299"></script>
 </body>
 </html>
