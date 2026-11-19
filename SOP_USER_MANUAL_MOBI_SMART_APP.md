@@ -25,66 +25,45 @@
 ### 3.1 แผนผังกระบวนการทำงานมาตรฐานสากล (ANSI / ISO Standard Flowchart)
 
 ```mermaid
-flowchart LR
+flowchart TD
     %% Styling Definition
     classDef term fill:#1e293b,stroke:#0f172a,stroke-width:2px,color:#fff;
     classDef process fill:#ffffff,stroke:#334155,stroke-width:1.5px,color:#0f172a;
-    classDef decision fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#92400e;
+    classDef decision fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#92400e;
     classDef reject fill:#fee2e2,stroke:#ef4444,stroke-width:1.5px,color:#991b1b;
-    classDef email fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#1e40af;
+    classDef email fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e40af;
     classDef output fill:#ecfdf5,stroke:#059669,stroke-width:1.5px,color:#065f46;
 
-    subgraph S1 ["ระยะที่ 1: สุ่มเก็บและนำส่งตัวอย่าง (พื้นที่)"]
-        direction LR
-        START(["เริ่มต้นกระบวนการ"]):::term --> P1["1. สุ่มเก็บตัวอย่างอาหาร"]:::process
-        P1 --> P2["2. บันทึกข้อมูลลงระบบ<br>(MU.10-001 ถึง 008)"]:::process
-        P2 --> P3["3. นำส่งตัวอย่าง<br>พร้อมใบนำส่ง (Ref ID)"]:::process
-    end
-
-    subgraph S2 ["ระยะที่ 2: ตรวจรับและตรวจวิเคราะห์ (ห้องปฏิบัติการ)"]
-        direction LR
-        D1{"4. ตรวจสอบตัวอย่าง<br>และเอกสาร<br>ถูกต้องสมบูรณ์?"}:::decision
-        R1["ปฏิเสธการรับตัวอย่าง<br>และส่งกลับเพื่อแก้ไข"]:::reject
-        P4["5. ออกรหัส Lab Code<br>และเตรียมตัวอย่าง"]:::process
-        P5["6. ตรวจวิเคราะห์<br>(เคมี / จุลินทรีย์)"]:::process
-        P6["7. บันทึกผลการตรวจ<br>(ผ่าน/ตกมาตรฐาน)"]:::process
-
-        D1 -- "ไม่ถูกต้อง" --> R1
-        D1 -- "ถูกต้องสมบูรณ์" --> P4
-        P4 --> P5
-        P5 --> P6
-    end
-
-    subgraph S3 ["ระยะที่ 3: รับรองผลและออกรายงานทางการ"]
-        direction LR
-        D2{"8. ทบทวนผลการตรวจ<br>ถูกต้องตามเกณฑ์?"}:::decision
-        R2["ส่งกลับให้<br>ตรวจวิเคราะห์ซ้ำ"]:::reject
-        P7["9. ลงนามอิเล็กทรอนิกส์<br>(E-Signature)"]:::process
-        P8["10. ออกรายงานผล<br>ทางการ (PDF/QR)"]:::process
-
-        D2 -- "ไม่สมบูรณ์" --> R2
-        D2 -- "ถูกต้องสมบูรณ์" --> P7
-        P7 --> P8
-    end
-
-    subgraph S4 ["ระยะที่ 4: การแจ้งเตือนและการส่งมอบผล (ปลายทาง)"]
-        direction LR
-        P9["11. ระบบส่งอีเมลแจ้งผลตรวจ<br>ให้ หน./ผู้รับผิดชอบจังหวัด"]:::email
-        OUT1["12.1 รายงานผลออนไลน์<br>(ภายใน 72 ชม.)"]:::output
-        OUT2["12.2 หนังสือราชการทางการ<br>(ภายใน 14 วัน)"]:::output
-        FINISH(["สิ้นสุดกระบวนการ"]):::term
-
-        P9 --> OUT1
-        P9 --> OUT2
-        OUT1 --> FINISH
-        OUT2 --> FINISH
-    end
-
-    P3 --> D1
-    R1 -.-> P2
-    P6 --> D2
-    R2 -.-> P5
-    P8 --> P9
+    %% Nodes
+    START(["เริ่มต้นกระบวนการ"]):::term --> P1["1. สุ่มเก็บตัวอย่างอาหารในพื้นที่"]:::process
+    P1 --> P2["2. บันทึกข้อมูลตัวอย่างลงในระบบ MOBI SMART APP<br>(แบบฟอร์ม MU.10-001 ถึง MU.10-008)"]:::process
+    P2 --> P3["3. นำส่งตัวอย่างพร้อมพิมพ์ใบนำส่ง (Ref ID) ไปยังแลป"]:::process
+    
+    P3 --> D1{"4. ตรวจสอบสภาพตัวอย่าง<br>และเอกสารนำส่ง<br>ถูกต้องสมบูรณ์?"}:::decision
+    
+    D1 -- "ไม่ถูกต้อง (ชำรุด/ข้อมูลไม่ตรง)" --> R1["ปฏิเสธการรับตัวอย่าง<br>และส่งกลับเพื่อแก้ไข"]:::reject
+    R1 --> P2
+    
+    D1 -- "ถูกต้องสมบูรณ์" --> P4["5. ออกรหัสแลป (Lab Code) และเตรียมตัวอย่าง"]:::process
+    P4 --> P5["6. ตรวจวิเคราะห์ทางห้องปฏิบัติการ (เคมี / จุลินทรีย์)"]:::process
+    P5 --> P6["7. บันทึกผลการตรวจวิเคราะห์ลงในระบบ<br>(ระบบประเมิน ผ่าน / ตกมาตรฐาน อัตโนมัติ)"]:::process
+    
+    P6 --> D2{"8. ทบทวนผลการตรวจ<br>ถูกต้องตามเกณฑ์วิชาการ?"}:::decision
+    
+    D2 -- "ไม่สมบูรณ์" --> R2["ส่งกลับให้ตรวจวิเคราะห์ซ้ำ"]:::reject
+    R2 --> P5
+    
+    D2 -- "ถูกต้องสมบูรณ์" --> P7["9. ลงนามอิเล็กทรอนิกส์ (E-Signature)<br>อนุมัติและรับรองรายงานผล"]:::process
+    
+    P7 --> P8["10. ออกรายงานผลการตรวจวิเคราะห์ทางการ (PDF)"]:::process
+    
+    P8 --> P9["11. ระบบส่งแจ้งผลการตรวจวิเคราะห์อัตโนมัติ<br>ไปยัง หน./ผู้รับผิดชอบงานจังหวัด ทางอีเมล"]:::email
+    
+    P9 --> OUT1["12.1 เผยแพร่รายงานผลออนไลน์ผ่านระบบ<br>(ภายใน 72 ชม. นับจากรับตัวอย่าง)"]:::output
+    P9 --> OUT2["12.2 จัดส่งเอกสารหนังสือราชการทางการ<br>(ภายใน 14 วัน)"]:::output
+    
+    OUT1 --> FINISH(["สิ้นสุดกระบวนการ"]):::term
+    OUT2 --> FINISH
 ```
 
 ---
