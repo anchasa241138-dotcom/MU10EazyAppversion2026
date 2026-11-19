@@ -12932,7 +12932,7 @@ const btnApprove = document.getElementById('btnApproveAndSign');
                 <!-- Action CTA Link -->
                 <div style="text-align: center; padding-top: 14px; border-top: 1px solid #e2e8f0;">
                     <a href="${appUrl}" target="_blank" style="display: inline-block; background-color: #0284c7; color: #ffffff !important; text-decoration: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
-                        คลิกที่นี่ เพื่อเข้าสู่ระบบ Mobi SmartLab 10 หรือดาวน์โหลดตารางสรุป Excel ทั้งหมด
+                        คลิกที่นี่ เพื่อเข้าสู่ระบบ MOBI SMART APP หรือดาวน์โหลดตารางสรุป Excel ทั้งหมด
                     </a>
                 </div>
             </div>
