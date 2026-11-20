@@ -2504,19 +2504,19 @@ document.getElementById('formNameTitle').innerText = title;
                         <label>น้ำหนัก (กรัม)</label>
                         <input type="number" name="weight_${this.globalSampleIndex}" step="0.1" placeholder="เช่น 500">
                     </div>
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group">
                         <label>แหล่งที่มาของตัวอย่าง *</label>
                         <input type="text" name="source_${this.globalSampleIndex}" required placeholder="เช่น ตลาดไท, รับซื้อจากเกษตรกร">
                     </div>
                 
-                    <div class="form-group" style="grid-column: span 2; margin-top: 15px;">
-                        <label>ชนิดสารปนเปื้อนที่ต้องการส่งตรวจ (เลือกได้มากกว่า 1) *</label>
-                        <div class="checkbox-group-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px;">
-                            <div class="checkbox-item"><input type="checkbox" name="test_borax_${this.globalSampleIndex}" value="บอแรกซ์"> <label>บอแรกซ์</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_formalin_${this.globalSampleIndex}" value="ฟอร์มาลิน"> <label>ฟอร์มาลิน</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_bleach_${this.globalSampleIndex}" value="ฟอกขาว"> <label>ฟอกขาว</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_salicylic_${this.globalSampleIndex}" value="กันรา (ซาลิซิลิค)"> <label>กันรา (ซาลิซิลิค)</label></div>
-                            <div class="checkbox-item"><input type="checkbox" name="test_agonist_${this.globalSampleIndex}" value="สารเร่งเนื้อแดง"> <label>สารเร่งเนื้อแดง</label></div>
+                    <div class="form-group" style="grid-column: 1 / -1; margin-top: 15px;">
+                        <label style="margin-bottom: 8px; display: block;">ชนิดสารปนเปื้อนที่ต้องการส่งตรวจ (เลือกได้มากกว่า 1) *</label>
+                        <div class="checkbox-group-container" style="display: flex; gap: 20px 24px; flex-wrap: wrap; align-items: center; margin-top: 6px;">
+                            <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer;"><input type="checkbox" id="test_borax_${this.globalSampleIndex}" name="test_borax_${this.globalSampleIndex}" value="บอแรกซ์" style="cursor: pointer; margin: 0;"> <label for="test_borax_${this.globalSampleIndex}" style="cursor: pointer; margin: 0; font-size: 13.5px; white-space: nowrap;">บอแรกซ์</label></div>
+                            <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer;"><input type="checkbox" id="test_formalin_${this.globalSampleIndex}" name="test_formalin_${this.globalSampleIndex}" value="ฟอร์มาลิน" style="cursor: pointer; margin: 0;"> <label for="test_formalin_${this.globalSampleIndex}" style="cursor: pointer; margin: 0; font-size: 13.5px; white-space: nowrap;">ฟอร์มาลิน</label></div>
+                            <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer;"><input type="checkbox" id="test_bleach_${this.globalSampleIndex}" name="test_bleach_${this.globalSampleIndex}" value="ฟอกขาว" style="cursor: pointer; margin: 0;"> <label for="test_bleach_${this.globalSampleIndex}" style="cursor: pointer; margin: 0; font-size: 13.5px; white-space: nowrap;">ฟอกขาว</label></div>
+                            <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer;"><input type="checkbox" id="test_salicylic_${this.globalSampleIndex}" name="test_salicylic_${this.globalSampleIndex}" value="กันรา (ซาลิซิลิค)" style="cursor: pointer; margin: 0;"> <label for="test_salicylic_${this.globalSampleIndex}" style="cursor: pointer; margin: 0; font-size: 13.5px; white-space: nowrap;">กันรา (ซาลิซิลิค)</label></div>
+                            <div class="checkbox-item" style="display: flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer;"><input type="checkbox" id="test_agonist_${this.globalSampleIndex}" name="test_agonist_${this.globalSampleIndex}" value="สารเร่งเนื้อแดง" style="cursor: pointer; margin: 0;"> <label for="test_agonist_${this.globalSampleIndex}" style="cursor: pointer; margin: 0; font-size: 13.5px; white-space: nowrap;">สารเร่งเนื้อแดง</label></div>
                         </div>
                     </div>
                 </div>`;
